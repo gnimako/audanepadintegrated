@@ -1,0 +1,89 @@
+@model LoginViewModel
+@{
+    ViewBag.Title = "AUDA-NEPAD Annual Planning and Reporting";
+    Layout = "_LoginsLayout";
+
+}
+				<form class="login100-form validate-form" asp-controller="Account" asp-action="Login"  method="post">
+					<div class="logintitle" style="text-align: center;">
+						 @Model.requestlogin
+					</div>
+					<br \>
+					<br \>
+					<span class="login100-form-avatar">
+						<img src="~/logins/images/avatar-01.png" alt="AVATAR">
+					</span>
+					<br \>
+					<div asp-validation-summary="All" class="text-danger"></div>
+					<br \>
+					<div class="wrap-input100 validate-input m-t-85 m-b-35" data-validate = "Enter AUDA Email">
+						<input class="input100" style="color:#000" type="text" asp-for="Email">
+						<span class="focus-input1001 loginplaceholder" style="color:#000"   data-placeholder="AUDA-NEPAD Email"></span>
+						
+					</div>
+
+					<div class="wrap-input100 validate-input m-b-50" data-validate="Enter password">
+						<input class="input100" type="password" asp-for="Password">
+						<span class="focus-input100 loginplaceholder" style="color:#000"   data-placeholder="Password"></span>
+						
+					</div>
+
+					<div class="container-login100-form-btn">
+						<button class="login100-form-btn">
+							Login
+						</button>
+					</div>
+
+					<ul class="login-more p-t-190">
+						<li class="m-b-8">
+							<span class="txt1">
+								Forgot
+							</span>
+
+							<a href="#" class="txt2">
+								Username / Password?
+							</a>
+						</li>
+
+						<li>
+							<span class="txt1">
+								Don’t have an account?
+							</span>
+
+							<a href="#" class="txt2">
+								Sign up
+							</a>
+						</li>
+					</ul>
+
+				</form>
+
+
+				<style>
+					::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+						color:    #000;
+						opacity: 1;
+					}
+					:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+					color:    #000;
+					opacity:  1;
+					}
+					::-moz-placeholder { /* Mozilla Firefox 19+ */
+					color:    #000;
+					opacity:  1;
+					}
+					:-ms-input-placeholder { /* Internet Explorer 10-11 */
+					color:    #000;
+					opacity: 1;
+					}
+					::-ms-input-placeholder { /* Microsoft Edge */
+					color:    #000;
+					opacity: 1;
+					}
+
+					::placeholder { /* Most modern browsers support this now. */
+					color:    #000;
+					opacity: 1;
+					}
+
+				</style>

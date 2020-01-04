@@ -1,0 +1,43 @@
+version: '3.7'
+
+volumes:
+  imdb_id_service_volume:
+    external:
+      name: imdb_id_service_volume
+
+networks:
+  app_network:
+    driver: bridge
+
+services:
+    audanepad_integrated:
+        image: gideonnimako/audanepad_integrated
+        container_name: audanepad_integrated_comp
+        depends_on: 
+            - "postgres_image"
+        build: 
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "8090:80"
+        environment: 
+            DB_CONNECTION_STRING: "host=postgres_image;port=5467;database=audanepadintegrated;username=employee;password=compute"
+        networks:
+            - app_network
+
+    postgres_image:
+        image: postgres:latest
+        container_name: postgres-audanepad_comp
+        ports:
+            - "5467:5467"
+        restart: always
+        volumes: 
+            - imdb_id_service_volume:/var/lib/docker/volumes/pgdata/_data
+        environment: 
+            POSTGRES_USER: "employee"
+            POSTGRES_PASSWORD: "compute"
+            POSTGRES_DB: "audanepadintegrated"
+        networks:
+            - app_network
+
+           
