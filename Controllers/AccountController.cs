@@ -44,13 +44,13 @@ namespace AUDANEPAD_Integrated.Controllers
             return View(model);
         }
 
-                [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> Logout()
         {
 
             await signInManager.SignOutAsync();
 
-            return RedirectToAction("Login", "Account");
+            return RedirectToAction("Index", "Home");
         }
 
         [AllowAnonymous]

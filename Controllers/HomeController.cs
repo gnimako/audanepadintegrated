@@ -26,7 +26,7 @@ namespace AUDANEPAD_Integrated.Controllers
         {
 
 
-            return View();
+            return RedirectToAction("Login", "Account");
           
         }
 
