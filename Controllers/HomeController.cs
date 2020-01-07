@@ -25,8 +25,8 @@ namespace AUDANEPAD_Integrated.Controllers
         public IActionResult Index()
         {
 
-
-            return RedirectToAction("Login", "Account");
+            return View();
+           // return RedirectToAction("Login", "Account");
           
         }
 

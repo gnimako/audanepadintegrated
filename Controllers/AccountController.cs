@@ -50,7 +50,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
             await signInManager.SignOutAsync();
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
 
         [AllowAnonymous]
