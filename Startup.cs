@@ -82,7 +82,9 @@ namespace AUDANEPAD_Integrated
             //         options.SerializerSettings.ContractResolver = new DefaultContractResolver();
             //   });
 
-           services.AddScoped<IEmployeeRepository, ServiceEmployeeRepository>();
+           services.AddScoped<IEmployeeRepository, ServiceEmployee>();
+           services.AddScoped<ILkUp_ActivityTypeRepository, ServiceLkUp_ActivityType>();
+        
 
            services.AddKendo();
 

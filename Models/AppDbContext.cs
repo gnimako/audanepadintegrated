@@ -16,6 +16,7 @@ namespace AUDANEPAD_Integrated.Models
         }
 
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<LkUp_ActivityType> LkUp_ActivityType { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,6 +42,10 @@ namespace AUDANEPAD_Integrated.Models
             .HasConversion(localDateConverter);
 
             modelBuilder.Entity<ApplicationUser>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<LkUp_ActivityType>()
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
         }

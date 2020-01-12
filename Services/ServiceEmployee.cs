@@ -6,19 +6,18 @@ using Microsoft.Extensions.Logging;
 
 namespace AUDANEPAD_Integrated.Services
 {
-    public class ServiceEmployeeRepository : IEmployeeRepository
+    public class ServiceEmployee : IEmployeeRepository
     {
         private readonly AppDbContext context;
-        private readonly ILogger<ServiceEmployeeRepository> logger;
+        private readonly ILogger<ServiceEmployee> logger;
 
-        //private List<Employee> _employeeList;
-
-        public ServiceEmployeeRepository(AppDbContext context, ILogger<ServiceEmployeeRepository> logger)
+        public ServiceEmployee(AppDbContext context, ILogger<ServiceEmployee> logger)
         {
             this.context = context;
             this.logger = logger;
         }
-        public Employee Add(Employee employee)
+
+            public Employee Add(Employee employee)
         {
             employee.Id = GetAllEmployee().Count() + 1;//_employeeList.Max(e => e.Id) + 1;
             context.Employees.Add(employee);
@@ -94,5 +93,6 @@ namespace AUDANEPAD_Integrated.Services
             context.SaveChanges();
             return employeeChanges;
         }
+        
     }
 }

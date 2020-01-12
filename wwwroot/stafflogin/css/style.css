@@ -517,11 +517,11 @@ ul.list-style-none li a:hover {
 .sidebar-nav ul li ul ul {
     padding-left: 15px}
 .sidebar-nav ul li.nav-small-cap {
-    font-size: 12px;
+    font-size: 14px;
     margin-bottom: 0px;
     padding: 14px 14px 14px 20px;
     color: #263238;
-    font-weight: 500}
+    font-weight: 1000}
 .sidebar-nav ul li.nav-devider {
     height: 1px;
     background: rgba(120, 130, 140, 0.13);
