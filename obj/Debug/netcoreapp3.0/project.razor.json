@@ -108564,6 +108564,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Admin/LookUpActivityType.cshtml",
+      "TargetPath": "Views/Admin/LookUpActivityType.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Account/Login2.cshtml",
       "TargetPath": "Views/Account/Login2.cshtml",
       "FileKind": "mvc"
