@@ -34,12 +34,12 @@
                                                     {
                                                         columns.Bound(c => c.LookUp_Id).Hidden();
                                                         columns.Bound(c => c.LookUp_Name).Title("Activity Name");
-                                                        columns.Bound(c => c.LookUp_Status).Title("Activity Status").Width(250);
-                                                        columns.Bound(c => c.TransactionDate).Title("Transaction Date").Format("{0: dd-MM-yyyy}").Width(200);
+                                                        columns.Bound(c => c.LookUp_Status).Title("Activity Status");
+                                                        columns.Bound(c => c.TransactionDate).Title("Transaction Date").Format("{0: dd-MM-yyyy}");
 
                                                         //columns.Command(command => command.Custom("Edit Activity").Click("resetpass1")).Width(200);
-                                                        columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("resetpass1")).Width(200);
-                                                        columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("resetpass1")).Width(250);
+                                                        columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("resetpass1"));
+                                                        columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("resetpass1"));
                                                     })
                                                     .HtmlAttributes(new { style = "height: 550px;" })
                                                     .Scrollable()
