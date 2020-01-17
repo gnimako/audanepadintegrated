@@ -68,9 +68,14 @@ namespace AUDANEPAD_Integrated
             });
 
 
+             services.AddMvc().AddJsonOptions(o =>
+                {
+                    o.JsonSerializerOptions.PropertyNamingPolicy = null;
+                    o.JsonSerializerOptions.DictionaryKeyPolicy = null;
+                });
+            //o.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
 
-
-
+            
             // services.AddMvc(config => {
             //     var policy = new AuthorizationPolicyBuilder()
             //                     .RequireAuthenticatedUser()

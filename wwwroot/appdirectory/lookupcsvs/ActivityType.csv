@@ -1,22 +1,12 @@
-﻿1;AU STC
-2;AU Summit
-3;AU Visit
-4;Conference
-5;Consultancy Services
-6;Evaluation Mission
-7;Executive Council Meeting
-8;Field Study
-9;Field Visit
-10;Finance Support
-11;IT Support
-12;Monitoring Mission
-13;Non-Consultancy and Other Services
-14;Other Procurement Support
-15;PRC Meeting
-16;Procurement of Goods
-17;Procurement of Works
-18;Resource Mobilisation
-19;Scoping Mission
-20;Staff Training
-21;Technical Advisory to MS/REC
-22;Training for MS/REC
+﻿1;Workshop
+2;Procurement of services or goods or works
+3;Training
+4;Seminar
+5;Technical Backstopping
+6;Missions
+7;Meetings
+8;Statutory Meetings
+9;Global Events
+10;Resource Mobilisation
+11;Conferences
+12;Others

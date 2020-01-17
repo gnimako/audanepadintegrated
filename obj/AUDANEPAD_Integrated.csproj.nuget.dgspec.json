@@ -41,6 +41,10 @@
       "frameworks": {
         "netcoreapp3.0": {
           "dependencies": {
+            "ChilkatDnCore": {
+              "target": "Package",
+              "version": "[9.5.0.80, )"
+            },
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
               "version": "[3.0.0, )"
