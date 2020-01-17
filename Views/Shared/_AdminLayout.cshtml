@@ -36,7 +36,19 @@
 
 
     </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet"
+              href="https://kendo.cdn.telerik.com/2019.1.115/styles/kendo.common.min.css"
+              asp-fallback-href="~/lib/kendo-ui/css/web/kendo.common.min.css"
+              asp-fallback-test-class="k-common-test-class"
+              asp-fallback-test-property="opacity" asp-fallback-test-value="0" />
 
+        <link rel="stylesheet"
+              href="https://kendo.cdn.telerik.com/2019.1.115/styles/kendo.blueopal.min.css"
+              asp-fallback-href="~/lib/kendo-ui/css/web/kendo.blueopal.min.css"
+              asp-fallback-test-class="k-theme-test-class"
+              asp-fallback-test-property="opacity" asp-fallback-test-value="0" />
+    </environment>
 
     <environment include="Development">
         @*<script src="~/lib/jquery/jquery.js"></script>*@
