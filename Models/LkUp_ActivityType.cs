@@ -13,7 +13,7 @@ namespace AUDANEPAD_Integrated.Models
 		[Required, MaxLength(255, ErrorMessage = "Name cannot exceed 255 characters")]
 		public string Activity_Name { get; set; }
 
-        public bool ActivityType_Status { get; set; }
+        public bool? ActivityType_Status { get; set; }
 
         public LocalDate TransactionDate { get; set; }
         

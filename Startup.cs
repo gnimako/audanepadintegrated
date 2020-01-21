@@ -89,6 +89,9 @@ namespace AUDANEPAD_Integrated
 
            services.AddScoped<IEmployeeRepository, ServiceEmployee>();
            services.AddScoped<ILkUp_ActivityTypeRepository, ServiceLkUp_ActivityType>();
+           services.AddScoped<ITrans_ActivityTypeRepository, ServiceTrans_ActivityType>();
+
+           
         
 
            services.AddKendo();

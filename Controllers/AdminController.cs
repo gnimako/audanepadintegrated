@@ -30,7 +30,8 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly ILkUp_ActivityTypeRepository _activityTypeRepository;
-        private readonly AppDbContext context;
+        private readonly ITrans_ActivityTypeRepository _transactivityTypeRepository;
+        private readonly AppDbContext _context;
 
         private readonly IWebHostEnvironment hostingEnvironment;
 
@@ -40,7 +41,8 @@ namespace AUDANEPAD_Integrated.Controllers
                                SignInManager<ApplicationUser> signInManager,
                                AppDbContext context,
                                IWebHostEnvironment hostingEnvironment,
-                               ILkUp_ActivityTypeRepository activityTypeRepository)
+                               ILkUp_ActivityTypeRepository activityTypeRepository,
+                               ITrans_ActivityTypeRepository transactivityTypeRepository)
         {
             this._employeeRepository = employeeRepository;
             this.userManager = userManager;
@@ -49,8 +51,9 @@ namespace AUDANEPAD_Integrated.Controllers
             this.hostingEnvironment = hostingEnvironment;
 
             _activityTypeRepository=activityTypeRepository;
+            _transactivityTypeRepository=transactivityTypeRepository;
 
-            this.context = context;
+            _context = context;
             
         }
 
@@ -245,7 +248,7 @@ namespace AUDANEPAD_Integrated.Controllers
                         for (row = 0; row <= n - 1; row++)
                         {
 
-                            LkUp_ActivityType sActivityType = new LkUp_ActivityType
+                            LkUp_ActivityType rec = new LkUp_ActivityType
                             {
 
                                 Activity_Id = Int32.Parse(csv_activitytype.GetCell(row, 0)),
@@ -254,7 +257,17 @@ namespace AUDANEPAD_Integrated.Controllers
                                 TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
                             };
 
-                            _activityTypeRepository.Add(sActivityType);
+                            _activityTypeRepository.Add(rec);
+
+                            Trans_ActivityType rec_trans = new Trans_ActivityType
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Activity_Id = Int32.Parse(csv_activitytype.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transactivityTypeRepository.Add(rec_trans);
+
                         }
                     }
                 } 
@@ -267,8 +280,106 @@ namespace AUDANEPAD_Integrated.Controllers
             }
 
         }
+        //**************GRID CREATE RECORDS******************///
+        [AcceptVerbs("Post")]
+		public ActionResult LkUp_ActivityType_Create([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                LkUp_ActivityType rec = _activityTypeRepository.GetActivityTypeByName(record.LookUp_Name);
+
+                if (rec == null && record.LookUp_Name !=null)
+                {
+
+                        var DB_Recs = _activityTypeRepository.GetAllActivityType();
+                        int _count = DB_Recs.Count();
+
+                        LkUp_ActivityType rec_to_add = new LkUp_ActivityType
+                        {
+                            Activity_Id=_count+1,
+                            Activity_Name=record.LookUp_Name,
+                            ActivityType_Status=null,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+                        _activityTypeRepository.Add(rec_to_add);
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+        //**************GRID UPDATE RECORDS******************///
+        [AcceptVerbs("Post")]
+		public ActionResult LkUp_ActivityType_Update([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                LkUp_ActivityType rec = _activityTypeRepository.GetActivityType(record.LookUp_Id);
+                
+                if (rec != null)
+                {
+
+                        LkUp_ActivityType rec_already_exist = _activityTypeRepository.GetActivityTypeByName(record.LookUp_Name);
+
+                        if(rec_already_exist==null)
+                        {
+                            rec.Activity_Name=record.LookUp_Name;
+                            rec.TransactionDate=new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
 
 
+                            _activityTypeRepository.Update(rec);
+                        }
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+        //**************GRID DELETE RECORDS******************///
+        [AcceptVerbs("Post")]
+		public ActionResult LkUp_ActivityType_Delete([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                LkUp_ActivityType rec = _activityTypeRepository.GetActivityType(record.LookUp_Id);
+                
+                if (rec != null)
+                {
+
+
+                        if(rec.ActivityType_Status==null)
+                        {
+                            _activityTypeRepository.Delete(rec.Activity_Id);
+                        }
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+
+        [AcceptVerbs("Post")]
+		public ActionResult Trans_ActivityType_Delete([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                Trans_ActivityType rec = _transactivityTypeRepository.GetTrans_ActivityType(record.Trans_LookUp_Id);
+                
+                if (rec != null)
+                {
+                    _transactivityTypeRepository.Delete(rec.Transaction_Id);
+
+                    LkUp_ActivityType rec_update=_activityTypeRepository.GetActivityType(rec.Activity_Id);
+                    rec_update.ActivityType_Status=false;
+                    _activityTypeRepository.Update(rec_update);
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
         //**************GRID DATA READS******************///
 
         public ActionResult LkUp_ActivityType_Read([DataSourceRequest]DataSourceRequest request, string text)
@@ -279,9 +390,14 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
 
-            var DB_Recs = _activityTypeRepository.GetAllActivityType();
+            var DB_Recs =  _activityTypeRepository.GetAllActivityType();
 
-            int _count = DB_Recs.Count();
+
+
+
+            int _count =  DB_Recs.Count();
+
+
             if (_count > 0)
             {
                 foreach (var rec in DB_Recs)
@@ -291,7 +407,8 @@ namespace AUDANEPAD_Integrated.Controllers
                     {
                         LookUp_Id = rec.Activity_Id,
                         LookUp_Name =rec.Activity_Name,
-                        LookUp_Status = rec.ActivityType_Status == true ? "Active" : "Inactive",
+                        Show_trans_button=rec.ActivityType_Status.HasValue? rec.ActivityType_Status.Value? false: true: true,
+                        LookUp_Status = rec.ActivityType_Status.HasValue? rec.ActivityType_Status.Value? "Transactional": "Active": "Inactive",
                         TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
                     };
 
@@ -303,6 +420,65 @@ namespace AUDANEPAD_Integrated.Controllers
 
             return Json(collection_recs.ToDataSourceResult(request));
         }
-        
+
+        public ActionResult Trans_ActivityType_Read([DataSourceRequest]DataSourceRequest request, string text)
+        {
+
+
+            List<LookUpTablesViewModel> collection_recs = new List<LookUpTablesViewModel>();
+
+            var DB_Recs =  _transactivityTypeRepository.GetAllTransActivityType().ToList();
+
+            int _count = DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+
+                    LookUpTablesViewModel srec = new LookUpTablesViewModel
+                    {
+                        LookUp_Id = rec.Activity_Id,
+                        Trans_LookUp_Id=rec.Transaction_Id,
+                        LookUp_Name =_activityTypeRepository.GetActivityType(rec.Activity_Id).Activity_Name,
+                        TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                    };
+
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+        //**************GRID COMMAND ACTIONS******************///
+        [HttpPost]
+        public ActionResult MakeActivityTypeTrans(string recid)
+        {
+            try
+            {
+                LkUp_ActivityType rec = _activityTypeRepository.GetActivityType(Int32.Parse(recid));
+                rec.ActivityType_Status=true;
+                _activityTypeRepository.Update(rec);
+
+                Trans_ActivityType rec_trans = new Trans_ActivityType
+                {
+                    Transaction_Id = Guid.NewGuid().ToString(),
+                    Activity_Id = rec.Activity_Id,
+                    TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                };
+                _transactivityTypeRepository.Add(rec_trans);
+
+                 return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+        }
+
     }
 }

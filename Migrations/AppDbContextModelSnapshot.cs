@@ -173,7 +173,7 @@ namespace AUDANEPAD_Integrated.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<bool>("ActivityType_Status")
+                    b.Property<bool?>("ActivityType_Status")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Activity_Name")
@@ -187,6 +187,22 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.HasKey("Activity_Id");
 
                     b.ToTable("LkUp_ActivityType");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_ActivityType", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Activity_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_ActivityType");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

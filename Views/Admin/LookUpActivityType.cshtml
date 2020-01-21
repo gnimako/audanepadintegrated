@@ -7,7 +7,7 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header" style="background-color:#d1e0e6">
-                <h4 class="m-b-0" style="color:#1a262b">Manage Activity Type Look Up</h4>
+                <h4 class="m-b-0" style="color:#1a262b">Manage Activity Type Look-Up</h4>
             </div>
 
 
@@ -23,24 +23,32 @@
                         <div class="row">
                             <div class="col-md-12 ">
                                 <div class="form-group">
-
-                                    <a class="k-button" asp-action="index" asp-controller="admin" id="btnAdd">
-                                        <span class="k-icon k-i-plus-outline"></span> Add Activity Type
-                                    </a>
-                                    <br />
+                                  <span style="color:#000">MAIN LOOK-UP</span> 
+                                  <br \>
                                     @(Html.Kendo().Grid<LookUpTablesViewModel>()
-                                                    .Name("grid")
+                                                    .Name("grid_main")
                                                     .Columns(columns =>
                                                     {
                                                         columns.Bound(c => c.LookUp_Id).Hidden();
-                                                        columns.Bound(c => c.LookUp_Name).Title("Activity Name");
-                                                        columns.Bound(c => c.LookUp_Status).Title("Activity Status");
-                                                        columns.Bound(c => c.TransactionDate).Title("Transaction Date").Format("{0: dd-MM-yyyy}");
+                                                        columns.Bound(c => c.Show_trans_button).Hidden();
+                                                        columns.Bound(c => c.LookUp_Name).Title("Activity Name");                                           
+                                                        columns.Bound(c => c.LookUp_Status).Title("Status");
 
                                                         //columns.Command(command => command.Custom("Edit Activity").Click("resetpass1")).Width(200);
-                                                        columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("resetpass1"));
-                                                        columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("resetpass1"));
+
+                                                        //columns.Command(command => { command.Edit(); command.Destroy(); });
+
+                                                        columns.Command(command => { command.Edit().Text(" Edit").IconClass("k-icon k-i-track-changes"); });
+                                                        columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
+                                                       columns.Command(command => command.Custom("Make Transactional").Click("mktransactional").Visible("editVisible"));
+
+      
+
+                                                        //columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("resetpass1"));
+                                                        //columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("resetpass1"));
                                                     })
+                                                    .ToolBar(toolbar => toolbar.Create().Text(" Add Activity Type").IconClass("k-icon k-i-plus-outline"))
+                                                    .Editable(editable => editable.Mode(GridEditMode.InLine))
                                                     .HtmlAttributes(new { style = "height: 550px;" })
                                                     .Scrollable()
                                                     .Groupable()
@@ -53,13 +61,73 @@
                                                         .ButtonCount(5))
                                                     .DataSource(dataSource => dataSource
                                                         .Ajax()
-                                                        .Read(read => read
-                                                                        .Action("LkUp_ActivityType_Read", "Admin"))
-                                                        .Model(model => model.Id(p => p.LookUp_Id))
+                                                        .Read(read => read.Action("LkUp_ActivityType_Read", "Admin"))
+                                                        .Model(model => 
+                                                            {
+                                                                model.Id(p => p.LookUp_Id);
+                                                                model.Field(field => field.LookUp_Status).Editable(false);
+                                                            })
+                                                        .Create(create => create.Action("LkUp_ActivityType_Create", "Admin"))
+                                                        .Update(update => update.Action("LkUp_ActivityType_Update", "Admin"))
+                                                        .Destroy(destroy => destroy.Action("LkUp_ActivityType_Delete", "Admin"))
                                                         .PageSize(20)
+                                                        .Events(events => events.Error("error_handler")
+                                                                                .RequestEnd("onRequestEnd"))
+                                                        
                                                     )
                                     )
+                                <br \>
+                                <br \>
+                                <br \>
+                                <span style="color:#000">TRANSACTIONAL LOOK-UP</span> 
+                                <br \>
+                                     @(Html.Kendo().Grid<LookUpTablesViewModel>()
+                                                    .Name("grid_trans")
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(c => c.LookUp_Id).Hidden();
+                                                        columns.Bound(c => c.Trans_LookUp_Id).Hidden();
+                                                        columns.Bound(c => c.LookUp_Name).Title("Activity Name");
+                                                        columns.Bound(c => c.TransactionDate).Title("Transaction Date").Format("{0: dd-MM-yyyy}");
 
+                                                        //columns.Command(command => command.Custom("Edit Activity").Click("resetpass1")).Width(200);
+
+                                                        //columns.Command(command => { command.Edit(); command.Destroy(); });
+
+                                                       
+                                                        columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
+
+                                                        //columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("resetpass1"));
+                                                        //columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("resetpass1"));
+                                                    })
+                                                    
+                                 
+                                                    .HtmlAttributes(new { style = "height: 550px;" })
+                                                    .Scrollable()
+                                                    .Groupable()
+                                                    .Sortable()
+                                                    .Navigatable()
+                                                    .Filterable()
+                                                    .Pageable(pageable => pageable
+                                                        .Refresh(true)
+                                                        .PageSizes(true)
+                                                        .ButtonCount(5))
+                                                    .DataSource(dataSource => dataSource
+                                                        .Ajax()
+                                                        .Read(read => read.Action("Trans_ActivityType_Read", "Admin"))
+                                                        .Model(model => 
+                                                            {
+                                                                model.Id(p => p.LookUp_Id);
+                                                                model.Field(field => field.TransactionDate).Editable(false);
+                                                            })
+                                                        
+                                                        .Destroy(destroy => destroy.Action("Trans_ActivityType_Delete", "Admin"))
+                                                        .PageSize(20)
+                                                        .Events(events => events.Error("error_handler")
+                                                                                .RequestEnd("onRequestEndTrans"))
+                                                        
+                                                    )
+                                    )
                                 </div>
                             </div>
                         </div>
@@ -91,6 +159,12 @@
     </div>
 </div>
 
+    <script>
+        function editVisible(dataItem) {
+        // hide the Edit button for the item with ProductID=1
+        return dataItem.LookUp_Status != "Transactional";
+        }
+    </script>
 
 
 <script type="text/javascript">
@@ -147,6 +221,89 @@ function resetpass1(e) {
     }
 
 
+    function mktransactional(e) {
+
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        var recid = dataItem.LookUp_Id;
+        var recstatus= dataItem.LookUp_Status;
+
+        var dialog = $('#dialog');
+        var undo = $("#undo");
+
+        function onClose() {
+            undo.fadeIn();
+        }
+
+          if (recstatus === "" && typeof recstatus === "string") {
+
+                            
+            dialog.kendoDialog({
+                  width: "450px",
+                  title: "Checks",
+                  closable: false,
+                  modal: true,
+                  content: "<p>Record has not been <strong>save</strong>.<p>",
+                  actions: [
+                      { text: 'OK' }
+                  ],
+                  close: onClose
+              });
+
+              dialog.data("kendoDialog").open();
+              undo.fadeOut();
+          }
+          else {
+
+              dialog.kendoDialog({
+                  width: "450px",
+                  title: "Confirmation",
+                  closable: false,
+                  modal: true,
+                  content: "<p>Please <strong>confirm</strong> the action.<p>",
+                  actions: [
+                      {
+                          text: 'Confirm',
+                          action: function (e) {
+                              $.ajax({
+                                  type: "POST",
+                                  url: '/Admin/MakeActivityTypeTrans',     //your action
+                                  data: { "recid": recid},
+                                  dataType: 'json',
+                                  success: function (result) {
+                                        var grid = $("#grid_main").data("kendoGrid"); 
+
+                                        grid.dataSource.transport.options.read.url = "/Admin/LkUp_ActivityType_Read";
+                                        grid.dataSource.read();
+
+                                  },
+                                  error: function (data) {
+
+                                  }
+                              })
+                              return true;
+                          },
+                          primary: true
+
+                      },
+                      { text: 'Cancel' }
+                  ],
+                  close: onClose
+              });
+
+              dialog.data("kendoDialog").open();
+              undo.fadeOut();
+
+          }
+
+
+
+
+
+    }
+
+
 
 
 
@@ -188,7 +345,52 @@ function onClick() {
     });</script>
 
 
+<script type="text/javascript">
+    function error_handler(e) {    
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function() {
+                        message += this + "\n";
+                    });
+                }
+            });        
+            alert(message);
+        }
+    }
 
+    function onRequestEnd(e){
+           // alert("on request end");
+
+           // if (e.type === "update") {
+           //     e.sender.read();
+            //} 
+            //case "create": case "update": case "destroy":
+            if (e.type === "update" || e.type === "create" || e.type === "destroy" ) {
+                var grid = $("#grid_main").data("kendoGrid"); 
+
+                grid.dataSource.transport.options.read.url = "/Admin/LkUp_ActivityType_Read";
+                grid.dataSource.read();
+            }
+    }
+
+
+        function onRequestEndTrans(e){
+           // alert("on request end");
+
+           // if (e.type === "update") {
+           //     e.sender.read();
+            //} 
+            //case "create": case "update": case "destroy":
+            if (e.type === "update" || e.type === "create" || e.type === "destroy" ) {
+                var grid = $("#grid_trans").data("kendoGrid"); 
+
+                grid.dataSource.transport.options.read.url = "/Admin/Trans_ActivityType_Read";
+                grid.dataSource.read();
+            }
+    }
+</script>
 
 
 <style>

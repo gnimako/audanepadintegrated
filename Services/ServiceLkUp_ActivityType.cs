@@ -4,6 +4,27 @@ using AUDANEPAD_Integrated.Interfaces;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 
+using System;
+using System.Collections;
+
+using System.IO;
+
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+
+
+using AUDANEPAD_Integrated.ViewModels;
+using Kendo.Mvc.Extensions;
+using Kendo.Mvc.UI;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using NodaTime;
+
+
 namespace AUDANEPAD_Integrated.Services
 {
     public class ServiceLkUp_ActivityType : ILkUp_ActivityTypeRepository
@@ -37,7 +58,7 @@ namespace AUDANEPAD_Integrated.Services
 
         public LkUp_ActivityType GetActivityType(int Id)
         {
-            return context.LkUp_ActivityType.Find(Id);
+            return  context.LkUp_ActivityType.Find(Id);
         }
 
         public LkUp_ActivityType GetActivityTypeByName(string name)
