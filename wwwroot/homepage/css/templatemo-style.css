@@ -157,7 +157,10 @@ img {
   background: url('../images/africa2.png') no-repeat;
   background-size: cover;
   background-position: center;
-  min-height: 500px;
+  width: 1000px;
+  position: inherit;
+  margin:auto;
+  min-height: 600px;
   padding-top: 180px;
   padding-bottom: 100px;
 }
@@ -200,13 +203,13 @@ img {
   cursor: pointer;
 }
 .divider .divider-one {
-  background: #c14000;
-}
-.divider .divider-two {
   background: #2b5e3c;
 }
+.divider .divider-two {
+  background: #8a3911;
+}
 .divider .divider-three {
-  background: #ffa500;
+  background: #e39402;
 }
 
 /* about section */
