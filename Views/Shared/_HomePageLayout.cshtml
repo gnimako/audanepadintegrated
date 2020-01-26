@@ -77,3 +77,25 @@ http://www.templatemo.com/tm-468-onetel
 
 </body>
 </html>
+
+<script type="text/javascript">
+
+
+$(window).resize(function() {
+	var $this = $(this),
+		thisWidth = $this.width();
+
+	var $imageWrapper = $('#home');
+
+	// Set the width of the image container to the window width
+
+	if (thisWidth > 1000) {
+		$imageWrapper.width(1000);
+	}
+	else{
+		$imageWrapper.width(thisWidth);
+		
+	}
+});
+
+</script>

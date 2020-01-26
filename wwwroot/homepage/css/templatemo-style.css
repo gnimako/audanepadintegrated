@@ -158,7 +158,8 @@ img {
   background-size: cover;
   background-position: center;
   width: 1000px;
-  position: inherit;
+  /*width: 1000px;*/
+  *position: inherit;
   margin:auto;
   min-height: 600px;
   padding-top: 180px;
