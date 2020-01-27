@@ -17,8 +17,14 @@ namespace AUDANEPAD_Integrated.Models
 
         public DbSet<Employee> Employees { get; set; }
         public DbSet<LkUp_ActivityType> LkUp_ActivityType { get; set; }
+        public DbSet<LkUp_DSAType> LkUp_DSAType { get; set; }   
+        public DbSet<LkUp_CostCatelogue> LkUp_CostCatelogue { get; set; }   
+
 
         public DbSet<Trans_ActivityType> Trans_ActivityType { get; set; }
+        public DbSet<Trans_DSAType> Trans_DSAType { get; set; }
+        public DbSet<Trans_CostCatelogue> Trans_CostCatelogue { get; set; }
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -51,9 +57,28 @@ namespace AUDANEPAD_Integrated.Models
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
 
+            modelBuilder.Entity<LkUp_DSAType>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<LkUp_CostCatelogue>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
             modelBuilder.Entity<Trans_ActivityType>()
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Trans_DSAType>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+
+            modelBuilder.Entity<Trans_CostCatelogue>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+
         }
         
     }

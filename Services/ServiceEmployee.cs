@@ -11,13 +11,15 @@ namespace AUDANEPAD_Integrated.Services
         private readonly AppDbContext context;
         private readonly ILogger<ServiceEmployee> logger;
 
+        
+
         public ServiceEmployee(AppDbContext context, ILogger<ServiceEmployee> logger)
         {
             this.context = context;
             this.logger = logger;
         }
 
-            public Employee Add(Employee employee)
+        public Employee Add(Employee employee)
         {
             employee.Id = GetAllEmployee().Count() + 1;//_employeeList.Max(e => e.Id) + 1;
             context.Employees.Add(employee);

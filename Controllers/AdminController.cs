@@ -29,20 +29,33 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly SignInManager<ApplicationUser> signInManager;
-        private readonly ILkUp_ActivityTypeRepository _activityTypeRepository;
-        private readonly ITrans_ActivityTypeRepository _transactivityTypeRepository;
+        private readonly ILkUp_ActivityTypeRepository _lkupActivityTypeRepository;
+        private readonly ILkUp_DSATypeRepository _lkupDSATypeRepository;
+        private readonly ILkUp_CostCatelogueRepository _lkupCostCatelogueRepository ;
+
+        private readonly ITrans_ActivityTypeRepository _transActivityTypeRepository;
+        private readonly ITrans_DSATypeRepository _transDSATypeRepository;
+        private readonly ITrans_CostCatelogueRepository _transCostCatelogueRepository;
+
+
+
         private readonly AppDbContext _context;
 
         private readonly IWebHostEnvironment hostingEnvironment;
 
          public AdminController(IEmployeeRepository employeeRepository,
-                                        UserManager<ApplicationUser> userManager,
-                               RoleManager<IdentityRole> roleManager,
-                               SignInManager<ApplicationUser> signInManager,
-                               AppDbContext context,
-                               IWebHostEnvironment hostingEnvironment,
-                               ILkUp_ActivityTypeRepository activityTypeRepository,
-                               ITrans_ActivityTypeRepository transactivityTypeRepository)
+                                UserManager<ApplicationUser> userManager,
+                                RoleManager<IdentityRole> roleManager,
+                                SignInManager<ApplicationUser> signInManager,
+                                AppDbContext context,
+                                IWebHostEnvironment hostingEnvironment,
+                                ILkUp_ActivityTypeRepository lkupActivityTypeRepository,
+                                ILkUp_DSATypeRepository lkupDSATypeRepository,
+                                ILkUp_CostCatelogueRepository lkupCostCatelogueRepository,
+
+                                ITrans_ActivityTypeRepository transActivityTypeRepository,
+                                ITrans_DSATypeRepository transDSATypeRepository,
+                                ITrans_CostCatelogueRepository transCostCatelogueRepository)
         {
             this._employeeRepository = employeeRepository;
             this.userManager = userManager;
@@ -50,8 +63,16 @@ namespace AUDANEPAD_Integrated.Controllers
             this.signInManager = signInManager;
             this.hostingEnvironment = hostingEnvironment;
 
-            _activityTypeRepository=activityTypeRepository;
-            _transactivityTypeRepository=transactivityTypeRepository;
+            _lkupActivityTypeRepository=lkupActivityTypeRepository;
+            _lkupDSATypeRepository=lkupDSATypeRepository;
+            _lkupCostCatelogueRepository=lkupCostCatelogueRepository;
+
+
+            _transActivityTypeRepository=transActivityTypeRepository;
+            _transDSATypeRepository=transDSATypeRepository;
+            _transCostCatelogueRepository=transCostCatelogueRepository;
+
+
 
             _context = context;
             
@@ -221,24 +242,34 @@ namespace AUDANEPAD_Integrated.Controllers
             return View(emp_view);
 
         }
+
+        //**************LOAD LOOK-UPS TABLES******************///
+
         [HttpPost]
         public ActionResult LoadAllLookUps()
         {
             Chilkat.Csv csv_activitytype = new Chilkat.Csv();
+            Chilkat.Csv csv_dsatype = new Chilkat.Csv();
+            Chilkat.Csv csv_costcatelogue = new Chilkat.Csv();
 
 
             string activitytype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ActivityType.csv");
+            string dsatype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/DSAType.csv");
+            string costcatelogue_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/CostCatelogue.csv");
+            
 
 
             try
             {
                 bool success_activitytype = csv_activitytype.LoadFile(activitytype_path);
+                bool success_dsatype = csv_dsatype.LoadFile(dsatype_path);
+                bool success_costcatelogue = csv_costcatelogue.LoadFile(costcatelogue_path);
 
                 if (success_activitytype == true)
                 {
 
                     // IEnumerable <EmployeeCountry> countries= _empcountryRepository.GetAllEmployeeCountry();
-                    int count_activitytypes = _activityTypeRepository.GetAllActivityType().Count();
+                    int count_activitytypes = _lkupActivityTypeRepository.GetAllActivityType().Count();
                     if (count_activitytypes <= 0)
                     {
                         int row;
@@ -257,7 +288,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
                             };
 
-                            _activityTypeRepository.Add(rec);
+                            _lkupActivityTypeRepository.Add(rec);
 
                             Trans_ActivityType rec_trans = new Trans_ActivityType
                             {
@@ -266,11 +297,89 @@ namespace AUDANEPAD_Integrated.Controllers
                                 TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
                             };
 
-                            _transactivityTypeRepository.Add(rec_trans);
+                            _transActivityTypeRepository.Add(rec_trans);
 
                         }
                     }
+                }
+
+                if (success_dsatype == true)
+                {
+
+                    // IEnumerable <EmployeeCountry> countries= _empcountryRepository.GetAllEmployeeCountry();
+                    int count_dsatypes = _lkupDSATypeRepository.GetAllDSAType().Count();
+                    if (count_dsatypes <= 0)
+                    {
+                        int row;
+                        int n = csv_dsatype.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_DSAType sDSAType = new LkUp_DSAType
+                            {
+
+                                DSA_Id = Int32.Parse(csv_dsatype.GetCell(row, 0)),
+                                DSA_Name = csv_dsatype.GetCell(row, 1),
+                                DSA_Value = float.Parse(csv_dsatype.GetCell(row, 2)),
+                                DSAType_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupDSATypeRepository.Add(sDSAType);
+
+                            Trans_DSAType rec_trans = new Trans_DSAType
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                DSA_Id = Int32.Parse(csv_dsatype.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transDSATypeRepository.Add(rec_trans);
+                        }
+                    }
                 } 
+                if (success_costcatelogue == true)
+                {
+
+                    // IEnumerable <EmployeeCountry> countries= _empcountryRepository.GetAllEmployeeCountry();
+                    int count_costcatelogue = _lkupCostCatelogueRepository.GetAllCostCatelogue().Count();
+                    if (count_costcatelogue <= 0)
+                    {
+                        int row;
+                        int n = csv_costcatelogue.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_CostCatelogue rec = new LkUp_CostCatelogue
+                            {
+
+                                Cost_Id = Int32.Parse(csv_costcatelogue.GetCell(row, 0)),
+                                Cost_Code = csv_costcatelogue.GetCell(row, 1),
+                                Cost_Category = csv_costcatelogue.GetCell(row, 2),
+                                Cost_Description = csv_costcatelogue.GetCell(row, 3),
+                                Unit_Of_Measure = csv_costcatelogue.GetCell(row, 4),
+                                Unit_Cost = float.Parse(csv_costcatelogue.GetCell(row, 5)),
+                                Cost_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupCostCatelogueRepository.Add(rec);
+
+                            Trans_CostCatelogue rec_trans = new Trans_CostCatelogue
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Cost_Id = Int32.Parse(csv_costcatelogue.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transCostCatelogueRepository.Add(rec_trans);
+                        }
+                    }
+                }
 
                 return Json(new { rtnmsg = "success" });
             }
@@ -286,12 +395,12 @@ namespace AUDANEPAD_Integrated.Controllers
         {
             if (record != null && ModelState.IsValid)
             {  
-                LkUp_ActivityType rec = _activityTypeRepository.GetActivityTypeByName(record.LookUp_Name);
+                LkUp_ActivityType rec = _lkupActivityTypeRepository.GetActivityTypeByName(record.LookUp_Name);
 
                 if (rec == null && record.LookUp_Name !=null)
                 {
 
-                        var DB_Recs = _activityTypeRepository.GetAllActivityType();
+                        var DB_Recs = _lkupActivityTypeRepository.GetAllActivityType();
                         int _count = DB_Recs.Count();
 
                         LkUp_ActivityType rec_to_add = new LkUp_ActivityType
@@ -302,7 +411,7 @@ namespace AUDANEPAD_Integrated.Controllers
                             TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
                         };
 
-                        _activityTypeRepository.Add(rec_to_add);
+                        _lkupActivityTypeRepository.Add(rec_to_add);
                 }      
                            
             }
@@ -315,12 +424,12 @@ namespace AUDANEPAD_Integrated.Controllers
         {
             if (record != null && ModelState.IsValid)
             {  
-                LkUp_ActivityType rec = _activityTypeRepository.GetActivityType(record.LookUp_Id);
+                LkUp_ActivityType rec = _lkupActivityTypeRepository.GetActivityType(record.LookUp_Id);
                 
                 if (rec != null)
                 {
 
-                        LkUp_ActivityType rec_already_exist = _activityTypeRepository.GetActivityTypeByName(record.LookUp_Name);
+                        LkUp_ActivityType rec_already_exist = _lkupActivityTypeRepository.GetActivityTypeByName(record.LookUp_Name);
 
                         if(rec_already_exist==null)
                         {
@@ -328,7 +437,7 @@ namespace AUDANEPAD_Integrated.Controllers
                             rec.TransactionDate=new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
 
 
-                            _activityTypeRepository.Update(rec);
+                            _lkupActivityTypeRepository.Update(rec);
                         }
                 }      
                            
@@ -342,7 +451,7 @@ namespace AUDANEPAD_Integrated.Controllers
         {
             if (record != null && ModelState.IsValid)
             {  
-                LkUp_ActivityType rec = _activityTypeRepository.GetActivityType(record.LookUp_Id);
+                LkUp_ActivityType rec = _lkupActivityTypeRepository.GetActivityType(record.LookUp_Id);
                 
                 if (rec != null)
                 {
@@ -350,7 +459,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                         if(rec.ActivityType_Status==null)
                         {
-                            _activityTypeRepository.Delete(rec.Activity_Id);
+                            _lkupActivityTypeRepository.Delete(rec.Activity_Id);
                         }
                 }      
                            
@@ -365,15 +474,15 @@ namespace AUDANEPAD_Integrated.Controllers
         {
             if (record != null && ModelState.IsValid)
             {  
-                Trans_ActivityType rec = _transactivityTypeRepository.GetTrans_ActivityType(record.Trans_LookUp_Id);
+                Trans_ActivityType rec = _transActivityTypeRepository.GetTrans_ActivityType(record.Trans_LookUp_Id);
                 
                 if (rec != null)
                 {
-                    _transactivityTypeRepository.Delete(rec.Transaction_Id);
+                    _transActivityTypeRepository.Delete(rec.Transaction_Id);
 
-                    LkUp_ActivityType rec_update=_activityTypeRepository.GetActivityType(rec.Activity_Id);
+                    LkUp_ActivityType rec_update=_lkupActivityTypeRepository.GetActivityType(rec.Activity_Id);
                     rec_update.ActivityType_Status=false;
-                    _activityTypeRepository.Update(rec_update);
+                    _lkupActivityTypeRepository.Update(rec_update);
                 }      
                            
             }
@@ -390,7 +499,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
 
-            var DB_Recs =  _activityTypeRepository.GetAllActivityType();
+            var DB_Recs =  _lkupActivityTypeRepository.GetAllActivityType();
 
 
 
@@ -427,7 +536,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
             List<LookUpTablesViewModel> collection_recs = new List<LookUpTablesViewModel>();
 
-            var DB_Recs =  _transactivityTypeRepository.GetAllTransActivityType().ToList();
+            var DB_Recs =  _transActivityTypeRepository.GetAllTransActivityType().ToList();
 
             int _count = DB_Recs.Count();
 
@@ -441,7 +550,7 @@ namespace AUDANEPAD_Integrated.Controllers
                     {
                         LookUp_Id = rec.Activity_Id,
                         Trans_LookUp_Id=rec.Transaction_Id,
-                        LookUp_Name =_activityTypeRepository.GetActivityType(rec.Activity_Id).Activity_Name,
+                        LookUp_Name =_lkupActivityTypeRepository.GetActivityType(rec.Activity_Id).Activity_Name,
                         TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
                     };
 
@@ -460,9 +569,9 @@ namespace AUDANEPAD_Integrated.Controllers
         {
             try
             {
-                LkUp_ActivityType rec = _activityTypeRepository.GetActivityType(Int32.Parse(recid));
+                LkUp_ActivityType rec = _lkupActivityTypeRepository.GetActivityType(Int32.Parse(recid));
                 rec.ActivityType_Status=true;
-                _activityTypeRepository.Update(rec);
+                _lkupActivityTypeRepository.Update(rec);
 
                 Trans_ActivityType rec_trans = new Trans_ActivityType
                 {
@@ -470,7 +579,7 @@ namespace AUDANEPAD_Integrated.Controllers
                     Activity_Id = rec.Activity_Id,
                     TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
                 };
-                _transactivityTypeRepository.Add(rec_trans);
+                _transActivityTypeRepository.Add(rec_trans);
 
                  return Json(new { rtnmsg = "success" });
             }

@@ -189,6 +189,65 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.ToTable("LkUp_ActivityType");
                 });
 
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_CostCatelogue", b =>
+                {
+                    b.Property<int>("Cost_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Cost_Category")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Cost_Code")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Cost_Description")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Cost_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<float>("Unit_Cost")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Unit_Of_Measure")
+                        .HasColumnType("text");
+
+                    b.HasKey("Cost_Id");
+
+                    b.ToTable("LkUp_CostCatelogue");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_DSAType", b =>
+                {
+                    b.Property<int>("DSA_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<bool>("DSAType_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("DSA_Name")
+                        .IsRequired()
+                        .HasColumnType("character varying(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<float>("DSA_Value")
+                        .HasColumnType("real");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("DSA_Id");
+
+                    b.ToTable("LkUp_DSAType");
+                });
+
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_ActivityType", b =>
                 {
                     b.Property<string>("Transaction_Id")
@@ -203,6 +262,38 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.HasKey("Transaction_Id");
 
                     b.ToTable("Trans_ActivityType");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_CostCatelogue", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Cost_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_CostCatelogue");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_DSAType", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("DSA_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_DSAType");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

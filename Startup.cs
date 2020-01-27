@@ -88,8 +88,15 @@ namespace AUDANEPAD_Integrated
             //   });
 
            services.AddScoped<IEmployeeRepository, ServiceEmployee>();
+
            services.AddScoped<ILkUp_ActivityTypeRepository, ServiceLkUp_ActivityType>();
+           services.AddScoped<ILkUp_DSATypeRepository, ServiceLkUp_DSAType>();
+           services.AddScoped<ILkUp_CostCatelogueRepository, ServiceLkUp_CostCatelogue>();
+
            services.AddScoped<ITrans_ActivityTypeRepository, ServiceTrans_ActivityType>();
+           services.AddScoped<ITrans_DSATypeRepository, ServiceTrans_DSAType>();
+           services.AddScoped<ITrans_CostCatelogueRepository, ServiceTrans_CostCatelogue>();
+           
 
            
         

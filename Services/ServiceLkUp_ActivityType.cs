@@ -4,26 +4,6 @@ using AUDANEPAD_Integrated.Interfaces;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 
-using System;
-using System.Collections;
-
-using System.IO;
-
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-
-
-using AUDANEPAD_Integrated.ViewModels;
-using Kendo.Mvc.Extensions;
-using Kendo.Mvc.UI;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using NodaTime;
-
 
 namespace AUDANEPAD_Integrated.Services
 {
