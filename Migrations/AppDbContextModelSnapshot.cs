@@ -189,6 +189,29 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.ToTable("LkUp_ActivityType");
                 });
 
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_CommsChannel", b =>
+                {
+                    b.Property<int>("CommsChannel_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("CommsChannel_Name")
+                        .IsRequired()
+                        .HasColumnType("character varying(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<bool?>("CommsChannel_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("CommsChannel_Id");
+
+                    b.ToTable("LkUp_CommsChannel");
+                });
+
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_CostCatelogue", b =>
                 {
                     b.Property<int>("Cost_Id")
@@ -222,6 +245,29 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.ToTable("LkUp_CostCatelogue");
                 });
 
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_Country", b =>
+                {
+                    b.Property<int>("Country_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Country_Name")
+                        .IsRequired()
+                        .HasColumnType("character varying(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<bool>("Country_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Country_Id");
+
+                    b.ToTable("LkUp_Country");
+                });
+
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_DSAType", b =>
                 {
                     b.Property<int>("DSA_Id")
@@ -248,6 +294,121 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.ToTable("LkUp_DSAType");
                 });
 
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_ExtParticipantType", b =>
+                {
+                    b.Property<int>("Record_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Record_Name")
+                        .IsRequired()
+                        .HasColumnType("character varying(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<bool>("Record_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Record_Id");
+
+                    b.ToTable("LkUp_ExtParticipantType");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_FiscalYear", b =>
+                {
+                    b.Property<int>("Record_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Record_Name")
+                        .IsRequired()
+                        .HasColumnType("character varying(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<bool>("Record_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Record_Id");
+
+                    b.ToTable("LkUp_FiscalYear");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_ImplementationType", b =>
+                {
+                    b.Property<int>("Record_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Record_Name")
+                        .IsRequired()
+                        .HasColumnType("character varying(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<bool>("Record_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Record_Id");
+
+                    b.ToTable("LkUp_ImplementationType");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_LeadershipStatus", b =>
+                {
+                    b.Property<int>("Record_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Record_Name")
+                        .IsRequired()
+                        .HasColumnType("character varying(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<bool>("Record_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Record_Id");
+
+                    b.ToTable("LkUp_LeadershipStatus");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_ParticipantType", b =>
+                {
+                    b.Property<int>("Record_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Record_Name")
+                        .IsRequired()
+                        .HasColumnType("character varying(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<bool>("Record_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Record_Id");
+
+                    b.ToTable("LkUp_ParticipantType");
+                });
+
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_ActivityType", b =>
                 {
                     b.Property<string>("Transaction_Id")
@@ -262,6 +423,22 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.HasKey("Transaction_Id");
 
                     b.ToTable("Trans_ActivityType");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_CommsChannel", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("CommsChannel_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_CommsChannel");
                 });
 
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_CostCatelogue", b =>
@@ -280,6 +457,22 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.ToTable("Trans_CostCatelogue");
                 });
 
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_Country", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Country_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_Country");
+                });
+
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_DSAType", b =>
                 {
                     b.Property<string>("Transaction_Id")
@@ -294,6 +487,86 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.HasKey("Transaction_Id");
 
                     b.ToTable("Trans_DSAType");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_ExtParticipantType", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Record_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_ExtParticipantType");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_FiscalYear", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Record_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_FiscalYear");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_ImplementationType", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Record_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_ImplementationType");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_LeadershipStatus", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Record_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_LeadershipStatus");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_ParticipantType", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Record_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_ParticipantType");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

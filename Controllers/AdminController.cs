@@ -32,10 +32,25 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly ILkUp_ActivityTypeRepository _lkupActivityTypeRepository;
         private readonly ILkUp_DSATypeRepository _lkupDSATypeRepository;
         private readonly ILkUp_CostCatelogueRepository _lkupCostCatelogueRepository ;
+        private readonly ILkUp_CommsChannelRepository _lkupCommsChannelRepository ;
+        private readonly ILkUp_CountryRepository _lkupCountryRepository ;
+        private readonly ILkUp_ExtParticipantTypeRepository _lkupExtParticipantTypeRepository ;
+        private readonly ILkUp_FiscalYearRepository _lkupFiscalYearRepository ;
+        private readonly ILkUp_ImplementationTypeRepository _lkupImplementationTypeRepository  ;
+        private readonly ILkUp_LeadershipStatusRepository _lkupLeadershipStatusRepository ;
+        private readonly ILkUp_ParticipantTypeRepository _lkupParticipantTypeRepository ;
+
 
         private readonly ITrans_ActivityTypeRepository _transActivityTypeRepository;
         private readonly ITrans_DSATypeRepository _transDSATypeRepository;
         private readonly ITrans_CostCatelogueRepository _transCostCatelogueRepository;
+        private readonly ITrans_CommsChannelRepository _transCommsChannelRepository;
+        private readonly ITrans_CountryRepository _transCountryRepository;
+        private readonly ITrans_ExtParticipantTypeRepository _transExtParticipantTypeRepository ;
+        private readonly ITrans_FiscalYearRepository _transFiscalYearRepository ;
+        private readonly ITrans_ImplementationTypeRepository _transImplementationTypeRepository  ;
+        private readonly ITrans_LeadershipStatusRepository _transLeadershipStatusRepository ;
+        private readonly ITrans_ParticipantTypeRepository _transParticipantTypeRepository ;
 
 
 
@@ -52,10 +67,24 @@ namespace AUDANEPAD_Integrated.Controllers
                                 ILkUp_ActivityTypeRepository lkupActivityTypeRepository,
                                 ILkUp_DSATypeRepository lkupDSATypeRepository,
                                 ILkUp_CostCatelogueRepository lkupCostCatelogueRepository,
+                                ILkUp_CommsChannelRepository lkupCommsChannelRepository,
+                                ILkUp_CountryRepository lkupCountryRepository,
+                                ILkUp_ExtParticipantTypeRepository lkupExtParticipantTypeRepository,
+                                ILkUp_FiscalYearRepository lkupFiscalYearRepository,
+                                ILkUp_ImplementationTypeRepository lkupImplementationTypeRepository,
+                                ILkUp_LeadershipStatusRepository lkupLeadershipStatusRepository,
+                                ILkUp_ParticipantTypeRepository lkupParticipantTypeRepository,
 
                                 ITrans_ActivityTypeRepository transActivityTypeRepository,
                                 ITrans_DSATypeRepository transDSATypeRepository,
-                                ITrans_CostCatelogueRepository transCostCatelogueRepository)
+                                ITrans_CostCatelogueRepository transCostCatelogueRepository,
+                                ITrans_CommsChannelRepository transCommsChannelRepository,
+                                ITrans_CountryRepository transCountryRepository,
+                                ITrans_ExtParticipantTypeRepository transExtParticipantTypeRepository,
+                                ITrans_FiscalYearRepository transFiscalYearRepository,
+                                ITrans_ImplementationTypeRepository transImplementationTypeRepository,
+                                ITrans_LeadershipStatusRepository transLeadershipStatusRepository,
+                                ITrans_ParticipantTypeRepository transParticipantTypeRepository)
         {
             this._employeeRepository = employeeRepository;
             this.userManager = userManager;
@@ -66,11 +95,26 @@ namespace AUDANEPAD_Integrated.Controllers
             _lkupActivityTypeRepository=lkupActivityTypeRepository;
             _lkupDSATypeRepository=lkupDSATypeRepository;
             _lkupCostCatelogueRepository=lkupCostCatelogueRepository;
+            _lkupCommsChannelRepository=lkupCommsChannelRepository;
+            _lkupCountryRepository=lkupCountryRepository;
+            _lkupExtParticipantTypeRepository=lkupExtParticipantTypeRepository;
+            _lkupFiscalYearRepository=lkupFiscalYearRepository;
+            _lkupImplementationTypeRepository=lkupImplementationTypeRepository;
+            _lkupLeadershipStatusRepository=lkupLeadershipStatusRepository;
+            _lkupParticipantTypeRepository=lkupParticipantTypeRepository;
 
 
             _transActivityTypeRepository=transActivityTypeRepository;
             _transDSATypeRepository=transDSATypeRepository;
             _transCostCatelogueRepository=transCostCatelogueRepository;
+            _transCommsChannelRepository=transCommsChannelRepository;
+            _transCountryRepository=transCountryRepository;
+            _transExtParticipantTypeRepository=transExtParticipantTypeRepository;
+            _transFiscalYearRepository=transFiscalYearRepository;
+            _transImplementationTypeRepository=transImplementationTypeRepository;
+            _transLeadershipStatusRepository=transLeadershipStatusRepository;
+            _transParticipantTypeRepository=transParticipantTypeRepository;
+            
 
 
 
@@ -251,11 +295,26 @@ namespace AUDANEPAD_Integrated.Controllers
             Chilkat.Csv csv_activitytype = new Chilkat.Csv();
             Chilkat.Csv csv_dsatype = new Chilkat.Csv();
             Chilkat.Csv csv_costcatelogue = new Chilkat.Csv();
+            Chilkat.Csv csv_commschannel = new Chilkat.Csv();
+            Chilkat.Csv csv_country = new Chilkat.Csv();
+            Chilkat.Csv csv_extparticipanttype= new Chilkat.Csv();
+            Chilkat.Csv csv_fiscalyear = new Chilkat.Csv();
+            Chilkat.Csv csv_implementationtype = new Chilkat.Csv();
+            Chilkat.Csv csv_leadershipstatus = new Chilkat.Csv();
+            Chilkat.Csv csv_participanttype = new Chilkat.Csv();
+
 
 
             string activitytype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ActivityType.csv");
             string dsatype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/DSAType.csv");
             string costcatelogue_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/CostCatelogue.csv");
+            string commschannel_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/CommunicationChannels.csv");
+            string country_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/Countries.csv");
+            string extparticipanttype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ExternalPersonsType.csv");
+            string fiscalyear_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/FiscalYears.csv");
+            string implementationtype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ImplementationTypes.csv");
+            string leadershipstatus_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/LeadershipStatus.csv");
+            string participanttype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ParticipantType.csv");
             
 
 
@@ -264,6 +323,13 @@ namespace AUDANEPAD_Integrated.Controllers
                 bool success_activitytype = csv_activitytype.LoadFile(activitytype_path);
                 bool success_dsatype = csv_dsatype.LoadFile(dsatype_path);
                 bool success_costcatelogue = csv_costcatelogue.LoadFile(costcatelogue_path);
+                bool success_commschannel = csv_commschannel.LoadFile(commschannel_path);
+                bool success_country = csv_country.LoadFile(country_path);
+                bool success_extparticipanttype = csv_extparticipanttype.LoadFile(extparticipanttype_path);
+                bool success_fiscalyear = csv_fiscalyear.LoadFile(fiscalyear_path);
+                bool success_implementationtype = csv_implementationtype.LoadFile(implementationtype_path);
+                bool success_leadershipstatus= csv_leadershipstatus.LoadFile(leadershipstatus_path);
+                bool success_participanttype = csv_participanttype.LoadFile(participanttype_path);
 
                 if (success_activitytype == true)
                 {
@@ -377,6 +443,261 @@ namespace AUDANEPAD_Integrated.Controllers
                             };
 
                             _transCostCatelogueRepository.Add(rec_trans);
+                        }
+                    }
+                }
+
+                if (success_commschannel == true)
+                {
+
+                    // IEnumerable <EmployeeCountry> countries= _empcountryRepository.GetAllEmployeeCountry();
+                    int count_commschannel = _lkupCommsChannelRepository.GetAllCommsChannel().Count();
+                    if (count_commschannel <= 0)
+                    {
+                        int row;
+                        int n = csv_commschannel.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_CommsChannel rec = new LkUp_CommsChannel
+                            {
+
+                                CommsChannel_Id = Int32.Parse(csv_commschannel.GetCell(row, 0)),
+                                CommsChannel_Name = csv_commschannel.GetCell(row, 1),
+                                CommsChannel_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupCommsChannelRepository.Add(rec);
+
+                            Trans_CommsChannel rec_trans = new Trans_CommsChannel
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                CommsChannel_Id = Int32.Parse(csv_commschannel.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transCommsChannelRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_country== true)
+                {
+                    int count_country = _lkupCountryRepository.GetAllCountry().Count();
+                    if (count_country <= 0)
+                    {
+                        int row;
+                        int n = csv_country.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_Country rec = new LkUp_Country
+                            {
+
+                                Country_Id = Int32.Parse(csv_country.GetCell(row, 0)),
+                                Country_Name = csv_country.GetCell(row, 1),
+                                Country_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupCountryRepository.Add(rec);
+
+                            Trans_Country rec_trans = new Trans_Country
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Country_Id = Int32.Parse(csv_country.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transCountryRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_extparticipanttype == true)
+                {
+                    int _count= _lkupExtParticipantTypeRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_extparticipanttype.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_ExtParticipantType rec = new LkUp_ExtParticipantType
+                            {
+
+                                Record_Id = Int32.Parse(csv_extparticipanttype.GetCell(row, 0)),
+                                Record_Name = csv_extparticipanttype.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupExtParticipantTypeRepository.Add(rec);
+
+                            Trans_ExtParticipantType rec_trans = new Trans_ExtParticipantType
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_extparticipanttype.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transExtParticipantTypeRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_fiscalyear == true)
+                {
+                    int _count= _lkupFiscalYearRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_fiscalyear.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_FiscalYear rec = new LkUp_FiscalYear
+                            {
+
+                                Record_Id = Int32.Parse(csv_fiscalyear.GetCell(row, 0)),
+                                Record_Name = csv_fiscalyear.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupFiscalYearRepository.Add(rec);
+
+                            Trans_FiscalYear rec_trans = new Trans_FiscalYear
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_fiscalyear.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transFiscalYearRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_implementationtype == true)
+                {
+                    int _count= _lkupImplementationTypeRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_implementationtype.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_ImplementationType rec = new LkUp_ImplementationType
+                            {
+
+                                Record_Id = Int32.Parse(csv_implementationtype.GetCell(row, 0)),
+                                Record_Name = csv_implementationtype.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupImplementationTypeRepository.Add(rec);
+
+                            Trans_ImplementationType rec_trans = new Trans_ImplementationType
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_implementationtype.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transImplementationTypeRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+
+                if (success_leadershipstatus == true)
+                {
+                    int _count= _lkupLeadershipStatusRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_leadershipstatus.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_LeadershipStatus rec = new LkUp_LeadershipStatus
+                            {
+
+                                Record_Id = Int32.Parse(csv_leadershipstatus.GetCell(row, 0)),
+                                Record_Name = csv_leadershipstatus.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupLeadershipStatusRepository.Add(rec);
+
+                            Trans_LeadershipStatus rec_trans = new Trans_LeadershipStatus
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_leadershipstatus.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transLeadershipStatusRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_participanttype == true)
+                {
+                    int _count= _lkupParticipantTypeRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_participanttype.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_ParticipantType rec = new LkUp_ParticipantType
+                            {
+
+                                Record_Id = Int32.Parse(csv_participanttype.GetCell(row, 0)),
+                                Record_Name = csv_participanttype.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupParticipantTypeRepository.Add(rec);
+
+                            Trans_ParticipantType rec_trans = new Trans_ParticipantType
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_participanttype.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transParticipantTypeRepository.Add(rec_trans);
+
                         }
                     }
                 }
