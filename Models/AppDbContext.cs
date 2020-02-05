@@ -26,6 +26,11 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<LkUp_ImplementationType> LkUp_ImplementationType { get; set; }
         public DbSet<LkUp_LeadershipStatus> LkUp_LeadershipStatus { get; set; }
         public DbSet<LkUp_ParticipantType> LkUp_ParticipantType { get; set; }
+        public DbSet<LkUp_ProcurementType> LkUp_ProcurementType { get; set; }
+        public DbSet<LkUp_RiskCategory> LkUp_RiskCategory { get; set; }
+        public DbSet<LkUp_RiskImpact> LkUp_RiskImpact { get; set; }
+        public DbSet<LkUp_RiskProbability> LkUp_RiskProbability { get; set; }
+        public DbSet<LkUp_RiskRTimeframe> LkUp_RiskRTimeframe { get; set; }
 
 
         public DbSet<Trans_ActivityType> Trans_ActivityType { get; set; }
@@ -38,6 +43,11 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<Trans_ImplementationType> Trans_ImplementationType { get; set; }
         public DbSet<Trans_LeadershipStatus> Trans_LeadershipStatus { get; set; }
         public DbSet<Trans_ParticipantType> Trans_ParticipantType { get; set; }
+        public DbSet<Trans_ProcurementType> Trans_ProcurementType { get; set; }
+        public DbSet<Trans_RiskCategory> Trans_RiskCategory { get; set; }
+        public DbSet<Trans_RiskImpact> Trans_RiskImpact { get; set; }
+        public DbSet<Trans_RiskProbability> Trans_RiskProbability { get; set; }
+        public DbSet<Trans_RiskRTimeframe> Trans_RiskRTimeframe { get; set; }
 
 
         
@@ -109,6 +119,26 @@ namespace AUDANEPAD_Integrated.Models
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
 
+            modelBuilder.Entity<LkUp_ProcurementType>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<LkUp_RiskCategory>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<LkUp_RiskImpact>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<LkUp_RiskProbability>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<LkUp_RiskRTimeframe>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
 
 
 
@@ -152,6 +182,26 @@ namespace AUDANEPAD_Integrated.Models
 			.HasConversion(localDateConverter);
 
             modelBuilder.Entity<Trans_ParticipantType>()
+			.Property(e => e.TransactionDate)
+			.HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Trans_ProcurementType>()
+			.Property(e => e.TransactionDate)
+			.HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Trans_RiskCategory>()
+			.Property(e => e.TransactionDate)
+			.HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Trans_RiskImpact>()
+			.Property(e => e.TransactionDate)
+			.HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Trans_RiskProbability>()
+			.Property(e => e.TransactionDate)
+			.HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Trans_RiskRTimeframe>()
 			.Property(e => e.TransactionDate)
 			.HasConversion(localDateConverter);
 

@@ -39,6 +39,11 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly ILkUp_ImplementationTypeRepository _lkupImplementationTypeRepository  ;
         private readonly ILkUp_LeadershipStatusRepository _lkupLeadershipStatusRepository ;
         private readonly ILkUp_ParticipantTypeRepository _lkupParticipantTypeRepository ;
+        private readonly ILkUp_ProcurementTypeRepository _lkupProcurementTypeRepository ;
+        private readonly ILkUp_RiskCategoryRepository _lkupRiskCategoryRepository ;
+        private readonly ILkUp_RiskImpactRepository _lkupRiskImpactRepository ;
+        private readonly ILkUp_RiskProbabilityRepository _lkupRiskProbabilityRepository ;
+        private readonly ILkUp_RiskRTimeframeRepository _lkupRiskRTimeframeRepository ;
 
 
         private readonly ITrans_ActivityTypeRepository _transActivityTypeRepository;
@@ -51,6 +56,11 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly ITrans_ImplementationTypeRepository _transImplementationTypeRepository  ;
         private readonly ITrans_LeadershipStatusRepository _transLeadershipStatusRepository ;
         private readonly ITrans_ParticipantTypeRepository _transParticipantTypeRepository ;
+        private readonly ITrans_ProcurementTypeRepository _transProcurementTypeRepository ;
+        private readonly ITrans_RiskCategoryRepository _transRiskCategoryRepository  ;
+        private readonly ITrans_RiskImpactRepository _transRiskImpactRepository;
+        private readonly ITrans_RiskProbabilityRepository _transRiskProbabilityRepository ;
+        private readonly ITrans_RiskRTimeframeRepository _transRiskRTimeframeRepository ;
 
 
 
@@ -74,6 +84,11 @@ namespace AUDANEPAD_Integrated.Controllers
                                 ILkUp_ImplementationTypeRepository lkupImplementationTypeRepository,
                                 ILkUp_LeadershipStatusRepository lkupLeadershipStatusRepository,
                                 ILkUp_ParticipantTypeRepository lkupParticipantTypeRepository,
+                                ILkUp_ProcurementTypeRepository lkupProcurementTypeRepository, 
+                                ILkUp_RiskCategoryRepository lkupRiskCategoryRepository, 
+                                ILkUp_RiskImpactRepository lkupRiskImpactRepository, 
+                                ILkUp_RiskProbabilityRepository lkupRiskProbabilityRepository,
+                                ILkUp_RiskRTimeframeRepository lkupRiskRTimeframeRepository,
 
                                 ITrans_ActivityTypeRepository transActivityTypeRepository,
                                 ITrans_DSATypeRepository transDSATypeRepository,
@@ -84,7 +99,12 @@ namespace AUDANEPAD_Integrated.Controllers
                                 ITrans_FiscalYearRepository transFiscalYearRepository,
                                 ITrans_ImplementationTypeRepository transImplementationTypeRepository,
                                 ITrans_LeadershipStatusRepository transLeadershipStatusRepository,
-                                ITrans_ParticipantTypeRepository transParticipantTypeRepository)
+                                ITrans_ParticipantTypeRepository transParticipantTypeRepository,
+                                ITrans_ProcurementTypeRepository transProcurementTypeRepository,
+                                ITrans_RiskCategoryRepository transRiskCategoryRepository,
+                                ITrans_RiskImpactRepository transRiskImpactRepository,
+                                ITrans_RiskProbabilityRepository transRiskProbabilityRepository,
+                                ITrans_RiskRTimeframeRepository transRiskRTimeframeRepository)
         {
             this._employeeRepository = employeeRepository;
             this.userManager = userManager;
@@ -102,6 +122,11 @@ namespace AUDANEPAD_Integrated.Controllers
             _lkupImplementationTypeRepository=lkupImplementationTypeRepository;
             _lkupLeadershipStatusRepository=lkupLeadershipStatusRepository;
             _lkupParticipantTypeRepository=lkupParticipantTypeRepository;
+            _lkupProcurementTypeRepository=lkupProcurementTypeRepository; 
+            _lkupRiskCategoryRepository=lkupRiskCategoryRepository; 
+            _lkupRiskImpactRepository=lkupRiskImpactRepository;
+            _lkupRiskProbabilityRepository=lkupRiskProbabilityRepository;
+            _lkupRiskRTimeframeRepository=lkupRiskRTimeframeRepository;
 
 
             _transActivityTypeRepository=transActivityTypeRepository;
@@ -114,7 +139,12 @@ namespace AUDANEPAD_Integrated.Controllers
             _transImplementationTypeRepository=transImplementationTypeRepository;
             _transLeadershipStatusRepository=transLeadershipStatusRepository;
             _transParticipantTypeRepository=transParticipantTypeRepository;
-            
+            _transProcurementTypeRepository =transProcurementTypeRepository ;
+            _transRiskCategoryRepository =transRiskCategoryRepository  ;
+            _transRiskImpactRepository =transRiskImpactRepository;
+            _transRiskProbabilityRepository =transRiskProbabilityRepository ;
+            _transRiskRTimeframeRepository =transRiskRTimeframeRepository ;
+      
 
 
 
@@ -303,6 +333,12 @@ namespace AUDANEPAD_Integrated.Controllers
             Chilkat.Csv csv_leadershipstatus = new Chilkat.Csv();
             Chilkat.Csv csv_participanttype = new Chilkat.Csv();
 
+            Chilkat.Csv csv_procurementtype = new Chilkat.Csv();
+            Chilkat.Csv csv_riskcategory = new Chilkat.Csv();
+            Chilkat.Csv csv_riskimpact = new Chilkat.Csv();
+            Chilkat.Csv csv_riskprobability = new Chilkat.Csv();
+            Chilkat.Csv csv_riskreptimeframe = new Chilkat.Csv();
+
 
 
             string activitytype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ActivityType.csv");
@@ -315,6 +351,11 @@ namespace AUDANEPAD_Integrated.Controllers
             string implementationtype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ImplementationTypes.csv");
             string leadershipstatus_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/LeadershipStatus.csv");
             string participanttype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ParticipantType.csv");
+            string procurementtype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ProcurementTypes.csv");
+            string riskcategory_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/RiskCategories.csv");
+            string riskimpact_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/RiskImpact.csv");
+            string riskprobability_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/RiskProbability.csv");
+            string riskreptimeframe_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/RiskTimeframes.csv");
             
 
 
@@ -330,6 +371,11 @@ namespace AUDANEPAD_Integrated.Controllers
                 bool success_implementationtype = csv_implementationtype.LoadFile(implementationtype_path);
                 bool success_leadershipstatus= csv_leadershipstatus.LoadFile(leadershipstatus_path);
                 bool success_participanttype = csv_participanttype.LoadFile(participanttype_path);
+                bool success_procurementtype= csv_procurementtype.LoadFile(procurementtype_path);
+                bool success_riskcategory = csv_riskcategory.LoadFile(riskcategory_path);
+                bool success_riskimpact = csv_riskimpact.LoadFile(riskimpact_path);
+                bool success_riskprobability= csv_riskprobability.LoadFile(riskprobability_path);
+                bool success_riskreptimeframe = csv_riskreptimeframe.LoadFile(riskreptimeframe_path);
 
                 if (success_activitytype == true)
                 {
@@ -697,6 +743,186 @@ namespace AUDANEPAD_Integrated.Controllers
                             };
 
                             _transParticipantTypeRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_procurementtype == true)
+                {
+                    int _count= _lkupProcurementTypeRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_procurementtype.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_ProcurementType rec = new LkUp_ProcurementType
+                            {
+
+                                Record_Id = Int32.Parse(csv_procurementtype.GetCell(row, 0)),
+                                Record_Name = csv_procurementtype.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupProcurementTypeRepository.Add(rec);
+
+                            Trans_ProcurementType rec_trans = new Trans_ProcurementType
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_procurementtype.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transProcurementTypeRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_riskcategory == true)
+                {
+                    int _count= _lkupRiskCategoryRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_riskcategory.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_RiskCategory rec = new LkUp_RiskCategory
+                            {
+
+                                Record_Id = Int32.Parse(csv_riskcategory.GetCell(row, 0)),
+                                Record_Name = csv_riskcategory.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupRiskCategoryRepository.Add(rec);
+
+                            Trans_RiskCategory rec_trans = new Trans_RiskCategory
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_riskcategory.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transRiskCategoryRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_riskimpact == true)
+                {
+                    int _count= _lkupRiskImpactRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_riskimpact.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_RiskImpact rec = new LkUp_RiskImpact
+                            {
+
+                                Record_Id = Int32.Parse(csv_riskimpact.GetCell(row, 0)),
+                                Record_Name = csv_riskimpact.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupRiskImpactRepository.Add(rec);
+
+                            Trans_RiskImpact rec_trans = new Trans_RiskImpact
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_riskimpact.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transRiskImpactRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_riskprobability == true)
+                {
+                    int _count= _lkupRiskProbabilityRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_riskprobability.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_RiskProbability rec = new LkUp_RiskProbability
+                            {
+
+                                Record_Id = Int32.Parse(csv_riskprobability.GetCell(row, 0)),
+                                Record_Name = csv_riskprobability.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupRiskProbabilityRepository.Add(rec);
+
+                            Trans_RiskProbability rec_trans = new Trans_RiskProbability
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_riskprobability.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transRiskProbabilityRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_riskreptimeframe == true)
+                {
+                    int _count= _lkupRiskRTimeframeRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_riskreptimeframe.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_RiskRTimeframe rec = new LkUp_RiskRTimeframe
+                            {
+
+                                Record_Id = Int32.Parse(csv_riskreptimeframe.GetCell(row, 0)),
+                                Record_Name = csv_riskreptimeframe.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupRiskRTimeframeRepository.Add(rec);
+
+                            Trans_RiskRTimeframe rec_trans = new Trans_RiskRTimeframe
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_riskreptimeframe.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transRiskRTimeframeRepository.Add(rec_trans);
 
                         }
                     }

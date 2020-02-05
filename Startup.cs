@@ -87,31 +87,40 @@ namespace AUDANEPAD_Integrated
             //         options.SerializerSettings.ContractResolver = new DefaultContractResolver();
             //   });
 
-           services.AddScoped<IEmployeeRepository, ServiceEmployee>();
+            services.AddScoped<IEmployeeRepository, ServiceEmployee>();
 
-           services.AddScoped<ILkUp_ActivityTypeRepository, ServiceLkUp_ActivityType>();
-           services.AddScoped<ILkUp_DSATypeRepository, ServiceLkUp_DSAType>();
-           services.AddScoped<ILkUp_CostCatelogueRepository, ServiceLkUp_CostCatelogue>();
-           services.AddScoped<ILkUp_CommsChannelRepository, ServiceLkUp_CommsChannel>();
-           services.AddScoped<ILkUp_CountryRepository, ServiceLkUp_Country>();
-           services.AddScoped<ILkUp_ExtParticipantTypeRepository, ServiceLkUp_ExtParticipantType>();
-           services.AddScoped<ILkUp_FiscalYearRepository, ServiceLkUp_FiscalYear>();
-           services.AddScoped<ILkUp_ImplementationTypeRepository, ServiceLkUp_ImplementationType>();
-           services.AddScoped<ILkUp_LeadershipStatusRepository, ServiceLkUp_LeadershipStatus>();
-           services.AddScoped<ILkUp_ParticipantTypeRepository, ServiceLkUp_ParticipantType>();
+            services.AddScoped<ILkUp_ActivityTypeRepository, ServiceLkUp_ActivityType>();
+            services.AddScoped<ILkUp_DSATypeRepository, ServiceLkUp_DSAType>();
+            services.AddScoped<ILkUp_CostCatelogueRepository, ServiceLkUp_CostCatelogue>();
+            services.AddScoped<ILkUp_CommsChannelRepository, ServiceLkUp_CommsChannel>();
+            services.AddScoped<ILkUp_CountryRepository, ServiceLkUp_Country>();
+            services.AddScoped<ILkUp_ExtParticipantTypeRepository, ServiceLkUp_ExtParticipantType>();
+            services.AddScoped<ILkUp_FiscalYearRepository, ServiceLkUp_FiscalYear>();
+            services.AddScoped<ILkUp_ImplementationTypeRepository, ServiceLkUp_ImplementationType>();
+            services.AddScoped<ILkUp_LeadershipStatusRepository, ServiceLkUp_LeadershipStatus>();
+            services.AddScoped<ILkUp_ParticipantTypeRepository, ServiceLkUp_ParticipantType>();
+            services.AddScoped<ILkUp_ProcurementTypeRepository, ServiceLkUp_ProcurementType>();
+            services.AddScoped<ILkUp_RiskCategoryRepository, ServiceLkUp_RiskCategory>();
+            services.AddScoped<ILkUp_RiskImpactRepository, ServiceLkUp_RiskImpact>();
+            services.AddScoped<ILkUp_RiskProbabilityRepository, ServiceLkUp_RiskProbability>();
+            services.AddScoped<ILkUp_RiskRTimeframeRepository, ServiceLkUp_RiskRTimeframe>();
 
 
-
-           services.AddScoped<ITrans_ActivityTypeRepository, ServiceTrans_ActivityType>();
-           services.AddScoped<ITrans_DSATypeRepository, ServiceTrans_DSAType>();
-           services.AddScoped<ITrans_CostCatelogueRepository, ServiceTrans_CostCatelogue>();
-           services.AddScoped<ITrans_CommsChannelRepository, ServiceTrans_CommsChannel>();
-           services.AddScoped<ITrans_CountryRepository, ServiceTrans_Country>();
-           services.AddScoped<ITrans_ExtParticipantTypeRepository, ServiceTrans_ExtParticipantType>();
-           services.AddScoped<ITrans_FiscalYearRepository, ServiceTrans_FiscalYear>();
-           services.AddScoped<ITrans_ImplementationTypeRepository, ServiceTrans_ImplementationType>();
-           services.AddScoped<ITrans_LeadershipStatusRepository, ServiceTrans_LeadershipStatus>();
-           services.AddScoped<ITrans_ParticipantTypeRepository, ServiceTrans_ParticipantType>();
+            services.AddScoped<ITrans_ActivityTypeRepository, ServiceTrans_ActivityType>();
+            services.AddScoped<ITrans_DSATypeRepository, ServiceTrans_DSAType>();
+            services.AddScoped<ITrans_CostCatelogueRepository, ServiceTrans_CostCatelogue>();
+            services.AddScoped<ITrans_CommsChannelRepository, ServiceTrans_CommsChannel>();
+            services.AddScoped<ITrans_CountryRepository, ServiceTrans_Country>();
+            services.AddScoped<ITrans_ExtParticipantTypeRepository, ServiceTrans_ExtParticipantType>();
+            services.AddScoped<ITrans_FiscalYearRepository, ServiceTrans_FiscalYear>();
+            services.AddScoped<ITrans_ImplementationTypeRepository, ServiceTrans_ImplementationType>();
+            services.AddScoped<ITrans_LeadershipStatusRepository, ServiceTrans_LeadershipStatus>();
+            services.AddScoped<ITrans_ParticipantTypeRepository, ServiceTrans_ParticipantType>();
+            services.AddScoped<ITrans_ProcurementTypeRepository, ServiceTrans_ProcurementType>();
+            services.AddScoped<ITrans_RiskCategoryRepository, ServiceTrans_RiskCategory>();
+            services.AddScoped<ITrans_RiskImpactRepository, ServiceTrans_RiskImpact>();
+            services.AddScoped<ITrans_RiskProbabilityRepository, ServiceTrans_RiskProbability>();
+            services.AddScoped<ITrans_RiskRTimeframeRepository, ServiceTrans_RiskRTimeframe>();
 
 
         
