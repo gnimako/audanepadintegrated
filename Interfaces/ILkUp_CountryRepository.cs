@@ -10,6 +10,7 @@ namespace AUDANEPAD_Integrated.Interfaces
 
         LkUp_Country GetCountryByName(string name);
 		IEnumerable<LkUp_Country> GetAllCountry();
+        IEnumerable<LkUp_Country> GetAllAfricanCountry();
         LkUp_Country Add(LkUp_Country rec);
         LkUp_Country Update(LkUp_Country recChanges);
         LkUp_Country Delete(int id);

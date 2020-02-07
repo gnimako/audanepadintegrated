@@ -44,6 +44,10 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly ILkUp_RiskImpactRepository _lkupRiskImpactRepository ;
         private readonly ILkUp_RiskProbabilityRepository _lkupRiskProbabilityRepository ;
         private readonly ILkUp_RiskRTimeframeRepository _lkupRiskRTimeframeRepository ;
+        private readonly ILkUp_PeopleTypeRepository _lkupPeopleTypeRepository ;
+        private readonly ILkUp_ProcurementLTimeRepository _lkupProcurementLTimeRepository ;
+        private readonly ILkUp_ProjectScopeRepository _lkupProjectScopeRepository ;
+        private readonly ILkUp_RegionScopeRepository _lkupRegionScopeRepository ;
 
 
         private readonly ITrans_ActivityTypeRepository _transActivityTypeRepository;
@@ -61,6 +65,10 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly ITrans_RiskImpactRepository _transRiskImpactRepository;
         private readonly ITrans_RiskProbabilityRepository _transRiskProbabilityRepository ;
         private readonly ITrans_RiskRTimeframeRepository _transRiskRTimeframeRepository ;
+        private readonly ITrans_PeopleTypeRepository _transPeopleTypeRepository ;
+        private readonly ITrans_ProcurementLTimeRepository _transProcurementLTimeRepository;
+        private readonly ITrans_ProjectScopeRepository _transProjectScopeRepository ;
+        private readonly ITrans_RegionScopeRepository _transRegionScopeRepository ;
 
 
 
@@ -89,6 +97,10 @@ namespace AUDANEPAD_Integrated.Controllers
                                 ILkUp_RiskImpactRepository lkupRiskImpactRepository, 
                                 ILkUp_RiskProbabilityRepository lkupRiskProbabilityRepository,
                                 ILkUp_RiskRTimeframeRepository lkupRiskRTimeframeRepository,
+                                ILkUp_PeopleTypeRepository lkupPeopleTypeRepository ,
+                                ILkUp_ProcurementLTimeRepository lkupProcurementLTimeRepository ,
+                                ILkUp_ProjectScopeRepository lkupProjectScopeRepository,
+                                ILkUp_RegionScopeRepository lkupRegionScopeRepository ,
 
                                 ITrans_ActivityTypeRepository transActivityTypeRepository,
                                 ITrans_DSATypeRepository transDSATypeRepository,
@@ -104,7 +116,11 @@ namespace AUDANEPAD_Integrated.Controllers
                                 ITrans_RiskCategoryRepository transRiskCategoryRepository,
                                 ITrans_RiskImpactRepository transRiskImpactRepository,
                                 ITrans_RiskProbabilityRepository transRiskProbabilityRepository,
-                                ITrans_RiskRTimeframeRepository transRiskRTimeframeRepository)
+                                ITrans_RiskRTimeframeRepository transRiskRTimeframeRepository,
+                                ITrans_PeopleTypeRepository transPeopleTypeRepository ,
+                                ITrans_ProcurementLTimeRepository transProcurementLTimeRepository,
+                                ITrans_ProjectScopeRepository transProjectScopeRepository,
+                                ITrans_RegionScopeRepository transRegionScopeRepository )
         {
             this._employeeRepository = employeeRepository;
             this.userManager = userManager;
@@ -127,6 +143,10 @@ namespace AUDANEPAD_Integrated.Controllers
             _lkupRiskImpactRepository=lkupRiskImpactRepository;
             _lkupRiskProbabilityRepository=lkupRiskProbabilityRepository;
             _lkupRiskRTimeframeRepository=lkupRiskRTimeframeRepository;
+            _lkupPeopleTypeRepository =lkupPeopleTypeRepository;
+            _lkupProcurementLTimeRepository =lkupProcurementLTimeRepository;
+            _lkupProjectScopeRepository = lkupProjectScopeRepository;
+            _lkupRegionScopeRepository= lkupRegionScopeRepository;
 
 
             _transActivityTypeRepository=transActivityTypeRepository;
@@ -144,6 +164,10 @@ namespace AUDANEPAD_Integrated.Controllers
             _transRiskImpactRepository =transRiskImpactRepository;
             _transRiskProbabilityRepository =transRiskProbabilityRepository ;
             _transRiskRTimeframeRepository =transRiskRTimeframeRepository ;
+            _transPeopleTypeRepository =transPeopleTypeRepository;
+            _transProcurementLTimeRepository=transProcurementLTimeRepository;
+            _transProjectScopeRepository =transProjectScopeRepository;
+            _transRegionScopeRepository= transRegionScopeRepository;
       
 
 
@@ -339,13 +363,18 @@ namespace AUDANEPAD_Integrated.Controllers
             Chilkat.Csv csv_riskprobability = new Chilkat.Csv();
             Chilkat.Csv csv_riskreptimeframe = new Chilkat.Csv();
 
+            Chilkat.Csv csv_peopletype= new Chilkat.Csv();
+            Chilkat.Csv csv_procurementleadtime = new Chilkat.Csv();
+            Chilkat.Csv csv_projectscope = new Chilkat.Csv();
+            Chilkat.Csv csv_regionscope= new Chilkat.Csv();
+
 
 
             string activitytype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ActivityType.csv");
             string dsatype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/DSAType.csv");
             string costcatelogue_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/CostCatelogue.csv");
             string commschannel_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/CommunicationChannels.csv");
-            string country_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/Countries.csv");
+            string country_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/Country.csv");
             string extparticipanttype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ExternalPersonsType.csv");
             string fiscalyear_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/FiscalYears.csv");
             string implementationtype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ImplementationTypes.csv");
@@ -356,6 +385,10 @@ namespace AUDANEPAD_Integrated.Controllers
             string riskimpact_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/RiskImpact.csv");
             string riskprobability_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/RiskProbability.csv");
             string riskreptimeframe_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/RiskTimeframes.csv");
+            string peopletype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/PeopleTypes.csv");
+            string procurementleadtime_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ProcurementLeadTimes.csv");
+            string projectscope_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ProjectScope.csv");
+            string regionscope_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/RegionScope.csv");
             
 
 
@@ -376,6 +409,10 @@ namespace AUDANEPAD_Integrated.Controllers
                 bool success_riskimpact = csv_riskimpact.LoadFile(riskimpact_path);
                 bool success_riskprobability= csv_riskprobability.LoadFile(riskprobability_path);
                 bool success_riskreptimeframe = csv_riskreptimeframe.LoadFile(riskreptimeframe_path);
+                bool success_peopletype= csv_peopletype.LoadFile(peopletype_path);
+                bool success_procurementleadtime = csv_procurementleadtime.LoadFile(procurementleadtime_path);
+                bool success_projectscope = csv_projectscope.LoadFile(projectscope_path);
+                bool success_regionscope = csv_regionscope.LoadFile(regionscope_path);
 
                 if (success_activitytype == true)
                 {
@@ -548,6 +585,8 @@ namespace AUDANEPAD_Integrated.Controllers
 
                                 Country_Id = Int32.Parse(csv_country.GetCell(row, 0)),
                                 Country_Name = csv_country.GetCell(row, 1),
+                                Country_Capital=csv_country.GetCell(row, 2),
+                                AfricanCountry=Int32.Parse(csv_country.GetCell(row, 3)),
                                 Country_Status = true,
                                 TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
                             };
@@ -923,6 +962,150 @@ namespace AUDANEPAD_Integrated.Controllers
                             };
 
                             _transRiskRTimeframeRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_peopletype == true)
+                {
+                    int _count= _lkupPeopleTypeRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_peopletype.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_PeopleType rec = new LkUp_PeopleType
+                            {
+
+                                Record_Id = Int32.Parse(csv_peopletype.GetCell(row, 0)),
+                                Record_Name = csv_peopletype.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupPeopleTypeRepository.Add(rec);
+
+                            Trans_PeopleType rec_trans = new Trans_PeopleType
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_peopletype.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transPeopleTypeRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_procurementleadtime == true)
+                {
+                    int _count= _lkupProcurementLTimeRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_procurementleadtime.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_ProcurementLTime rec = new LkUp_ProcurementLTime
+                            {
+
+                                Record_Id = Int32.Parse(csv_procurementleadtime.GetCell(row, 0)),
+                                Record_Name = csv_procurementleadtime.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupProcurementLTimeRepository.Add(rec);
+
+                            Trans_ProcurementLTime rec_trans = new Trans_ProcurementLTime
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_procurementleadtime.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transProcurementLTimeRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_projectscope == true)
+                {
+                    int _count= _lkupProjectScopeRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_projectscope.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_ProjectScope rec = new LkUp_ProjectScope
+                            {
+
+                                Record_Id = Int32.Parse(csv_projectscope.GetCell(row, 0)),
+                                Record_Name = csv_projectscope.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupProjectScopeRepository.Add(rec);
+
+                            Trans_ProjectScope rec_trans = new Trans_ProjectScope
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_projectscope.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transProjectScopeRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_regionscope == true)
+                {
+                    int _count= _lkupRegionScopeRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_regionscope.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_RegionScope rec = new LkUp_RegionScope
+                            {
+
+                                Record_Id = Int32.Parse(csv_regionscope.GetCell(row, 0)),
+                                Record_Name = csv_regionscope.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupRegionScopeRepository.Add(rec);
+
+                            Trans_RegionScope rec_trans = new Trans_RegionScope
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_regionscope.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transRegionScopeRepository.Add(rec_trans);
 
                         }
                     }

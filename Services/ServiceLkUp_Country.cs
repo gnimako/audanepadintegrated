@@ -41,6 +41,15 @@ namespace AUDANEPAD_Integrated.Services
             return context.LkUp_Country;
         }
 
+        public IEnumerable<LkUp_Country> GetAllAfricanCountry()
+        {
+            var recs = context.LkUp_Country
+                                .Where(s => s.AfricanCountry == 1)
+                                .ToList();
+
+            return recs;
+        }
+
         public LkUp_Country GetCountry(int Id)
         {
             return context.LkUp_Country.Find(Id);

@@ -104,6 +104,10 @@ namespace AUDANEPAD_Integrated
             services.AddScoped<ILkUp_RiskImpactRepository, ServiceLkUp_RiskImpact>();
             services.AddScoped<ILkUp_RiskProbabilityRepository, ServiceLkUp_RiskProbability>();
             services.AddScoped<ILkUp_RiskRTimeframeRepository, ServiceLkUp_RiskRTimeframe>();
+            services.AddScoped<ILkUp_PeopleTypeRepository, ServiceLkUp_PeopleType>();
+            services.AddScoped<ILkUp_ProcurementLTimeRepository, ServiceLkUp_ProcurementLTime>();
+            services.AddScoped<ILkUp_ProjectScopeRepository, ServiceLkUp_ProjectScope>();
+            services.AddScoped<ILkUp_RegionScopeRepository, ServiceLkUp_RegionScope>();
 
 
             services.AddScoped<ITrans_ActivityTypeRepository, ServiceTrans_ActivityType>();
@@ -121,6 +125,13 @@ namespace AUDANEPAD_Integrated
             services.AddScoped<ITrans_RiskImpactRepository, ServiceTrans_RiskImpact>();
             services.AddScoped<ITrans_RiskProbabilityRepository, ServiceTrans_RiskProbability>();
             services.AddScoped<ITrans_RiskRTimeframeRepository, ServiceTrans_RiskRTimeframe>();
+            services.AddScoped<ITrans_PeopleTypeRepository, ServiceTrans_PeopleType>();
+            services.AddScoped<ITrans_ProcurementLTimeRepository, ServiceTrans_ProcurementLTime>();
+            services.AddScoped<ITrans_ProjectScopeRepository, ServiceTrans_ProjectScope>();
+            services.AddScoped<ITrans_RegionScopeRepository, ServiceTrans_RegionScope>();
+
+
+            
 
 
         
