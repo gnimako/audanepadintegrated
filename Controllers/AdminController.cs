@@ -48,6 +48,10 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly ILkUp_ProcurementLTimeRepository _lkupProcurementLTimeRepository ;
         private readonly ILkUp_ProjectScopeRepository _lkupProjectScopeRepository ;
         private readonly ILkUp_RegionScopeRepository _lkupRegionScopeRepository ;
+        private readonly IStrategy_PriorityRepository _strategyPriorityRepository ;
+        private readonly IStrategy_KeyPerformanceAreaRepository _strategyKeyPerformanceAreaRepository;
+        private readonly IStruc_DirectorateRepository _strucDirectorateRepository ;
+        private readonly IStruc_DivisionRepository _strucDivisionRepository;
 
 
         private readonly ITrans_ActivityTypeRepository _transActivityTypeRepository;
@@ -69,6 +73,11 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly ITrans_ProcurementLTimeRepository _transProcurementLTimeRepository;
         private readonly ITrans_ProjectScopeRepository _transProjectScopeRepository ;
         private readonly ITrans_RegionScopeRepository _transRegionScopeRepository ;
+        private readonly ITrans_StrategyPriorityRepository _transStrategyPriorityRepository ;
+        private readonly ITrans_StrategyKeyPerformanceAreaRepository _transStrategyKeyPerformanceAreaRepository  ;
+        private readonly ITrans_StrucDirectorateRepository _transStrucDirectorateRepository  ;
+        private readonly ITrans_StrucDivisionRepository _transStrucDivisionRepository  ;
+
 
 
 
@@ -101,6 +110,10 @@ namespace AUDANEPAD_Integrated.Controllers
                                 ILkUp_ProcurementLTimeRepository lkupProcurementLTimeRepository ,
                                 ILkUp_ProjectScopeRepository lkupProjectScopeRepository,
                                 ILkUp_RegionScopeRepository lkupRegionScopeRepository ,
+                                IStrategy_PriorityRepository strategyPriorityRepository,
+                                IStrategy_KeyPerformanceAreaRepository strategyKeyPerformanceAreaRepository,
+                                IStruc_DirectorateRepository strucDirectorateRepository,
+                                IStruc_DivisionRepository strucDivisionRepository,
 
                                 ITrans_ActivityTypeRepository transActivityTypeRepository,
                                 ITrans_DSATypeRepository transDSATypeRepository,
@@ -120,7 +133,11 @@ namespace AUDANEPAD_Integrated.Controllers
                                 ITrans_PeopleTypeRepository transPeopleTypeRepository ,
                                 ITrans_ProcurementLTimeRepository transProcurementLTimeRepository,
                                 ITrans_ProjectScopeRepository transProjectScopeRepository,
-                                ITrans_RegionScopeRepository transRegionScopeRepository )
+                                ITrans_RegionScopeRepository transRegionScopeRepository,
+                                ITrans_StrategyPriorityRepository transStrategyPriorityRepository,
+                                ITrans_StrategyKeyPerformanceAreaRepository transStrategyKeyPerformanceAreaRepository,
+                                ITrans_StrucDirectorateRepository transStrucDirectorateRepository,
+                                ITrans_StrucDivisionRepository transStrucDivisionRepository    )
         {
             this._employeeRepository = employeeRepository;
             this.userManager = userManager;
@@ -147,6 +164,10 @@ namespace AUDANEPAD_Integrated.Controllers
             _lkupProcurementLTimeRepository =lkupProcurementLTimeRepository;
             _lkupProjectScopeRepository = lkupProjectScopeRepository;
             _lkupRegionScopeRepository= lkupRegionScopeRepository;
+            _strategyPriorityRepository=strategyPriorityRepository;
+            _strategyKeyPerformanceAreaRepository=strategyKeyPerformanceAreaRepository;
+            _strucDirectorateRepository=strucDirectorateRepository;
+            _strucDivisionRepository=strucDivisionRepository;
 
 
             _transActivityTypeRepository=transActivityTypeRepository;
@@ -168,6 +189,10 @@ namespace AUDANEPAD_Integrated.Controllers
             _transProcurementLTimeRepository=transProcurementLTimeRepository;
             _transProjectScopeRepository =transProjectScopeRepository;
             _transRegionScopeRepository= transRegionScopeRepository;
+            _transStrategyPriorityRepository=transStrategyPriorityRepository;
+            _transStrategyKeyPerformanceAreaRepository=transStrategyKeyPerformanceAreaRepository;
+            _transStrucDirectorateRepository=transStrucDirectorateRepository;
+            _transStrucDivisionRepository=transStrucDivisionRepository;
       
 
 
@@ -367,6 +392,10 @@ namespace AUDANEPAD_Integrated.Controllers
             Chilkat.Csv csv_procurementleadtime = new Chilkat.Csv();
             Chilkat.Csv csv_projectscope = new Chilkat.Csv();
             Chilkat.Csv csv_regionscope= new Chilkat.Csv();
+            Chilkat.Csv csv_strategypriority= new Chilkat.Csv();
+            Chilkat.Csv csv_strategykeyperformancearea= new Chilkat.Csv();
+            Chilkat.Csv csv_strucdirectorate= new Chilkat.Csv();
+            Chilkat.Csv csv_strucdivision= new Chilkat.Csv();
 
 
 
@@ -389,6 +418,10 @@ namespace AUDANEPAD_Integrated.Controllers
             string procurementleadtime_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ProcurementLeadTimes.csv");
             string projectscope_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ProjectScope.csv");
             string regionscope_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/RegionScope.csv");
+            string strategypriority_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/StrategicPriorities.csv");
+            string strategykeyperformancearea_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/StrategicPrioritiesKeyPerformanceAreas.csv");
+            string strucdirectorate_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/Directorates.csv");
+            string strucdivision_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/Division.csv");
             
 
 
@@ -413,6 +446,10 @@ namespace AUDANEPAD_Integrated.Controllers
                 bool success_procurementleadtime = csv_procurementleadtime.LoadFile(procurementleadtime_path);
                 bool success_projectscope = csv_projectscope.LoadFile(projectscope_path);
                 bool success_regionscope = csv_regionscope.LoadFile(regionscope_path);
+                bool success_strategypriority = csv_strategypriority.LoadFile(strategypriority_path);
+                bool success_strategykeyperformancearea = csv_strategykeyperformancearea.LoadFile(strategykeyperformancearea_path);
+                bool success_strucdirectorate = csv_strucdirectorate.LoadFile(strucdirectorate_path);
+                bool success_strucdivision = csv_strucdivision.LoadFile(strucdivision_path);
 
                 if (success_activitytype == true)
                 {
@@ -1110,6 +1147,156 @@ namespace AUDANEPAD_Integrated.Controllers
                         }
                     }
                 }
+
+                if (success_strategypriority == true)
+                {
+                    int _count= _strategyPriorityRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_strategypriority.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            Strategy_Priority rec = new Strategy_Priority
+                            {
+
+                                Record_Id = Int32.Parse(csv_strategypriority.GetCell(row, 0)),
+                                Record_Name = csv_strategypriority.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _strategyPriorityRepository.Add(rec);
+
+                            Trans_StrategyPriority rec_trans = new Trans_StrategyPriority
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_strategypriority.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transStrategyPriorityRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_strategykeyperformancearea == true)
+                {
+                    int _count= _strategyKeyPerformanceAreaRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_strategykeyperformancearea.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            Strategy_KeyPerformanceArea rec = new Strategy_KeyPerformanceArea
+                            {
+
+                                Record_Id = Int32.Parse(csv_strategykeyperformancearea.GetCell(row, 0)),
+                                StrategicPriority_Id=Int32.Parse(csv_strategykeyperformancearea.GetCell(row, 1)),
+                                Record_Name = csv_strategykeyperformancearea.GetCell(row, 2),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _strategyKeyPerformanceAreaRepository.Add(rec);
+
+                            Trans_StrategyKeyPerformanceArea rec_trans = new Trans_StrategyKeyPerformanceArea
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                StrategicKeyPerformanceArea_Id = Int32.Parse(csv_strategykeyperformancearea.GetCell(row, 0)),
+                                TransStrategicPriority_Id=_transStrategyPriorityRepository.GetRecordByMasterStrategyPriorityId(Int32.Parse(csv_strategykeyperformancearea.GetCell(row, 1))).Transaction_Id,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transStrategyKeyPerformanceAreaRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_strucdirectorate == true)
+                {
+                    int _count= _strucDirectorateRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_strucdirectorate.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            Struc_Directorate rec = new Struc_Directorate
+                            {
+
+                                Record_Id = Int32.Parse(csv_strucdirectorate.GetCell(row, 0)),
+                                Record_Name = csv_strucdirectorate.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _strucDirectorateRepository.Add(rec);
+
+                            Trans_StrucDirectorate rec_trans = new Trans_StrucDirectorate
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_strucdirectorate.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transStrucDirectorateRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_strucdivision == true)
+                {
+                    int _count= _strucDivisionRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_strucdivision.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            Struc_Division rec = new Struc_Division
+                            {
+
+                                Record_Id = Int32.Parse(csv_strucdivision.GetCell(row, 0)),
+                                Directorate_Id=Int32.Parse(csv_strucdivision.GetCell(row, 1)),
+                                Record_Name = csv_strucdivision.GetCell(row, 2),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _strucDivisionRepository.Add(rec);
+
+                            Trans_StrucDivision rec_trans = new Trans_StrucDivision
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Division_Id = Int32.Parse(csv_strucdivision.GetCell(row, 0)),
+                                TransDirectorate_Id=_transStrucDirectorateRepository.GetRecordByMasterStrucDirectorateId(Int32.Parse(csv_strucdivision.GetCell(row, 1))).Transaction_Id,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transStrucDivisionRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                
 
                 return Json(new { rtnmsg = "success" });
             }

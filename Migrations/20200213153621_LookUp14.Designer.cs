@@ -3,15 +3,17 @@ using System;
 using AUDANEPAD_Integrated.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace AUDANEPAD_Integrated.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200213153621_LookUp14")]
+    partial class LookUp14
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -670,54 +672,6 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.ToTable("Strategy_Priority");
                 });
 
-            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Struc_Directorate", b =>
-                {
-                    b.Property<int>("Record_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("Record_Name")
-                        .IsRequired()
-                        .HasColumnType("character varying(255)")
-                        .HasMaxLength(255);
-
-                    b.Property<bool>("Record_Status")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("TransactionDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.HasKey("Record_Id");
-
-                    b.ToTable("Struc_Directorate");
-                });
-
-            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Struc_Division", b =>
-                {
-                    b.Property<int>("Record_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<int>("Directorate_Id")
-                        .HasColumnType("integer")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("Record_Name")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("Record_Status")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("TransactionDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.HasKey("Record_Id");
-
-                    b.ToTable("Struc_Division");
-                });
-
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_ActivityType", b =>
                 {
                     b.Property<string>("Transaction_Id")
@@ -1055,41 +1009,6 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.HasKey("Transaction_Id");
 
                     b.ToTable("Trans_StrategyPriority");
-                });
-
-            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_StrucDirectorate", b =>
-                {
-                    b.Property<string>("Transaction_Id")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Record_Id")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("TransactionDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.HasKey("Transaction_Id");
-
-                    b.ToTable("Trans_StrucDirectorate");
-                });
-
-            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_StrucDivision", b =>
-                {
-                    b.Property<string>("Transaction_Id")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Division_Id")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("TransDirectorate_Id")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("TransactionDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.HasKey("Transaction_Id");
-
-                    b.ToTable("Trans_StrucDivision");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

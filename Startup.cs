@@ -108,6 +108,10 @@ namespace AUDANEPAD_Integrated
             services.AddScoped<ILkUp_ProcurementLTimeRepository, ServiceLkUp_ProcurementLTime>();
             services.AddScoped<ILkUp_ProjectScopeRepository, ServiceLkUp_ProjectScope>();
             services.AddScoped<ILkUp_RegionScopeRepository, ServiceLkUp_RegionScope>();
+            services.AddScoped<IStrategy_PriorityRepository, ServiceStrategy_Priority>();
+            services.AddScoped<IStrategy_KeyPerformanceAreaRepository, ServiceStrategy_KeyPerformanceArea>();
+            services.AddScoped<IStruc_DirectorateRepository, ServiceStruc_Directorate>();
+            services.AddScoped<IStruc_DivisionRepository, ServiceStruc_Division>();
 
 
             services.AddScoped<ITrans_ActivityTypeRepository, ServiceTrans_ActivityType>();
@@ -129,6 +133,10 @@ namespace AUDANEPAD_Integrated
             services.AddScoped<ITrans_ProcurementLTimeRepository, ServiceTrans_ProcurementLTime>();
             services.AddScoped<ITrans_ProjectScopeRepository, ServiceTrans_ProjectScope>();
             services.AddScoped<ITrans_RegionScopeRepository, ServiceTrans_RegionScope>();
+            services.AddScoped<ITrans_StrategyPriorityRepository, ServiceTrans_StrategyPriority>();
+            services.AddScoped<ITrans_StrategyKeyPerformanceAreaRepository, ServiceTrans_StrategyKeyPerformanceArea>();
+            services.AddScoped<ITrans_StrucDirectorateRepository, ServiceTrans_StrucDirectorate>();
+            services.AddScoped<ITrans_StrucDivisionRepository, ServiceTrans_StrucDivision>();
 
 
             

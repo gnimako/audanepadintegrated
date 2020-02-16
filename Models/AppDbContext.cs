@@ -35,6 +35,12 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<LkUp_ProjectScope> LkUp_ProjectScope { get; set; }
         public DbSet<LkUp_RegionScope> LkUp_RegionScope { get; set; }
         public DbSet<LkUp_PeopleType> LkUp_PeopleType { get; set; }
+        public DbSet<Strategy_Priority> Strategy_Priority { get; set; }
+        public DbSet<Strategy_KeyPerformanceArea> Strategy_KeyPerformanceArea { get; set; }
+        public DbSet<Struc_Directorate> Struc_Directorate { get; set; }
+        public DbSet<Struc_Division> Struc_Division { get; set; }
+        
+        
 
 
         public DbSet<Trans_ActivityType> Trans_ActivityType { get; set; }
@@ -56,6 +62,10 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<Trans_ProcurementLTime> Trans_ProcurementLTime { get; set; }
         public DbSet<Trans_ProjectScope> Trans_ProjectScope { get; set; }
         public DbSet<Trans_RegionScope> Trans_RegionScope { get; set; }
+        public DbSet<Trans_StrategyPriority> Trans_StrategyPriority { get; set; }
+        public DbSet<Trans_StrategyKeyPerformanceArea> Trans_StrategyKeyPerformanceArea { get; set; }
+        public DbSet<Trans_StrucDirectorate> Trans_StrucDirectorate { get; set; }
+        public DbSet<Trans_StrucDivision> Trans_StrucDivision { get; set; }
 
 
         
@@ -163,6 +173,24 @@ namespace AUDANEPAD_Integrated.Models
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
 
+            modelBuilder.Entity<Strategy_Priority>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Strategy_KeyPerformanceArea>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Struc_Directorate>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Struc_Division>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+
+
 
 
 
@@ -244,6 +272,22 @@ namespace AUDANEPAD_Integrated.Models
             modelBuilder.Entity<Trans_RegionScope>()
 			.Property(e => e.TransactionDate)
 			.HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Trans_StrategyPriority>()
+			.Property(e => e.TransactionDate)
+			.HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Trans_StrategyKeyPerformanceArea>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Trans_StrucDirectorate>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Trans_StrucDivision>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
 
 
 
