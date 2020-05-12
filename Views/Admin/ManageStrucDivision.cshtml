@@ -1,0 +1,496 @@
+@model EmployeeViewModel
+@{
+    ViewBag.Title = "AUDA-NEPAD Integrated System";
+    Layout = "_AdminLayout";
+}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header" style="background-color:#d1e0e6">
+                <h4 class="m-b-0" style="color:#1a262b">Manage Divisions</h4>
+            </div>
+
+
+
+            <div class="card-body">
+                <form asp-controller="admin" asp-action="editprofile" enctype="multipart/form-data" method="post">
+                    <input hidden asp-for="Id" class="k-textbox" style="width:100%" value="@Model.Id">
+                    <input hidden asp-for="IdentityUserId" class="k-textbox" style="width:100%" value="@Model.IdentityUserId">
+                    <input hidden asp-for="ExistingPhotoPath" />
+
+                    <div class="form-body">
+
+                        <div class="row">
+                            <div class="col-md-12 ">
+                                <div class="form-group">
+                                  <span style="color:#000">MAIN RECORDS</span> 
+                                  <br \>
+                               <a class="k-button" asp-action="index" asp-controller="admin" id="btnAddDivision">
+                                    <span class="k-icon k-i-plus-outline"></span> Add Division
+                                </a>
+                                            <br \>
+                                    @(Html.Kendo().Grid<LookUpTablesViewModel>()
+                                                    .Name("grid_main")
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(c => c.LookUp_Id).Hidden();
+                                                        columns.Bound(c => c.Show_trans_button).Hidden();
+                                                        columns.Bound(c => c.LookUp_Name).Title("Division Name");  
+                                                        columns.Bound(p => p.Category).ClientTemplate("#=Category.DropDown_Name#").Sortable(false).Title("Directorate");                                          
+                                                        columns.Bound(c => c.LookUp_Status).Title("Status");
+
+                                                        //columns.Command(command => command.Custom("Edit Activity").Click("resetpass1")).Width(200);
+
+                                                        //columns.Command(command => { command.Edit(); command.Destroy(); });
+
+                                                        columns.Command(command => { command.Edit().Text(" Edit").IconClass("k-icon k-i-track-changes"); });
+                                                        columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
+                                                       columns.Command(command => command.Custom("Make Transactional").Click("mktransactional").Visible("editVisible"));
+
+      
+
+                                                        //columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("resetpass1"));
+                                                        //columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("resetpass1"));
+                                                    })
+                                                    //.ToolBar(toolbar => toolbar.Create().Text(" Add Division").IconClass("k-icon k-i-plus-outline"))
+                                                    .Editable(editable => editable.Mode(GridEditMode.InLine))
+                                                    .HtmlAttributes(new { style = "height: 550px;" })
+                                                    .Scrollable()
+                                                    .Groupable()
+                                                    .Sortable()
+                                                    .Navigatable()
+                                                    .Filterable()
+                                                    .Pageable(pageable => pageable
+                                                        .Refresh(true)
+                                                        .PageSizes(true)
+                                                        .ButtonCount(5))
+                                                    .DataSource(dataSource => dataSource
+                                                        .Ajax()
+                                                        .Read(read => read.Action("Struc_Division_Read", "Admin"))
+                                                        .Model(model => 
+                                                            {
+                                                                model.Id(p => p.LookUp_Id);
+                                                                model.Field(field => field.LookUp_Status).Editable(false);
+                                                                model.Field(p => p.Category).DefaultValue(
+                                                                        ViewData["defaultCategory"] as DropDownListViewModel);
+                                                                model.Field(field => field.Category).Editable(false);
+                                                            })
+                                                        //.Create(create => create.Action("Struc_Directorate_Create", "Admin"))
+                                                        .Update(update => update.Action("Struc_Division_Update", "Admin"))
+                                                        .Destroy(destroy => destroy.Action("Struc_Division_Delete", "Admin"))
+                                                        .PageSize(20)
+                                                        .Events(events => events.Error("error_handler")
+                                                                                .RequestEnd("onRequestEnd"))
+                                                        
+                                                    )
+                                    )
+                                <br \>
+                                <br \>
+                                <br \>
+                                <span style="color:#000">TRANSACTIONAL RECORDS</span> 
+                                <br \>
+                                     @(Html.Kendo().Grid<LookUpTablesViewModel>()
+                                                    .Name("grid_trans")
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(c => c.Trans_LookUp_Id).Hidden();
+                                                        columns.Bound(c => c.Trans_Parent_LookUp_Id).Hidden();
+                                                        columns.Bound(c => c.ParentLink_Id).Hidden();
+                                                        columns.Bound(c => c.LookUp_Name).Title("Division Name");
+                                                        columns.Bound(p => p.Category).ClientTemplate("#=Category.DropDown_Name#").Sortable(false).Title("Directorate");  
+                                                        columns.Bound(c => c.TransactionDate).Title("Transaction Date").Format("{0: dd-MM-yyyy}");
+
+                                                        //columns.Command(command => command.Custom("Edit Activity").Click("resetpass1")).Width(200);
+
+                                                        //columns.Command(command => { command.Edit(); command.Destroy(); });
+
+                                                       
+                                                        columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
+
+                                                        //columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("resetpass1"));
+                                                        //columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("resetpass1"));
+                                                    })
+                                                    
+                                 
+                                                    .HtmlAttributes(new { style = "height: 550px;" })
+                                                    .Scrollable()
+                                                    .Groupable()
+                                                    .Sortable()
+                                                    .Navigatable()
+                                                    .Filterable()
+                                                    .Pageable(pageable => pageable
+                                                        .Refresh(true)
+                                                        .PageSizes(true)
+                                                        .ButtonCount(5))
+                                                    .DataSource(dataSource => dataSource
+                                                        .Ajax()
+                                                        .Read(read => read.Action("Trans_StrucDivision_Read", "Admin"))
+                                                        .Model(model => 
+                                                            {
+                                                                model.Id(p => p.Trans_LookUp_Id);
+                                                                model.Field(field => field.TransactionDate).Editable(false);
+                                                                model.Field(p => p.Category).DefaultValue(
+                                                                        ViewData["defaultCategory"] as DropDownListViewModel);
+                                                                model.Field(field => field.Category).Editable(false);
+                                                            })
+                                                        
+                                                        .Destroy(destroy => destroy.Action("Trans_StrucDivision_Delete", "Admin"))
+                                                        .PageSize(20)
+                                                        .Events(events => events.Error("error_handler")
+                                                                                .RequestEnd("onRequestEndTrans"))
+                                                        
+                                                    )
+                                    )
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="getstaffwindow">
+</div>
+<div id="windowstaff"></div>
+<div id="staffposwindow"></div>
+
+
+<div id="windowstaff2"></div>
+<div id="staffposwindow2"></div>
+
+<div id="windowstaffpos">
+</div>
+
+<div id="example">
+    <div id="dialog">
+    </div>
+    <div id="undo">
+    </div>
+</div>
+
+    <script>
+        function editVisible(dataItem) {
+        // hide the Edit button for the item with ProductID=1
+        return dataItem.LookUp_Status != "Transactional";
+        }
+    </script>
+
+
+<script type="text/javascript">
+
+ $("#btnAddDivision").click(function (e) {
+          e.preventDefault();
+
+
+             $("#windowstaff").append("<div id='getstaffwindow'></div>");
+              var wnd2 = $("#getstaffwindow").kendoWindow({
+                  //actions: ["Close"],
+                  draggable: true,
+                  modal: true,
+                  animation: false,
+                  resizable: true,
+                  content: "/Admin/AddStrucDivision",
+                  width: 800,
+                  height: 400,
+
+                  title: "Add a New Division",
+                  // close: onClose,
+                  deactivate: function () {
+                      this.destroy();
+                  }
+
+              }).data("kendoWindow");
+              wnd2.center().open();
+          
+      });
+
+
+function resetpass1(e) {
+
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        var employeeid = dataItem.Programme_Id;
+
+
+        var dialog = $('#dialog');
+        var undo = $("#undo");
+
+
+
+
+
+
+        function onClose() {
+            undo.fadeIn();
+        }
+
+
+
+
+        $("#windowstaff2").append("<div id='getstaffwindow2'></div>");
+
+
+        var wnd3 = $("#getstaffwindow2").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/Admin/LoginPasswordReset?employeeid=" + employeeid,
+            width: 800,
+            height: 370,
+
+            title: "Reset Password",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd3.center().open();
+
+
+
+
+
+    }
+
+
+    function mktransactional(e) {
+
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        var recid = dataItem.LookUp_Id;
+        var recstatus= dataItem.LookUp_Status;
+
+        var dialog = $('#dialog');
+        var undo = $("#undo");
+
+        function onClose() {
+            undo.fadeIn();
+        }
+
+          if (recstatus === "" && typeof recstatus === "string") {
+
+                            
+            dialog.kendoDialog({
+                  width: "450px",
+                  title: "Checks",
+                  closable: false,
+                  modal: true,
+                  content: "<p>Record has not been <strong>save</strong>.<p>",
+                  actions: [
+                      { text: 'OK' }
+                  ],
+                  close: onClose
+              });
+
+              dialog.data("kendoDialog").open();
+              undo.fadeOut();
+          }
+          else {
+
+              dialog.kendoDialog({
+                  width: "450px",
+                  title: "Confirmation",
+                  closable: false,
+                  modal: true,
+                  content: "<p>Please <strong>confirm</strong> the action.<p>",
+                  actions: [
+                      {
+                          text: 'Confirm',
+                          action: function (e) {
+                              $.ajax({
+                                  type: "POST",
+                                  url: '/Admin/MakeDivisionTrans',     //your action
+                                  data: { "recid": recid},
+                                  dataType: 'json',
+                                  success: function (result) {
+                                        var grid = $("#grid_main").data("kendoGrid"); 
+
+                                        grid.dataSource.transport.options.read.url = "/Admin/Struc_Division_Read";
+                                        grid.dataSource.read();
+
+                                  },
+                                  error: function (data) {
+
+                                  }
+                              })
+                              return true;
+                          },
+                          primary: true
+
+                      },
+                      { text: 'Cancel' }
+                  ],
+                  close: onClose
+              });
+
+              dialog.data("kendoDialog").open();
+              undo.fadeOut();
+
+          }
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+function onClick() {
+
+    }
+
+
+    </script>
+
+<script type="text/javascript">$("#btnAdd").click(function (e) {
+        e.preventDefault();
+
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/Admin/AddLoginAccess",
+            width: 800,
+            height: 400,
+
+            title: "Add or Assign Login Access",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+
+    });</script>
+
+
+<script type="text/javascript">
+    function error_handler(e) {    
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function() {
+                        message += this + "\n";
+                    });
+                }
+            });        
+            alert(message);
+        }
+    }
+
+    function onRequestEnd(e){
+           // alert("on request end");
+
+           // if (e.type === "update") {
+           //     e.sender.read();
+            //} 
+            //case "create": case "update": case "destroy":
+            if (e.type === "update" || e.type === "create" || e.type === "destroy" ) {
+                var grid = $("#grid_main").data("kendoGrid"); 
+
+                grid.dataSource.transport.options.read.url = "/Admin/Struc_Division_Read";
+                grid.dataSource.read();
+            }
+    }
+
+
+        function onRequestEndTrans(e){
+           // alert("on request end");
+
+           // if (e.type === "update") {
+           //     e.sender.read();
+            //} 
+            //case "create": case "update": case "destroy":
+           if (e.type === "update" || e.type === "create" || e.type === "destroy" ) {
+                var grid = $("#grid_trans").data("kendoGrid"); 
+
+                grid.dataSource.transport.options.read.url = "/Admin/Trans_StrucDivision_Read";
+                grid.dataSource.read();
+           }
+    }
+</script>
+
+
+<style>
+    /* Page Template for the exported PDF */
+    .page-template {
+        font-family: "DejaVu Sans", "Arial", sans-serif;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+
+        .page-template .header {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            right: 30px;
+            border-bottom: 1px solid #888;
+            color: #888;
+        }
+
+        .page-template .footer {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+            border-top: 1px solid #888;
+            text-align: center;
+            color: #888;
+        }
+
+        .page-template .watermark {
+            font-weight: bold;
+            font-size: 400%;
+            text-align: center;
+            margin-top: 30%;
+            color: #aaaaaa;
+            opacity: 0.1;
+            transform: rotate(-35deg) scale(1.7, 1.5);
+        }
+
+    /* Content styling */
+    .customer-photo {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-size: 32px 35px;
+        background-position: center center;
+        vertical-align: middle;
+        line-height: 32px;
+        box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0,0,0,.2);
+        margin-left: 5px;
+    }
+
+    .customer-name {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 32px;
+        padding-left: 3px;
+    }
+</style>

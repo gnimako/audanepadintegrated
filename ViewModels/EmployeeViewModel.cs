@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using NodaTime;
@@ -7,7 +7,7 @@ namespace AUDANEPAD_Integrated.ViewModels
 {
     public class EmployeeViewModel
     {
-        		public int Id { get; set; }
+		public int Id { get; set; }
         public int Employee_Id { get; set; }
         public int Programme_Id { get; set; }
         public string IdentityUserId { get; set; }
@@ -22,6 +22,8 @@ namespace AUDANEPAD_Integrated.ViewModels
 
         public int Directorate_Id { get; set; }
         public int Department_Id { get; set; }
+
+        public int Division_Id { get; set; }
 
      
         public int Unit_Id { get; set; }
@@ -57,7 +59,22 @@ namespace AUDANEPAD_Integrated.ViewModels
         //Draft Annual WorkPlan
         public string TransAWP_TransId { get; set; }
         public string FiscalYear { get; set; }
+
+
+
+        public bool? Mapping_Status { get; set; }
+
+        public string Mapping_Status_String { get; set; }
+        public bool? Primary { get; set; }
+
+        public bool? PrimaryMain { get; set; }
+
+        public string Primary_String { get; set; }
        
-        
+
+
+
+
+
     }
 }

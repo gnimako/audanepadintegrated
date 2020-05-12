@@ -158,6 +158,9 @@ namespace AUDANEPAD_Integrated.Migrations
                         .HasColumnType("character varying(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("TestEmail")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("timestamp without time zone");
 
@@ -484,6 +487,73 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.ToTable("LkUp_ProcurementType");
                 });
 
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_Programme", b =>
+                {
+                    b.Property<int>("Record_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("Directorate_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Division_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("DocPath")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Record_Name")
+                        .IsRequired()
+                        .HasColumnType("character varying(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<bool>("Record_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Record_Id");
+
+                    b.ToTable("LkUp_Programme");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_Project", b =>
+                {
+                    b.Property<int>("Record_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("Directorate_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Division_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("DocPath")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Programme_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Record_Name")
+                        .IsRequired()
+                        .HasColumnType("character varying(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<bool>("Record_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Record_Id");
+
+                    b.ToTable("LkUp_Project");
+                });
+
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_ProjectScope", b =>
                 {
                     b.Property<int>("Record_Id")
@@ -611,7 +681,7 @@ namespace AUDANEPAD_Integrated.Migrations
                         .HasColumnType("character varying(255)")
                         .HasMaxLength(255);
 
-                    b.Property<bool>("Record_Status")
+                    b.Property<bool?>("Record_Status")
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("TransactionDate")
@@ -632,7 +702,7 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.Property<string>("Record_Name")
                         .HasColumnType("text");
 
-                    b.Property<bool>("Record_Status")
+                    b.Property<bool?>("Record_Status")
                         .HasColumnType("boolean");
 
                     b.Property<int>("StrategicPriority_Id")
@@ -659,7 +729,7 @@ namespace AUDANEPAD_Integrated.Migrations
                         .HasColumnType("character varying(255)")
                         .HasMaxLength(255);
 
-                    b.Property<bool>("Record_Status")
+                    b.Property<bool?>("Record_Status")
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("TransactionDate")
@@ -668,6 +738,104 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.HasKey("Record_Id");
 
                     b.ToTable("Strategy_Priority");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Struc_DirStaffMapping", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Directorate_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EmployeePK")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("IdentityUserId")
+                        .HasColumnType("text");
+
+                    b.Property<bool?>("Mapping_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("PrimaryDirectorate")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Staff_Number")
+                        .IsRequired()
+                        .HasColumnType("character varying(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Struc_DirStaffMapping");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Struc_Director", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Directorate_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EmployeePK")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Staff_Number")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool?>("Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Status_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Struc_Director");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Struc_DirectorOIC", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Directorate_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EmployeePK")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("OIC_Status")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Staff_Number")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Struc_DirectorOIC");
                 });
 
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.Struc_Directorate", b =>
@@ -682,7 +850,7 @@ namespace AUDANEPAD_Integrated.Migrations
                         .HasColumnType("character varying(255)")
                         .HasMaxLength(255);
 
-                    b.Property<bool>("Record_Status")
+                    b.Property<bool?>("Record_Status")
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("TransactionDate")
@@ -691,6 +859,116 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.HasKey("Record_Id");
 
                     b.ToTable("Struc_Directorate");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Struc_DivHead", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Directorate_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Division_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EmployeePK")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Staff_Number")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool?>("Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Status_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Struc_DivHead");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Struc_DivHeadOIC", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Directorate_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Division_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EmployeePK")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("OIC_Status")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ParentTransaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Staff_Number")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Struc_DivHeadOIC");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Struc_DivStaffMapping", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Directorate_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Division_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EmployeePK")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("IdentityUserId")
+                        .HasColumnType("text");
+
+                    b.Property<bool?>("Mapping_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("PrimaryDivision")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Staff_Number")
+                        .IsRequired()
+                        .HasColumnType("character varying(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Struc_DivStaffMapping");
                 });
 
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.Struc_Division", b =>
@@ -707,7 +985,7 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.Property<string>("Record_Name")
                         .HasColumnType("text");
 
-                    b.Property<bool>("Record_Status")
+                    b.Property<bool?>("Record_Status")
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("TransactionDate")
@@ -924,6 +1202,56 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.HasKey("Transaction_Id");
 
                     b.ToTable("Trans_ProcurementType");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_Programme", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Directorate_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Division_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MainProgramme_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_Programme");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_Project", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Directorate_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Division_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MainProgramme_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MainProject_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TransProgramme_Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_Project");
                 });
 
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_ProjectScope", b =>

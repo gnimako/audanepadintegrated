@@ -27,6 +27,8 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly IEmployeeRepository _employeeRepository;
         
         private readonly UserManager<ApplicationUser> userManager;
+
+      
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly ILkUp_ActivityTypeRepository _lkupActivityTypeRepository;
@@ -52,6 +54,8 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly IStrategy_KeyPerformanceAreaRepository _strategyKeyPerformanceAreaRepository;
         private readonly IStruc_DirectorateRepository _strucDirectorateRepository ;
         private readonly IStruc_DivisionRepository _strucDivisionRepository;
+        private readonly ILkUp_ProgrammeRepository _lkupProgrammeRepository;
+        private readonly ILkUp_ProjectRepository _lkupProjectRepository;
 
 
         private readonly ITrans_ActivityTypeRepository _transActivityTypeRepository;
@@ -77,6 +81,18 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly ITrans_StrategyKeyPerformanceAreaRepository _transStrategyKeyPerformanceAreaRepository  ;
         private readonly ITrans_StrucDirectorateRepository _transStrucDirectorateRepository  ;
         private readonly ITrans_StrucDivisionRepository _transStrucDivisionRepository  ;
+        private readonly ITrans_ProgrammeRepository _transProgrammeRepository ;
+        private readonly ITrans_ProjectRepository _transProjectRepository  ;
+
+
+        private readonly IStruc_DirStaffMappingRepository _strucDirStaffMappingRepository  ;
+        private readonly IStruc_DivStaffMappingRepository _strucDivStaffMappingRepository  ;
+
+        private readonly IStruc_DirectorRepository _strucDirectorRepository   ;
+        private readonly IStruc_DirectorOICRepository _strucDirectorOICRepository   ;
+        private readonly IStruc_DivHeadRepository _strucDivHeadRepository   ;
+        private readonly IStruc_DivHeadOICRepository _strucDivHeadOICRepository  ;
+        private readonly IEmailSender _emailSender  ;
 
 
 
@@ -114,6 +130,8 @@ namespace AUDANEPAD_Integrated.Controllers
                                 IStrategy_KeyPerformanceAreaRepository strategyKeyPerformanceAreaRepository,
                                 IStruc_DirectorateRepository strucDirectorateRepository,
                                 IStruc_DivisionRepository strucDivisionRepository,
+                                ILkUp_ProgrammeRepository lkupProgrammeRepository,
+                                ILkUp_ProjectRepository lkupProjectRepository,
 
                                 ITrans_ActivityTypeRepository transActivityTypeRepository,
                                 ITrans_DSATypeRepository transDSATypeRepository,
@@ -137,7 +155,16 @@ namespace AUDANEPAD_Integrated.Controllers
                                 ITrans_StrategyPriorityRepository transStrategyPriorityRepository,
                                 ITrans_StrategyKeyPerformanceAreaRepository transStrategyKeyPerformanceAreaRepository,
                                 ITrans_StrucDirectorateRepository transStrucDirectorateRepository,
-                                ITrans_StrucDivisionRepository transStrucDivisionRepository    )
+                                ITrans_StrucDivisionRepository transStrucDivisionRepository,   
+                                ITrans_ProgrammeRepository transProgrammeRepository, 
+                                ITrans_ProjectRepository transProjectRepository, 
+                                IStruc_DirStaffMappingRepository strucDirStaffMappingRepository,
+                                IStruc_DivStaffMappingRepository strucDivStaffMappingRepository,
+                                IStruc_DirectorRepository strucDirectorRepository,
+                                IStruc_DirectorOICRepository strucDirectorOICRepository,
+                                IStruc_DivHeadRepository strucDivHeadRepository,
+                                IStruc_DivHeadOICRepository strucDivHeadOICRepository,
+                                IEmailSender emailSender)
         {
             this._employeeRepository = employeeRepository;
             this.userManager = userManager;
@@ -164,6 +191,8 @@ namespace AUDANEPAD_Integrated.Controllers
             _lkupProcurementLTimeRepository =lkupProcurementLTimeRepository;
             _lkupProjectScopeRepository = lkupProjectScopeRepository;
             _lkupRegionScopeRepository= lkupRegionScopeRepository;
+            _lkupProgrammeRepository=lkupProgrammeRepository;
+            _lkupProjectRepository=lkupProjectRepository;
             _strategyPriorityRepository=strategyPriorityRepository;
             _strategyKeyPerformanceAreaRepository=strategyKeyPerformanceAreaRepository;
             _strucDirectorateRepository=strucDirectorateRepository;
@@ -193,6 +222,15 @@ namespace AUDANEPAD_Integrated.Controllers
             _transStrategyKeyPerformanceAreaRepository=transStrategyKeyPerformanceAreaRepository;
             _transStrucDirectorateRepository=transStrucDirectorateRepository;
             _transStrucDivisionRepository=transStrucDivisionRepository;
+            _transProgrammeRepository=transProgrammeRepository;
+            _transProjectRepository=transProjectRepository;
+            _strucDirStaffMappingRepository=strucDirStaffMappingRepository;
+            _strucDivStaffMappingRepository=strucDivStaffMappingRepository;
+            _strucDirectorRepository=strucDirectorRepository;
+            _strucDirectorOICRepository=strucDirectorOICRepository;
+            _strucDivHeadRepository=strucDivHeadRepository;
+            _strucDivHeadOICRepository=strucDivHeadOICRepository;
+            _emailSender=emailSender;
       
 
 
@@ -222,7 +260,7 @@ namespace AUDANEPAD_Integrated.Controllers
             }
             else
             {
-                profilepicpath = "/appdirectory/" + employee.Staff_Number + "/" + employee.PhotoPath;
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
 
             }
 
@@ -272,7 +310,7 @@ namespace AUDANEPAD_Integrated.Controllers
             }
             else
             {
-                profilepicpath = "/appdirectory/" + employee.Staff_Number + "/" + employee.PhotoPath;
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
 
             }
 
@@ -329,7 +367,7 @@ namespace AUDANEPAD_Integrated.Controllers
             }
             else
             {
-                profilepicpath = "/appdirectory/" + employee.Staff_Number + "/" + employee.PhotoPath;
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
 
             }
 
@@ -366,6 +404,356 @@ namespace AUDANEPAD_Integrated.Controllers
 
         }
 
+        public async Task<ActionResult> ManageStrucDirectorate()
+        {
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+
+
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            // DateTime test = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day);
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                // DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank,
+                ExistingPhotoPath = employee.PhotoPath
+
+            };
+
+
+
+            return View(emp_view);
+
+        }
+
+        public async Task<ActionResult> StaffDirectorateMapping()
+        {
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+
+
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            // DateTime test = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day);
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                // DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank,
+                ExistingPhotoPath = employee.PhotoPath
+
+            };
+
+
+
+            return View(emp_view);
+
+        }
+
+        public async Task<ActionResult> StaffDirectorsMapping()
+        {
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+
+
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            // DateTime test = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day);
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                // DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank,
+                ExistingPhotoPath = employee.PhotoPath
+
+            };
+
+
+
+            return View(emp_view);
+
+        }
+
+        public async Task<ActionResult> StaffDivisionHeadMapping()
+        {
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+
+
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            // DateTime test = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day);
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                // DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank,
+                ExistingPhotoPath = employee.PhotoPath
+
+            };
+
+
+
+            return View(emp_view);
+
+        }
+
+        public async Task<ActionResult> StaffDivisionMapping()
+        {
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+
+
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            // DateTime test = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day);
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                // DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank,
+                ExistingPhotoPath = employee.PhotoPath
+
+            };
+
+
+
+            return View(emp_view);
+
+        }
+
+        public async Task<ActionResult> ManageStrucDivision()
+        {
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+
+
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            // DateTime test = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day);
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                // DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank,
+                ExistingPhotoPath = employee.PhotoPath
+
+            };
+
+
+            PopulateDirectorateDropDownList();
+
+            return View(emp_view);
+
+        }
+        private void PopulateDirectorateDropDownList()
+        {
+           // var dataContext = new SampleEntities();
+            var categories = _transStrucDirectorateRepository.GetAllRecords().ToList()
+                        .Select(c => new DropDownListViewModel {
+                            DropDown_IntId = c.Record_Id,
+                            DropDown_Name = _strucDirectorateRepository.GetRecord(c.Record_Id).Record_Name
+                        })
+                        .OrderBy(e => e.DropDown_Name);
+
+            ViewData["categories"] = categories;
+            ViewData["defaultCategory"] = categories.First();            
+        }
+
         //**************LOAD LOOK-UPS TABLES******************///
 
         [HttpPost]
@@ -396,6 +784,8 @@ namespace AUDANEPAD_Integrated.Controllers
             Chilkat.Csv csv_strategykeyperformancearea= new Chilkat.Csv();
             Chilkat.Csv csv_strucdirectorate= new Chilkat.Csv();
             Chilkat.Csv csv_strucdivision= new Chilkat.Csv();
+            Chilkat.Csv csv_programme= new Chilkat.Csv();
+            Chilkat.Csv csv_project =new Chilkat.Csv();
 
 
 
@@ -422,6 +812,8 @@ namespace AUDANEPAD_Integrated.Controllers
             string strategykeyperformancearea_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/StrategicPrioritiesKeyPerformanceAreas.csv");
             string strucdirectorate_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/Directorates.csv");
             string strucdivision_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/Division.csv");
+            string programme_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/AUDANEPADProgrammes.csv");
+            string project_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/AUDANEPADProjects.csv");
             
 
 
@@ -450,6 +842,9 @@ namespace AUDANEPAD_Integrated.Controllers
                 bool success_strategykeyperformancearea = csv_strategykeyperformancearea.LoadFile(strategykeyperformancearea_path);
                 bool success_strucdirectorate = csv_strucdirectorate.LoadFile(strucdirectorate_path);
                 bool success_strucdivision = csv_strucdivision.LoadFile(strucdivision_path);
+                bool success_programme = csv_programme.LoadFile(programme_path);
+                bool success_project = csv_project.LoadFile(project_path);
+
 
                 if (success_activitytype == true)
                 {
@@ -1296,6 +1691,112 @@ namespace AUDANEPAD_Integrated.Controllers
                     }
                 }
 
+                if (success_programme == true)
+                {
+                    int _count= _lkupProgrammeRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_programme.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_Programme rec = new LkUp_Programme
+                            {
+
+                                Record_Id = Int32.Parse(csv_programme.GetCell(row, 0)),
+                                Directorate_Id=Int32.Parse(csv_programme.GetCell(row, 1)),
+                                Division_Id=Int32.Parse(csv_programme.GetCell(row, 2)),
+                                Record_Name = csv_programme.GetCell(row, 3),
+                                DocPath="",
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupProgrammeRepository.Add(rec);
+
+                            Trans_Programme rec_trans = new Trans_Programme
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                MainProgramme_Id= Int32.Parse(csv_programme.GetCell(row, 0)),
+                                Directorate_Id=Int32.Parse(csv_programme.GetCell(row, 1)),
+                                Division_Id=Int32.Parse(csv_programme.GetCell(row, 2)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transProgrammeRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_project == true)
+                {
+                    int _count= _lkupProjectRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_project.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_Project rec = new LkUp_Project
+                            {
+
+                                Record_Id = Int32.Parse(csv_project.GetCell(row, 0)),
+                                Programme_Id=Int32.Parse(csv_project.GetCell(row, 1)),
+                                Directorate_Id=Int32.Parse(csv_project.GetCell(row, 2)),
+                                Division_Id=Int32.Parse(csv_project.GetCell(row, 3)),
+                                Record_Name = csv_project.GetCell(row, 4),
+                                DocPath="",
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupProjectRepository.Add(rec);
+
+                            Trans_Programme transrec=_transProgrammeRepository.GetRecordByMainProgrammeID(Int32.Parse(csv_project.GetCell(row, 1)));
+                            if(transrec!=null)
+                            {
+                                Trans_Project rec_trans = new Trans_Project
+                                {
+                                    Transaction_Id = Guid.NewGuid().ToString(),
+                                    TransProgramme_Id=transrec.Transaction_Id,
+                                    MainProject_Id= Int32.Parse(csv_project.GetCell(row, 0)),
+                                    MainProgramme_Id= Int32.Parse(csv_project.GetCell(row, 1)),
+                                    Directorate_Id=Int32.Parse(csv_project.GetCell(row, 2)),
+                                    Division_Id=Int32.Parse(csv_project.GetCell(row, 3)),
+                                    TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                                };
+                                 _transProjectRepository.Add(rec_trans);
+                            }
+                            else
+                            {
+                                Trans_Project rec_trans = new Trans_Project
+                                {
+                                    Transaction_Id = Guid.NewGuid().ToString(),
+                                    TransProgramme_Id="", 
+                                    MainProject_Id= Int32.Parse(csv_project.GetCell(row, 0)),
+                                    MainProgramme_Id= Int32.Parse(csv_project.GetCell(row, 1)),
+                                    Directorate_Id=Int32.Parse(csv_project.GetCell(row, 2)),
+                                    Division_Id=Int32.Parse(csv_project.GetCell(row, 3)),
+                                    TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                                };
+                                 _transProjectRepository.Add(rec_trans);
+
+
+                            }
+
+                           
+
+                        }
+                    }
+                }
+
                 
 
                 return Json(new { rtnmsg = "success" });
@@ -1305,6 +1806,49 @@ namespace AUDANEPAD_Integrated.Controllers
                 return Json(new { rtnmsg = "error" });
             }
 
+        }
+
+
+
+        [HttpPost]
+        public ActionResult SetTestStaffEmails()
+        {
+            try
+            {
+                    var recs =  _employeeRepository.GetAllEmployee().ToList();
+
+                    int _count = recs.Count();
+
+                   // List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+                    string staffemail = "";
+                    string testmail = "";
+
+                    if (_count > 0)
+                    {
+                        foreach (var rec in recs)
+                        {
+                            staffemail=rec.First_Name+rec.Last_Name.Substring(0,2)+"@nepad.org";
+                            staffemail=staffemail.ToLower();
+                            testmail="gideonn@nepad.org";
+
+                            rec.Email=staffemail;
+                            rec.TestEmail=testmail;
+
+                            _employeeRepository.Update(rec);
+                            
+                        
+
+                        }
+                    }
+
+
+                return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
         }
         //**************GRID CREATE RECORDS******************///
         [AcceptVerbs("Post")]
@@ -1329,6 +1873,35 @@ namespace AUDANEPAD_Integrated.Controllers
                         };
 
                         _lkupActivityTypeRepository.Add(rec_to_add);
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+        [AcceptVerbs("Post")]
+		public ActionResult Struc_Directorate_Create([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                Struc_Directorate rec = _strucDirectorateRepository.GetRecordByName(record.LookUp_Name);
+
+                if (rec == null && record.LookUp_Name !=null)
+                {
+
+                        var DB_Recs = _strucDirectorateRepository.GetAllRecords();
+                        int _count = DB_Recs.Count();
+
+                        Struc_Directorate rec_to_add = new Struc_Directorate
+                        {
+                            Record_Id=_count+1,
+                            Record_Name=record.LookUp_Name,
+                            Record_Status=null,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+                        _strucDirectorateRepository.Add(rec_to_add);
                 }      
                            
             }
@@ -1362,6 +1935,58 @@ namespace AUDANEPAD_Integrated.Controllers
             
             return Json(new [] { record }.ToDataSourceResult(request, ModelState));
         }
+        [AcceptVerbs("Post")]
+		public ActionResult Struc_Directorate_Update([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                Struc_Directorate rec = _strucDirectorateRepository.GetRecord(record.LookUp_Id);
+                
+                if (rec != null)
+                {
+
+                        Struc_Directorate rec_already_exist = _strucDirectorateRepository.GetRecordByName(record.LookUp_Name);
+
+                        if(rec_already_exist==null)
+                        {
+                            rec.Record_Name=record.LookUp_Name;
+                            rec.TransactionDate=new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+
+
+                            _strucDirectorateRepository.Update(rec);
+                        }
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+        [AcceptVerbs("Post")]
+		public ActionResult Struc_Division_Update([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                Struc_Division rec = _strucDivisionRepository.GetRecord(record.LookUp_Id);
+                
+                if (rec != null)
+                {
+
+                        Struc_Division rec_already_exist = _strucDivisionRepository.GetRecordByName(record.LookUp_Name);
+
+                        if(rec_already_exist==null)
+                        {
+                            rec.Record_Name=record.LookUp_Name;
+                            rec.TransactionDate=new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+
+
+                            _strucDivisionRepository.Update(rec);
+                        }
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
         //**************GRID DELETE RECORDS******************///
         [AcceptVerbs("Post")]
 		public ActionResult LkUp_ActivityType_Delete([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
@@ -1385,6 +2010,139 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(new [] { record }.ToDataSourceResult(request, ModelState));
         }
 
+        [AcceptVerbs("Post")]
+		public async Task<ActionResult> Struc_DirStaffMapping_Delete([DataSourceRequest] DataSourceRequest request, EmployeeMappingViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                Struc_DirStaffMapping rec = _strucDirStaffMappingRepository.GetRecord(record.Transaction_Id);
+                
+                if (rec != null)
+                {
+                    //Delete all division level mapping related to this directorate
+                    var DB_Recs =  _strucDivStaffMappingRepository.GetAllRecordsByEmployeeAndDirectorate(rec.EmployeePK, rec.Directorate_Id);
+                    foreach (var recordset in DB_Recs)
+                    {
+                        _strucDivStaffMappingRepository.Delete(recordset.Transaction_Id);
+                    }
+                    //If this is the primary directorate, delete all assigned roles
+                    Struc_DirStaffMapping thisprimarydir=_strucDirStaffMappingRepository.GetRecordByEmployeeAndThisPrimaryDirectorate(rec.EmployeePK, rec.Directorate_Id);
+
+                    Employee _emp = _employeeRepository.GetEmployee(rec.EmployeePK);
+                    var _user = await userManager.FindByIdAsync(_emp.IdentityUserId);
+
+                    var userRoles = await userManager.GetRolesAsync(_user);
+
+                    IdentityResult _result;
+
+                    if(thisprimarydir!=null)
+                    {
+                        foreach (var userrec in userRoles)
+                        {
+                            if(userrec !="Admin")
+                            {
+                                _result = await userManager.RemoveFromRoleAsync(_user, userrec);
+                            }
+                        }
+                        
+
+                    }
+
+                    //Delete directate mapping
+                    _strucDirStaffMappingRepository.Delete(rec.Transaction_Id);
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+        [AcceptVerbs("Post")]
+		public async Task<ActionResult> Struc_DivStaffMapping_Delete([DataSourceRequest] DataSourceRequest request, EmployeeMappingViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                Struc_DivStaffMapping rec = _strucDivStaffMappingRepository.GetRecord(record.Transaction_Id);
+                
+                if (rec != null)
+                {
+                    //If this is the primary directorate and primary division, delete all assigned roles
+                    Struc_DirStaffMapping thisprimarydir=_strucDirStaffMappingRepository.GetRecordByEmployeeAndThisPrimaryDirectorate(rec.EmployeePK, rec.Directorate_Id);
+                    Struc_DivStaffMapping thisprimarydiv=_strucDivStaffMappingRepository.GetRecordByEmployeeAndThisPrimaryDivision(rec.EmployeePK, rec.Division_Id);
+
+                    Employee _emp = _employeeRepository.GetEmployee(rec.EmployeePK);
+                    var _user = await userManager.FindByIdAsync(_emp.IdentityUserId);
+
+                    var userRoles = await userManager.GetRolesAsync(_user);
+
+                    IdentityResult _result;
+
+                    if(thisprimarydir!=null && thisprimarydiv!=null)
+                    {
+                        foreach (var userrec in userRoles)
+                        {
+                            if(userrec =="Division Head" || userrec =="Unit Lead" || userrec =="Programme Lead"  || userrec =="Nepad Staff" )
+                            {
+                                _result = await userManager.RemoveFromRoleAsync(_user, userrec);
+                            }
+                        }
+                        
+
+                    }
+
+                    //Delete division mapping
+                    _strucDivStaffMappingRepository.Delete(rec.Transaction_Id);
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+
+        [AcceptVerbs("Post")]
+		public ActionResult Struc_Directorate_Delete([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                Struc_Directorate rec = _strucDirectorateRepository.GetRecord(record.LookUp_Id);
+                
+                if (rec != null)
+                {
+
+
+                        if(rec.Record_Status==null)
+                        {
+                            _strucDirectorateRepository.Delete(rec.Record_Id);
+                        }
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+        [AcceptVerbs("Post")]
+		public ActionResult Struc_Division_Delete([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                Struc_Division rec = _strucDivisionRepository.GetRecord(record.LookUp_Id);
+                
+                if (rec != null)
+                {
+
+
+                        if(rec.Record_Status==null)
+                        {
+                            _strucDivisionRepository.Delete(rec.Record_Id);
+                        }
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
 
         [AcceptVerbs("Post")]
 		public ActionResult Trans_ActivityType_Delete([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
@@ -1400,6 +2158,48 @@ namespace AUDANEPAD_Integrated.Controllers
                     LkUp_ActivityType rec_update=_lkupActivityTypeRepository.GetActivityType(rec.Activity_Id);
                     rec_update.ActivityType_Status=false;
                     _lkupActivityTypeRepository.Update(rec_update);
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+        [AcceptVerbs("Post")]
+		public ActionResult Trans_StrucDirectorate_Delete([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                Trans_StrucDirectorate rec = _transStrucDirectorateRepository.GetRecord(record.Trans_LookUp_Id);
+                
+                if (rec != null)
+                {
+                    _transStrucDirectorateRepository.Delete(rec.Transaction_Id);
+
+                    Struc_Directorate rec_update=_strucDirectorateRepository.GetRecord(rec.Record_Id);
+                    rec_update.Record_Status=false;
+                    _strucDirectorateRepository.Update(rec_update);
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+
+        [AcceptVerbs("Post")]
+		public ActionResult Trans_StrucDivision_Delete([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                Trans_StrucDivision rec = _transStrucDivisionRepository.GetRecord(record.Trans_LookUp_Id);
+                
+                if (rec != null)
+                {
+                    _transStrucDivisionRepository.Delete(rec.Transaction_Id);
+
+                    Struc_Division rec_update=_strucDivisionRepository.GetRecord(rec.Division_Id);
+                    rec_update.Record_Status=false;
+                    _strucDivisionRepository.Update(rec_update);
                 }      
                            
             }
@@ -1447,6 +2247,83 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(collection_recs.ToDataSourceResult(request));
         }
 
+        public ActionResult Struc_Directorate_Read([DataSourceRequest]DataSourceRequest request, string text)
+        {
+
+
+            List<LookUpTablesViewModel> collection_recs = new List<LookUpTablesViewModel>();
+
+
+
+            var DB_Recs =  _strucDirectorateRepository.GetAllRecords();
+
+
+
+
+            int _count =  DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+   
+                    LookUpTablesViewModel srec = new LookUpTablesViewModel
+                    {
+                        LookUp_Id = rec.Record_Id,
+                        LookUp_Name =rec.Record_Name,
+                        Show_trans_button=rec.Record_Status.HasValue? rec.Record_Status.Value? false: true: true,
+                        LookUp_Status = rec.Record_Status.HasValue? rec.Record_Status.Value? "Transactional": "Active": "Inactive",
+                        TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                    };
+
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+        public ActionResult Struc_Division_Read([DataSourceRequest]DataSourceRequest request, string text)
+        {
+            List<LookUpTablesViewModel> collection_recs = new List<LookUpTablesViewModel>();
+
+            var DB_Recs =  _strucDivisionRepository.GetAllRecords().ToList();
+
+            int _count =  DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+   
+                    LookUpTablesViewModel srec = new LookUpTablesViewModel
+                    {
+                        LookUp_Id = rec.Record_Id,
+                        LookUp_Name =rec.Record_Name,
+                        ParentLink_Id=rec.Directorate_Id,
+                        Show_trans_button=rec.Record_Status.HasValue? rec.Record_Status.Value? false: true: true,
+                        LookUp_Status = rec.Record_Status.HasValue? rec.Record_Status.Value? "Transactional": "Active": "Inactive",
+                        Category = new DropDownListViewModel()
+                        {
+                            DropDown_IntId = rec.Directorate_Id,
+                            DropDown_Name = _strucDirectorateRepository.GetRecord(rec.Directorate_Id).Record_Name
+                        },
+                        TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                    };
+
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
         public ActionResult Trans_ActivityType_Read([DataSourceRequest]DataSourceRequest request, string text)
         {
 
@@ -1480,6 +2357,311 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(collection_recs.ToDataSourceResult(request));
         }
 
+        public ActionResult Trans_StrucDirectorate_Read([DataSourceRequest]DataSourceRequest request, string text)
+        {
+
+
+            List<LookUpTablesViewModel> collection_recs = new List<LookUpTablesViewModel>();
+
+            var DB_Recs =  _transStrucDirectorateRepository.GetAllRecords().ToList();
+
+            int _count = DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+
+                    LookUpTablesViewModel srec = new LookUpTablesViewModel
+                    {
+                        LookUp_Id = rec.Record_Id,
+                        Trans_LookUp_Id=rec.Transaction_Id,
+                        LookUp_Name =_strucDirectorateRepository.GetRecord(rec.Record_Id).Record_Name,
+                        TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                    };
+
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+        public ActionResult Trans_StrucDivision_Read([DataSourceRequest]DataSourceRequest request, string text)
+        {
+
+
+            List<LookUpTablesViewModel> collection_recs = new List<LookUpTablesViewModel>();
+
+            var DB_Recs =  _transStrucDivisionRepository.GetAllRecords().ToList();
+
+            int _count = DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+
+                    LookUpTablesViewModel srec = new LookUpTablesViewModel
+                    {
+                        
+                        Trans_LookUp_Id=rec.Transaction_Id,
+                        Trans_Parent_LookUp_Id=rec.TransDirectorate_Id,
+                        ParentLink_Id=rec.Division_Id,
+                        LookUp_Name =_strucDivisionRepository.GetRecord(rec.Division_Id).Record_Name,
+                        Category = new DropDownListViewModel()
+                        {
+                            DropDown_IntId = _transStrucDirectorateRepository.GetRecord(rec.TransDirectorate_Id).Record_Id,
+                            DropDown_Name = _strucDirectorateRepository.GetRecord(_transStrucDirectorateRepository.GetRecord(rec.TransDirectorate_Id).Record_Id).Record_Name
+                        },
+                        TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                    };
+
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+        
+        public ActionResult DirectorateStaffMapping_Read([DataSourceRequest]DataSourceRequest request, string recid)
+        {
+
+
+            List<EmployeeMappingViewModel> collection_recs = new List<EmployeeMappingViewModel>();
+
+            if (recid != null)
+            {
+              //  AUDAProgramme prog = _programmeRepository.GetAUDAProgramme(Int32.Parse(programmeid));
+                var DB_Recs = _strucDirStaffMappingRepository.GetAllRecordsByDirectorate(Int32.Parse(recid));
+
+                int _count = DB_Recs.Count();
+                if (_count > 0)
+                {
+                    foreach (var rec in DB_Recs)
+                    {
+                        Employee employee = _employeeRepository.GetEmployee(rec.EmployeePK);
+
+                        string profilepicpath = "";
+                        if (employee.PhotoPath == null)
+                        {
+                            if (employee.Gender == 1)
+                                profilepicpath = "appdirectory/profilepics/male_null_profile.jpg";
+                            else if (employee.Gender == 2)
+                                profilepicpath = "appdirectory/profilepics/female_null_profile.jpg";
+                            else
+                                profilepicpath = "appdirectory/profilepics/male_null_profile.jpg";
+                        }
+                        else
+                        {
+                            profilepicpath = "appdirectory/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+                        }
+
+                        EmployeeMappingViewModel srec = new EmployeeMappingViewModel
+                        {
+                            EmployeePK = employee.Id,
+                            Transaction_Id=rec.Transaction_Id,
+                            EmployeeName = employee.First_Name + " " + employee.Last_Name,
+                            Staff_Number = rec.Staff_Number,
+                            profilepicpath = profilepicpath,
+                            Directorate_Id=rec.Directorate_Id,
+                            Mapping_Status_String = rec.Mapping_Status == true ? "Enabled" : "Disabled",
+                            Primary_String = rec.PrimaryDirectorate == true ? "Primary" : "Secondary",
+                            TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+
+                        };
+
+                        collection_recs.Add(srec);
+                    }
+                }
+            }
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+
+        public ActionResult DirectorateDirectorMapping_Read([DataSourceRequest]DataSourceRequest request, string recid)
+        {
+
+
+            List<EmployeeMappingViewModel> collection_recs = new List<EmployeeMappingViewModel>();
+
+            if (recid != null)
+            {
+              //  AUDAProgramme prog = _programmeRepository.GetAUDAProgramme(Int32.Parse(programmeid));
+                var DB_Recs = _strucDirectorRepository.GetAllRecordsByDirectorate(Int32.Parse(recid));
+
+                int _count = DB_Recs.Count();
+                if (_count > 0)
+                {
+                    foreach (var rec in DB_Recs)
+                    {
+                        Employee employee = _employeeRepository.GetEmployee(rec.EmployeePK);
+
+                        string profilepicpath = "";
+                        if (employee.PhotoPath == null)
+                        {
+                            if (employee.Gender == 1)
+                                profilepicpath = "appdirectory/profilepics/male_null_profile.jpg";
+                            else if (employee.Gender == 2)
+                                profilepicpath = "appdirectory/profilepics/female_null_profile.jpg";
+                            else
+                                profilepicpath = "appdirectory/profilepics/male_null_profile.jpg";
+                        }
+                        else
+                        {
+                            profilepicpath = "appdirectory/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+                        }
+
+                        EmployeeMappingViewModel srec = new EmployeeMappingViewModel
+                        {
+                            EmployeePK = employee.Id,
+                            Transaction_Id=rec.Transaction_Id,
+                            EmployeeName = employee.First_Name + " " + employee.Last_Name,
+                            Staff_Number = rec.Staff_Number,
+                            profilepicpath = profilepicpath,
+                            Directorate_Id=rec.Directorate_Id,
+                            Mapping_Status_String = rec.Status.HasValue? rec.Status.Value? "Substantive": "Not Assigned": "Inactive",
+                            TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+
+                        };
+
+                        collection_recs.Add(srec);
+                    }
+                }
+            }
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+        public ActionResult DivisionHeadMapping_Read([DataSourceRequest]DataSourceRequest request, string recid)
+        {
+
+
+            List<EmployeeMappingViewModel> collection_recs = new List<EmployeeMappingViewModel>();
+
+            if (recid != null)
+            {
+              //  AUDAProgramme prog = _programmeRepository.GetAUDAProgramme(Int32.Parse(programmeid));
+               // var DB_Recs = _strucDirectorRepository.GetAllRecordsByDirectorate(Int32.Parse(recid));
+                var DB_Recs = _strucDivHeadRepository.GetAllRecordsByDivision(Int32.Parse(recid));
+
+
+                int _count = DB_Recs.Count();
+                if (_count > 0)
+                {
+                    foreach (var rec in DB_Recs)
+                    {
+                        Employee employee = _employeeRepository.GetEmployee(rec.EmployeePK);
+
+                        string profilepicpath = "";
+                        if (employee.PhotoPath == null)
+                        {
+                            if (employee.Gender == 1)
+                                profilepicpath = "appdirectory/profilepics/male_null_profile.jpg";
+                            else if (employee.Gender == 2)
+                                profilepicpath = "appdirectory/profilepics/female_null_profile.jpg";
+                            else
+                                profilepicpath = "appdirectory/profilepics/male_null_profile.jpg";
+                        }
+                        else
+                        {
+                            profilepicpath = "appdirectory/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+                        }
+
+                        EmployeeMappingViewModel srec = new EmployeeMappingViewModel
+                        {
+                            EmployeePK = employee.Id,
+                            Transaction_Id=rec.Transaction_Id,
+                            EmployeeName = employee.First_Name + " " + employee.Last_Name,
+                            Staff_Number = rec.Staff_Number,
+                            profilepicpath = profilepicpath,
+                            Directorate_Id=rec.Directorate_Id,
+                            Mapping_Status_String = rec.Status.HasValue? rec.Status.Value? "Substantive": "Not Assigned": "Inactive",
+                            TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+
+                        };
+
+                        collection_recs.Add(srec);
+                    }
+                }
+            }
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+
+
+
+        public ActionResult DivisionStaffMapping_Read([DataSourceRequest]DataSourceRequest request, string recid)
+        {
+
+
+            List<EmployeeMappingViewModel> collection_recs = new List<EmployeeMappingViewModel>();
+
+            if (recid != null)
+            {
+              //  AUDAProgramme prog = _programmeRepository.GetAUDAProgramme(Int32.Parse(programmeid));
+                var DB_Recs = _strucDivStaffMappingRepository.GetAllRecordsByDivision(Int32.Parse(recid));
+
+                int _count = DB_Recs.Count();
+                if (_count > 0)
+                {
+                    foreach (var rec in DB_Recs)
+                    {
+                        Employee employee = _employeeRepository.GetEmployee(rec.EmployeePK);
+
+                        string profilepicpath = "";
+                        if (employee.PhotoPath == null)
+                        {
+                            if (employee.Gender == 1)
+                                profilepicpath = "appdirectory/profilepics/male_null_profile.jpg";
+                            else if (employee.Gender == 2)
+                                profilepicpath = "appdirectory/profilepics/female_null_profile.jpg";
+                            else
+                                profilepicpath = "appdirectory/profilepics/male_null_profile.jpg";
+                        }
+                        else
+                        {
+                            profilepicpath = "appdirectory/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+                        }
+
+                        EmployeeMappingViewModel srec = new EmployeeMappingViewModel
+                        {
+                            EmployeePK = employee.Id,
+                            Transaction_Id=rec.Transaction_Id,
+                            EmployeeName = employee.First_Name + " " + employee.Last_Name,
+                            Staff_Number = rec.Staff_Number,
+                            profilepicpath = profilepicpath,
+                            Directorate_Id=rec.Directorate_Id,
+                            Division_Id=rec.Division_Id,
+                            Mapping_Status_String = rec.Mapping_Status == true ? "Enabled" : "Disabled",
+                            Primary_String = rec.PrimaryDivision == true ? "Primary" : "Secondary",
+                            TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+
+                        };
+
+                        collection_recs.Add(srec);
+                    }
+                }
+            }
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
         //**************GRID COMMAND ACTIONS******************///
         [HttpPost]
         public ActionResult MakeActivityTypeTrans(string recid)
@@ -1504,6 +2686,778 @@ namespace AUDANEPAD_Integrated.Controllers
             {
                 return Json(new { rtnmsg = "error" });
             }
+        }
+
+        [HttpPost]
+        public ActionResult MakeDirectorateTrans(string recid)
+        {
+            try
+            {
+                Struc_Directorate rec = _strucDirectorateRepository.GetRecord(Int32.Parse(recid));
+                rec.Record_Status=true;
+                _strucDirectorateRepository.Update(rec);
+
+                Trans_StrucDirectorate rec_trans = new Trans_StrucDirectorate
+                {
+                    Transaction_Id = Guid.NewGuid().ToString(),
+                    Record_Id = rec.Record_Id,
+                    TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                };
+                _transStrucDirectorateRepository.Add(rec_trans);
+
+                 return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult MakeDivisionTrans(string recid)
+        {
+            try
+            {
+                Struc_Division rec = _strucDivisionRepository.GetRecord(Int32.Parse(recid));
+                rec.Record_Status=true;
+                _strucDivisionRepository.Update(rec);
+
+                Trans_StrucDivision rec_trans = new Trans_StrucDivision
+                {
+                    Transaction_Id = Guid.NewGuid().ToString(),
+                    Division_Id = rec.Record_Id,
+                    TransDirectorate_Id=_transStrucDirectorateRepository.GetRecordByMasterStrucDirectorateId(rec.Directorate_Id).Transaction_Id,
+                    TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                };
+                _transStrucDivisionRepository.Add(rec_trans);
+
+                 return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+        }
+
+        //**************KENDO WINDOW PARTIAL VIEWS******************///
+        public ActionResult AddStrucDivision()
+        {
+            LookUpTablesViewModel model = new LookUpTablesViewModel
+            {
+            };
+
+            return PartialView("_AddStrucDivision", model);
+        }
+
+
+        public ActionResult EditStaffDirectorateMapping(string transid)
+        {
+            Struc_DirStaffMapping rec = _strucDirStaffMappingRepository.GetRecord(transid);
+            EmployeeMappingViewModel model = new EmployeeMappingViewModel
+            {
+                Transaction_Id=rec.Transaction_Id,
+                EmployeePK=rec.EmployeePK,
+                Directorate_Id=rec.Directorate_Id,
+                Directorate_Name = _strucDirectorateRepository.GetRecord(rec.Directorate_Id).Record_Name,
+                EmployeeName=_employeeRepository.GetEmployee(rec.EmployeePK).First_Name+" "+_employeeRepository.GetEmployee(rec.EmployeePK).Last_Name,
+                Mapping_Status=rec.Mapping_Status,
+                Primary=rec.PrimaryDirectorate
+
+
+            };
+
+
+
+
+            return PartialView("_EditStaffDirectorateMapping", model);
+        }
+        public ActionResult EditStaffDivisionMapping(string transid)
+        {
+            Struc_DivStaffMapping rec = _strucDivStaffMappingRepository.GetRecord(transid);
+            EmployeeMappingViewModel model = new EmployeeMappingViewModel
+            {
+                Transaction_Id=rec.Transaction_Id,
+                EmployeePK=rec.EmployeePK,
+                Directorate_Id=rec.Directorate_Id,
+                Division_Id=rec.Division_Id,
+                Directorate_Name = _strucDirectorateRepository.GetRecord(rec.Directorate_Id).Record_Name,
+                Division_Name=_strucDivisionRepository.GetRecord(rec.Division_Id).Record_Name,
+                EmployeeName=_employeeRepository.GetEmployee(rec.EmployeePK).First_Name+" "+_employeeRepository.GetEmployee(rec.EmployeePK).Last_Name,
+                Mapping_Status=rec.Mapping_Status,
+                Primary=rec.PrimaryDivision
+
+
+            };
+
+
+
+
+            return PartialView("_EditStaffDivisionMapping", model);
+        }
+
+        [HttpPost]
+        public ActionResult EditStaffDirectorateMapping(EmployeeMappingViewModel model)
+        {
+            
+            Struc_DirStaffMapping rec = _strucDirStaffMappingRepository.GetRecord(model.Transaction_Id);
+
+            
+            if (rec != null)
+            {
+                Struc_DirStaffMapping primarydir=_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(rec.EmployeePK);
+
+                Struc_DirStaffMapping thisprimarydir=_strucDirStaffMappingRepository.GetRecordByEmployeeAndThisPrimaryDirectorate(rec.EmployeePK, model.Directorate_Id);
+
+                if(model.Primary==false || (model.Primary==true && primarydir ==null) || thisprimarydir!=null)
+                {
+                    try
+                    {
+
+                        rec.Mapping_Status=model.Mapping_Status;
+                        rec.PrimaryDirectorate=model.Primary;
+
+                        _strucDirStaffMappingRepository.Update(rec);
+
+                        Struc_DivStaffMapping primarydivrec=_strucDivStaffMappingRepository.GetRecordByEmployeeAndPrimaryDivision(rec.EmployeePK);
+
+                        if(primarydivrec!=null)
+                        {
+                            if(primarydivrec.Directorate_Id==model.Directorate_Id)
+                            {
+                                primarydivrec.PrimaryDivision=false;
+                                _strucDivStaffMappingRepository.Update(primarydivrec);
+
+                            }
+                        }
+
+                        return Json(new { rtnmsg = "success" });
+                    }
+                    catch (Exception)
+                    {
+                        return Json(new { rtnmsg = "error" });
+                    }
+                }
+                else
+                {
+                    return Json(new { rtnmsg = "otherprimaryalreadyexist" });
+                }
+            }
+            else
+            {
+                return Json(new { rtnmsg = "doesnotexist" });
+            }
+
+
+
+        }
+
+        [HttpPost]
+        public ActionResult EditStaffDivisionMapping(EmployeeMappingViewModel model)
+        {
+            
+            Struc_DivStaffMapping rec = _strucDivStaffMappingRepository.GetRecord(model.Transaction_Id);
+
+
+            if (rec != null)
+            {
+                Struc_DivStaffMapping thisprimarydiv=_strucDivStaffMappingRepository.GetRecordByEmployeeAndThisPrimaryDivision(rec.EmployeePK, model.Division_Id);
+                Struc_DivStaffMapping primarydiv=_strucDivStaffMappingRepository.GetRecordByEmployeeAndPrimaryDivision(rec.EmployeePK);
+
+                Struc_DirStaffMapping primarydir=_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(rec.EmployeePK);
+                Struc_DirStaffMapping thisprimarydir=_strucDirStaffMappingRepository.GetRecordByEmployeeAndThisPrimaryDirectorate(rec.EmployeePK, model.Directorate_Id);
+
+                
+
+                if(model.Primary==false || (model.Primary==true && thisprimarydir !=null && primarydiv==null) || (thisprimarydiv!=null && thisprimarydir!=null))
+                {
+                    try
+                    {
+
+                        rec.Mapping_Status=model.Mapping_Status;
+                        rec.PrimaryDivision=model.Primary;
+
+                        _strucDivStaffMappingRepository.Update(rec);
+
+                        return Json(new { rtnmsg = "success" });
+                    }
+                    catch (Exception)
+                    {
+                        return Json(new { rtnmsg = "error" });
+                    }
+                }
+                else
+                {
+                    return Json(new { rtnmsg = "notprimarydirectorate" });
+
+                }
+            }
+            else
+            {
+                return Json(new { rtnmsg = "doesnotexist" });
+            }
+
+
+
+        }
+
+
+        //**************AJAX ACTIONS******************///
+
+        [HttpPost]
+        public ActionResult AddStrucDivision(LookUpTablesViewModel record)
+        {
+
+            string returnmessage = "";
+
+
+            if (record != null && ModelState.IsValid)
+            {  
+                Struc_Division rec = _strucDivisionRepository.GetRecordByName(record.LookUp_Name);
+
+                if (rec == null && record.LookUp_Name !=null)
+                {
+
+                        var DB_Recs = _strucDivisionRepository.GetAllRecords();
+                        int _count = DB_Recs.Count();
+
+                        Struc_Division rec_to_add = new Struc_Division
+                        {
+                            Record_Id=_count+1,
+                            Record_Name=record.LookUp_Name,
+                            Directorate_Id=record.ParentLink_Id,
+                            Record_Status=null,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+                        _strucDivisionRepository.Add(rec_to_add);
+                        returnmessage = "success";
+                }    
+                else
+                {
+                    returnmessage = "alreadyexist";
+
+                }      
+                           
+            }
+            else
+            {
+                returnmessage = "error";
+
+            }
+            
+           return Json(new { rtnmsg = returnmessage });
+        }
+        //public async Task<ActionResult> AddStaffDirectorateMapping(string dirid, string empid, bool primaryid)
+        [HttpPost]
+        public async Task<ActionResult> AddStaffDirectorateMapping(EmployeeViewModel model)
+        {
+            Employee emp = _employeeRepository.GetEmployee(model.Employee_Id);
+            Struc_DirStaffMapping rec=_strucDirStaffMappingRepository.GetRecordByEmployeeAndDirectorate(model.Employee_Id, model.Directorate_Id);
+            IdentityResult _result;
+
+            Struc_DirStaffMapping primarydir=_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(model.Employee_Id);
+
+            if (rec == null)
+            {
+                if(model.PrimaryMain==false || (model.PrimaryMain==true && primarydir ==null))
+                {
+                    try
+                    {
+                        Struc_DirStaffMapping rec_to_add = new Struc_DirStaffMapping
+                        {
+                            Transaction_Id= Guid.NewGuid().ToString(),
+                            EmployeePK= model.Employee_Id,
+                            Staff_Number=emp.Staff_Number,
+                            IdentityUserId=emp.IdentityUserId,
+                            Directorate_Id= model.Directorate_Id,
+                            Mapping_Status=true,
+                            PrimaryDirectorate=model.PrimaryMain,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+
+                        _strucDirStaffMappingRepository.Add(rec_to_add);
+
+                        if(emp.IdentityUserId==null || emp.IdentityUserId=="")
+                        {
+                            var user = new ApplicationUser
+                            {
+                                UserName = emp.Email,
+                                Email = emp.Email,
+                                Staff_Number = emp.Staff_Number,
+                                Employee_Id = emp.Id,
+                                Admin_Generated = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+
+                            };
+
+                            // Store user data in AspNetUsers database table
+                            var result = await userManager.CreateAsync(user, "Compute112233");
+
+                            if (result.Succeeded)
+                            {
+                                //await signInManager.SignInAsync(user, isPersistent: false);
+
+
+                                emp.IdentityUserId = user.Id;
+                                //Update Employee Record
+                                var employee = _context.Employees.Attach(emp);
+                                employee.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                                _context.SaveChanges();
+
+                            }
+                            //SEND EMAIL WITH CREDENTIALS
+
+                            string content="<p>Dear "+ emp.First_Name+" "+emp.Last_Name+",</p>"+ 
+                                        "<p>&nbsp;</p>" +
+                                        "<p>Welcome to <strong>AUDA-NEPAD Integrated Planning Data System</strong>. An account has been created for you with the following credentials:</p>"+
+                                        "<p>&nbsp;</p>"+
+                                        "<p><strong>Username</strong>:"+" "+ emp.Email+"</p>"+
+                                        "<p><strong>Password</strong>: Compute112233</p>"+
+                                        "<p>&nbsp;</p>"+
+                                        "<p>You will be required to change the initial password when you login for the first time. Please ensure the password is not shared.&nbsp;</p>"+
+                                        "<p>&nbsp;</p>"+
+                                        "<p>Kind regards.</p>"+
+                                        "<p>AUDA-NEPAD Integrated Planning Data System Team</p>";
+
+                            var message = new Message(new string[] { emp.TestEmail}, "AUDA-NEPAD Integrated: Password Created", content);
+                            await _emailSender.SendEmailAsync(message);
+                        }
+
+                        Employee _emp = _employeeRepository.GetEmployee(model.Employee_Id);
+
+                        var _user = await userManager.FindByIdAsync(_emp.IdentityUserId);
+
+                        var isInRole = await userManager.IsInRoleAsync(_user, "Nepad Staff");
+
+                        if (!isInRole)
+                        {
+                            _result = await userManager.AddToRoleAsync(_user, "Nepad Staff");
+                        }
+
+
+                        return Json(new { rtnmsg = "success" });
+                    }
+                    catch (Exception)
+                    {
+                        return Json(new { rtnmsg = "error" });
+                    }
+                }
+                else
+                {
+                    return Json(new { rtnmsg = "otherprimaryalreadyexist" });
+
+                }
+            }
+            else
+            {
+                return Json(new { rtnmsg = "alreadyexist" });
+            }
+
+
+
+        }
+
+
+
+        [HttpPost]
+        public async Task<ActionResult> AddDirectorateDirectorMapping(EmployeeViewModel model)
+        {
+            Employee emp = _employeeRepository.GetEmployee(model.Employee_Id);
+            Struc_DirStaffMapping rec=_strucDirStaffMappingRepository.GetRecordByEmployeeAndDirectorate(model.Employee_Id, model.Directorate_Id);
+            IdentityResult _result;
+
+            Struc_DirStaffMapping primarydir=_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(model.Employee_Id);
+
+
+            if(primarydir !=null)
+            {
+                try
+                {
+                    Struc_Director rec_to_add = new Struc_Director
+                    {
+                        Transaction_Id= Guid.NewGuid().ToString(),
+                        EmployeePK= model.Employee_Id,
+                        Staff_Number=emp.Staff_Number,
+                        Directorate_Id= model.Directorate_Id,
+                        Status=true,
+                        StartDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day),
+                        TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                    };
+
+
+                    _strucDirectorRepository.Add(rec_to_add);
+
+                    Employee _emp = _employeeRepository.GetEmployee(model.Employee_Id);
+
+                    var _user = await userManager.FindByIdAsync(_emp.IdentityUserId);
+
+                    var isInRole = await userManager.IsInRoleAsync(_user, "Director");
+
+                    if (!isInRole)
+                    {
+                        _result = await userManager.AddToRoleAsync(_user, "Director");
+                    }
+                            
+
+                    return Json(new { rtnmsg = "success" });
+                }
+                catch (Exception)
+                {
+                    return Json(new { rtnmsg = "error" });
+                }
+            }
+            else
+            {
+                return Json(new { rtnmsg = "otherprimaryalreadyexist" });
+
+            }
+
+
+
+
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult> AddDivisionHeadMapping(EmployeeViewModel model)
+        {
+            Employee emp = _employeeRepository.GetEmployee(model.Employee_Id);
+           // Struc_DirStaffMapping rec=_strucDirStaffMappingRepository.GetRecordByEmployeeAndDirectorate(model.Employee_Id, model.Directorate_Id);
+            Struc_DivStaffMapping rec=_strucDivStaffMappingRepository.GetRecordByEmployeeAndDivision(model.Employee_Id, model.Division_Id);
+            IdentityResult _result;
+
+           // Struc_DirStaffMapping primarydir=_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(model.Employee_Id);
+
+            Struc_DivStaffMapping primaryrec=_strucDivStaffMappingRepository.GetRecordByEmployeeAndPrimaryDivision(model.Employee_Id);
+
+
+
+
+            if(primaryrec !=null)
+            {
+                try
+                {
+                    Struc_DivHead rec_to_add = new Struc_DivHead
+                    {
+                        Transaction_Id= Guid.NewGuid().ToString(),
+                        EmployeePK= model.Employee_Id,
+                        Staff_Number=emp.Staff_Number,
+                        Directorate_Id= model.Directorate_Id,
+                        Division_Id=model.Division_Id,
+                        Status=true,
+                        StartDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day),
+                        TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                    };
+
+                    _strucDivHeadRepository.Add(rec_to_add);
+
+                    Employee _emp = _employeeRepository.GetEmployee(model.Employee_Id);
+
+                    var _user = await userManager.FindByIdAsync(_emp.IdentityUserId);
+
+                    var isInRole = await userManager.IsInRoleAsync(_user, "Division Head");
+
+                    if (!isInRole)
+                    {
+                        _result = await userManager.AddToRoleAsync(_user, "Division Head");
+                    }
+                            
+
+                    return Json(new { rtnmsg = "success" });
+                }
+                catch (Exception)
+                {
+                    return Json(new { rtnmsg = "error" });
+                }
+            }
+            else
+            {
+                return Json(new { rtnmsg = "otherprimaryalreadyexist" });
+
+            }
+
+
+
+
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddStaffDivisionMapping(EmployeeViewModel model)
+        {
+            Employee emp = _employeeRepository.GetEmployee(model.Employee_Id);
+            Struc_DivStaffMapping rec=_strucDivStaffMappingRepository.GetRecordByEmployeeAndDivision(model.Employee_Id, model.Division_Id);
+            IdentityResult _result;
+
+            //Struc_DirStaffMapping primarydir=_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(model.Employee_Id);
+
+            Struc_DirStaffMapping thisprimarydir=_strucDirStaffMappingRepository.GetRecordByEmployeeAndThisPrimaryDirectorate(model.Employee_Id, model.Directorate_Id);
+
+            if (rec == null)
+            {
+                if(model.PrimaryMain==false || (model.PrimaryMain==true && thisprimarydir !=null))
+                {
+                    try
+                    {
+
+                        Struc_DivStaffMapping rec_to_add = new Struc_DivStaffMapping
+                        {
+                            Transaction_Id= Guid.NewGuid().ToString(),
+                            EmployeePK= model.Employee_Id,
+                            Staff_Number=emp.Staff_Number,
+                            IdentityUserId=emp.IdentityUserId,
+                            Directorate_Id= model.Directorate_Id,
+                            Division_Id=model.Division_Id,
+                            Mapping_Status=true,
+                            PrimaryDivision=model.PrimaryMain,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+
+                        _strucDivStaffMappingRepository.Add(rec_to_add);
+
+
+                        //Check if lowest role exist and add
+                        Employee _emp = _employeeRepository.GetEmployee(model.Employee_Id);
+                        var _user = await userManager.FindByIdAsync(_emp.IdentityUserId);
+                        var isInRole = await userManager.IsInRoleAsync(_user, "Nepad Staff");
+
+
+                        if (!isInRole)
+                        {
+                            _result = await userManager.AddToRoleAsync(_user, "Nepad Staff");
+                        }
+
+                        return Json(new { rtnmsg = "success" });
+                    }
+                    catch (Exception)
+                    {
+                        return Json(new { rtnmsg = "error" });
+                    }
+                }
+                else
+                {
+                    return Json(new { rtnmsg = "notprimarydirectorate" });
+
+                }
+            }
+            else
+            {
+                return Json(new { rtnmsg = "alreadyexist" });
+            }
+
+
+
+        }
+
+        //**************DROP DOWN READS******************///
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetAllTransDirectorate()
+        {
+            // IEnumerable<Employee> DB_Employees = new List<Employee>();
+            
+
+            var recs =  _transStrucDirectorateRepository.GetAllRecords().ToList();
+
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                   
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = rec.Record_Id,
+                            DropDown_Name = _strucDirectorateRepository.GetRecord(rec.Record_Id).Record_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+            return Json(collection_recs.ToList());
+
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetTransDivisionsByDirectorate(int directorate)
+        {
+            var recs =  _transStrucDivisionRepository.GetAllRecordsByDirectorate(_transStrucDirectorateRepository.GetRecordByMasterStrucDirectorateId(directorate).Transaction_Id).ToList();
+
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                   
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = rec.Division_Id,
+                            DropDown_Name = _strucDivisionRepository.GetRecord(rec.Division_Id).Record_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+                }
+            }
+
+            return Json(collection_recs.ToList());
+
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetDirMappStaff(int recid)
+        {
+            var recs =  _strucDirStaffMappingRepository.GetAllRecordsByDirectorate(recid).ToList();
+
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                    Employee employee = _employeeRepository.GetEmployee(rec.EmployeePK);
+                   
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = employee.Id,
+                            DropDown_Name = employee.First_Name + " " + employee.Last_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+                }
+            }
+
+            return Json(collection_recs.ToList());
+
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetDirPrimaryMappStaff(int recid)
+        {
+            var recs =  _strucDirStaffMappingRepository.GetAllRecordsByDirectorate(recid).ToList();
+
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                    Struc_DirStaffMapping thisprimarydir=_strucDirStaffMappingRepository.GetRecordByEmployeeAndThisPrimaryDirectorate(rec.EmployeePK, recid);
+
+                    if(thisprimarydir!=null)
+                    {
+                        Employee employee = _employeeRepository.GetEmployee(rec.EmployeePK);
+                    
+                        DropDownListViewModel srec = new DropDownListViewModel
+                        {
+                                DropDown_IntId = employee.Id,
+                                DropDown_Name = employee.First_Name + " " + employee.Last_Name
+                        };
+                        // EmployeeDropDownViewModel me = DB_Employees[_count];
+                        collection_recs.Add(srec);
+                    }
+                }
+            }
+
+            return Json(collection_recs.ToList());
+
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetDivPrimaryMappStaff(int recid)
+        {
+           
+            var recs =  _strucDivStaffMappingRepository.GetAllRecordsByDivision(recid).ToList();
+
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                    Struc_DivStaffMapping thisprimarydiv=_strucDivStaffMappingRepository.GetRecordByEmployeeAndThisPrimaryDivision(rec.EmployeePK, recid);
+
+                    if(thisprimarydiv!=null)
+                    {
+                        Employee employee = _employeeRepository.GetEmployee(rec.EmployeePK);
+                    
+                        DropDownListViewModel srec = new DropDownListViewModel
+                        {
+                                DropDown_IntId = employee.Id,
+                                DropDown_Name = employee.First_Name + " " + employee.Last_Name
+                        };
+                        // EmployeeDropDownViewModel me = DB_Employees[_count];
+                        collection_recs.Add(srec);
+                    }
+                }
+            }
+
+            return Json(collection_recs.ToList());
+
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetAllEmployee()
+        {
+            // IEnumerable<Employee> DB_Employees = new List<Employee>();
+            
+
+            var recs =  _employeeRepository.GetAllEmployee().ToList();
+
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                   
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = rec.Id,
+                            DropDown_Name = rec.First_Name+" "+rec.Last_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+            return Json(collection_recs.ToList());
+
         }
 
     }

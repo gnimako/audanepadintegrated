@@ -117,7 +117,7 @@
                                                         .Read(read => read.Action("Trans_ActivityType_Read", "Admin"))
                                                         .Model(model => 
                                                             {
-                                                                model.Id(p => p.LookUp_Id);
+                                                                model.Id(p => p.Trans_LookUp_Id);
                                                                 model.Field(field => field.TransactionDate).Editable(false);
                                                             })
                                                         

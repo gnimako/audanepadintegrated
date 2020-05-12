@@ -49,9 +49,20 @@ namespace AUDANEPAD_Integrated
                 options.Password.RequiredLength = 10;
                 options.Password.RequiredUniqueChars = 3;
                 options.Password.RequireNonAlphanumeric = false;
+                //options.Authentication.CookieLifetime = TimeSpan.FromHours(2); 
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                //options.ExpireTimeSpan = TimeSpan.FromSeconds(5);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                options.LoginPath = "/Account/Login";
+                options.SlidingExpiration = true;
+            });
+
+         
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
@@ -112,6 +123,9 @@ namespace AUDANEPAD_Integrated
             services.AddScoped<IStrategy_KeyPerformanceAreaRepository, ServiceStrategy_KeyPerformanceArea>();
             services.AddScoped<IStruc_DirectorateRepository, ServiceStruc_Directorate>();
             services.AddScoped<IStruc_DivisionRepository, ServiceStruc_Division>();
+            services.AddScoped<ILkUp_ProgrammeRepository, ServiceLkUp_Programme>();
+            services.AddScoped<ILkUp_ProjectRepository, ServiceLkUp_Project>();
+            
 
 
             services.AddScoped<ITrans_ActivityTypeRepository, ServiceTrans_ActivityType>();
@@ -137,12 +151,25 @@ namespace AUDANEPAD_Integrated
             services.AddScoped<ITrans_StrategyKeyPerformanceAreaRepository, ServiceTrans_StrategyKeyPerformanceArea>();
             services.AddScoped<ITrans_StrucDirectorateRepository, ServiceTrans_StrucDirectorate>();
             services.AddScoped<ITrans_StrucDivisionRepository, ServiceTrans_StrucDivision>();
+            services.AddScoped<IStruc_DirStaffMappingRepository, ServiceStruc_DirStaffMapping>();
+            services.AddScoped<IStruc_DivStaffMappingRepository, ServiceStruc_DivStaffMapping>();
+            services.AddScoped<IStruc_DirectorRepository, ServiceStruc_Director>();
+            services.AddScoped<IStruc_DirectorOICRepository, ServiceStruc_DirectorOIC>();
+            services.AddScoped<IStruc_DivHeadRepository, ServiceStruc_DivHead>();
+            services.AddScoped<IStruc_DivHeadOICRepository, ServiceStruc_DivHeadOIC>();
+            services.AddScoped<ITrans_ProgrammeRepository, ServiceTrans_Programme>();
+            services.AddScoped<ITrans_ProjectRepository, ServiceTrans_Project>();
+            
+            services.AddScoped<IEmailSender, ServiceEmailSender>();
 
 
             
 
 
-        
+            var emailConfig = Configuration
+                                .GetSection("EmailConfiguration")
+                                .Get<EmailConfiguration>();
+                                services.AddSingleton(emailConfig);
            
 
            

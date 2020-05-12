@@ -26,6 +26,8 @@ namespace AUDANEPAD_Integrated.Models
         public string Last_Name { get; set; }
         public string Email { get; set; }
 
+        public string TestEmail { get; set; }
+
         //[DataType(DataType.Date)]
         //[Column(TypeName = "Date")]
         public LocalDate DOB { get; set; }

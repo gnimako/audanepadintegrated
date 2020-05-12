@@ -67,6 +67,15 @@ namespace AUDANEPAD_Integrated.Services
             return rec;
         }
 
+
+        public  Struc_Division GetRecordByNameAndDirectorate(string name, int Directorate_Id)
+        {
+            var rec = context.Struc_Division
+                                  .Where(s => s.Record_Name == name && s.Directorate_Id==Directorate_Id)
+                                  .FirstOrDefault();
+            return rec;
+        }
+
         
 
         public Struc_Division Update(Struc_Division recChanges)

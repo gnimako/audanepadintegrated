@@ -39,6 +39,10 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<Strategy_KeyPerformanceArea> Strategy_KeyPerformanceArea { get; set; }
         public DbSet<Struc_Directorate> Struc_Directorate { get; set; }
         public DbSet<Struc_Division> Struc_Division { get; set; }
+         public DbSet<LkUp_Programme> LkUp_Programme { get; set; }
+          public DbSet<LkUp_Project> LkUp_Project { get; set; }
+
+        
         
         
 
@@ -66,6 +70,16 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<Trans_StrategyKeyPerformanceArea> Trans_StrategyKeyPerformanceArea { get; set; }
         public DbSet<Trans_StrucDirectorate> Trans_StrucDirectorate { get; set; }
         public DbSet<Trans_StrucDivision> Trans_StrucDivision { get; set; }
+
+        public DbSet<Struc_DirStaffMapping> Struc_DirStaffMapping { get; set; }
+        public DbSet<Struc_DivStaffMapping> Struc_DivStaffMapping { get; set; }
+        public DbSet<Struc_Director> Struc_Director { get; set; }
+        public DbSet<Struc_DirectorOIC> Struc_DirectorOIC { get; set; }
+        public DbSet<Struc_DivHead> Struc_DivHead { get; set; }
+        public DbSet<Struc_DivHeadOIC> Struc_DivHeadOIC { get; set; }
+        public DbSet<Trans_Programme> Trans_Programme { get; set; }
+        public DbSet<Trans_Project> Trans_Project { get; set; }
+        
 
 
         
@@ -189,6 +203,16 @@ namespace AUDANEPAD_Integrated.Models
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
 
+            modelBuilder.Entity<LkUp_Programme>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<LkUp_Project>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            
+
 
 
 
@@ -288,6 +312,78 @@ namespace AUDANEPAD_Integrated.Models
             modelBuilder.Entity<Trans_StrucDivision>()
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
+
+
+            modelBuilder.Entity<Struc_DirStaffMapping>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Struc_DivStaffMapping>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+
+            modelBuilder.Entity<Struc_Director>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Struc_Director>()
+            .Property(e => e.StartDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Struc_Director>()
+            .Property(e => e.EndDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Struc_DivHead>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Struc_DivHead>()
+            .Property(e => e.StartDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Struc_DivHead>()
+            .Property(e => e.EndDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Struc_DirectorOIC>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Struc_DirectorOIC>()
+            .Property(e => e.StartDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Struc_DirectorOIC>()
+            .Property(e => e.EndDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Struc_DivHeadOIC>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Struc_DivHeadOIC>()
+            .Property(e => e.StartDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Struc_DivHeadOIC>()
+            .Property(e => e.EndDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Trans_Programme>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Trans_Project>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+
+            
+
+
+            
 
 
 

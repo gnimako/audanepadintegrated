@@ -9,6 +9,7 @@ namespace AUDANEPAD_Integrated.Interfaces
         Struc_Division GetRecord(int Id);
 
         Struc_Division GetRecordByName(string name);
+        Struc_Division GetRecordByNameAndDirectorate(string name, int Directorate_Id);
         IEnumerable<Struc_Division> GetAllRecords();
 
         IEnumerable<Struc_Division> GetAllRecordsByDirectorate(int Directorate_Id);
