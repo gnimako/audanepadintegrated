@@ -1,0 +1,7 @@
+@model DropDownListViewModel
+
+@(Html.Kendo().DropDownListFor(m => m)
+        .DataValueField("DropDown_IntId")
+        .DataTextField("DropDown_Name")
+        .BindTo((System.Collections.IEnumerable)ViewData["categories"])
+)

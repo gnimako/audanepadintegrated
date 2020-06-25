@@ -1,0 +1,200 @@
+@model EmployeeViewModel
+@{
+    ViewBag.Title = "AUDA-NEPAD Integrated System";
+    Layout = "_AdminLayout";
+
+}
+
+  <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header" style="background-color:#d1e0e6">
+                                <h4 class="m-b-0" style="color:#1a262b">Initialize LookUp Tables</h4>
+                            </div>
+
+
+
+                            <div class="card-body">
+                                 <input hidden asp-for="Id" class="k-textbox" style="width:100%" value="@Model.Id">
+                                 <input hidden asp-for="IdentityUserId" class="k-textbox" style="width:100%" value="@Model.IdentityUserId">
+                                    <input hidden asp-for="ExistingPhotoPath" />
+                                    <div class="form-body">
+                                        <h3 class="card-title">All LookUp Tables</h3>
+                                        <hr>
+
+                                            <div id="targetDivStaffa" class="rssedStaffa">
+                                            </div>
+                                        <div class="row p-t-20">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                            <a class="k-button"  id="btnLoadAllLookUps" style="color:#000;">
+                                                <span class="k-icon k-i-reset"></span>&nbsp; Load and Iniitialize All LookUps
+                                            </a>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                            </div>
+
+  </div>
+
+  <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+
+                      <div class="card-body">
+                                 <input hidden asp-for="Id" class="k-textbox" style="width:100%" value="@Model.Id">
+                                 <input hidden asp-for="IdentityUserId" class="k-textbox" style="width:100%" value="@Model.IdentityUserId">
+                                    <input hidden asp-for="ExistingPhotoPath" />
+                                    <div class="form-body">
+    
+
+
+
+                                        <h3 class="card-title">For Testing Purposes</h3>
+                                        <hr>
+
+                                            <div id="targetDivStaffb" class="rssedStaffb">
+                                            </div>
+                                        <div class="row p-t-20">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                            <a class="k-button"  id="btnSetTestStaffEmails" style="color:#000;">
+                                                <span class="k-icon k-i-reset"></span>&nbsp; Set Testing Emails for Staff
+                                            </a>
+                                            <br \>
+                                            <br \>
+                                            <br \>
+                                            <br \>
+                                            <a class="k-button"  id="btnDeleteAllTestData" style="color:#000;">
+                                                <span class="k-icon k-i-delete"></span>&nbsp; Delete All Test Data
+                                            </a>
+                                            </div>
+
+                                        </div>
+
+
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+  </div>
+  
+  <script type="text/javascript">
+
+
+
+
+$("#btnLoadAllLookUps").click(function () {
+
+  
+        $.ajax({
+            type: "POST",
+            url: '/Admin/LoadAllLookUps',     //your action
+            dataType: 'json',
+            success: function (result) {
+                var response = result.rtnmsg;
+
+                if (response == "success") {
+                            $('#targetDivStaffa').empty();
+                            $('<span class="alert alert-success" style="display: block;font-size: 100%"><b>Success : All Look Up Tables Loaded Successfully. </b> </span>').appendTo('.rssedStaffa');
+
+                }
+                else if (response == "error") {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Error occurred whiles loading</b> </span>').appendTo('.rssedStaffa');
+
+                }
+                else {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Unknown Error: Please try Again</b> </span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
+
+            },
+            error: function (data) {
+                    $('#targetDivStaffa').empty();
+                    $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Error: Error Occurred whiles saving</b> </span>').appendTo('.rssedStaffa');
+                    //$('#targetDivStaffa').empty();
+            }
+        })
+
+    });
+
+
+    $("#btnSetTestStaffEmails").click(function () {
+
+  
+        $.ajax({
+            type: "POST",
+            url: '/Admin/SetTestStaffEmails',     //your action
+            dataType: 'json',
+            success: function (result) {
+                var response = result.rtnmsg;
+
+                if (response == "success") {
+                            $('#targetDivStaffb').empty();
+                            $('<span class="alert alert-success" style="display: block;font-size: 100%"><b>Success : Emails Loaded Successfully. </b> </span>').appendTo('.rssedStaffb');
+
+                }
+                else if (response == "error") {
+                        $('#targetDivStaffb').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Error occurred whiles loading</b> </span>').appendTo('.rssedStaffb');
+
+                }
+                else {
+                        $('#targetDivStaffb').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Unknown Error: Please try Again</b> </span>').appendTo('.rssedStaffb');
+                        //$('#targetDivStaffa').empty();
+                }
+
+            },
+            error: function (data) {
+                    $('#targetDivStaffb').empty();
+                    $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Error: Error Occurred whiles saving</b> </span>').appendTo('.rssedStaffb');
+                    //$('#targetDivStaffa').empty();
+            }
+        })
+
+    });
+
+    $("#btnDeleteAllTestData").click(function () {
+
+  
+        $.ajax({
+            type: "POST",
+            url: '/Admin/DeleteAllTestData',     //your action
+            dataType: 'json',
+            success: function (result) {
+                var response = result.rtnmsg;
+
+                if (response == "success") {
+                            $('#targetDivStaffb').empty();
+                            $('<span class="alert alert-success" style="display: block;font-size: 100%"><b>Success : Test Data Deleted Successfully. </b> </span>').appendTo('.rssedStaffb');
+
+                }
+                else if (response == "error") {
+                        $('#targetDivStaffb').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Error occurred whiles loading</b> </span>').appendTo('.rssedStaffb');
+
+                }
+                else {
+                        $('#targetDivStaffb').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Unknown Error: Please try Again</b> </span>').appendTo('.rssedStaffb');
+                        //$('#targetDivStaffa').empty();
+                }
+
+            },
+            error: function (data) {
+                    $('#targetDivStaffb').empty();
+                    $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Error: Error Occurred whiles saving</b> </span>').appendTo('.rssedStaffb');
+                    //$('#targetDivStaffa').empty();
+            }
+        })
+
+    });
+          
+
+ </script>

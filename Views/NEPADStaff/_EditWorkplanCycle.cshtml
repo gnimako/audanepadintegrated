@@ -1,0 +1,286 @@
+
+
+
+
+@model WorkplansViewModel
+
+<form id="addform">
+
+    <input hidden asp-for="Employee_Id" class="k-textbox" style="width:100%" value="@Model.Employee_Id">
+    <input hidden asp-for="Transaction_Id" class="k-textbox" style="width:100%" value="@Model.Transaction_Id">
+    <div class="form-body" style="padding: 1.25rem;">
+        <label style="color: #1b406c;">Year:  </label>
+        &nbsp; &nbsp;
+        <span style="color: #0b192b;">@Model.FisYear</span>
+
+
+        <br />
+ 
+        <label style="color: #1b406c;">Period:  </label>
+        &nbsp; &nbsp;
+        <span style="color: #0b192b;">@Model.FisPeriod</span>
+ 
+        <br />
+        <br />
+        <br />
+
+        <label>Activate Workplan Cycle? </label>
+        &nbsp; &nbsp;
+        @(Html.Kendo().SwitchFor(m=>m.WPStatus)
+               // .Name("PrimaryDirectorate")
+                .Messages(c => c.Checked("YES").Unchecked("NO"))
+               // .Events(c => c.Change("onChange"))
+        )
+
+        <br />
+        <br />
+
+
+
+        <br />
+
+
+
+
+        <br />
+        <div id="targetDivStaffa" class="rssedStaffa">
+        </div>
+        <br />
+        <br />
+        <div style="align-content:center; text-align:center">
+            <a class="k-button" id="btnSubmita">
+                <span class="k-icon k-i-save"></span> Save
+            </a>
+
+            <a class="k-button" id="btnCloseStaffa">
+                <span class="k-icon k-i-cancel"></span> Close
+            </a>
+        </div>
+
+    </div>
+
+
+
+
+
+</form>
+
+
+
+<style>
+
+/*SWITCH ON*/
+
+    .k-switch-on .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28
+    }
+
+    .k-switch-on:hover .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:hover .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+    .k-switch-on:active .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4
+    }
+
+    .k-switch-on:active .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28
+    }
+
+
+
+    .k-switch-on:visited .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:visited .k-switch-handle{
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+    .k-switch-on:focus .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:focus .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+
+
+    /*SWITCH OFF*/
+
+    .k-switch-off .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+
+    .k-switch-off:hover .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:hover .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+    .k-switch-off:active .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:active .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+    .k-switch-off:visited .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:visited .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+    .k-switch-off:focus .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:focus .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+
+</style>
+
+
+
+
+<script>$("#btnCloseStaffa").click(function () {
+        $(".k-window-content").each(function () {
+            $(this).data("kendoWindow").close();
+        });
+    });
+
+
+
+$("#btnSubmita").click(function () {
+
+  
+        $.ajax({
+            type: "POST",
+            url: '/Admin/EditWorkplanCycle',     //your action
+            data: $('#addform').serialize(),   //your form name.it takes all the values of model
+            dataType: 'json',
+            success: function (result) {
+                var response = result.rtnmsg;
+
+                if (response == "success") {
+                            $('#targetDivStaffa').empty();
+                            $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Cycle Saved Successfully. </span>').appendTo('.rssedStaffa');
+
+                             
+                            var grid = $("#grid").data("kendoGrid"); 
+
+                            grid.dataSource.transport.options.read.url = "/Admin/WorkplanCurrentCycles_Read";
+                            grid.dataSource.read();
+                            grid.refresh();
+
+                }
+                else if (response == "pkerror") {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to Save. Cycle Already Exist.  Please Select different options </span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
+                else if (response == "createerror") {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to create cycle</span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
+                else if (response == "doesnotexist") {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">No Record: Cycle does not exist</span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
+                else {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
+
+            },
+            error: function (data) {
+                    $('#targetDivStaffa').empty();
+                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffa');
+                    //$('#targetDivStaffa').empty();
+            }
+        })
+    
+        return false;
+    });</script>
+
+
+
+
+
+
+
+
+
+
+

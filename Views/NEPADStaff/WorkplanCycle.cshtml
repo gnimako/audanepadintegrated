@@ -1,0 +1,606 @@
+@model EmployeeViewModel
+@{
+    ViewBag.Title = "AUDA-NEPAD Integrated Planning System";
+    Layout = "_NEPADStaffLayout2";
+
+}
+
+
+
+<h1 style="font-family: Faktslab;">Workplan Cycles</h1>
+<div class="separator-breadcrumb border-top"></div>
+
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-5">
+            <div class="card-body">
+                <div class="card-title mb-3">Current Cycles</div>
+
+                <form id="addformmain">
+                <input hidden asp-for="IdentityUserId" class="k-textbox" style="width:100%" value="@Model.IdentityUserId">
+                    <input hidden asp-for="Employee_Id" class="k-textbox" style="width:100%" value="@Model.Id">
+
+                    <div class="form-group row" style="padding: 1.25rem;">
+                        <a class="k-button " id="btnAdd" style="color: #003f59;">
+                                        <span class="k-icon k-i-plus-outline"></span> Add A Cycle
+                        </a>
+                        @(Html.Kendo().Grid<WorkplansViewModel>()
+                                        .Name("grid")
+                                        .Columns(columns =>
+                                        {
+
+                                            columns.Bound(c => c.Employee_Id).Hidden();
+                                            columns.Bound(c => c.Transaction_Id).Hidden();
+                                            columns.Bound(c => c.FisYear).Title("Cycle Year");
+                                            columns.Bound(c => c.FisPeriod).Title("Period");
+                                            columns.Bound(c => c.WPStatus_String).Title("Status");
+                                            columns.Bound(c => c.TransactionDate).Title("Transaction Date").Format("{0: dd-MM-yyyy}") ;
+                                            columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("editstaffdirmap"));
+                                            columns.Command(command => command.Custom(" Close Cycle").IconClass("k-icon k-i-lock").Click("closecycle").Visible("editVisible"));
+                                        })
+                                        .HtmlAttributes(new { style = "height: 400px;" })
+                                        .Scrollable()
+                                        .Groupable()
+                                        .Sortable()
+                                        .Navigatable()
+                                        .Filterable()
+                                        .Pageable(pageable => pageable
+                                            .Refresh(true)
+                                            .PageSizes(true)
+                                            .ButtonCount(5))
+                                        .DataSource(dataSource => dataSource
+                                            .Ajax()
+                                            .Sort(sort => sort.Add("FisYear").Ascending())
+                                            .Read(read => read
+                                                            .Action("WorkplanCurrentCycles_Read", "Admin"))
+                                            .Model(model => model.Id(p => p.Transaction_Id))
+                                            //.Destroy(destroy => destroy.Action("Struc_DirStaffMapping_Delete", "Admin"))
+                                            .PageSize(20)
+                                            .Events(events => events.Error("error_handler")
+                                                                .RequestEnd("onRequestEnd"))
+                                        )
+                                    )
+                    </div>
+
+        
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-5">
+            <div class="card-body">
+                <div class="card-title mb-3">Closed Cycles</div>
+
+                <form id="addformmain">
+                <input hidden asp-for="IdentityUserId" class="k-textbox" style="width:100%" value="@Model.IdentityUserId">
+                    <input hidden asp-for="Employee_Id" class="k-textbox" style="width:100%" value="@Model.Id">
+
+                    <div class="form-group row" style="padding: 1.25rem;">
+                        @(Html.Kendo().Grid<WorkplansViewModel>()
+                                        .Name("gridclosed")
+                                        .Columns(columns =>
+                                        {
+
+                                            columns.Bound(c => c.Employee_Id).Hidden();
+                                            columns.Bound(c => c.Transaction_Id).Hidden();
+                                            columns.Bound(c => c.FisYear).Title("Cycle Year");
+                                            columns.Bound(c => c.FisPeriod).Title("Period");
+                                            columns.Bound(c => c.WPStatus_String).Title("Status");
+                                            columns.Bound(c => c.TransactionDate).Title("Transaction Date").Format("{0: dd-MM-yyyy}");
+                                            columns.Command(command => command.Custom(" Re-open Cycle").IconClass("k-icon k-i-unlock").Click("opencycle"));
+                                        })
+                                        .HtmlAttributes(new { style = "height: 400px;" })
+                                        .Scrollable()
+                                        .Groupable()
+                                        .Sortable()
+                                        .Navigatable()
+                                        .Filterable()
+                                        .Pageable(pageable => pageable
+                                            .Refresh(true)
+                                            .PageSizes(true)
+                                            .ButtonCount(5))
+                                        .DataSource(dataSource => dataSource
+                                            .Ajax()
+                                            .Sort(sort => sort.Add("FisYear").Ascending())
+                                            .Read(read => read
+                                                            .Action("WorkplanClosedCycles_Read", "Admin"))
+                                            .Model(model => model.Id(p => p.Transaction_Id))
+                                            //.Destroy(destroy => destroy.Action("Struc_DirStaffMapping_Delete", "Admin"))
+                                            .PageSize(20)
+                                            .Events(events => events.Error("error_handler")
+                                                                .RequestEnd("onRequestEnd"))
+                                        )
+                                    )
+                    </div>
+
+        
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<br \>
+<br \>
+<br \>
+
+
+<div id="getstaffwindow">
+</div>
+<div id="windowstaff"></div>
+<div id="staffposwindow">
+</div>
+<div id="windowstaffpos">
+</div>
+
+<div id="example">
+    <div id="dialog">
+    </div>
+    <div id="undo">
+    </div>
+</div>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+
+  function onClick() {
+
+  }
+
+ function closecycle(e) {
+
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        var recid = dataItem.Transaction_Id;
+
+        var dialog = $('#dialog');
+        var undo = $("#undo");
+
+        function onClose() {
+            undo.fadeIn();
+        }
+
+
+
+              dialog.kendoDialog({
+                  width: "450px",
+                  title: "Confirmation",
+                  closable: false,
+                  modal: true,
+                  content: "<p>Please <strong>confirm</strong> the action.<p>",
+                  actions: [
+                      {
+                          text: 'Confirm',
+                          action: function (e) {
+                              $.ajax({
+                                  type: "POST",
+                                  url: '/Admin/CloseWorkplanCycle',     //your action
+                                  data: { "recid": recid},
+                                  dataType: 'json',
+                                  success: function (result) {
+                                        var grid = $("#grid").data("kendoGrid"); 
+                                        grid.dataSource.transport.options.read.url = "/Admin/WorkplanCurrentCycles_Read";
+                                        grid.dataSource.read();
+
+
+                                        var gridclosed = $("#gridclosed").data("kendoGrid"); 
+                                        gridclosed.dataSource.transport.options.read.url = "/Admin/WorkplanClosedCycles_Read";
+                                        gridclosed.dataSource.read();
+
+                                  },
+                                  error: function (data) {
+
+                                  }
+                              })
+                              return true;
+                          },
+                          primary: true
+
+                      },
+                      { text: 'Cancel' }
+                  ],
+                  close: onClose
+              });
+
+              dialog.data("kendoDialog").open();
+              undo.fadeOut();
+
+          
+
+
+
+
+
+    }
+
+
+    function opencycle(e) {
+
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        var recid = dataItem.Transaction_Id;
+
+        var dialog = $('#dialog');
+        var undo = $("#undo");
+
+        function onClose() {
+            undo.fadeIn();
+        }
+
+
+
+              dialog.kendoDialog({
+                  width: "450px",
+                  title: "Confirmation",
+                  closable: false,
+                  modal: true,
+                  content: "<p>Please <strong>confirm</strong> the action.<p>",
+                  actions: [
+                      {
+                          text: 'Confirm',
+                          action: function (e) {
+                              $.ajax({
+                                  type: "POST",
+                                  url: '/Admin/OpenWorkplanCycle',     //your action
+                                  data: { "recid": recid},
+                                  dataType: 'json',
+                                  success: function (result) {
+                                        var grid = $("#grid").data("kendoGrid"); 
+                                        grid.dataSource.transport.options.read.url = "/Admin/WorkplanCurrentCycles_Read";
+                                        grid.dataSource.read();
+
+
+                                        var gridclosed = $("#gridclosed").data("kendoGrid"); 
+                                        gridclosed.dataSource.transport.options.read.url = "/Admin/WorkplanClosedCycles_Read";
+                                        gridclosed.dataSource.read();
+
+                                  },
+                                  error: function (data) {
+
+                                  }
+                              })
+                              return true;
+                          },
+                          primary: true
+
+                      },
+                      { text: 'Cancel' }
+                  ],
+                  close: onClose
+              });
+
+              dialog.data("kendoDialog").open();
+              undo.fadeOut();
+
+          
+
+
+
+
+
+    }
+
+
+    function editVisible(dataItem) {
+    // hide the Edit button for the item with ProductID=1
+    return dataItem.WPStatus_String != "Inactive";
+    }
+ </script>
+
+<script type="text/javascript"> 
+    function error_handler(e) {    
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function() {
+                        message += this + "\n";
+                    });
+                }
+            });        
+            alert(message);
+        }
+    }
+
+    function onRequestEnd(e){
+            var recid = $("#Directorate_Id").val();  
+            if (e.type === "update" || e.type === "create" || e.type === "destroy" ) {
+                    var grid = $("#grid").data("kendoGrid"); 
+
+                    grid.dataSource.transport.options.read.url = "/Admin/DirectorateStaffMapping_Read/?recid=" + recid;
+                    grid.dataSource.read();
+            }
+    }
+    function editstaffdirmap(e) {
+
+         e.preventDefault();
+          var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+          var transid = dataItem.Transaction_Id;
+                  $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+                var wnd2 = $("#getstaffwindow").kendoWindow({
+                    //actions: ["Close"],
+                    draggable: true,
+                    modal: true,
+                    animation: false,
+                    resizable: true,
+                    content: "/NEPADStaff/EditWorkplanCycle?transid=" + transid,
+                    width: 400,
+                    height: 300,
+
+                    title: "Edit A Workplan Cycle",
+                    // close: onClose,
+                    deactivate: function () {
+                        this.destroy();
+                    }
+
+                }).data("kendoWindow");
+                wnd2.center().open();
+
+         
+
+      }
+
+   $("#btnAdd").click(function () {
+
+
+                  $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+                var wnd2 = $("#getstaffwindow").kendoWindow({
+                    //actions: ["Close"],
+                    draggable: true,
+                    modal: true,
+                    animation: false,
+                    resizable: true,
+                    content: "/NEPADStaff/AddWorkplanCycle",
+                    width: 600,
+                    height: 400,
+
+                    title: "Add A Workplan Cycle",
+                    // close: onClose,
+                    deactivate: function () {
+                        this.destroy();
+                    }
+
+                }).data("kendoWindow");
+                wnd2.center().open();
+
+   });
+</script>
+
+
+
+
+
+<style>
+    /* Page Template for the exported PDF */
+    .page-template {
+        font-family: "DejaVu Sans", "Arial", sans-serif;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+
+        .page-template .header {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            right: 30px;
+            border-bottom: 1px solid #888;
+            color: #888;
+        }
+
+        .page-template .footer {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+            border-top: 1px solid #888;
+            text-align: center;
+            color: #888;
+        }
+
+        .page-template .watermark {
+            font-weight: bold;
+            font-size: 400%;
+            text-align: center;
+            margin-top: 30%;
+            color: #aaaaaa;
+            opacity: 0.1;
+            transform: rotate(-35deg) scale(1.7, 1.5);
+        }
+
+    /* Content styling */
+    .customer-photo {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-size: 32px 35px;
+        background-position: center center;
+        vertical-align: middle;
+        line-height: 32px;
+        box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0,0,0,.2);
+        margin-left: 5px;
+    }
+
+    .customer-name {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 32px;
+        padding-left: 3px;
+    }
+</style>
+
+<style>
+
+/*SWITCH ON*/
+
+    .k-switch-on .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28
+    }
+
+    .k-switch-on:hover .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:hover .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+    .k-switch-on:active .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4
+    }
+
+    .k-switch-on:active .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28
+    }
+
+
+
+    .k-switch-on:visited .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:visited .k-switch-handle{
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+    .k-switch-on:focus .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:focus .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+
+
+    /*SWITCH OFF*/
+
+    .k-switch-off .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+
+    .k-switch-off:hover .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:hover .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+    .k-switch-off:active .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:active .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+    .k-switch-off:visited .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:visited .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+    .k-switch-off:focus .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:focus .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+
+</style>
+
+
+
+
+
+
+
+

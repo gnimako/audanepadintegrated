@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>AUDA-NEPAD Data Platform</title>
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta name="author" content="Themesdesign" />
+
+        <!-- App favicon -->
+        <link rel="shortcut icon" type="image/png" sizes="16x16"  href="~/frontpage/images/favicon.png">
+
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="~/frontpage/css/bootstrap.min.css" type="text/css">
+
+        <!-- Material Icon -->
+        <link rel="stylesheet" type="text/css" href="~/frontpage/css/materialdesignicons.min.css" />
+
+        <!-- owl carousel -->
+        <link rel="stylesheet" type="text/css" href="~/frontpage/css/owl.carousel.min.css" />
+        <link rel="stylesheet" type="text/css" href="~/frontpage/css/owl.theme.default.min.css" />
+
+        <!-- Custom  sCss -->
+        <link rel="stylesheet" type="text/css" href="~/frontpage/css/style.css" />
+
+    </head>
+
+    <body>
+
+        <nav class="navbar navbar-expand-lg fixed-top navbar-custom sticky sticky-dark">
+            <div class="container">
+                <!-- LOGO -->
+                <a class="logo text-uppercase" asp-controller="home" asp-action="index">
+                    <img src="~/frontpage/images/logo-dark.png" alt="" class="logo-dark" height="70" />
+                </a>
+
+            </div>
+        </nav>
+
+        
+        <!-- Hero section Start -->
+        <section class="hero-section" id="home" style="background: url('@Url.Content("~/frontpage/images/bg-1.png")') center center;">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="hero-wrapper mb-4">
+                                	@RenderBody()
+                        </div>
+                        
+                    </div>
+
+                    <div id="focusdiv" class="col-lg-6 col-sm-8">
+                        <div class="mt-5 mt-lg-0">
+                            <img src="~/frontpage/images/home-img.png" alt="" class="img-fluid mx-auto d-block">
+                        </div>
+                    </div>
+                </div>
+                <!-- end row -->
+            </div>
+            <!-- end container -->
+        </section>
+
+
+        <!-- Footer alt start -->
+
+        <!-- Footer alt start -->
+
+        <!-- Javascript -->
+        <script src="~/frontpage/js/jquery.min.js"></script>
+        <script src="~/frontpage/js/bootstrap.bundle.min.js"></script>
+        <script src="~/frontpage/js/jquery.easing.min.js"></script>
+        <script src="~/frontpage/js/scrollspy.min.js"></script>
+        <script src="~/frontpage/js/feather.min.js"></script>
+
+        <!-- owl carousel -->
+        <script src="~/frontpage/js/owl.carousel.min.js"></script>
+
+        <!-- app js -->
+        <script src="~/frontpage/js/app.js"></script>
+
+
+        <script>
+            window.onload = function() {
+                document.getElementById("focusdiv").focus();
+            };
+        </script>
+    </body>
+
+</html>

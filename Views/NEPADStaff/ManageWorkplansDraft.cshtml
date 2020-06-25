@@ -1,0 +1,1549 @@
+@model EmployeeViewModel
+@{
+    ViewBag.Title = "AUDA-NEPAD Integrated Planning System";
+    Layout = "_NEPADStaffLayout2";
+
+}
+
+
+<link rel="stylesheet" href="~/nepadstaff1/css/vendor/smart_wizard.min.css" />
+<link href="~/nepadstaff2/dist-assets/css/themes/dore.light.blue2.css" rel="stylesheet" />
+
+
+<h1 style="font-family: Faktslab;">Manage Workplans</h1>
+
+                <div class="separator-breadcrumb border-top"></div>
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card mb-5">
+                            <div class="card-body">
+                                <form id="addformmain">
+                                <input hidden asp-for="IdentityUserId" class="k-textbox" style="width:100%" value="@Model.IdentityUserId">
+                                <input hidden asp-for="Employee_Id" class="k-textbox" style="width:100%" value="@Model.Id">
+                                <input hidden asp-for="WPMainRecordId" class="k-textbox" style="width:100%" value="@Model.WPMainRecordId">
+                                <input hidden asp-for="Programme_Id" class="k-textbox" style="width:100%" value="@Model.Programme_Id">
+                                <input hidden asp-for="Project_Id" class="k-textbox" style="width:100%" value="@Model.Project_Id">
+                                <input hidden asp-for="FYear" class="k-textbox" style="width:100%" value="@Model.FYear">
+                                <input hidden asp-for="FPeriod" class="k-textbox" style="width:100%" value="@Model.FPeriod">
+                                <input hidden asp-for="Directorate_Id" class="k-textbox" style="width:100%" value="@Model.Directorate_Id">
+                                <input hidden asp-for="Division_Id" class="k-textbox" style="width:100%" value="@Model.Division_Id">
+                                    <div class="form-group row">
+                                        <label class="col-sm-2 col-form-label" for="inputPassword3">Project</label>
+                                        <div class="col-sm-10" style="padding-top: calc(0.375rem + 1px); padding-bottom: calc(0.375rem + 1px);">
+                                           <b>@Model.Project_Name</b>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-2 col-form-label" for="inputPassword3">Year</label>
+                                        <div class="col-sm-10" style="padding-top: calc(0.375rem + 1px); padding-bottom: calc(0.375rem + 1px);">
+                                            @Model.FisYear
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm-2 col-form-label" for="inputPassword3">Period</label>
+                                        <div class="col-sm-10" style="padding-top: calc(0.375rem + 1px); padding-bottom: calc(0.375rem + 1px);">
+                                            @Model.FisPeriod
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                       
+                                        <div class="col-sm-10" style="padding-top: calc(0.375rem + 1px); padding-bottom: calc(0.375rem + 1px); color: #570b06">
+                                           
+                                            <span style="font-size: 14px; color: #1b406c;">Workplan Status</span>
+                                            <div class="separator-breadcrumb border-top"></div>
+                                          
+                                     
+                                               <div id="norecord" style="visibility: hidden;">No Record</div>
+                                                
+                                         
+                                               <div  id="recordstatus" style="visibility: hidden;">
+                                                   @(Html.Kendo().Stepper()
+                                                        .Name("Timeline")
+                                                        .Linear(false)
+                                                        .Orientation(StepperOrientationType.Horizontal)
+                                                        .Steps(s =>
+                                                        {
+                                                            s.Add().Label("Drafting Mode").Icon("track-changes-enable").Selected(true);
+                                                            s.Add().Label("Approved").Icon("check-outline").Enabled(false);
+                                                            s.Add().Label("Closed").Icon("lock").Enabled(false);
+                                                        })
+                                                    )
+                                               </div>
+                                                                                            
+                                                                                            
+                                            
+                                          
+                                        </div>
+                                    </div>
+                                   
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card mb-5">
+                            <div class="card-body">
+                                <div id="smartWizardDefault">
+                                    <ul class="card-header">
+                                        <li><a href="#defaultStep1">Outcomes<br /><small>Define Outcomes</small></a></li>
+                                        <li><a href="#defaultStep2">Outputs<br /><small>Define Outputs</small></a></li>
+                                        <li><a href="#defaultStep3">Activities<br /><small>Activities</small></a></li>
+                                        <li><a href="#defaultStep4">Procurement<br /><small>Procurement Plan</small></a></li>
+                                        <li><a href="#defaultStep5">Communication<br /><small>Communication Plan</small></a></li>
+                                        <li><a href="#defaultStep6">Risk<br /><small>Risk Profile</small></a></li>
+                                    </ul>
+
+                                    <div class="card-body">
+                                        <div id="defaultStep1">
+                                            <h5 class="pb-2" style="color: #003473;"><span class="bluenum">1</span> What are the outcomes for @Model.FisYear, @Model.FisPeriod?</h5>
+                                                                @(Html.Kendo().Grid<WorkplansViewModel>()
+                                                                            .Name("grid_main")
+                                                                            .Columns(columns =>
+                                                                            {
+                                                                                columns.Bound(c => c.Transaction_Id).Hidden();
+                                                                                columns.Bound(c => c.WPMainRecord_Ident).Hidden();
+                                                                                columns.Bound(c => c.ProjectId).Hidden();
+                                                                                columns.Bound(c => c.FYearIdent).Hidden();
+                                                                                columns.Bound(c => c.FPeriodIdent).Hidden();
+                                                                                columns.Bound(c => c.ViewNumbering).Title("No").Width(20).Hidden(); 
+                                                                                columns.Bound(c => c.Outcome).Title("Outcome");                                           
+
+                                                                                columns.Command(command => { command.Edit().Text(" Edit").IconClass("k-icon k-i-track-changes"); });
+                                                                                columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
+
+                                                                            })
+                                                                            .ToolBar(toolbar => toolbar.Create().Text(" Add an Outcome").IconClass("k-icon k-i-plus-outline"))
+                                                                            .Editable(editable => editable.Mode(GridEditMode.InLine))
+                                                                            .Resizable(r=>r.Columns(true))
+                                                                            .DataSource(dataSource => dataSource
+                                                                                .Ajax()
+                                                                                .Read(read => read.Action("WP_Outcomes_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod}))
+                                                                                .Model(model => 
+                                                                                    {
+                                                                                        model.Id(p => p.Transaction_Id);
+                                                                                        //model.Field(field => field.LookUp_Status).Editable(false);
+                                                                                    })
+                                                                                .Create(create => create.Action("WP_Outcomes_Create", "Admin", new {progid=Model.Programme_Id, projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod, empid=Model.Employee_Id, dirid=Model.Directorate_Id, divid=Model.Division_Id}))
+                                                                                .Update(update => update.Action("WP_Outcomes_Update", "Admin", new {empid=Model.Employee_Id}))
+                                                                                .Destroy(destroy => destroy.Action("WP_Outcomes_Delete", "Admin"))
+                                                                               // .PageSize(20)
+                                                                                .Events(events => events.Error("error_handler")
+                                                                                                        .RequestEnd("onRequestEnd"))
+                                                                                
+                                                                            )
+                                                            )
+                                                            <br \>
+
+                                                <h5 class="pb-2" style="color: #003473;"><span class="bluenum">2</span> What AUC MTP Priorities are closely linked to the outcome(s)?</h5>
+                                                                
+
+                                                                @(Html.Kendo().Grid<WorkplansViewModel>()
+                                                                            .Name("grid_mtp2")
+                                                                            .Columns(columns =>
+                                                                            {
+                                                                                columns.Bound(c => c.SessionTransaction_Id).Hidden();
+                                                                                columns.Bound(c => c.Transaction_Id).Hidden();
+                                                                                columns.Bound(c => c.SelectedRow).Hidden();
+                                                                                columns.Bound(c => c.WPMainRecord_Ident).Hidden();
+                                                                                columns.Bound(c => c.ProjectId).Hidden();
+                                                                                columns.Bound(c => c.FYearIdent).Hidden();
+                                                                                columns.Bound(c => c.FPeriodIdent).Hidden();
+                                                                                columns.Bound(c => c.MTP_Ident).Hidden();
+                                                                                columns.Select().Width(50).HtmlAttributes(new { style = "text-align:center" }).HeaderHtmlAttributes(new { style = "text-align:center" });
+                                                                                columns.Bound(c => c.MTP_PriorityStatement).Title("MTP Priority");                                           
+                                                                               // columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
+
+                                                                            })
+                                                                            .Events(e => e.DataBound("onDataBound"))
+                                                                            .Events(ev => ev.Change("onChange"))
+                                                                            .DataSource(dataSource => dataSource
+                                                                                .Ajax()
+                                                                                .Read(read => read.Action("WP_MTPsActual_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod}))
+                                                                                .Model(model => 
+                                                                                    {
+                                                                                        model.Id(p => p.MTP_Ident);
+                                                                                        //model.Field(field => field.LookUp_Status).Editable(false);
+                                                                                    })
+                                             
+                                                                                                        
+                                                                                
+                                                                            )
+                                                                )
+                                                                  <br \>
+
+                                                             <h5 class="pb-2" style="color: #003473;"><span class="bluenum">3</span> What AUDA-NEPAD Strategic Priorities are closely linked to the outcome(s)?</h5>
+                                                                        @(Html.Kendo().Grid<WorkplansViewModel>()
+                                                                            .Name("gridpriority")
+                                                                            .Columns(columns =>
+                                                                            {
+                                                                                columns.Bound(c => c.SessionTransaction_Id).Hidden();
+                                                                                columns.Bound(c => c.Transaction_Id).Hidden();
+                                                                                columns.Bound(c => c.SelectedRow).Hidden();
+                                                                                columns.Bound(c => c.EnableRow).Hidden();
+                                                                                columns.Bound(c => c.WPMainRecord_Ident).Hidden();
+                                                                                columns.Bound(c => c.ProjectId).Hidden();
+                                                                                columns.Bound(c => c.FYearIdent).Hidden();
+                                                                                columns.Bound(c => c.FPeriodIdent).Hidden();
+                                                                                columns.Bound(c => c.AUDAPriority_Ident).Hidden();
+                                                                                columns.Bound(c => c.MTP_Ident).Hidden();
+                                                                                columns.Select().Width(50).HtmlAttributes(new { style = "text-align:center" }).HeaderHtmlAttributes(new { style = "text-align:center", @class = "disabled" });
+                                                                                columns.Bound(c => c.AUDA_PriorityStatement).Title("AUDA-NEPAD Priority");                                           
+                                                                               // columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
+
+                                                                            })
+                                                                            .Events(e => e.DataBound("onDataBoundPriority"))
+                                                                            .Events(ev => ev.Change("onChangePriority"))
+                                                                            .DataSource(dataSource => dataSource
+                                                                                .Ajax()
+                                                                                .Read(read => read.Action("WP_AUDAPrioritiesActual_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod}))
+                                                                                .Model(model => 
+                                                                                    {
+                                                                                        model.Id(p => p.AUDAPriority_Ident);
+                                                                                        //model.Field(field => field.LookUp_Status).Editable(false);
+                                                                                    })
+                                             
+                                                                                                        
+                                                                                
+                                                                            )
+                                                                        )
+                                                                      
+                                                                  
+                                        
+                                        <br \>
+
+                                        <h5 class="pb-2" style="color: #003473;"><span class="bluenum">4</span> What is the scope of delivery for this workplan?</h5>
+                                        <br \>
+                                        <div style="padding-left: 4em;">
+                                            <span class="pb-2" style="color: #000000;"><span class="blacknum">4</span> Continental Coverage  </span>       
+                                            &nbsp; &nbsp;
+                                            @(Html.Kendo().SwitchFor(m=>m.ContinentalCoverage)
+                                                // .Name("PrimaryDirectorate")
+                                                    .Messages(c => c.Checked("YES").Unchecked("NO"))
+                                                    .Events(c => c.Change("onChangeContinental"))
+                                            )
+                                            <br \>
+                                            <br \>
+                                            <br \>
+                                            <span class="pb-2" style="color: #000000;"><span class="blacknum">4</span> Regional Coverage  </span>   
+                                            <br \>
+                                            <br \>
+                                              @(Html.Kendo().Grid<WorkplansViewModel>()
+                                                        .Name("grid_recs")
+                                                        .Columns(columns =>
+                                                        {
+                                                            columns.Bound(c => c.SessionTransaction_Id).Hidden();
+                                                            columns.Bound(c => c.Transaction_Id).Hidden();
+                                                            columns.Bound(c => c.SelectedRow).Hidden();
+                                                            columns.Bound(c => c.WPMainRecord_Ident).Hidden();
+                                                            columns.Bound(c => c.ProjectId).Hidden();
+                                                            columns.Bound(c => c.FYearIdent).Hidden();
+                                                            columns.Bound(c => c.FPeriodIdent).Hidden();
+                                                            columns.Bound(c => c.REC_Ident).Hidden();
+                                                            columns.Select().Width(50).HtmlAttributes(new { style = "text-align:center" }).HeaderHtmlAttributes(new { style = "text-align:center" });
+                                                            columns.Bound(c => c.Statement).Title("Regional Economic Communities (RECs)");                                           
+                                                            // columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
+
+                                                        })
+                                                        .Events(e => e.DataBound("onDataBoundREC"))
+                                                        .Events(ev => ev.Change("onChangeREC"))
+                                                        .DataSource(dataSource => dataSource
+                                                            .Ajax()
+                                                            .Read(read => read.Action("WP_RECsActual_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod}))
+                                                            .Model(model => 
+                                                                {
+                                                                    model.Id(p => p.REC_Ident);
+                                                                    //model.Field(field => field.LookUp_Status).Editable(false);
+                                                                })
+                            
+                                                                                    
+                                                            
+                                                        )
+                                            )
+                                        </div>
+
+
+
+                                        </div>
+                                        <div id="defaultStep2">
+                                            <h6 class="pb-2" style="color: #003473;"><span class="bluenum">5</span> What are the outputs/deliverables for @Model.FisYear, @Model.FisPeriod?</h6>
+                                                                @(Html.Kendo().Grid<WorkplansViewModel>()
+                                                                            .Name("grid_outputs")
+                                                                            .Columns(columns =>
+                                                                            {
+                                                                                columns.Bound(c => c.Transaction_Id).Hidden();
+                                                                                columns.Bound(c => c.WPMainRecord_Ident).Hidden();
+                                                                                columns.Bound(c => c.ProjectId).Hidden();
+                                                                                columns.Bound(c => c.FYearIdent).Hidden();
+                                                                                columns.Bound(c => c.FPeriodIdent).Hidden();
+                                                                                columns.Bound(c => c.ViewNumbering).Title("No").Width(20).Hidden(); 
+                                                                                columns.Bound(c => c.Outcome).Title("Outcome");                                           
+
+                                                                                columns.Command(command => { command.Edit().Text(" Edit").IconClass("k-icon k-i-track-changes"); });
+                                                                                columns.Command(command => command.Custom(" Manage Indicators").IconClass("k-icon k-i-track-changes").Click(""));
+                                                                                columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
+
+                                                                            })
+                                                                            .ToolBar(toolbar => toolbar.Create().Text(" Add an Outcome").IconClass("k-icon k-i-plus-outline"))
+                                                                            .Editable(editable => editable.Mode(GridEditMode.InLine))
+                                                                            .Resizable(r=>r.Columns(true))
+                                                                            .DataSource(dataSource => dataSource
+                                                                                .Ajax()
+                                                                                .Read(read => read.Action("WP_Outcomes_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod}))
+                                                                                .Model(model => 
+                                                                                    {
+                                                                                        model.Id(p => p.Transaction_Id);
+                                                                                        //model.Field(field => field.LookUp_Status).Editable(false);
+                                                                                    })
+                                                                                .Create(create => create.Action("WP_Outcomes_Create", "Admin", new {progid=Model.Programme_Id, projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod, empid=Model.Employee_Id, dirid=Model.Directorate_Id, divid=Model.Division_Id}))
+                                                                                .Update(update => update.Action("WP_Outcomes_Update", "Admin", new {empid=Model.Employee_Id}))
+                                                                                .Destroy(destroy => destroy.Action("WP_Outcomes_Delete", "Admin"))
+                                                                               // .PageSize(20)
+                                                                                .Events(events => events.Error("error_handler")
+                                                                                                        .RequestEnd("onRequestEnd"))
+                                                                                
+                                                                            )
+                                                            )
+                                                            <br \>
+                                        </div>
+                                        <div id="defaultStep3">
+                                            <h4 class="pb-2">Step 3 Content</h4>
+                                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                                                Lorem Ipsum has been the industry's standard dummy text ever since the
+                                                1500s, when an unknown printer took a galley of type and scrambled it to
+                                                make a type specimen book. It has survived not only five centuries, but also
+                                                the leap into electronic typesetting, remaining essentially unchanged. It
+                                                was popularised in the 1960s with the release of Letraset sheets containing
+                                                Lorem Ipsum passages, and more recently with desktop publishing software
+                                                like Aldus PageMaker including versions of Lorem Ipsum. </div>
+
+                                        </div>
+                                        <div id="defaultStep4">
+                                            <h4 class="pb-2">Step 4 Content</h4>
+                                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                                                Lorem Ipsum has been the industry's standard dummy text ever since the
+                                                1500s, when an unknown printer took a galley of type and scrambled it to
+                                                make a type specimen book. It has survived not only five centuries, but also
+                                                the leap into electronic typesetting, remaining essentially unchanged. It
+                                                was popularised in the 1960s with the release of Letraset sheets containing
+                                                Lorem Ipsum passages, and more recently with desktop publishing software
+                                                like Aldus PageMaker including versions of Lorem Ipsum. </div>
+
+                                        </div>
+                                        <div id="defaultStep5">
+                                            <h4 class="pb-2">Step 5 Content</h4>
+                                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                                                Lorem Ipsum has been the industry's standard dummy text ever since the
+                                                1500s, when an unknown printer took a galley of type and scrambled it to
+                                                make a type specimen book. It has survived not only five centuries, but also
+                                                the leap into electronic typesetting, remaining essentially unchanged. It
+                                                was popularised in the 1960s with the release of Letraset sheets containing
+                                                Lorem Ipsum passages, and more recently with desktop publishing software
+                                                like Aldus PageMaker including versions of Lorem Ipsum. </div>
+
+                                        </div>
+                                        <div id="defaultStep6">
+                                            <h4 class="pb-2">Step 6 Content</h4>
+                                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                                                Lorem Ipsum has been the industry's standard dummy text ever since the
+                                                1500s, when an unknown printer took a galley of type and scrambled it to
+                                                make a type specimen book. It has survived not only five centuries, but also
+                                                the leap into electronic typesetting, remaining essentially unchanged. It
+                                                was popularised in the 1960s with the release of Letraset sheets containing
+                                                Lorem Ipsum passages, and more recently with desktop publishing software
+                                                like Aldus PageMaker including versions of Lorem Ipsum. </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+<div id="getstaffwindow">
+</div>
+<div id="windowstaff"></div>
+<div id="staffposwindow"></div>
+
+
+<div id="windowstaff2"></div>
+<div id="staffposwindow2"></div>
+
+<div id="windowstaffpos">
+</div>
+
+<div id="example">
+    <div id="dialog">
+    </div>
+    <div id="undo">
+    </div>
+</div>
+
+
+
+<script>
+function editVisible(dataItem) {
+// hide the Edit button for the item with ProductID=1
+    return dataItem.LookUp_Status != "Transactional";
+}
+function onChangeContinental(e) {
+   // kendoConsole.log("checked: " + e.checked);
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+    var empid = $("#Employee_Id").val(); 
+    var dirid = $("#Directorate_Id").val(); 
+    var divid = $("#Division_Id").val(); 
+    var progid = $("#Programme_Id").val(); 
+    var contstatus="";
+
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+
+    if(e.checked==true){
+        contstatus="True";
+    }
+    else{
+        contstatus="False";
+    }
+
+    $.ajax({
+        type: "POST",
+        url: '/Admin/AddContinentalCoverage',     //your action
+        data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "empid": empid, "contstatus": contstatus},
+        dataType: 'json',
+        success: function (result) {
+            var response = result.rtnmsg;
+
+            if (response == "nomainrecord") {
+            
+                dialog.kendoDialog({
+                    width: "300px",
+                    title: "No Outcome or MTP",
+                    closable: false,
+                    modal: true,
+                    content: "<p>Please define at least one outcome or link an MTP Priority to the workplan<p>",
+                    actions: [
+                        { text: 'Cancel' }
+                    ],
+                    close: onClose
+                });
+
+                dialog.data("kendoDialog").open();
+                undo.fadeOut();
+
+                var switchInstance = $("#ContinentalCoverage").data("kendoSwitch");
+                switchInstance.toggle();
+
+
+            }
+          
+
+        },
+        error: function (data) {
+                        dialog.kendoDialog({
+                            width: "300px",
+                            title: "Error",
+                            closable: false,
+                            modal: true,
+                            content: "<p>Error Occurred whiles saving<p>",
+                            actions: [
+                                { text: 'Cancel' }
+                            ],
+                            close: onClose
+                        });
+
+                        dialog.data("kendoDialog").open();
+                        undo.fadeOut();
+        }
+    })
+    
+}
+
+function onDataBound(e){
+
+    var grid = $('#grid_mtp2').data('kendoGrid');
+
+    $.each(grid.tbody.find('tr'),function(){
+        var model = grid.dataItem(this);
+        if(model.SelectedRow == "Selected"){
+            $('[data-uid='+model.uid+']').addClass('k-state-selected').find("input").attr("checked","checked");
+          //  $('[data-uid='+model.uid+']').addClass('disabled');
+
+
+
+
+        }                          
+    });
+
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+    var empid = $("#Employee_Id").val(); 
+    var dirid = $("#Directorate_Id").val(); 
+    var divid = $("#Division_Id").val(); 
+    var progid = $("#Programme_Id").val(); 
+
+    var norecord = document.getElementById("norecord");
+    var recordstatus = document.getElementById("recordstatus");
+
+
+
+    $.ajax({
+        type: "POST",
+        url: '/Admin/CheckMainWPRecordStatus',     //your action
+        //data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, selectedrows: JSON.parse( JSON.stringify(models))},
+        data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "empid": empid, "dirid": dirid, "divid": divid, "progid": progid},
+        dataType: 'json',
+        success: function (result) {
+            var response = result.rtnmsg;
+
+            if (response == "recordfound") {
+                //norecord.style.display = "none";
+               // recordstatus.style.display = "block";
+                norecord.style.visibility = "hidden";
+                recordstatus.style.visibility = "visible";
+            }
+            else if(response == "norecord")
+            {
+                //norecord.style.display = "block";
+               // recordstatus.style.display = "none";
+
+                norecord.style.visibility = "visible";
+                recordstatus.style.visibility = "hidden";
+            }
+
+        },
+        error: function (data) {
+                       
+        }
+    })
+
+
+
+}
+
+
+function onDataBoundREC(e){
+
+    var grid = $('#grid_recs').data('kendoGrid');
+
+    $.each(grid.tbody.find('tr'),function(){
+        var model = grid.dataItem(this);
+        if(model.SelectedRow == "Selected"){
+            $('[data-uid='+model.uid+']').addClass('k-state-selected').find("input").attr("checked","checked");
+          //  $('[data-uid='+model.uid+']').addClass('disabled');
+
+        }                          
+    });
+
+    
+
+
+
+}
+
+
+function onDataBoundPriority(e){
+
+    var grid = $('#gridpriority').data('kendoGrid');
+
+    $.each(grid.tbody.find('tr'),function(){
+        var model = grid.dataItem(this);
+        if(model.SelectedRow == "Selected"){
+            $('[data-uid='+model.uid+']').addClass('k-state-selected').find("input").attr("checked","checked");
+            //$('[data-uid='+model.uid+']').addClass('disabled');
+        } 
+        if(model.EnableRow == "No"){
+           // $('[data-uid='+model.uid+']').addClass('k-state-selected').find("input").attr("checked","checked");
+          $('[data-uid='+model.uid+']').addClass('disabled');
+        }                           
+    });
+
+    
+
+
+
+}
+
+function onChange(arg) {
+   // kendoConsole.log("The selected product ids are: [" + this.selectedKeyNames().join(", ") + "]");
+
+
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+    var empid = $("#Employee_Id").val(); 
+    var dirid = $("#Directorate_Id").val(); 
+    var divid = $("#Division_Id").val(); 
+    var progid = $("#Programme_Id").val(); 
+
+    var norecord = document.getElementById("norecord");
+    var recordstatus = document.getElementById("recordstatus");
+
+
+    var models = [];
+    var gridmtp = $('#grid_mtp2').data('kendoGrid');
+
+    var rows = gridmtp.items();
+
+   // gridmtp.table.find("input[type=checkbox]:checked").each(function () {
+   $(rows).each(function(e) {
+        var row = $(this).closest("tr");
+        var model = gridmtp.dataItem(row);
+        models.push(model);
+    });
+
+
+    //var row = concessoesGrid.select(); 
+
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+    $.ajax({
+        type: "POST",
+        url: '/Admin/AddWPMTPPriorities',     //your action
+        //data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, selectedrows: JSON.parse( JSON.stringify(models))},
+        data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, "dirid": dirid, "divid": divid, "progid": progid},
+        dataType: 'json',
+        success: function (result) {
+            var response = result.rtnmsg;
+
+            if (response == "success") {
+
+                norecord.style.visibility = "hidden";
+                recordstatus.style.visibility = "visible";
+
+               var grid = $('#gridpriority').data('kendoGrid');
+
+               grid.dataSource.transport.options.read.url = "/Admin/WP_AUDAPrioritiesActual_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
+               grid.dataSource.read();
+
+            }
+          
+
+        },
+        error: function (data) {
+                        dialog.kendoDialog({
+                            width: "300px",
+                            title: "Error",
+                            closable: false,
+                            modal: true,
+                            content: "<p>Error Occurred whiles saving<p>",
+                            actions: [
+                                { text: 'Cancel' }
+                            ],
+                            close: onClose
+                        });
+
+                        dialog.data("kendoDialog").open();
+                        undo.fadeOut();
+        }
+    })
+
+
+
+}
+
+
+function onChangeREC(arg) {
+   // kendoConsole.log("The selected product ids are: [" + this.selectedKeyNames().join(", ") + "]");
+
+
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+    var empid = $("#Employee_Id").val(); 
+    var dirid = $("#Directorate_Id").val(); 
+    var divid = $("#Division_Id").val(); 
+    var progid = $("#Programme_Id").val(); 
+
+    var norecord = document.getElementById("norecord");
+    var recordstatus = document.getElementById("recordstatus");
+
+
+    var models = [];
+    var gridmtp = $('#grid_recs').data('kendoGrid');
+
+    var rows = gridmtp.items();
+
+   // gridmtp.table.find("input[type=checkbox]:checked").each(function () {
+   $(rows).each(function(e) {
+        var row = $(this).closest("tr");
+        var model = gridmtp.dataItem(row);
+        models.push(model);
+    });
+
+
+    //var row = concessoesGrid.select(); 
+
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+    $.ajax({
+        type: "POST",
+        url: '/Admin/AddWPRECCoverage',     //your action
+        //data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, selectedrows: JSON.parse( JSON.stringify(models))},
+        data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, "dirid": dirid, "divid": divid, "progid": progid},
+        dataType: 'json',
+        success: function (result) {
+            var response = result.rtnmsg;
+
+            if (response == "success") {
+
+                norecord.style.visibility = "hidden";
+                recordstatus.style.visibility = "visible";
+
+            }
+          
+
+        },
+        error: function (data) {
+                        dialog.kendoDialog({
+                            width: "300px",
+                            title: "Error",
+                            closable: false,
+                            modal: true,
+                            content: "<p>Error Occurred whiles saving<p>",
+                            actions: [
+                                { text: 'Cancel' }
+                            ],
+                            close: onClose
+                        });
+
+                        dialog.data("kendoDialog").open();
+                        undo.fadeOut();
+        }
+    })
+
+
+
+}
+
+
+function onChangePriority(arg) {
+   // kendoConsole.log("The selected product ids are: [" + this.selectedKeyNames().join(", ") + "]");
+
+
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+    var empid = $("#Employee_Id").val(); 
+    var dirid = $("#Directorate_Id").val(); 
+    var divid = $("#Division_Id").val(); 
+    var progid = $("#Programme_Id").val(); 
+
+    var norecord = document.getElementById("norecord");
+    var recordstatus = document.getElementById("recordstatus");
+
+
+    var models = [];
+    var gridpriority = $('#gridpriority').data('kendoGrid');
+
+    var rows = gridpriority.items();
+
+   // gridmtp.table.find("input[type=checkbox]:checked").each(function () {
+   $(rows).each(function(e) {
+        var row = $(this).closest("tr");
+        var model = gridpriority.dataItem(row);
+        models.push(model);
+    });
+
+
+    //var row = concessoesGrid.select(); 
+
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+    $.ajax({
+        type: "POST",
+        url: '/Admin/AddWPAUDAPriorities',     //your action
+        //data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, selectedrows: JSON.parse( JSON.stringify(models))},
+        data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, "dirid": dirid, "divid": divid, "progid": progid},
+        dataType: 'json',
+        success: function (result) {
+            var response = result.rtnmsg;
+
+            if (response == "success") {
+
+                norecord.style.visibility = "hidden";
+                recordstatus.style.visibility = "visible";
+
+
+            }
+          
+
+        },
+        error: function (data) {
+                        dialog.kendoDialog({
+                            width: "300px",
+                            title: "Error",
+                            closable: false,
+                            modal: true,
+                            content: "<p>Error Occurred whiles saving<p>",
+                            actions: [
+                                { text: 'Cancel' }
+                            ],
+                            close: onClose
+                        });
+
+                        dialog.data("kendoDialog").open();
+                        undo.fadeOut();
+        }
+    })
+
+
+
+}
+
+</script>
+
+
+<script type="text/javascript">
+
+/*function onDB() {
+   $("#grid_main tr.k-alt").removeClass("k-alt");
+} */
+</script>
+
+<script type="text/javascript">
+ $("#btnAddMTP").click(function () {
+
+ // e.preventDefault();
+        var mtpid = $("#MTP_Id").val();  
+        var projid = $("#Project_Id").val();  
+        var fyear = $("#FYear").val();  
+        var fperiod = $("#FPeriod").val();  
+        var empid = $("#Employee_Id").val(); 
+
+
+        var dialog = $('#dialog');
+        var undo = $("#undo");
+
+        function onClose() {
+            undo.fadeIn();
+        }
+
+        if(mtpid === "" && typeof mtpid === "string")
+        {
+              dialog.kendoDialog({
+                  width: "300px",
+                  title: "No Selection",
+                  closable: false,
+                  modal: true,
+                  content: "<p>Please select <strong>MTP Priority</strong><p>",
+                  actions: [
+                      { text: 'Cancel' }
+                  ],
+                  close: onClose
+              });
+
+              dialog.data("kendoDialog").open();
+              undo.fadeOut();
+        }
+        else{
+            $.ajax({
+                type: "POST",
+                url: '/Admin/AddWPMTPPriority',     //your action
+                //data: $('#addformmain').serialize(),   //your form name.it takes all the values of model
+                data: { "projid": projid, "fyear": fyear, "fperiod": fperiod, "mtpid": mtpid, "empid": empid},   //your form name.it takes all the values of model
+                dataType: 'json',
+                success: function (result) {
+                    var response = result.rtnmsg;
+
+                    if (response == "success") {
+
+                        var grid = $("#grid_mtp").data("kendoGrid"); 
+
+                        grid.dataSource.transport.options.read.url = "/Admin/WP_MTPs_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
+                        grid.dataSource.read();
+
+                    }
+                    else if (response == "alreadyexist") {
+                                dialog.kendoDialog({
+                                    width: "300px",
+                                    title: "Already Exist",
+                                    closable: false,
+                                    modal: true,
+                                    content: "<p>MTP Priority Aready Exist.<p>",
+                                    actions: [
+                                        { text: 'Cancel' }
+                                    ],
+                                    close: onClose
+                                });
+
+                                dialog.data("kendoDialog").open();
+                                undo.fadeOut();
+                    }
+                    else {
+
+                                dialog.kendoDialog({
+                                    width: "300px",
+                                    title: "Error",
+                                    closable: false,
+                                    modal: true,
+                                    content: "<p>Error: Please try Again<p>",
+                                    actions: [
+                                        { text: 'Cancel' }
+                                    ],
+                                    close: onClose
+                                });
+
+                                dialog.data("kendoDialog").open();
+                                undo.fadeOut();
+                    }
+
+                },
+                error: function (data) {
+                                dialog.kendoDialog({
+                                    width: "300px",
+                                    title: "Error",
+                                    closable: false,
+                                    modal: true,
+                                    content: "<p>Error Occurred whiles saving<p>",
+                                    actions: [
+                                        { text: 'Cancel' }
+                                    ],
+                                    close: onClose
+                                });
+
+                                dialog.data("kendoDialog").open();
+                                undo.fadeOut();
+                }
+            })
+        }
+        return false;
+
+   });
+    
+    
+    
+</script>
+
+
+<script type="text/javascript">
+    function error_handler(e) {    
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function() {
+                        message += this + "\n";
+                    });
+                }
+            });        
+            alert(message);
+        }
+    }
+
+    function onRequestEnd(e){
+
+            var projid = $("#Project_Id").val();  
+            var fyear = $("#FYear").val();  
+            var fperiod = $("#FPeriod").val();  
+
+            var norecord = document.getElementById("norecord");
+            var recordstatus = document.getElementById("recordstatus");
+
+            if (e.type === "update" || e.type === "create" || e.type === "destroy" ) {
+                var grid = $("#grid_main").data("kendoGrid"); 
+
+                grid.dataSource.transport.options.read.url = "/Admin/WP_Outcomes_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
+                grid.dataSource.read();
+
+                norecord.style.visibility = "hidden";
+                recordstatus.style.visibility = "visible";
+
+            }
+    }
+
+    function onRequestEndMTP(e){
+           // alert("on request end");
+
+           // if (e.type === "update") {
+           //     e.sender.read();
+            //} 
+            //case "create": case "update": case "destroy":
+
+            var projid = $("#Project_Id").val();  
+            var fyear = $("#FYear").val();  
+            var fperiod = $("#FPeriod").val();  
+            if (e.type === "update" || e.type === "create" || e.type === "destroy" ) {
+                var grid = $("#grid_mtp").data("kendoGrid"); 
+
+                grid.dataSource.transport.options.read.url = "/Admin/WP_MTPs_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
+                grid.dataSource.read();
+            }
+    }
+
+    function onRequestEndMTP(e){
+           // alert("on request end");
+
+           // if (e.type === "update") {
+           //     e.sender.read();
+            //} 
+            //case "create": case "update": case "destroy":
+
+            var projid = $("#Project_Id").val();  
+            var fyear = $("#FYear").val();  
+            var fperiod = $("#FPeriod").val();  
+            if (e.type === "update" || e.type === "create" || e.type === "destroy" ) {
+                var grid = $("#grid_mtp").data("kendoGrid"); 
+
+                grid.dataSource.transport.options.read.url = "/Admin/WP_MTPs_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
+                grid.dataSource.read();
+            }
+    }
+</script>
+
+
+<style>
+/*
+.k-grid .k-header {
+    display: none;
+}
+*/
+
+
+    #grid_main tr.k-alt {
+    background-color: #fff ;
+
+    }
+    #grid_main td {
+    border-style: solid;
+   /* border-width: 1px 0px 0px 1px;*/
+    border-top-width: 1px ;
+    padding: .4em .6em;
+    overflow: hidden;
+    line-height: 1.6em;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    }
+    #grid_main tr.k-alt:hover {
+       background-color:  #7bd2f6;
+    }
+
+/* Begin  MTP Grid CSS*/
+    #grid_mtp2 tr.k-alt {
+    background-color: #fff ;
+    }
+
+    #grid_mtp2 td {
+    border-style: solid;
+   /* border-width: 1px 0px 0px 1px;*/
+    border-top-width: 1px ;
+    padding: .4em .6em;
+    overflow: hidden;
+    line-height: 1.6em;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    }
+
+   /*  #grid_mtp2 tr.k-alt.k-state-selected {
+        color: #022636;
+        background-color:#dff0e6; /* #e6fcec;
+        font-weight: 570;
+        border-color: #146b90;
+    }*/
+
+
+    #grid_mtp2 tr.k-alt.k-state-selected {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+
+    #grid_mtp2 tr.k-state-selected  {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+    #grid_mtp2 tr.k-alt:hover {
+       background-color:  #7bd2f6;
+      }
+    #grid_mtp2 tr.k-alt.k-state-selected:hover {
+        background-color: #13688c;
+    }
+/* End  MTP Grid CSS*/
+
+
+/* Begin  AUDA-NEPAD Priorities Grid CSS*/
+    #gridpriority tr.k-alt {
+    background-color: #fff ;
+    }
+
+    #gridpriority td {
+    border-style: solid;
+   /* border-width: 1px 0px 0px 1px;*/
+    border-top-width: 1px ;
+    padding: .4em .6em;
+    overflow: hidden;
+    line-height: 1.6em;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    }
+
+     #gridpriority tr.k-alt.k-state-selected {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+
+    #gridpriority tr.k-state-selected  {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+    #gridpriority tr.k-alt:hover {
+        background-color:  #7bd2f6;
+    }
+    #gridpriority tr.k-alt.k-state-selected:hover {
+        background-color: #13688c;
+    }
+/* End  AUDA-NEPAD Priorities  Grid CSS*/
+
+
+
+/* Begin  AUDA-NEPAD RECs Grid CSS*/
+    #grid_recs tr.k-alt {
+    background-color: #fff ;
+    }
+
+    #grid_recs td {
+    border-style: solid;
+   /* border-width: 1px 0px 0px 1px;*/
+    border-top-width: 1px ;
+    padding: .4em .6em;
+    overflow: hidden;
+    line-height: 1.6em;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    }
+
+     #grid_recs tr.k-alt.k-state-selected {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+
+    #grid_recs tr.k-state-selected  {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+    #grid_recs tr.k-alt:hover {
+        background-color:  #7bd2f6;
+    }
+    #grid_recs tr.k-alt.k-state-selected:hover {
+        background-color: #13688c;
+    }
+
+/* End  AUDA-NEPAD RECs  Grid CSS*/
+
+    .disabled{
+        opacity:0.5;
+        pointer-events:none;
+    }
+
+    .console div {
+        height: 3.3em;
+    }
+
+
+
+    .k-stepper .k-step-current .k-step-indicator {
+    border-color: #1c6b26;
+    color: #000;
+    background-color: #affca2;
+    }
+    
+
+    .k-stepper .k-step-current .k-step-label, .k-stepper .k-step-hover .k-step-label, .k-stepper .k-step:hover .k-step-label {
+    font-weight: normal;
+    color:#1c6b26;
+    }
+
+    .k-stepper .k-step-current.k-step-hover .k-step-indicator, .k-stepper .k-step-current:hover .k-step-indicator {
+    border-color: false;
+    color: false;
+    background-color: #9cfa8c;
+    }
+
+    .k-stepper .k-step-done.k-step-hover .k-step-indicator, .k-stepper .k-step-done:hover .k-step-indicator {
+    border-color: false;
+    color: false;
+    background-color: #9cfa8c;
+    }
+
+
+
+
+    /*
+   #grid_main .k-grid tr {
+        background-color: #fff; 
+        border-color: #bbdceb;
+        border-width:1;
+    } */
+
+
+    /* Page Template for the exported PDF */
+    .page-template {
+        font-family: "DejaVu Sans", "Arial", sans-serif;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+
+        .page-template .header {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            right: 30px;
+            border-bottom: 1px solid #888;
+            color: #888;
+        }
+
+        .page-template .footer {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+            border-top: 1px solid #888;
+            text-align: center;
+            color: #888;
+        }
+
+        .page-template .watermark {
+            font-weight: bold;
+            font-size: 400%;
+            text-align: center;
+            margin-top: 30%;
+            color: #aaaaaa;
+            opacity: 0.1;
+            transform: rotate(-35deg) scale(1.7, 1.5);
+        }
+
+    /* Content styling */
+    .customer-photo {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-size: 32px 35px;
+        background-position: center center;
+        vertical-align: middle;
+        line-height: 32px;
+        box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0,0,0,.2);
+        margin-left: 5px;
+    }
+
+    .customer-name {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 32px;
+        padding-left: 3px;
+    }
+</style>
+
+
+<style>
+    .console div
+{
+    background-image: url("sprite.png");
+    background-repeat: no-repeat;
+    background-color: transparent;
+}
+* html .console div
+{
+    background-image: url("sprite_ie6.png");
+}
+.console
+{
+    background-color: #FFF;
+    border: 1px solid #CCC;
+    color: #333;
+    font: 11px Consolas, Monaco, "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
+    height: 200px;
+    margin: 1.4em 0 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    text-align: left;
+}
+.console .count
+{
+    background-color: #91AFEF;
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    color: #FFFFFF;
+    font-size: 10px;
+    margin-left: 5px;
+    padding: 2px 6px 2px 5px;
+}
+.console div
+{
+    background-position: 6px -95px;
+    border-bottom: 1px solid #DDD;
+    padding: 5px 5px 4px 24px;
+}
+.console .error
+{
+    background-position: 6px -135px;
+}
+
+
+
+/*numbering*/
+span.bluenum {
+  background: #ffffff;
+  border-radius: 0.8em;
+  -moz-border-radius: 0.8em;
+  -webkit-border-radius: 0.8em;
+  color: #003473;
+  display: inline-block;
+  font-weight: bold;
+  line-height: 1.6em;
+  margin-right: 15px;
+  text-align: center;
+  width: 1.7em; 
+      border-style: solid;
+    border-width: 1px ;
+    border-color:#003473 ;
+  -webkit-box-shadow: 7px 7px 5px 0px rgba(50, 50, 50, 0.75);
+-moz-box-shadow:    7px 7px 5px 0px rgba(50, 50, 50, 0.75);
+box-shadow: 2px 4px 5px 0px rgba(50, 50, 50, 0.75);
+}
+
+span.blacknum {
+  background: #ffffff;
+  border-radius: 0.8em;
+  -moz-border-radius: 0.8em;
+  -webkit-border-radius: 0.8em;
+  color: #ffffff;
+  display: inline-block;
+  font-weight: bold;
+  line-height: 0.8em;
+  margin-right: 15px;
+  text-align: center;
+  width: 0.9em; 
+      border-style: solid;
+    border-width: 1px ;
+    border-color:#000000;
+  -webkit-box-shadow: 7px 7px 5px 0px rgba(50, 50, 50, 0.75);
+-moz-box-shadow:    7px 7px 5px 0px rgba(50, 50, 50, 0.75);
+box-shadow: 2px 4px 5px 0px rgba(50, 50, 50, 0.75);
+}
+
+span.bluenum2 {
+  background: #003473;
+  border-radius: 0.8em;
+  -moz-border-radius: 0.8em;
+  -webkit-border-radius: 0.8em;
+  color: #ffffff;
+  display: inline-block;
+  font-weight: bold;
+  line-height: 1.6em;
+  margin-right: 15px;
+  text-align: center;
+  width: 1.6em; 
+  -webkit-box-shadow: 7px 7px 5px 0px rgba(50, 50, 50, 0.75);
+-moz-box-shadow:    7px 7px 5px 0px rgba(50, 50, 50, 0.75);
+box-shadow: 2px 4px 5px 0px rgba(50, 50, 50, 0.75);
+}
+
+
+
+/*SWITCH ON*/
+
+    .k-switch-on .k-switch-container {
+        border-color: #13688c;
+        color: #d9ecf5;
+        background-color: #d9ecf5;
+    }
+
+    .k-switch-on .k-switch-handle {
+        border-color: #13688c;
+        color: #fff;
+        background-color: #13688c
+    }
+
+    .k-switch-on:hover .k-switch-container {
+        border-color: #13688c;
+        color: #d9ecf5;
+        background-color: #d9ecf5;
+    }
+
+    .k-switch-on:hover .k-switch-handle {
+        border-color: #13688c;
+        color: #fff;
+        background-color: #13688c;
+    }
+
+
+    .k-switch-on:active .k-switch-container {
+        border-color: #13688c;
+        color: #d9ecf5;
+        background-color: #d9ecf5
+    }
+
+    .k-switch-on:active .k-switch-handle {
+        border-color: #13688c;
+        color: #fff;
+        background-color: #13688c
+    }
+
+
+
+    .k-switch-on:visited .k-switch-container {
+        border-color: #13688c;
+        color: #d9ecf5;
+        background-color: #d9ecf5;
+    }
+
+    .k-switch-on:visited .k-switch-handle{
+        border-color: #13688c;
+        color: #fff;
+        background-color: #13688c;
+    }
+
+
+    .k-switch-on:focus .k-switch-container {
+        border-color: #13688c;
+        color: #d9ecf5;
+        background-color: #d9ecf5;
+    }
+
+    .k-switch-on:focus .k-switch-handle {
+        border-color: #13688c;
+        color: #fff;
+        background-color: #13688c;
+    }
+
+
+
+
+    /*SWITCH OFF*/
+
+    .k-switch-off .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+
+    .k-switch-off:hover .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:hover .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+    .k-switch-off:active .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:active .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+    .k-switch-off:visited .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:visited .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+    .k-switch-off:focus .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:focus .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+</style>
+
+
+<script src="~/nepadstaff1/js/vendor/jquery.smartWizard.min.js"></script>
+<script src="~/nepadstaff1/js/dore.script_edited.js"></script> 
+<script src="~/lib/kendo-ui/js/kendo.console.js"></script>
+
+
+

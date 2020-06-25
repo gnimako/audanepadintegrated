@@ -1,0 +1,640 @@
+@model EmployeeViewModel
+@{
+    ViewBag.Title = "AUDA-NEPAD Integrated System";
+    Layout = "_AdminLayout";
+
+}
+  <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header" style="background-color:#d1e0e6">
+                                <h4 class="m-b-0" style="color:#1a262b">Staff Mapping to Division</h4>
+                            </div>
+
+
+
+                            <div class="card-body">
+                      
+                                 <input hidden asp-for="Id" class="k-textbox" style="width:100%" value="@Model.Id">
+                                 <input hidden asp-for="IdentityUserId" class="k-textbox" style="width:100%" value="@Model.IdentityUserId">
+                                    <input hidden asp-for="ExistingPhotoPath" />
+                                    <div class="form-body">
+                                        <h3 class="box-title m-t-40">Select Directorate, Division and Employee</h3>
+                                        <hr>
+<form id="addformmain">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    @(Html.Kendo().DropDownList()
+                                                                  .Name("Directorate_Id")
+                                                                  .HtmlAttributes(new { style = "width:100%" })
+                                                                  .OptionLabel("Select Directorate...")
+                                                                  .DataTextField("DropDown_Name")
+                                                                  .DataValueField("DropDown_IntId")
+                                                                  .DataSource(source =>
+                                                                  {
+                                                                      source.Read(read =>
+                                                                      {
+                                                                          read.Action("GetAllTransDirectorate", "Admin");
+                                                                      });
+                                                                  })
+                                                                 // .SelectedIndex(Model.Directorate_Id)
+                                                    )
+
+                                 
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    @(Html.Kendo().DropDownListFor(model => model.Division_Id)
+                                                                        // .Name("Department_Id")
+                                                                        .HtmlAttributes(new { style = "width:100%", id = "Division_Id" })
+                                                                        .OptionLabel("Select Division/Department...")
+                                                                        .DataTextField("DropDown_Name")
+                                                                        .DataValueField("DropDown_IntId")
+                                                                        .Events(e =>
+                                                                        {
+                                                                                e.Close("onDropDownChange");
+                                                                        })
+                                                                        .DataSource(source =>
+                                                                        {
+                                                                            source.Read(read =>
+                                                                            {
+                                                                                    read.Action("GetTransDivisionsByDirectorate", "Admin")
+                                                                                    .Data("filterProducts");
+                                                                            })
+                                                                            .ServerFiltering(true);
+                                                                        })
+                                                                        .Enable(false)
+                                                                        .AutoBind(false)
+                                                                        .CascadeFrom("Directorate_Id")
+                                                                        //.SelectedIndex(Model.Department_Id)
+                                                    )
+                                                    <script>function filterProducts() {
+                                                            return {
+                                                                directorate: $("#Directorate_Id").val()
+                                                            };
+                                                        }</script>
+
+                                 
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    @(Html.Kendo().DropDownList()
+                                                                  .Name("Employee_Id")
+                                                                  .HtmlAttributes(new { style = "width:100%" })
+                                                                  .OptionLabel("Select Staff...")
+                                                                  .DataTextField("DropDown_Name")
+                                                                  .DataValueField("DropDown_IntId")
+                                                                 // .Filter(FilterType.Contains)
+                                                                  .DataSource(source =>
+                                                                  {
+                                                                      source.Read(read =>
+                                                                      {
+                                                                          read.Action("GetDirMappStaff", "Admin")
+                                                                              .Data("filterDiv");
+                                                                      })
+                                                                      .ServerFiltering(true);
+                                                                  })
+                                                                 .Enable(false)
+                                                                 .AutoBind(false)
+                                                                 .CascadeFrom("Directorate_Id")
+                                                                 // .SelectedIndex(Model.Directorate_Id)
+                                                    )
+                                                    <script>function filterDiv() {
+                                                            return {
+                                                                recid: $("#Directorate_Id").val()
+                                                            };
+                                                        }</script>
+
+                                 
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                            <label>Is this the PRIMARY Division of staff? </label>
+                                                &nbsp; &nbsp;
+                                                @(Html.Kendo().SwitchFor(m=>m.PrimaryMain)
+                                                     .Name("PrimaryMain")
+                                                        .Messages(c => c.Checked("YES").Unchecked("NO"))
+                                                    // .Events(c => c.Change("onChange"))
+                                                )
+
+                                 
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+
+
+                                                    <a class="k-button " id="btnAddStaffMapping" style="color: #003f59;">
+                                                        <span class="k-icon k-i-plus-outline"></span> Add Employee
+                                                    </a>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                
+                                        <div id="targetResponse" class="rssedResponse">
+                                        </div>
+                                         
+</form>
+                                        <h3 class="box-title m-t-40"><label style="color:#17ad30" id="reflabel"></label></h3>
+                                        <hr>
+                                      <div class="row">
+
+                                            <!--/span-->
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                @(Html.Kendo().Grid<EmployeeMappingViewModel>()
+                                                        .Name("grid")
+                                                        .Columns(columns =>
+                                                        {
+
+                                                            columns.Bound(c => c.EmployeePK).Hidden();
+                                                            columns.Bound(c => c.Transaction_Id).Hidden();
+                                                            columns.Bound(c => c.Directorate_Id).Hidden();
+                                                            columns.Bound(c => c.EmployeeName).ClientTemplate(
+                                                                           @"<div class='customer-photo'
+                                                                                   style='background-image: url(../#:data.profilepicpath#);'></div>
+                                                                                <div class='customer-name'>#:EmployeeName#</div>")
+                                                                          .Title("Employee Name");
+                                                            columns.Bound(c => c.Staff_Number).Title("Staff Number").Width(200).Hidden();
+                                                            columns.Bound(c => c.Primary_String).Title("Primary Division").Width(250);
+                                                            columns.Bound(c => c.Mapping_Status_String).Title("Status").Width(150);
+                                                            columns.Bound(c => c.TransactionDate).Title("Transaction Date").Format("{0: dd-MM-yyyy}").Width(200) ;
+                                                            columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("editstaffdivmap"));
+                                                            columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
+                                                        })
+                                                        .HtmlAttributes(new { style = "height: 550px;" })
+                                                        .Scrollable()
+                                                        .Groupable()
+                                                        .Sortable()
+                                                        .Navigatable()
+                                                        .Filterable()
+                                                        .Pageable(pageable => pageable
+                                                            .Refresh(true)
+                                                            .PageSizes(true)
+                                                            .ButtonCount(5))
+                                                        .DataSource(dataSource => dataSource
+                                                            .Ajax()
+                                                            .Sort(sort => sort.Add("Primary_String").Ascending())
+                                                            .Read(read => read
+                                                                            .Action("DivisionStaffMapping_Read", "Admin"))
+                                                            .Model(model => model.Id(p => p.Transaction_Id))
+                                                            .Destroy(destroy => destroy.Action("Struc_DivStaffMapping_Delete", "Admin"))
+                                                            .PageSize(20)
+                                                            .Events(events => events.Error("error_handler")
+                                                                                .RequestEnd("onRequestEnd"))
+                                                        )
+                                                    )
+
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                        </div>
+
+
+
+
+                                        <!--/row-->
+                                   
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-md-12 ">
+                                                <div class="form-group">
+
+                                                
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                          
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+<div id="getstaffwindow">
+</div>
+<div id="windowstaff"></div>
+<div id="staffposwindow">
+</div>
+<div id="windowstaffpos">
+</div>
+
+<div id="example">
+    <div id="dialog">
+    </div>
+    <div id="undo">
+    </div>
+</div>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+
+  function onClick() {
+
+  }
+
+
+
+ </script>
+
+<script type="text/javascript"> 
+    function error_handler(e) {    
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function() {
+                        message += this + "\n";
+                    });
+                }
+            });        
+            alert(message);
+        }
+    }
+
+    function onRequestEnd(e){
+            var recid = $("#Division_Id").val();  
+            if (e.type === "update" || e.type === "create" || e.type === "destroy" ) {
+                    var grid = $("#grid").data("kendoGrid"); 
+
+                    grid.dataSource.transport.options.read.url = "/Admin/DivisionStaffMapping_Read/?recid=" + recid;
+                    grid.dataSource.read();
+            }
+    }
+    function editstaffdivmap(e) {
+
+         e.preventDefault();
+          var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+          var transid = dataItem.Transaction_Id;
+                  $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+                var wnd2 = $("#getstaffwindow").kendoWindow({
+                    //actions: ["Close"],
+                    draggable: true,
+                    modal: true,
+                    animation: false,
+                    resizable: true,
+                    content: "/Admin/EditStaffDivisionMapping?transid=" + transid,
+                    width: 800,
+                    height: 400,
+
+                    title: "Edit Staff Division Mapping",
+                    // close: onClose,
+                    deactivate: function () {
+                        this.destroy();
+                    }
+
+                }).data("kendoWindow");
+                wnd2.center().open();
+
+         
+
+      }
+    function onDropDownChange()  
+    {  
+        var recid = $("#Division_Id").val();  
+        var grid = $("#grid").data("kendoGrid"); 
+
+        grid.dataSource.transport.options.read.url = "/Admin/DivisionStaffMapping_Read/?recid=" + recid;
+        grid.dataSource.read();
+
+        $("#reflabel").empty();
+        $("#reflabel").append($("#Division_Id").data("kendoDropDownList").text());
+
+   }
+
+    function programmeReadData() 
+    {
+         var programmeid = $("#Data_Id_StringType").val();  
+            return {
+                programmeid:programmeid
+
+            };
+    }
+
+
+
+   $("#btnAddStaffMapping").click(function () {
+       // e.preventDefault();
+        var dirid = $("#Directorate_Id").val();  
+        var divid = $("#Division_Id").val();  
+        var empid = $("#Employee_Id").val();  
+       // if(dirid === 0 && typeof dirid === "number")
+        //if(dirid === null)
+        if(dirid === "" && typeof dirid === "string")
+        {
+            $('#targetResponse').empty();
+            $('<span class="alert alert-warning" style="display: block;font-size: 100%"><b>Empty: Please select directorate</b> </span>').appendTo('.rssedResponse');
+        }
+        else if (divid === "" && typeof divid === "string")
+        {
+            $('#targetResponse').empty();
+            $('<span class="alert alert-warning" style="display: block;font-size: 100%"><b>Empty: Please select division/department</b> </span>').appendTo('.rssedResponse');
+        }
+        else if (empid === "" && typeof empid === "string")
+        {
+            $('#targetResponse').empty();
+            $('<span class="alert alert-warning" style="display: block;font-size: 100%"><b>Empty: Please select staff member to map</b> </span>').appendTo('.rssedResponse');
+        }
+        else{
+            $.ajax({
+                type: "POST",
+                url: '/Admin/AddStaffDivisionMapping',     //your action
+                //data: { "dirid": dirid, "divid": divid, "empid": empid},   //your form name.it takes all the values of model
+                data: $('#addformmain').serialize(),   //your form name.it takes all the values of model
+                dataType: 'json',
+                success: function (result) {
+                    var response = result.rtnmsg;
+
+                    if (response == "success") {
+                                $('#targetResponse').empty();
+                                $('<span class="alert alert-success" style="display: block;font-size: 100%"><b>Success : Mapping Saved Successfully. </b> </span>').appendTo('.rssedResponse');
+
+                             
+                                var grid = $("#grid").data("kendoGrid"); 
+
+                                grid.dataSource.transport.options.read.url = "/Admin/DivisionStaffMapping_Read/?recid=" + divid;
+                                grid.dataSource.read();
+                                grid.refresh();
+
+                    }
+                    else if (response == "pkerror") {
+                            $('#targetResponse').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Error: Unable to Save. Mapping Already Exist. <br> Please Select the User from the list to Update.</b> </span>').appendTo('.rssedResponse');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else if (response == "createerror") {
+                            $('#targetResponse').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Error: Unable to create mapping.</b> </span>').appendTo('.rssedResponse');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else if (response == "alreadyexist") {
+                            $('#targetResponse').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Already Exist: Mapping already exist.</b> </span>').appendTo('.rssedResponse');
+                            //$('#targetDivStaffa').empty();
+                    }
+                   else if (response == "notprimarydirectorate") {
+                            $('#targetResponse').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Mismatch Mapping: Ensure primary division mapping correspond to primary directorate mapping.</b> </span>').appendTo('.rssedResponse');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else {
+                            $('#targetResponse').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Unknown Error: Please try Again</b> </span>').appendTo('.rssedResponse');
+                            //$('#targetDivStaffa').empty();
+                    }
+
+                },
+                error: function (data) {
+                        $('#targetResponse').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Error: Error Occurred whiles saving</b> </span>').appendTo('.rssedResponse');
+                        //$('#targetDivStaffa').empty();
+                }
+            })
+        }
+        return false;
+
+    });
+
+
+
+
+</script>
+
+
+
+
+
+<style>
+    /* Page Template for the exported PDF */
+    .page-template {
+        font-family: "DejaVu Sans", "Arial", sans-serif;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+
+        .page-template .header {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            right: 30px;
+            border-bottom: 1px solid #888;
+            color: #888;
+        }
+
+        .page-template .footer {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+            border-top: 1px solid #888;
+            text-align: center;
+            color: #888;
+        }
+
+        .page-template .watermark {
+            font-weight: bold;
+            font-size: 400%;
+            text-align: center;
+            margin-top: 30%;
+            color: #aaaaaa;
+            opacity: 0.1;
+            transform: rotate(-35deg) scale(1.7, 1.5);
+        }
+
+    /* Content styling */
+    .customer-photo {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-size: 32px 35px;
+        background-position: center center;
+        vertical-align: middle;
+        line-height: 32px;
+        box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0,0,0,.2);
+        margin-left: 5px;
+    }
+
+    .customer-name {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 32px;
+        padding-left: 3px;
+    }
+</style>
+
+
+<style>
+
+/*SWITCH ON*/
+
+    .k-switch-on .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28
+    }
+
+    .k-switch-on:hover .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:hover .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+    .k-switch-on:active .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4
+    }
+
+    .k-switch-on:active .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28
+    }
+
+
+
+    .k-switch-on:visited .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:visited .k-switch-handle{
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+    .k-switch-on:focus .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:focus .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+
+
+    /*SWITCH OFF*/
+
+    .k-switch-off .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+
+    .k-switch-off:hover .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:hover .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+    .k-switch-off:active .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:active .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+    .k-switch-off:visited .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:visited .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+    .k-switch-off:focus .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:focus .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+
+</style>
