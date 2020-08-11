@@ -102,11 +102,12 @@
                                         <li><a href="#defaultStep4">Procurement<br /><small>Procurement Plan</small></a></li>
                                         <li><a href="#defaultStep5">Communication<br /><small>Communication Plan</small></a></li>
                                         <li><a href="#defaultStep6">Risk<br /><small>Risk Profile</small></a></li>
+                                        <li><a href="#defaultStep7">Submit<br /><small>Review &#38; Submit</small></a></li>
                                     </ul>
 
                                     <div class="card-body">
                                         <div id="defaultStep1">
-                                            <h5 class="pb-2" style="color: #003473;"><span class="bluenum">1</span> What are the outcomes for @Model.FisYear, @Model.FisPeriod?</h5>
+                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">1</span> What are the outcomes for @Model.FisYear, @Model.FisPeriod?</h6>
                                                                 @(Html.Kendo().Grid<WorkplansViewModel>()
                                                                             .Name("grid_main")
                                                                             .Columns(columns =>
@@ -144,8 +145,9 @@
                                                                             )
                                                             )
                                                             <br \>
+                                                            <br \>
 
-                                                <h5 class="pb-2" style="color: #003473;"><span class="bluenum">2</span> What AUC MTP Priorities are closely linked to the outcome(s)?</h5>
+                                                <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">2</span> What AUC MTP Priorities are closely linked to the outcome(s)?</h6>
                                                                 
 
                                                                 @(Html.Kendo().Grid<WorkplansViewModel>()
@@ -181,8 +183,9 @@
                                                                             )
                                                                 )
                                                                   <br \>
+                                                                  <br \>
 
-                                                             <h5 class="pb-2" style="color: #003473;"><span class="bluenum">3</span> What AUDA-NEPAD Strategic Priorities are closely linked to the outcome(s)?</h5>
+                                                             <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">3</span> What AUDA-NEPAD Strategic Priorities are closely linked to the outcome(s)?</h6>
                                                                         @(Html.Kendo().Grid<WorkplansViewModel>()
                                                                             .Name("gridpriority")
                                                                             .Columns(columns =>
@@ -221,8 +224,9 @@
                                                                   
                                         
                                         <br \>
+                                        <br \>
 
-                                        <h5 class="pb-2" style="color: #003473;"><span class="bluenum">4</span> What is the scope of delivery for this workplan?</h5>
+                                        <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">4</span> What is the scope of delivery for this workplan?</h6>
                                         <br \>
                                         <div style="padding-left: 4em;">
                                             <span class="pb-2" style="color: #000000;"><span class="blacknum">4</span> Continental Coverage  </span>       
@@ -238,45 +242,66 @@
                                             <span class="pb-2" style="color: #000000;"><span class="blacknum">4</span> Regional Coverage  </span>   
                                             <br \>
                                             <br \>
-                                              @(Html.Kendo().Grid<WorkplansViewModel>()
-                                                        .Name("grid_recs")
-                                                        .Columns(columns =>
-                                                        {
-                                                            columns.Bound(c => c.SessionTransaction_Id).Hidden();
-                                                            columns.Bound(c => c.Transaction_Id).Hidden();
-                                                            columns.Bound(c => c.SelectedRow).Hidden();
-                                                            columns.Bound(c => c.WPMainRecord_Ident).Hidden();
-                                                            columns.Bound(c => c.ProjectId).Hidden();
-                                                            columns.Bound(c => c.FYearIdent).Hidden();
-                                                            columns.Bound(c => c.FPeriodIdent).Hidden();
-                                                            columns.Bound(c => c.REC_Ident).Hidden();
-                                                            columns.Select().Width(50).HtmlAttributes(new { style = "text-align:center" }).HeaderHtmlAttributes(new { style = "text-align:center" });
-                                                            columns.Bound(c => c.Statement).Title("Regional Economic Communities (RECs)");                                           
-                                                            // columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
-
-                                                        })
-                                                        .Events(e => e.DataBound("onDataBoundREC"))
-                                                        .Events(ev => ev.Change("onChangeREC"))
-                                                        .DataSource(dataSource => dataSource
-                                                            .Ajax()
-                                                            .Read(read => read.Action("WP_RECsActual_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod}))
-                                                            .Model(model => 
-                                                                {
-                                                                    model.Id(p => p.REC_Ident);
-                                                                    //model.Field(field => field.LookUp_Status).Editable(false);
-                                                                })
-                            
-                                                                                    
-                                                            
-                                                        )
+                                            @(Html.Kendo().MultiSelect()
+                                                .Name("recscopeselect")
+                                                .HtmlAttributes(new { style = "width:100%" })
+                                                .DataTextField("DropDown_Name")
+                                                .DataValueField("DropDown_IntId")
+                                                .Placeholder("Select REC..")
+                                                .AutoBind(false)
+                                                .Value(Model.SelectedRECs)
+                                            // .Value(new[] { new { ProductName = "Chang", ProductID = 2 }, new { ProductName = "Uncle Bob's Organic Dried Pears", ProductID = 7 } })
+                                                .Events(e =>
+                                                {
+                                                    e.Change("onChangeRECMultiSelect");//.Select("onSelectCountry").Select("onSelect").Open("onOpen").Close("onClose").DataBound("onDataBound").Filtering("onFiltering");
+                                                })
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                        read.Action("GetAllTransRECs", "Admin");
+                                                    })
+                                                    .ServerFiltering(false);
+                                                })
                                             )
+                                            
+                                            <br \>
+                                            <br \>
+                                            <br \>
+
+                                            <span class="pb-2" style="color: #000000;"><span class="blacknum">4</span> Member States Coverage  </span>   
+                                             <br \>
+                                            <br \>
+                                            @(Html.Kendo().MultiSelect()
+                                                .Name("countryscopeselect")
+                                                .HtmlAttributes(new { style = "width:100%" })
+                                                .DataTextField("DropDown_Name")
+                                                .DataValueField("DropDown_IntId")
+                                                .Placeholder("Select Member State...")
+                                                .AutoBind(false)
+                                                .Value(Model.SelectedCountries)
+                                            // .Value(new[] { new { ProductName = "Chang", ProductID = 2 }, new { ProductName = "Uncle Bob's Organic Dried Pears", ProductID = 7 } })
+                                                .Events(e =>
+                                                {
+                                                    e.Change("onChangeCountry");//.Select("onSelectCountry").Select("onSelect").Open("onOpen").Close("onClose").DataBound("onDataBound").Filtering("onFiltering");
+                                                })
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                        read.Action("GetAllTransAUCMemberStates", "Admin");
+                                                    })
+                                                    .ServerFiltering(false);
+                                                })
+                                            )
+                                            
                                         </div>
 
 
 
                                         </div>
                                         <div id="defaultStep2">
-                                            <h6 class="pb-2" style="color: #003473;"><span class="bluenum">5</span> What are the outputs/deliverables for @Model.FisYear, @Model.FisPeriod?</h6>
+                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">5</span> What are the outputs or deliverables for @Model.FisYear, @Model.FisPeriod?</h6>
                                                                 @(Html.Kendo().Grid<WorkplansViewModel>()
                                                                             .Name("grid_outputs")
                                                                             .Columns(columns =>
@@ -287,45 +312,127 @@
                                                                                 columns.Bound(c => c.FYearIdent).Hidden();
                                                                                 columns.Bound(c => c.FPeriodIdent).Hidden();
                                                                                 columns.Bound(c => c.ViewNumbering).Title("No").Width(20).Hidden(); 
-                                                                                columns.Bound(c => c.Outcome).Title("Outcome");                                           
+                                                                                columns.Bound(c => c.Output).Title("Output");                                           
 
                                                                                 columns.Command(command => { command.Edit().Text(" Edit").IconClass("k-icon k-i-track-changes"); });
-                                                                                columns.Command(command => command.Custom(" Manage Indicators").IconClass("k-icon k-i-track-changes").Click(""));
+                                                                             // columns.Command(command => command.Custom(" Manage Indicators").IconClass("k-icon k-i-track-changes").Click(""));
                                                                                 columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
 
                                                                             })
-                                                                            .ToolBar(toolbar => toolbar.Create().Text(" Add an Outcome").IconClass("k-icon k-i-plus-outline"))
+                                                                            .ToolBar(toolbar => toolbar.Create().Text(" Add an Output").IconClass("k-icon k-i-plus-outline"))
                                                                             .Editable(editable => editable.Mode(GridEditMode.InLine))
                                                                             .Resizable(r=>r.Columns(true))
                                                                             .DataSource(dataSource => dataSource
                                                                                 .Ajax()
-                                                                                .Read(read => read.Action("WP_Outcomes_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod}))
+                                                                                .Read(read => read.Action("WP_Outputs_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod}))
                                                                                 .Model(model => 
                                                                                     {
                                                                                         model.Id(p => p.Transaction_Id);
                                                                                         //model.Field(field => field.LookUp_Status).Editable(false);
                                                                                     })
-                                                                                .Create(create => create.Action("WP_Outcomes_Create", "Admin", new {progid=Model.Programme_Id, projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod, empid=Model.Employee_Id, dirid=Model.Directorate_Id, divid=Model.Division_Id}))
-                                                                                .Update(update => update.Action("WP_Outcomes_Update", "Admin", new {empid=Model.Employee_Id}))
-                                                                                .Destroy(destroy => destroy.Action("WP_Outcomes_Delete", "Admin"))
+                                                                                .Create(create => create.Action("WP_Outputs_Create", "Admin", new {progid=Model.Programme_Id, projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod, empid=Model.Employee_Id, dirid=Model.Directorate_Id, divid=Model.Division_Id}))
+                                                                                .Update(update => update.Action("WP_Outputs_Update", "Admin", new {empid=Model.Employee_Id}))
+                                                                                .Destroy(destroy => destroy.Action("WP_Outputs_Delete", "Admin"))
                                                                                // .PageSize(20)
                                                                                 .Events(events => events.Error("error_handler")
-                                                                                                        .RequestEnd("onRequestEnd"))
+                                                                                                        .RequestEnd("onRequestEndOutput"))
                                                                                 
                                                                             )
                                                             )
                                                             <br \>
+                                                            <br \>
+
+                                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">6</span> What are the indicators for measuring progress towards the outputs?</h6>
+                                                             @(Html.Kendo().Grid<WorkplansViewModel>()
+                                                                            .Name("grid_outputindicators")
+                                                                            .Columns(columns =>
+                                                                            {
+                                                                                columns.Bound(c => c.Transaction_Id).Hidden();
+                                                                                columns.Bound(c => c.WPMainRecord_Ident).Hidden();
+                                                                                columns.Bound(c => c.ProjectId).Hidden();
+                                                                                columns.Bound(c => c.FYearIdent).Hidden();
+                                                                                columns.Bound(c => c.FPeriodIdent).Hidden();
+                                                                                columns.Bound(c => c.ViewNumbering).Title("No").Width(20).Hidden(); 
+                                                                                columns.Bound(c => c.Output).Title("Define Indicators for each Output").HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                //.HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                                                        
+
+                                                                            
+                                                                               columns.Command(command => command.Custom(" Add Indicator").IconClass("k-icon k-i-column-stacked").Click("addoutputindicator").HtmlAttributes(new { style = "border-radius: 12px;" })).Title("ClickButton").HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                //columns.Command(command => command.Custom(" Add Indicator").IconClass("k-icon k-i-column-stacked"));
+                                                                                //.HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                
+
+                                                                            })
+                                                                            
+                                                                            
+                                                                            .Resizable(r=>r.Columns(true))
+                                                                            .ClientDetailTemplateId("templateoutputindicators")
+                                                                            .DataSource(dataSource => dataSource
+                                                                                .Ajax()
+                                                                                .Read(read => read.Action("WP_Outputs_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod}))
+                                                                                .Model(model => 
+                                                                                    {
+                                                                                        model.Id(p => p.Transaction_Id);
+                                                                                        //model.Field(field => field.LookUp_Status).Editable(false);
+                                                                                    })
+                                                                     
+                                                                               // .PageSize(20)
+                                                                                .Events(events => events.Error("error_handler"))
+                                                                                                    
+                                                                                
+                                                                            )
+                                                                            .Events(events => events.DataBound("dataBoundOutputIndicators"))
+                                                            )
+
+
+                                                            
+                                                       
+
                                         </div>
                                         <div id="defaultStep3">
-                                            <h4 class="pb-2">Step 3 Content</h4>
-                                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                                Lorem Ipsum has been the industry's standard dummy text ever since the
-                                                1500s, when an unknown printer took a galley of type and scrambled it to
-                                                make a type specimen book. It has survived not only five centuries, but also
-                                                the leap into electronic typesetting, remaining essentially unchanged. It
-                                                was popularised in the 1960s with the release of Letraset sheets containing
-                                                Lorem Ipsum passages, and more recently with desktop publishing software
-                                                like Aldus PageMaker including versions of Lorem Ipsum. </div>
+                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">7</span> What are the activities for delivering the outputs?</h6>
+                                                             @(Html.Kendo().Grid<WorkplansViewModel>()
+                                                                            .Name("grid_outputactivities")
+                                                                            .Columns(columns =>
+                                                                            {
+                                                                                columns.Bound(c => c.Transaction_Id).Hidden();
+                                                                                columns.Bound(c => c.WPMainRecord_Ident).Hidden();
+                                                                                columns.Bound(c => c.ProjectId).Hidden();
+                                                                                columns.Bound(c => c.FYearIdent).Hidden();
+                                                                                columns.Bound(c => c.FPeriodIdent).Hidden();
+                                                                                columns.Bound(c => c.ViewNumbering).Title("No").Width(20).Hidden(); 
+                                                                                columns.Bound(c => c.Output).Title("Define Indicators for each Output").HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                //.HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                                                        
+
+                                                                            
+                                                                               columns.Command(command => command.Custom(" Add An Activity").IconClass("k-icon k-i-group-collection").Click("addoutputactivity").HtmlAttributes(new { style = "border-radius: 12px;" })).HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                //columns.Command(command => command.Custom(" Add Indicator").IconClass("k-icon k-i-column-stacked"));
+                                                                                //.HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                
+
+                                                                            })
+                                                                            
+                                                                            
+                                                                            .Resizable(r=>r.Columns(true))
+                                                                            .ClientDetailTemplateId("templateoutputactivities")
+                                                                            .DataSource(dataSource => dataSource
+                                                                                .Ajax()
+                                                                                .Read(read => read.Action("WP_Outputs_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod}))
+                                                                                .Model(model => 
+                                                                                    {
+                                                                                        model.Id(p => p.Transaction_Id);
+                                                                                        //model.Field(field => field.LookUp_Status).Editable(false);
+                                                                                    })
+                                                                     
+                                                                               // .PageSize(20)
+                                                                                .Events(events => events.Error("error_handler"))
+                                                                                                    
+                                                                                
+                                                                            )
+                                                                            .Events(events => events.DataBound("dataBoundOutputIndicators"))
+                                                            )
 
                                         </div>
                                         <div id="defaultStep4">
@@ -364,6 +471,48 @@
                                                 like Aldus PageMaker including versions of Lorem Ipsum. </div>
 
                                         </div>
+
+                                        <div id="defaultStep7">
+                                            <h4 class="pb-2">Review Workplan and Submit</h4>
+                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">D</span> Outputs and Budget</h6>
+                                              <div style="padding-left: 4em;">
+                                                             @(Html.Kendo().Grid<WorkplansViewModel>()
+                                                                            .Name("grid_outputsbudget")
+                                                                            .Columns(columns =>
+                                                                            {
+                                                                                columns.Bound(c => c.Transaction_Id).Hidden();
+                                                                                columns.Bound(c => c.WPMainRecord_Ident).Hidden();
+                                                                                columns.Bound(c => c.ProjectId).Hidden();
+                                                                                columns.Bound(c => c.FYearIdent).Hidden();
+                                                                                columns.Bound(c => c.FPeriodIdent).Hidden();
+                                                                                columns.Bound(c => c.WPOutput_Id).Hidden();
+                                                                                columns.Bound(c => c.WPSAPLink_Id).Hidden();
+                                                                                columns.Bound(c => c.LinkToSAPExecutionStringVM).Hidden();
+                                    
+                                                                                columns.Bound(c => c.Output).Title("Output").HeaderHtmlAttributes(new { @class = "hidden" }); 
+                                                                                columns.Bound(c => c.Output_BudgetAmount).Title("Budget").Format("{0:n2}").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                columns.Bound(c => c.LinkToSAPExecutionDisplayVM).Title("Link To SAP").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { @class = "hidden" })   ;                                     
+                                                                                columns.Command(command => command.Custom(" Link to SAP").IconClass("k-icon k-i-track-changes").Click("addoutputbudget").Visible("showactsaplinkedbuttons").HtmlAttributes(new { style = "border-radius: 12px;" })).HtmlAttributes(new { style = "text-align:center" }).HeaderHtmlAttributes(new { @class = "hidden" });
+                               
+
+                                                                            })
+                                                                            .Resizable(r=>r.Columns(true))
+                                                                            .DataSource(dataSource => dataSource
+                                                                                .Ajax()
+                                                                                .Read(read => read.Action("WP_OutputsBudget_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod}))
+                                                                                .Model(model => 
+                                                                                    {
+                                                                                        model.Id(p => p.Transaction_Id);
+                                                                                        //model.Field(field => field.LookUp_Status).Editable(false);
+                                                                                    })
+                                                                               // .PageSize(20)
+                                                                                
+                                                                            )
+                                                                            .Events(evnts => evnts.DataBound("ColorMeBad"))
+                                                            )
+                                                    </div>
+
+                                        </div>
                                     </div>
                                 </div>
 
@@ -400,9 +549,814 @@
     </div>
 </div>
 
+<script id="templateoutputindicators" type="text/kendo-tmpl">
+    @(Html.Kendo().Grid<WP_OutputIndicatorsSubGridVM>()
+            .Name("gridsub_#=Transaction_Id#")
+            .Columns(columns =>
+            {
+                columns.Bound(o => o.Output_ChildGridId).Hidden();
+                columns.Bound(o => o.Transaction_IdOIVM).Hidden();
+                columns.Bound(o => o.IndicatorStatementOIVM).Title("Indicator");
+                columns.Bound(o => o.BaselineOIVM).Width(110).Title("Baseline");
+                columns.Bound(o => o.TargetOIVM).Title("Target");
+                columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("deleteoutputindicator"));
+            })
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(10)
+                .Read(read => read.Action("WP_OutputsSubIndicators_Read", "Admin", new { output_transid = "#=Transaction_Id#" }))
+            )
+            
+            .ToClientTemplate()
+    )
+</script>
+<script id="templateoutputactivities" type="text/kendo-tmpl">
+    @(Html.Kendo().Grid<WP_OutputActivitiesSubGridVM>()
+            .Name("gridactivitysub_#=Transaction_Id#")
+            .Columns(columns =>
+            {
+                columns.Bound(o => o.Transaction_IdOAVM).Hidden();
+                columns.Bound(o => o.ShowGridButtons).Hidden();
+                columns.Bound(o => o.ActivityTypeName_IdOAVM).Width(110).Title("Activity Type");
+                columns.Bound(o => o.ActivityDescriptionOAVM).Title("Activity Description");
+                columns.Bound(o => o.ActivityCostOAVM).Title("Cost (USD)").Format("{0:n2}").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { style = "text-align:right" });
+                columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("deleteoutputindicator").Visible("showactbuttons")).HtmlAttributes(new { style = "text-align:center" });
+                columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("editoutputactivity").Visible("showactbuttons")).HtmlAttributes(new { style = "text-align:center" });
+            })
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(10)
+                .Read(read => read.Action("WP_OutputsSubActivities_Read", "Admin", new { output_transid = "#=Transaction_Id#" }))
+     
+            )
+            .Events(events => events.DataBound("dataBoundOutputActChild"))
+            .ToClientTemplate()
+    )
+</script>
+<script>
+    function showactbuttons(dataItem) {
+        // hide the Edit button for the item with ProductID=1
+        return dataItem.ShowGridButtons == "YES";
+    }
+    function showactsaplinkedbuttons(dataItem) {
+        // hide the Edit button for the item with ProductID=1
+        return dataItem.LinkToSAPExecutionStringVM == "true";
+    }
+    function dataBoundOutputIndicators(e) {
+        // this.expandRow(this.tbody.find("tr.k-master-row").first());
+        // this.expandRow(this.tbody.find("tr.k-master-row"));
+
+        var grid = e.sender;
+   
+        grid.tbody.find("tr.k-master-row").click(function(e){                           
+        var target = $(e.target);  
+
+        var row = $(this).closest("tr");
+
+        //var colIdx = $("td", row).index(this);   
+        // var colName = $('#grid_outputindicators').find('th').eq(colIdx).text();
+
+
+        if((target.hasClass("k-i-expand"))||(target.hasClass("k-i-collapse"))){
+            return;
+        }         
+            
+        var row = target.closest("tr.k-master-row");
+        var icon = row.find(".k-i-expand");
+        grid.expandRow(row);
+
+           // if(icon.length)
+         //   {
+             //   grid.expandRow(row);
+           // }
+          //  else
+           // {
+            //    grid.collapseRow(row);    
+          //  }  
+            
+ 
+        });
+    }
+    function dataBoundOutputActChild(e) {
+            // iterate the table rows and apply custom row and cell styling
+            var rows = e.sender.tbody.children();
+            for (var j = 0; j < rows.length; j++) {
+              var row = $(rows[j]);
+              var dataItem = e.sender.dataItem(row);
+
+              var showbut = dataItem.get("ShowGridButtons");
+
+              if (showbut=="NO") {
+                row.addClass("boldclass");
+              }
+
+            }
+
+    }
+    function ColorMeBad(e) {
+
+
+
+       var rows = e.sender.tbody.children();
+       for (var j = 0; j < rows.length; j++) {
+            var row = $(rows[j]);
+            var dataItem = e.sender.dataItem(row);
+
+            var showvar= dataItem.get("LinkToSAPExecutionDisplayVM");
+            var cellIndex_8=8;
+            var cellIndex_9=9;
+            var cellIndex_10=10;
+            var cellIndex_11=11;
+
+            var cell_8 = row.find("td:eq(" + cellIndex_8 + ")");
+            var cell_9 = row.find("td:eq(" + cellIndex_9 + ")");
+            var cell_10 = row.find("td:eq(" + cellIndex_10 + ")");
+            var cell_11 = row.find("td:eq(" + cellIndex_11 + ")");
+
+            if (showvar=="Linked to SAP") {
+                cell_8.addClass("linked");
+                cell_9.addClass("linked");
+                cell_10.addClass("linked");
+                cell_11.addClass("linked");
+            }
+            else if (showvar=="Not Linked to SAP")
+            {
+                cell_8.addClass("unlinked");
+                cell_9.addClass("unlinked");
+                cell_10.addClass("unlinked");
+                cell_11.addClass("unlinked");
+            }
+            else
+            {
+                cell_8.addClass("budgettotal");
+                cell_9.addClass("budgettotal");
+                cell_10.addClass("budgettotal");
+                cell_11.addClass("budgettotal");
+
+            }
+
+       }
+
+               // dataView = this.dataSource.view();
+                //for (var i = 0; i < dataView.length; i++) {
+                    //if (dataView[i].LinkToSAPExecutionDisplayVM=="Linked to SAP") {
+                        //var uid = dataView[i].uid;
+                        //$("#grid_outputsbudget tbody").find("tr[data-uid=" + uid + "]").addClass("linked");  
+                    //}
+                    //else  {
+                        //var uid = dataView[i].uid;
+                        //$("#grid_outputsbudget tbody").find("tr[data-uid=" + uid + "]").addClass("unlinked");
+                    //}
+                //}
+    }
+function dataBoundOutputBudgetSAPLink(e) {
+    var grid = this;
+    
+  	grid.tbody.find("tr[role='row']").each(function(){
+    	var model = grid.dataItem(this);
+      
+      $(this).find(".progress").kendoProgressBar({
+      	value: model.UtilizationPercentageSAPVM,
+        type: "percent"
+      });
+
+      //$(this).progressWrapper.css({"background-color": "#32c728", "border-color": "#32c728"});
+    });
+}
+
+
+</script>
 
 
 <script>
+//Partial Window Loads JQuery Functions
+function filterindicators() {
+    return {
+        priority: $("#Priority_IdOIVM").val()
+    };
+}
+function onDropDownChangeOutputIndicator(d)  
+{  
+
+    var quant = document.getElementById("quantitativediv");
+    var qual = document.getElementById("qualitativediv");
+
+    var indicatorid = $("#OutputIndicator_IdOIVM").val();
+
+
+
+
+    $.ajax({
+        type: "POST",
+        url: '/Admin/CheckOutputIndicatorType',     //your action
+        //data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, selectedrows: JSON.parse( JSON.stringify(models))},
+        data:{"indicatorid": indicatorid},
+        //data: { selectkeys: dataItem},
+        dataType: 'json',
+        success: function (result) {
+            var response = result.rtnmsg;
+
+            if (response == "quanlitative") {
+                quant.hidden = true;
+                qual.hidden = false;
+            }
+            else
+            {
+                quant.hidden = false;
+                qual.hidden = true;
+
+            }
+        },
+        error: function (data) {
+ 
+        }
+    })
+
+
+
+ }
+
+ function onDropDownChangeOutputIndicator_Proj(d)  
+{  
+
+    var quant = document.getElementById("quantitativediv_proj");
+    var qual = document.getElementById("qualitativediv_proj");
+
+    var indicatortype = $("#IndicatorTypeOIVM_Proj").val();
+
+    if (indicatortype == "2") {
+        quant.hidden = true;
+        qual.hidden = false;
+    }
+    else
+    {
+        quant.hidden = false;
+        qual.hidden = true;
+
+    }
+  
+
+
+
+ }
+
+
+</script>
+
+
+<script>
+//Begin*** Partial Windows Loads ***
+function addoutputindicator(e) {
+
+    e.preventDefault();
+
+
+
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+    var transid = dataItem.Transaction_Id;
+   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
+    
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/NEPADStaff/AddOutputIndicator?transid=" + transid,
+            width: 600,
+            height: 600,
+
+            title: "Add an Output Indicator",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+
+
+
+
+        $('.k-widget.k-window .k-window-titlebar').css({
+               // 'background-color': '#003473' ,
+                //'border-color': '#003473' ,
+               // 'color': '#fff' ,
+                'border-top-left-radius': '0px',
+                'border-top-right-radius': '0px'
+        });
+         
+
+}
+
+function addoutputactivity(e) {
+
+    e.preventDefault();
+
+
+
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+    var transid = dataItem.Transaction_Id;
+   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
+    
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/NEPADStaff/AddOutputActivity?transid=" + transid,
+            width: 600,
+            height: 600,
+
+            title: "Add an Output Activity",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+         
+
+}
+
+
+function editoutputactivity(e) {
+
+    e.preventDefault();
+
+
+
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+    var transid = dataItem.Transaction_IdOAVM;
+   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
+    
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/NEPADStaff/EditOutputActivity?transid=" + transid,
+            width: 600,
+            height: 600,
+
+            title: "Edit an Output Activity",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+         
+
+}
+
+function addoutputbudget(e) {
+
+    e.preventDefault();
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+
+    var outputid = dataItem.WPOutput_Id;
+    var mainrecordid = dataItem.WPMainRecord_Ident;
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/NEPADStaff/ManageOutputBudgetLink?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&mainrecordid=" + mainrecordid + "&outputid=" + outputid,
+            width: 600,
+            height: 400,
+
+            title: "Link Output Budget to SAP",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+
+
+         
+
+}
+
+
+//End*** of Partial Windows Loads ***
+
+//Begin *** Kendo Grid Row Delete functions ***
+
+function deleteoutputindicator(e) {
+    e.preventDefault();
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    //var subindicatorid = dataItem.Transaction_IndicatorId;
+    var subindicatorid = dataItem.Transaction_IdOIVM;
+    var childgridident = dataItem.Output_ChildGridId;
+
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+
+
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+    dialog.kendoDialog({
+        width: "450px",
+        title: "Confirmation",
+        closable: false,
+        modal: true,
+        content: "<p>Please confirm the DELETE action.<p>",
+        actions: [
+            {
+                text: 'Confirm',
+                action: function (e) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/Admin/WP_OutputsSubIndicators_Delete',     //your action
+                        data: { "subindicatorid": subindicatorid},
+                        dataType: 'json',
+                        success: function (result) {
+
+                          //  var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+
+                            var childGrid = $('#gridsub_'+childgridident).data("kendoGrid");
+
+                            childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutputsSubIndicators_Read?output_transid=" + childgridident;
+                            childGrid.dataSource.read();
+                            childGrid.refresh();
+
+                        },
+                        error: function (data) {
+
+                        }
+                    })
+                    return true;
+                },
+                primary: true
+
+            },
+            { text: 'Cancel' }
+        ],
+        close: onClose
+    });
+
+    dialog.data("kendoDialog").open();
+    undo.fadeOut();
+
+    }
+
+
+
+function deleteoutputbudgetsaplink(e) {
+    e.preventDefault();
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    //var subindicatorid = dataItem.Transaction_IndicatorId;
+    var transid = dataItem.Transaction_IdSAPVM;
+    var transident = $("#Transaction_IdOBVM").val();  
+
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+
+
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+    dialog.kendoDialog({
+        width: "450px",
+        title: "Confirmation",
+        closable: false,
+        modal: true,
+        content: "<p>Please confirm the DELETE action.<p>",
+        actions: [
+            {
+                text: 'Confirm',
+                action: function (e) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/Admin/DeleteBudgetSAPLink',     //your action
+                        data: { "transid": transid},
+                        dataType: 'json',
+                        success: function (result) {
+                            var response = result.rtnmsg;
+
+                            if (response == "success") {
+                                        $('#targetDivStaffa_outputbudget').empty();
+                                        $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Budget Link Successfully Deleted. </span>').appendTo('.rssedStaffa_outputbudget');
+
+                                        var grid = $("#grid_saplink").data("kendoGrid"); 
+                                        grid.dataSource.transport.options.read.url = "/Admin/WP_OutputsBudgetLink_Read/?transid=" + transident;
+                                        grid.dataSource.read();
+                                        grid.refresh();
+
+                                        var grid_outputsbudget = $("#grid_outputsbudget").data("kendoGrid"); 
+                                        grid_outputsbudget.dataSource.transport.options.read.url = "/Admin/WP_OutputsBudget_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
+                                        grid_outputsbudget.dataSource.read();
+                                        grid_outputsbudget.refresh();
+
+
+
+                            }
+                            else {
+                                    $('#targetDivStaffa_outputbudget').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffa_outputbudget');
+                                    //$('#targetDivStaffa').empty();
+                            }
+
+                        },
+                        error: function (data) {
+                                $('#targetDivStaffa_outputbudget').empty();
+                                $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffa_outputbudget');
+                                //$('#targetDivStaffa').empty();
+                        }
+                    })
+                    return true;
+                },
+                primary: true
+
+            },
+            { text: 'Cancel' }
+        ],
+        close: onClose
+    });
+
+    dialog.data("kendoDialog").open();
+    undo.fadeOut();
+
+}
+
+//End *** Kendo Grid Row Delete functions ***
+
+
+
+
+function onSelectCountry(e) {
+
+    var dataItem = this.dataSource.view()[e.item.index()];
+
+   var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+    dialog.kendoDialog({
+        width: "300px",
+        title: "Delete",
+        closable: false,
+        modal: true,
+        content: "<p>Delete: <p>"+dataItem.DropDown_Name + " : " + dataItem.DropDown_IntId,
+        actions: [
+            { text: 'Cancel' }
+        ],
+        close: onClose
+    });
+
+    dialog.data("kendoDialog").open();
+    undo.fadeOut();
+}
+
+function onChangeCountry() {
+
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+    var empid = $("#Employee_Id").val(); 
+    var dirid = $("#Directorate_Id").val(); 
+    var divid = $("#Division_Id").val(); 
+    var progid = $("#Programme_Id").val(); 
+
+    var multiselect = $("#countryscopeselect").data("kendoMultiSelect");
+    //var dataItem = multiselect.dataItems();
+    var dataItem = multiselect.value().toString();
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+
+    $.ajax({
+        type: "POST",
+        url: '/Admin/AddWPMemberStateMultiSelect',     //your action
+        //data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, selectedrows: JSON.parse( JSON.stringify(models))},
+        data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": dataItem, "empid": empid, "dirid": dirid, "divid": divid, "progid": progid},
+        //data: { selectkeys: dataItem},
+        dataType: 'json',
+        success: function (result) {
+            var response = result.rtnmsg;
+
+            if (response == "success") {
+
+
+            }
+            else if  (response == "nomainrecord") {
+            
+                dialog.kendoDialog({
+                    width: "300px",
+                    title: "No Outcome or MTP",
+                    closable: false,
+                    modal: true,
+                    content: "<p>Please define at least one outcome or link an MTP Priority to the workplan<p>",
+                    actions: [
+                        { text: 'Cancel' }
+                    ],
+                    close: onClose
+                });
+
+                dialog.data("kendoDialog").open();
+                undo.fadeOut();
+
+                multiselect.value("");
+               // multiselect.trigger("change");
+
+
+
+            }
+          
+
+        },
+        error: function (data) {
+ 
+        }
+    })
+
+
+}
+
+
+
+function onChangeRECMultiSelect() {
+
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+    var empid = $("#Employee_Id").val(); 
+    var dirid = $("#Directorate_Id").val(); 
+    var divid = $("#Division_Id").val(); 
+    var progid = $("#Programme_Id").val(); 
+
+    var multiselect = $("#recscopeselect").data("kendoMultiSelect");
+    //var dataItem = multiselect.dataItems();
+    var dataItem = multiselect.value().toString();
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+
+    $.ajax({
+        type: "POST",
+        url: '/Admin/AddWPRECCoverageMultiSelect',     //your action
+        //data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, selectedrows: JSON.parse( JSON.stringify(models))},
+        data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": dataItem, "empid": empid, "dirid": dirid, "divid": divid, "progid": progid},
+        //data: { selectkeys: dataItem},
+        dataType: 'json',
+        success: function (result) {
+            var response = result.rtnmsg;
+
+            if (response == "success") {
+
+
+            }
+            else if  (response == "nomainrecord") {
+            
+                dialog.kendoDialog({
+                    width: "300px",
+                    title: "No Outcome or MTP",
+                    closable: false,
+                    modal: true,
+                    content: "<p>Please define at least one outcome or link an MTP Priority to the workplan<p>",
+                    actions: [
+                        { text: 'Cancel' }
+                    ],
+                    close: onClose
+                });
+
+                dialog.data("kendoDialog").open();
+                undo.fadeOut();
+
+                multiselect.value("");
+               // multiselect.trigger("change");
+
+
+
+            }
+          
+
+        },
+        error: function (data) {
+ 
+        }
+    })
+
+
+}
+
+function onDropDownChangeSAPLink()  
+{  
+    //Transaction_IdOBVM
+    var sapwbsselect = $("#WPSAPLink_IdOBVM").val();  
+    var transid = $("#Transaction_IdOBVM").val();  
+
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+
+
+
+    $.ajax({
+        type: "POST",
+        url: '/Admin/AddBudgetSAPLink',     //your action
+        data:{"sapwbsselect": sapwbsselect, "transid": transid},
+        dataType: 'json',
+        success: function (result) {
+            var response = result.rtnmsg;
+
+            if (response == "success") {
+                        $('#targetDivStaffa_outputbudget').empty();
+                        $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Budget Successfully Linked. </span>').appendTo('.rssedStaffa_outputbudget');
+
+                        var grid = $("#grid_saplink").data("kendoGrid"); 
+                        grid.dataSource.transport.options.read.url = "/Admin/WP_OutputsBudgetLink_Read/?transid=" + transid;
+                        grid.dataSource.read();
+                        grid.refresh();
+
+                        var grid_outputsbudget = $("#grid_outputsbudget").data("kendoGrid"); 
+                        grid_outputsbudget.dataSource.transport.options.read.url = "/Admin/WP_OutputsBudget_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
+                        grid_outputsbudget.dataSource.read();
+                        grid_outputsbudget.refresh();
+
+
+
+            }
+            else if (response == "budgetexceedssapamount") {
+                $('#targetDivStaffa_outputbudget').empty();
+                $('<span class="alert alert-warning" style="display: block;font-size: 100%">Budget Amount Exceeds Allocated SAP Amount for WBS </span>').appendTo('.rssedStaffa_outputbudget');
+            } 
+            else if (response == "insufficientfunds") {
+                $('#targetDivStaffa_outputbudget').empty();
+                $('<span class="alert alert-warning" style="display: block;font-size: 100%">Budget Amount Exceeds Remaining SAP Amount for WBS</span>').appendTo('.rssedStaffa_outputbudget');
+            }
+            else {
+                    $('#targetDivStaffa_outputbudget').empty();
+                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffa_outputbudget');
+                    //$('#targetDivStaffa').empty();
+            }
+
+        },
+        error: function (data) {
+                $('#targetDivStaffa_outputbudget').empty();
+                $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffa_outputbudget');
+                //$('#targetDivStaffa').empty();
+        }
+    })
+
+}
+
+
 function editVisible(dataItem) {
 // hide the Edit button for the item with ProductID=1
     return dataItem.LookUp_Status != "Transactional";
@@ -732,6 +1686,35 @@ function onChangeREC(arg) {
                 recordstatus.style.visibility = "visible";
 
             }
+            else if  (response == "nomainrecord") {
+            
+
+                var grid = $('#grid_recs').data('kendoGrid');
+
+                //grid.clearSelection();
+
+                grid.dataSource.transport.options.read.url = "/Admin/WP_RECsActual_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
+                grid.dataSource.read();
+
+                dialog.kendoDialog({
+                    width: "300px",
+                    title: "No Outcome or MTP",
+                    closable: false,
+                    modal: true,
+                    content: "<p>Please define at least one outcome or link an MTP Priority to the workplan<p>",
+                    actions: [
+                        { text: 'Cancel' }
+                    ],
+                    close: onClose
+                });
+
+                dialog.data("kendoDialog").open();
+                undo.fadeOut();
+
+
+            }
+
+
           
 
         },
@@ -849,10 +1832,10 @@ function onChangePriority(arg) {
 </script>
 
 <script type="text/javascript">
- $("#btnAddMTP").click(function () {
+ $("#btnAddCountry").click(function () {
 
  // e.preventDefault();
-        var mtpid = $("#MTP_Id").val();  
+        var countryid = $("#Country").val();  
         var projid = $("#Project_Id").val();  
         var fyear = $("#FYear").val();  
         var fperiod = $("#FPeriod").val();  
@@ -866,14 +1849,14 @@ function onChangePriority(arg) {
             undo.fadeIn();
         }
 
-        if(mtpid === "" && typeof mtpid === "string")
+        if(countryid === "" && typeof countryid === "string")
         {
               dialog.kendoDialog({
                   width: "300px",
                   title: "No Selection",
                   closable: false,
                   modal: true,
-                  content: "<p>Please select <strong>MTP Priority</strong><p>",
+                  content: "<p>Please select <strong>Member State</strong><p>",
                   actions: [
                       { text: 'Cancel' }
                   ],
@@ -886,18 +1869,18 @@ function onChangePriority(arg) {
         else{
             $.ajax({
                 type: "POST",
-                url: '/Admin/AddWPMTPPriority',     //your action
+                url: '/Admin/AddWPMemberState',     //your action
                 //data: $('#addformmain').serialize(),   //your form name.it takes all the values of model
-                data: { "projid": projid, "fyear": fyear, "fperiod": fperiod, "mtpid": mtpid, "empid": empid},   //your form name.it takes all the values of model
+                data: { "projid": projid, "fyear": fyear, "fperiod": fperiod, "countryid": countryid, "empid": empid},   //your form name.it takes all the values of model
                 dataType: 'json',
                 success: function (result) {
                     var response = result.rtnmsg;
 
                     if (response == "success") {
 
-                        var grid = $("#grid_mtp").data("kendoGrid"); 
+                        var grid = $("#grid_country").data("kendoGrid"); 
 
-                        grid.dataSource.transport.options.read.url = "/Admin/WP_MTPs_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
+                        grid.dataSource.transport.options.read.url = "/Admin/WP_CountryScope_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
                         grid.dataSource.read();
 
                     }
@@ -907,7 +1890,7 @@ function onChangePriority(arg) {
                                     title: "Already Exist",
                                     closable: false,
                                     modal: true,
-                                    content: "<p>MTP Priority Aready Exist.<p>",
+                                    content: "<p>Member State Aready Exist.<p>",
                                     actions: [
                                         { text: 'Cancel' }
                                     ],
@@ -999,6 +1982,106 @@ function onChangePriority(arg) {
             }
     }
 
+ function onRequestEndOutput(e){
+
+            var projid = $("#Project_Id").val();  
+            var fyear = $("#FYear").val();  
+            var fperiod = $("#FPeriod").val();  
+            var empid = $("#Employee_Id").val(); 
+            var dirid = $("#Directorate_Id").val(); 
+            var divid = $("#Division_Id").val(); 
+            var progid = $("#Programme_Id").val();  
+
+            var norecord = document.getElementById("norecord");
+            var recordstatus = document.getElementById("recordstatus");
+
+            var dialog = $('#dialog');
+            var undo = $("#undo");
+
+            function onClose() {
+                undo.fadeIn();
+            }
+
+            if (e.type === "update" || e.type === "create" || e.type === "destroy" ) {
+
+
+                $.ajax({
+                    type: "POST",
+                    url: '/Admin/CheckMainWPRecordStatus',     //your action
+                    //data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, selectedrows: JSON.parse( JSON.stringify(models))},
+                    data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "empid": empid, "dirid": dirid, "divid": divid, "progid": progid},
+                    dataType: 'json',
+                    success: function (result) {
+                        var response = result.rtnmsg;
+
+                        var grid = $("#grid_outputs").data("kendoGrid"); 
+                        var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+                        var grid_outputsactivities = $("#grid_outputactivities").data("kendoGrid"); 
+                        var grid_outputsbudget = $("#grid_outputsbudget").data("kendoGrid"); 
+
+
+
+                        if (response == "recordfound") {
+                            grid.dataSource.transport.options.read.url = "/Admin/WP_Outputs_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
+                            grid.dataSource.read();
+
+                            grid_outputindicators.dataSource.transport.options.read.url = "/Admin/WP_Outputs_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
+                            grid_outputindicators.dataSource.read();
+
+                            grid_outputsactivities.dataSource.transport.options.read.url = "/Admin/WP_Outputs_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
+                            grid_outputsactivities.dataSource.read();
+
+                            grid_outputsbudget.dataSource.transport.options.read.url = "/Admin/WP_OutputsBudget_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
+                            grid_outputsbudget.dataSource.read();
+
+
+
+                            norecord.style.visibility = "hidden";
+                            recordstatus.style.visibility = "visible";
+                        }
+                        else if(response == "norecord")
+                        {
+                            grid.dataSource.transport.options.read.url = "/Admin/WP_Outputs_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
+                            grid.dataSource.read();
+
+                            grid_outputindicators.dataSource.transport.options.read.url = "/Admin/WP_Outputs_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
+                            grid_outputindicators.dataSource.read();
+
+                            grid_outputsbudget.dataSource.transport.options.read.url = "/Admin/WP_OutputsBudget_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
+                            grid_outputsbudget.dataSource.read();
+
+                            norecord.style.visibility = "visible";
+                            recordstatus.style.visibility = "hidden";
+
+                            dialog.kendoDialog({
+                                width: "300px",
+                                title: "No Outcome or MTP",
+                                closable: false,
+                                modal: true,
+                                content: "<p>Please define at least one outcome or link an MTP Priority to the workplan<p>",
+                                actions: [
+                                    { text: 'Cancel' }
+                                ],
+                                close: onClose
+                            });
+
+                            dialog.data("kendoDialog").open();
+                            undo.fadeOut();
+                        }
+
+                    },
+                    error: function (data) {
+                                
+                    }
+                })
+                
+
+
+            }
+    }
+
+
+
     function onRequestEndMTP(e){
            // alert("on request end");
 
@@ -1018,7 +2101,7 @@ function onChangePriority(arg) {
             }
     }
 
-    function onRequestEndMTP(e){
+    function onRequestEndCountry(e){
            // alert("on request end");
 
            // if (e.type === "update") {
@@ -1030,9 +2113,9 @@ function onChangePriority(arg) {
             var fyear = $("#FYear").val();  
             var fperiod = $("#FPeriod").val();  
             if (e.type === "update" || e.type === "create" || e.type === "destroy" ) {
-                var grid = $("#grid_mtp").data("kendoGrid"); 
+                var grid = $("#grid_country").data("kendoGrid"); 
 
-                grid.dataSource.transport.options.read.url = "/Admin/WP_MTPs_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
+                grid.dataSource.transport.options.read.url = "/Admin/WP_CountryScope_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
                 grid.dataSource.read();
             }
     }
@@ -1040,11 +2123,8 @@ function onChangePriority(arg) {
 
 
 <style>
-/*
-.k-grid .k-header {
-    display: none;
-}
-*/
+/* Begin  Outcome Grid CSS*/
+
 
 
     #grid_main tr.k-alt {
@@ -1064,6 +2144,32 @@ function onChangePriority(arg) {
     #grid_main tr.k-alt:hover {
        background-color:  #7bd2f6;
     }
+/* End  Outcome Grid CSS*/
+
+
+/* Begin  Member State Grid CSS*/
+
+    #grid_country tr.k-alt {
+    background-color: #fff ;
+
+    }
+    #grid_country td {
+    border-style: solid;
+   /* border-width: 1px 0px 0px 1px;*/
+    border-top-width: 1px ;
+    padding: .4em .6em;
+    overflow: hidden;
+    line-height: 1.6em;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    }
+    #grid_country tr.k-alt:hover {
+       background-color:  #7bd2f6;
+    }
+/* End  Member State Grid CSS*/
+
+
+
 
 /* Begin  MTP Grid CSS*/
     #grid_mtp2 tr.k-alt {
@@ -1083,22 +2189,22 @@ function onChangePriority(arg) {
 
    /*  #grid_mtp2 tr.k-alt.k-state-selected {
         color: #022636;
-        background-color:#dff0e6; /* #e6fcec;
+        background-color:#dff0e6; /* #e6fcec; #13688c;#7bd2f6;
         font-weight: 570;
         border-color: #146b90;
     }*/
 
 
     #grid_mtp2 tr.k-alt.k-state-selected {
-        color: #fff;
-        background-color: #13688c;
+        color: #003f59;
+        background-color: #daecf4;
         font-weight: 570;
         border-color: #146b90;
     }
 
     #grid_mtp2 tr.k-state-selected  {
-        color: #fff;
-        background-color: #13688c;
+        color: #003f59;
+        background-color: #daecf4;
         font-weight: 570;
         border-color: #146b90;
     }
@@ -1106,7 +2212,7 @@ function onChangePriority(arg) {
        background-color:  #7bd2f6;
       }
     #grid_mtp2 tr.k-alt.k-state-selected:hover {
-        background-color: #13688c;
+        background-color: #daecf4;
     }
 /* End  MTP Grid CSS*/
 
@@ -1128,15 +2234,15 @@ function onChangePriority(arg) {
     }
 
      #gridpriority tr.k-alt.k-state-selected {
-        color: #fff;
-        background-color: #13688c;
+        color: #003f59;
+        background-color: #daecf4;
         font-weight: 570;
         border-color: #146b90;
     }
 
     #gridpriority tr.k-state-selected  {
-        color: #fff;
-        background-color: #13688c;
+        color: #003f59;
+        background-color: #daecf4;
         font-weight: 570;
         border-color: #146b90;
     }
@@ -1144,18 +2250,18 @@ function onChangePriority(arg) {
         background-color:  #7bd2f6;
     }
     #gridpriority tr.k-alt.k-state-selected:hover {
-        background-color: #13688c;
+        background-color: #daecf4;
     }
 /* End  AUDA-NEPAD Priorities  Grid CSS*/
 
 
 
-/* Begin  AUDA-NEPAD RECs Grid CSS*/
-    #grid_recs tr.k-alt {
+/* Begin  AUDA-NEPAD Outputs Grid CSS*/
+    #grid_outputs tr.k-alt {
     background-color: #fff ;
     }
 
-    #grid_recs td {
+    #grid_outputs td {
     border-style: solid;
    /* border-width: 1px 0px 0px 1px;*/
     border-top-width: 1px ;
@@ -1166,27 +2272,354 @@ function onChangePriority(arg) {
     text-overflow: ellipsis;
     }
 
-     #grid_recs tr.k-alt.k-state-selected {
-        color: #fff;
-        background-color: #13688c;
+     #grid_outputs tr.k-alt.k-state-selected {
+        color: #003f59;
+        background-color: #daecf4;
         font-weight: 570;
         border-color: #146b90;
     }
 
-    #grid_recs tr.k-state-selected  {
-        color: #fff;
-        background-color: #13688c;
+    #grid_outputs tr.k-state-selected  {
+        color: #003f59;
+        background-color: #daecf4;
         font-weight: 570;
         border-color: #146b90;
     }
-    #grid_recs tr.k-alt:hover {
+    #grid_outputs tr.k-alt:hover {
         background-color:  #7bd2f6;
     }
-    #grid_recs tr.k-alt.k-state-selected:hover {
-        background-color: #13688c;
+    #grid_outputs tr.k-alt.k-state-selected:hover {
+        background-color: #daecf4;
     }
 
-/* End  AUDA-NEPAD RECs  Grid CSS*/
+/* End  AUDA-NEPAD Outputs  Grid CSS*/
+
+
+/* Begin  AUDA-NEPAD Outputs Budget Grid CSS* grid_outputsbudget */
+#grid_outputsbudget tr.k-alt {
+    background-color: #fff ;
+    }
+
+    #grid_outputsbudget td {
+    border-style: solid;
+   /* border-width: 1px 0px 0px 1px;*/
+    border-width: 0px ;
+    padding: .4em .6em;
+    overflow: hidden;
+    line-height: 1.6em;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    }
+
+     #grid_outputsbudget tr.k-alt.k-state-selected {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+
+    #grid_outputsbudget tr.k-state-selected  {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+    #grid_outputsbudget tr:hover {
+        background-color:  transparent;
+        
+    }
+    #grid_outputsbudget tr.k-state-selected:hover {
+        background-color: transparent;
+    }
+    #grid_outputsbudget tr.k-alt:hover {
+        background-color:  transparent;
+        
+    }
+    #grid_outputsbudget tr.k-alt.k-state-selected:hover {
+        background-color: transparent;
+    }
+    
+    #grid_outputsbudget>.k-grid-header th{
+        border-style: solid;
+    /* border-width: 1px 0px 0px 1px;*/
+        border-width: 0px ;
+        padding: .4em .6em;
+        overflow: hidden;
+        line-height: 1.6em;
+        vertical-align: middle;
+        text-overflow: ellipsis;
+        background-color:  #ffffff;
+        border-color: #ffffff;
+    }
+    .k-hierarchy-cell.k-header
+    {
+        height: 0;
+        border-bottom-width: 0;
+        visibility: hidden;
+        overflow: hidden;
+        display: none;
+
+
+    }
+    #grid_outputsbudget {
+        border-color: #ffffff;
+    }    
+
+/* End  AUDA-NEPAD Outputs Budget  Grid CSS*/
+
+
+
+
+/* Begin  AUDA-NEPAD Outputs Budget SAP Link Grid CSS* grid_outputsbudget */
+#grid_saplink tr.k-alt {
+    background-color: #fff ;
+    }
+
+    #grid_saplink td {
+    border-style: solid;
+   /* border-width: 1px 0px 0px 1px;*/
+    border-width: 0px ;
+    padding: .4em .6em;
+    overflow: hidden;
+    line-height: 1.6em;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    }
+
+     #grid_saplink tr.k-alt.k-state-selected {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+
+    #grid_saplink tr.k-state-selected  {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+    #grid_saplink tr:hover {
+        background-color:  transparent;
+        
+    }
+    #grid_saplink tr.k-state-selected:hover {
+        background-color: transparent;
+    }
+    #grid_saplink tr.k-alt:hover {
+        background-color:  transparent;
+        
+    }
+    #grid_saplink tr.k-alt.k-state-selected:hover {
+        background-color: transparent;
+    }
+    
+    #grid_saplink>.k-grid-header th{
+        border-style: solid;
+    /* border-width: 1px 0px 0px 1px;*/
+        border-width: 0px ;
+        padding: .4em .6em;
+        overflow: hidden;
+        line-height: 1.6em;
+        vertical-align: middle;
+        text-overflow: ellipsis;
+        background-color:  #ffffff;
+        border-color: #ffffff;
+    }
+    .k-hierarchy-cell.k-header
+    {
+        height: 0;
+        border-bottom-width: 0;
+        visibility: hidden;
+        overflow: hidden;
+        display: none;
+
+
+    }
+    #grid_saplink {
+        border-color: #ffffff;
+    }    
+
+/* End  AUDA-NEPAD Outputs Budget SAP Link  Grid CSS*/
+
+/* Begin  AUDA-NEPAD Outputs Indicators Grid CSS*/
+
+#grid_outputindicators tr.k-alt {
+    background-color: #fff ;
+    }
+
+    #grid_outputindicators td {
+    border-style: solid;
+   /* border-width: 1px 0px 0px 1px;*/
+    border-width: 0px ;
+    padding: .4em .6em;
+    overflow: hidden;
+    line-height: 1.6em;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    }
+
+     #grid_outputindicators tr.k-alt.k-state-selected {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+
+    #grid_outputindicators tr.k-state-selected  {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+    #grid_outputindicators tr:hover {
+        background-color:  transparent;
+        
+    }
+    #grid_outputindicators tr.k-state-selected:hover {
+        background-color: transparent;
+    }
+    #grid_outputindicators tr.k-alt:hover {
+        background-color:  transparent;
+        
+    }
+    #grid_outputindicators tr.k-alt.k-state-selected:hover {
+        background-color: transparent;
+    }
+    
+    #grid_outputindicators>.k-grid-header tr, .hidden{
+        height: 0;
+        border-bottom-width: 0;
+        visibility: hidden;
+        overflow: hidden;
+        display: none;
+    }
+    .k-hierarchy-cell.k-header
+    {
+        height: 0;
+        border-bottom-width: 0;
+        visibility: hidden;
+        overflow: hidden;
+        display: none;
+
+
+    }
+    #grid_outputindicators {
+        border-color: #ffffff;
+    }
+
+
+    /****Sub Grids******/
+
+
+    div[name^='gridsub_'] td {
+        border-style: solid;
+    /* border-width: 1px 0px 0px 1px;*/
+        border-top-width: 1px ;
+        padding: .4em .6em;
+        overflow: hidden;
+        line-height: 1.6em;
+        vertical-align: middle;
+        text-overflow: ellipsis;
+    }
+
+
+ 
+
+/* End  AUDA-NEPAD Outputs Indicators  Grid CSS*/
+
+
+
+/* Begin  AUDA-NEPAD Outputs Activities Grid CSS*/
+
+#grid_outputactivities tr.k-alt {
+    background-color: #fff ;
+    }
+
+    #grid_outputactivities td {
+    border-style: solid;
+   /* border-width: 1px 0px 0px 1px;*/
+    border-width: 0px ;
+    padding: .4em .6em;
+    overflow: hidden;
+    line-height: 1.6em;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    }
+
+     #grid_outputactivities tr.k-alt.k-state-selected {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+
+    #grid_outputactivities tr.k-state-selected  {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+    #grid_outputactivities tr:hover {
+        background-color:  transparent;
+        
+    }
+    #grid_outputactivities tr.k-state-selected:hover {
+        background-color: transparent;
+    }
+    #grid_outputactivities tr.k-alt:hover {
+        background-color:  transparent;
+        
+    }
+    #grid_outputactivities tr.k-alt.k-state-selected:hover {
+        background-color: transparent;
+    }
+    
+    #grid_outputactivities>.k-grid-header tr, .hidden{
+        height: 0;
+        border-bottom-width: 0;
+        visibility: hidden;
+        overflow: hidden;
+        display: none;
+    }
+    .k-hierarchy-cell.k-header
+    {
+        height: 0;
+        border-bottom-width: 0;
+        visibility: hidden;
+        overflow: hidden;
+        display: none;
+
+
+    }
+    #grid_outputactivities {
+        border-color: #ffffff;
+    }
+
+
+    /****Sub Grids******/
+
+
+    div[name^='gridactivitysub_'] td {
+        border-style: solid;
+    /* border-width: 1px 0px 0px 1px;*/
+        border-top-width: 1px ;
+        padding: .4em .6em;
+        overflow: hidden;
+        line-height: 1.6em;
+        vertical-align: middle;
+        text-overflow: ellipsis;
+    }
+
+
+ 
+
+/* End  AUDA-NEPAD Outputs Activities  Grid CSS*/
+
+
+
+
+
 
     .disabled{
         opacity:0.5;
@@ -1297,7 +2730,7 @@ function onChangePriority(arg) {
 
 
 <style>
-    .console div
+.console div
 {
     background-image: url("sprite.png");
     background-repeat: no-repeat;
@@ -1349,7 +2782,7 @@ span.bluenum {
   border-radius: 0.8em;
   -moz-border-radius: 0.8em;
   -webkit-border-radius: 0.8em;
-  color: #003473;
+  color: #044a0d;
   display: inline-block;
   font-weight: bold;
   line-height: 1.6em;
@@ -1358,7 +2791,7 @@ span.bluenum {
   width: 1.7em; 
       border-style: solid;
     border-width: 1px ;
-    border-color:#003473 ;
+    border-color:#044a0d ;
   -webkit-box-shadow: 7px 7px 5px 0px rgba(50, 50, 50, 0.75);
 -moz-box-shadow:    7px 7px 5px 0px rgba(50, 50, 50, 0.75);
 box-shadow: 2px 4px 5px 0px rgba(50, 50, 50, 0.75);
@@ -1385,7 +2818,7 @@ box-shadow: 2px 4px 5px 0px rgba(50, 50, 50, 0.75);
 }
 
 span.bluenum2 {
-  background: #003473;
+  background: #044a0d;
   border-radius: 0.8em;
   -moz-border-radius: 0.8em;
   -webkit-border-radius: 0.8em;
@@ -1401,72 +2834,70 @@ span.bluenum2 {
 box-shadow: 2px 4px 5px 0px rgba(50, 50, 50, 0.75);
 }
 
-
-
 /*SWITCH ON*/
 
     .k-switch-on .k-switch-container {
-        border-color: #13688c;
-        color: #d9ecf5;
-        background-color: #d9ecf5;
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
     }
 
     .k-switch-on .k-switch-handle {
-        border-color: #13688c;
+        border-color: #13ad28;
         color: #fff;
-        background-color: #13688c
+        background-color: #13ad28
     }
 
     .k-switch-on:hover .k-switch-container {
-        border-color: #13688c;
-        color: #d9ecf5;
-        background-color: #d9ecf5;
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
     }
 
     .k-switch-on:hover .k-switch-handle {
-        border-color: #13688c;
+        border-color: #13ad28;
         color: #fff;
-        background-color: #13688c;
+        background-color: #13ad28;
     }
 
 
     .k-switch-on:active .k-switch-container {
-        border-color: #13688c;
-        color: #d9ecf5;
-        background-color: #d9ecf5
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4
     }
 
     .k-switch-on:active .k-switch-handle {
-        border-color: #13688c;
+        border-color: #13ad28;
         color: #fff;
-        background-color: #13688c
+        background-color: #13ad28
     }
 
 
 
     .k-switch-on:visited .k-switch-container {
-        border-color: #13688c;
-        color: #d9ecf5;
-        background-color: #d9ecf5;
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
     }
 
     .k-switch-on:visited .k-switch-handle{
-        border-color: #13688c;
+        border-color: #13ad28;
         color: #fff;
-        background-color: #13688c;
+        background-color: #13ad28;
     }
 
 
     .k-switch-on:focus .k-switch-container {
-        border-color: #13688c;
-        color: #d9ecf5;
-        background-color: #d9ecf5;
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
     }
 
     .k-switch-on:focus .k-switch-handle {
-        border-color: #13688c;
+        border-color: #13ad28;
         color: #fff;
-        background-color: #13688c;
+        background-color: #13ad28;
     }
 
 
@@ -1538,7 +2969,45 @@ box-shadow: 2px 4px 5px 0px rgba(50, 50, 50, 0.75);
         background-color: #c5c7c9;
     }
 
+
+
+
+    .k-window {
+        border-radius: 0px;
+        overflow: hidden;
+    }
+    /*.k-window-titlebar {
+        border-color: inherit;
+        color: #656565;
+        background-color: #f6f6f6;
+    }*/
+
+    .boldclass {
+        font-weight: bold;
+        /*background-color: #daecf4;*/
+    }
+
+.linked {
+    color: #163617;
+    background-color: #dbefdc;
+    border-color: #cde9ce;
+}
+.unlinked{
+    color: #574203;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+}
+.budgettotal {
+    font-weight: bold;
+    /*background-color: #daecf4;*/
+}
+
 </style>
+
+
+
+
+
 
 
 <script src="~/nepadstaff1/js/vendor/jquery.smartWizard.min.js"></script>

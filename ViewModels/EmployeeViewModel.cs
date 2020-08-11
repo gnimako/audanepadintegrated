@@ -102,6 +102,10 @@ namespace AUDANEPAD_Integrated.ViewModels
         //Workplans
         public string WPMainRecordId { get; set; }
 
+        public List<DropDownListViewModel> SelectedCountries { get; set; }
+
+        public List<DropDownListViewModel> SelectedRECs { get; set; }
+
 
 
 

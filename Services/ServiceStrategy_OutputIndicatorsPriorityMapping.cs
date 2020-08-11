@@ -58,6 +58,14 @@ namespace AUDANEPAD_Integrated.Services
 
             return records;
         }
+		public IEnumerable<Strategy_OutputIndicatorsPriorityMapping> GetAllRecordsByPriority (int priority)
+        {
+            var records = context.Strategy_OutputIndicatorsPriorityMapping
+                                .Where(s => s.Priority_Id == priority)
+                                .ToList();
+
+            return records;
+        }
 
 		public Strategy_OutputIndicatorsPriorityMapping GetRecordsByIndicatorPriorityAndKPA (int indicatorid, int priorityid, int kpa)
         {

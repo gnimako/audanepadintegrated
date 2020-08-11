@@ -47,6 +47,7 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<LkUp_Programme> LkUp_Programme { get; set; }
         public DbSet<LkUp_Project> LkUp_Project { get; set; }
         public DbSet<LkUp_Period> LkUp_Period { get; set; }
+        public DbSet<LkUp_IndicatorType> LkUp_IndicatorType { get; set; }
 
         
         
@@ -88,12 +89,13 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<Trans_Programme> Trans_Programme { get; set; }
         public DbSet<Trans_Project> Trans_Project { get; set; }
         public DbSet<Trans_Period> Trans_Period { get; set; }
+        public DbSet<Trans_IndicatorType> Trans_IndicatorType { get; set; }
 
         public DbSet<System_Audit> System_Audit { get; set; }
         
         
         //Workplans
-        public DbSet<WP_Dispatch> WP_Dispatch { get; set; }
+        public DbSet<WP_DispatchCycle> WP_DispatchCycle { get; set; }
         public DbSet<WP_MainRecord> WP_MainRecord { get; set; }
         public DbSet<WP_Outcomes> WP_Outcomes { get; set; }
         public DbSet<WP_MTP> WP_MTP { get; set; }
@@ -104,6 +106,10 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<WP_CountryScope> WP_CountryScope { get; set; }
         public DbSet<WP_Outputs> WP_Outputs { get; set; }
         public DbSet<WP_OutputIndicators> WP_OutputIndicators { get; set; }
+        public DbSet<WP_OutputActivities> WP_OutputActivities { get; set; }
+        public DbSet<WP_SAPLink> WP_SAPLink { get; set; }
+        public DbSet<WP_OutputBudget> WP_OutputBudget { get; set; }
+        public DbSet<WP_OutputActivityCountries> WP_OutputActivityCountries { get; set; }
 
 
         
@@ -252,6 +258,10 @@ namespace AUDANEPAD_Integrated.Models
             .HasConversion(localDateConverter);
 
             modelBuilder.Entity<LkUp_Period>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<LkUp_IndicatorType>()
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
 
@@ -435,6 +445,10 @@ namespace AUDANEPAD_Integrated.Models
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
 
+            modelBuilder.Entity<Trans_IndicatorType>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
 
 
 
@@ -444,7 +458,7 @@ namespace AUDANEPAD_Integrated.Models
 
 
             //Workplans
-            modelBuilder.Entity<WP_Dispatch>()
+            modelBuilder.Entity<WP_DispatchCycle>()
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
 
@@ -481,6 +495,30 @@ namespace AUDANEPAD_Integrated.Models
             .HasConversion(localDateConverter);
 
             modelBuilder.Entity<WP_OutputIndicators>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_OutputActivities>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_OutputActivities>()
+            .Property(e => e.ActivityStartDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_OutputActivities>()
+            .Property(e => e.ActivityEndDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_SAPLink>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_OutputBudget>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_OutputActivityCountries>()
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
         }

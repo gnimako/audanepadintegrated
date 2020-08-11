@@ -34,12 +34,14 @@
 
                                             columns.Bound(c => c.Employee_Id).Hidden();
                                             columns.Bound(c => c.Transaction_Id).Hidden();
+                                            columns.Bound(c => c.WPSAPLinkView_String).Hidden();
                                             columns.Bound(c => c.FisYear).Title("Cycle Year");
                                             columns.Bound(c => c.FisPeriod).Title("Period");
                                             columns.Bound(c => c.WPStatus_String).Title("Status");
                                             columns.Bound(c => c.TransactionDate).Title("Transaction Date").Format("{0: dd-MM-yyyy}") ;
                                             columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("editstaffdirmap"));
                                             columns.Command(command => command.Custom(" Close Cycle").IconClass("k-icon k-i-lock").Click("closecycle").Visible("editVisible"));
+                                            columns.Command(command => command.Custom(" Link to SAP").IconClass("k-icon k-i-link-vertical").Click("addsaplink").Visible("sapVisible"));
                                         })
                                         .HtmlAttributes(new { style = "height: 400px;" })
                                         .Scrollable()
@@ -165,6 +167,18 @@
   function onClick() {
 
   }
+
+    function onDropDownChangeSAP()  
+    {  
+        var dir_id = $("#Directorate_Id").val();  
+        var wpcycle_id = $("#WPDispatchCycle_Ident").val();  
+        var grid = $("#gridsaplinksingle").data("kendoGrid"); 
+
+        grid.dataSource.transport.options.read.url = "/Admin/DirectorateWPCycleSAPLink_Read/?dir_id=" + dir_id+ "&wpcycle_id=" + wpcycle_id ;
+        grid.dataSource.read();
+        grid.refresh();
+
+    }
 
  function closecycle(e) {
 
@@ -303,8 +317,12 @@
 
 
     function editVisible(dataItem) {
-    // hide the Edit button for the item with ProductID=1
-    return dataItem.WPStatus_String != "Inactive";
+        // hide the Edit button for the item with ProductID=1
+        return dataItem.WPStatus_String != "Inactive";
+    }
+    function sapVisible(dataItem) {
+        // hide the Edit button for the item with ProductID=1
+        return dataItem.WPSAPLinkView_String != "Not Linked";
     }
  </script>
 
@@ -347,8 +365,8 @@
                     animation: false,
                     resizable: true,
                     content: "/NEPADStaff/EditWorkplanCycle?transid=" + transid,
-                    width: 400,
-                    height: 300,
+                    width: 600,
+                    height: 400,
 
                     title: "Edit A Workplan Cycle",
                     // close: onClose,
@@ -361,7 +379,100 @@
 
          
 
-      }
+    }
+
+
+    function deletesapwbslink(e) {
+
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var transid = dataItem.Transaction_Id;
+
+        var dir_id = $("#Directorate_Id").val();  
+        var wpcycle_id = $("#WPDispatchCycle_Ident").val();  
+
+        var dialog = $('#dialog');
+        var undo = $("#undo");
+
+        function onClose() {
+            undo.fadeIn();
+        }
+
+
+        dialog.kendoDialog({
+        width: "450px",
+        title: "Confirmation",
+        closable: false,
+        modal: true,
+        content: "<p>Please confirm the DELETE action.<p>",
+        actions: [
+            {
+                text: 'Confirm',
+                action: function (e) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/Admin/WP_SAPWBSLink_Delete',     //your action
+                        data: { "transid": transid},
+                        dataType: 'json',
+                        success: function (result) {
+                                var grid = $("#gridsaplinksingle").data("kendoGrid"); 
+
+                                grid.dataSource.transport.options.read.url = "/Admin/DirectorateWPCycleSAPLink_Read/?dir_id=" + dir_id+ "&wpcycle_id=" + wpcycle_id ;
+                                grid.dataSource.read();
+                                grid.refresh();
+                        },
+                        error: function (data) {
+
+                        }
+                    })
+                    return true;
+                },
+                primary: true
+
+            },
+            { text: 'Cancel' }
+        ],
+        close: onClose
+    });
+
+    dialog.data("kendoDialog").open();
+    undo.fadeOut();
+
+
+         
+
+    }
+
+    function addsaplink(e) {
+
+         e.preventDefault();
+          var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+          var transid = dataItem.Transaction_Id;
+                  $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+                var wnd2 = $("#getstaffwindow").kendoWindow({
+                    //actions: ["Close"],
+                    draggable: true,
+                    modal: true,
+                    animation: false,
+                    resizable: true,
+                    content: "/NEPADStaff/AddSAPLinkage?transid=" + transid,
+                    width: 700,
+                    height: 700,
+
+                    title: "Add SAP Linkage",
+                    // close: onClose,
+                    deactivate: function () {
+                        this.destroy();
+                    }
+
+                }).data("kendoWindow");
+                wnd2.center().open();
+
+         
+
+    }
 
    $("#btnAdd").click(function () {
 
@@ -376,7 +487,7 @@
                     resizable: true,
                     content: "/NEPADStaff/AddWorkplanCycle",
                     width: 600,
-                    height: 400,
+                    height: 500,
 
                     title: "Add A Workplan Cycle",
                     // close: onClose,

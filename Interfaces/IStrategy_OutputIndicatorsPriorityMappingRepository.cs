@@ -14,6 +14,8 @@ namespace AUDANEPAD_Integrated.Interfaces
 
         IEnumerable<Strategy_OutputIndicatorsPriorityMapping> GetAllRecordsByKPA (int kpa);
 
+        IEnumerable<Strategy_OutputIndicatorsPriorityMapping> GetAllRecordsByPriority (int priority);
+
         Strategy_OutputIndicatorsPriorityMapping GetRecordsByIndicatorPriorityAndKPA (int indicatorid, int priorityid, int kpa);
         Strategy_OutputIndicatorsPriorityMapping Add(Strategy_OutputIndicatorsPriorityMapping atype);
         Strategy_OutputIndicatorsPriorityMapping Update(Strategy_OutputIndicatorsPriorityMapping atypeChanges);

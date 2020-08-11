@@ -55,6 +55,14 @@ namespace AUDANEPAD_Integrated.Services
 
             return records;
         }
+		public IEnumerable<WP_OutputIndicators> GetRecordsByOutputId (string outputid)
+        {
+            var records = context.WP_OutputIndicators
+                                .Where(s => s.WPOutput_Id==outputid)
+                                .ToList();
+
+            return records;
+        }
         public IEnumerable<WP_OutputIndicators> GetRecordsByProjectYearAndPeriod (int projectid, int year, int period)
         {
             var records = context.WP_OutputIndicators
@@ -72,6 +80,15 @@ namespace AUDANEPAD_Integrated.Services
 
             return records;
         }
+
+		public  WP_OutputIndicators GetRecordByProjectYearAndPeriodOutputIdIndicatorId (int projectid, int year, int period, string outputid, int indicatorid)
+        {
+            var rec = context.WP_OutputIndicators
+						.Where(s => s.FiscalYear_Id == year && s.Period_Id == period && s.Project_Id==projectid && s.OutputIndicator_Id==indicatorid && s.WPOutput_Id==outputid)
+						.FirstOrDefault();
+            return rec;
+        }
+
 
 
 

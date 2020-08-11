@@ -20,9 +20,9 @@ namespace AUDANEPAD_Integrated.Models
         public int Priority_Id { get; set; }
         public int KeyPerformanceArea_Id { get; set; }
         public string ProjectBasedIndicatorStatement { get; set; }
-        public int  BaselineQuantitative { get; set; }
+        public double  BaselineQuantitative { get; set; }
         public string  BaselineQuanlitative { get; set; }
-        public int  TargetQuantitative { get; set; }
+        public double  TargetQuantitative { get; set; }
         public string  TargetQuanlitative { get; set; }
         public int  Employee_Id { get; set; }
         public LocalDate TransactionDate { get; set; }

@@ -1,0 +1,227 @@
+@model WP_OutputBudgetVM
+
+<form id="addform">
+    <input hidden asp-for="Employee_IdOBVM" class="k-textbox" style="width:100%" value="@Model.Employee_IdOBVM">
+    <input hidden asp-for="Transaction_IdOBVM" class="k-textbox" style="width:100%" value="@Model.Transaction_IdOBVM">
+    <input hidden asp-for="FiscalYear_IdOBVM" class="k-textbox" style="width:100%" value="@Model.FiscalYear_IdOBVM">
+    <input hidden asp-for="Period_IdOBVM" class="k-textbox" style="width:100%" value="@Model.Period_IdOBVM">
+    <input hidden asp-for="Project_IdOBVM" class="k-textbox" style="width:100%" value="@Model.Project_IdOBVM">
+    <input hidden asp-for="WPMainRecord_idOBVM" class="k-textbox" style="width:100%" value="@Model.WPMainRecord_idOBVM">
+    <input hidden asp-for="WPOutput_IdOBVM" class="k-textbox" style="width:100%" value="@Model.WPOutput_IdOBVM">
+    <input hidden asp-for="LinkToSAPExecutionString" class="k-textbox" style="width:100%" value="@Model.LinkToSAPExecutionString">
+
+    <div class="form-body" style="padding: 1.25rem;">
+
+                            <h5 style="color:#807878"> Budget Amount: @Model.Output_BudgetAmountOBVM USD </h5>
+                                <br \>
+                                <br \>
+                                @(Html.Kendo().DropDownListFor(model => model.WPSAPLink_IdOBVM)
+                                    // .Name("Department_Id")
+                                    .HtmlAttributes(new { style = "width:100%", id = "WPSAPLink_IdOBVM" })
+                                    .OptionLabel("Select SAP WBS to link...")
+                                    .DataTextField("DropDown_Name")
+                                    .DataValueField("DropDown_StringId")
+                                    .Events(e =>
+                                    {
+                                        e.Close("onDropDownChangeSAPLink");
+                                    })
+                                    .DataSource(source =>
+                                    {
+                                        source.Read(read =>
+                                        {
+                                                read.Action("GetWPSAPWBSsByCycleAndDirectorate", "Admin", new {empid=Model.Employee_IdOBVM, mainrecordid=Model.WPMainRecord_idOBVM});
+                                            
+                                        })
+                                        .ServerFiltering(true);
+                                    })
+                                    
+                                    //.SelectedIndex(Model.WPSAPLink_IdOBVM)
+                                )
+                                <br />
+                                <br />
+                                <div id="targetDivStaffa_outputbudget" class="rssedStaffa_outputbudget">
+                                </div>
+                                <br />
+                                  <br />
+                                @(Html.Kendo().Grid<WP_OutputBudgetSAPLinkVM>()
+                                            .Name("grid_saplink")
+                                            .Columns(columns =>
+                                            {
+                                                columns.Bound(c => c.Transaction_IdSAPVM).Hidden();
+                                                columns.Bound(c => c.WPSAPBudget_WBSSAPVM).Title("SAP WBS").HeaderHtmlAttributes(new { @class = "hidden" }); 
+                                                columns.Bound(c => c.UtilizationPercentageSAPVM).Title("Utilization").HeaderHtmlAttributes(new { @class = "hidden" }).ClientTemplate("<div class='progress'></div>");                                        
+                                                columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("deleteoutputbudgetsaplink").HtmlAttributes(new { style = "border-radius: 12px;" })).HeaderHtmlAttributes(new { @class = "hidden" });
+
+
+                                            })
+                                            .Resizable(r=>r.Columns(true))
+                                            .DataSource(dataSource => dataSource
+                                                .Ajax()
+                                                .Read(read => read.Action("WP_OutputsBudgetLink_Read", "Admin", new {transid=Model.Transaction_IdOBVM}))
+                                                .Model(model => 
+                                                    {
+                                                        model.Id(p => p.Transaction_IdSAPVM);
+                                                        //model.Field(field => field.LookUp_Status).Editable(false);
+                                                    })
+                                                // .PageSize(20)
+                                                
+                                            )
+                                            .Events(events => events.DataBound("dataBoundOutputBudgetSAPLink"))
+                            )
+
+
+                            <br />
+
+
+
+
+    </div>
+
+
+
+
+</form>
+
+<script>
+
+    
+$("#btnCloseStaffa_outputbudget").click(function () {
+    $(".k-window-content").each(function () {
+        $(this).data("kendoWindow").close();
+    });
+});
+
+
+
+
+$("#btnSubmita_outputbudget").click(function () {
+
+    var gridid = $("#Transaction_IdOBVM").val(); 
+
+    var projid = $("#Project_IdOBVM").val();  
+    var fyear = $("#FiscalYear_IdOBVM").val();  
+    var fperiod = $("#Period_IdOBVM").val();  
+
+    var mainrecid= $("#WPMainRecord_idOBVM").val();  
+    var outputid = $("#WPOutput_IdOBVM").val();  
+
+    var linktosap = $("#LinkToSAPExecutionString").val();  
+
+    var budgetamount = $("#Output_BudgetAmountOBVM").val();  
+    var sapwbsselect = $("#WPSAPLink_IdOBVM").val();  
+    
+
+    if (linktosap == "true") 
+    {
+        if(budgetamount === "" && typeof budgetamount === "string")
+        {
+            $('#targetDivStaffa_outputbudget').empty();
+            $('<span class="alert alert-warning" style="display: block;font-size: 100%">Empty : Please provide a value for the amount field. </span>').appendTo('.rssedStaffa_outputbudget');
+
+        }
+        else if(isNaN(budgetamount))
+        {
+            $('#targetDivStaffa_outputbudget').empty();
+            $('<span class="alert alert-warning" style="display: block;font-size: 100%">Wrong Type : Please provide a numberic value for the amount field. </span>').appendTo('.rssedStaffa_outputbudget');
+        }
+        else if(sapwbsselect === "" && typeof sapwbsselect === "string")
+        {
+            $('#targetDivStaffa_outputbudget').empty();
+            $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select SAP WBS. </span>').appendTo('.rssedStaffa_outputbudget');
+        }
+        else
+        {
+            $.ajax({
+            type: "POST",
+            url: '/Admin/CheckAvailabilityOfSAPFunds',     //your action
+            data:{"sapwbsselect": sapwbsselect, "budgetamount": budgetamount},
+            //data: { selectkeys: dataItem},
+            dataType: 'json',
+                success: function (result) 
+                {
+                        var response = result.rtnmsg;
+
+
+                        if (response == "budgetexceedssapamount") {
+                            $('#targetDivStaffa_outputbudget').empty();
+                            $('<span class="alert alert-warning" style="display: block;font-size: 100%">Budget Amount Exceeds Allocated SAP Amount for WBS </span>').appendTo('.rssedStaffa_outputbudget');
+                        } 
+                        else if (response == "insufficientfunds") {
+                            $('#targetDivStaffa_outputbudget').empty();
+                            $('<span class="alert alert-warning" style="display: block;font-size: 100%">Budget Amount Exceeds Remaining SAP Amount for WBS</span>').appendTo('.rssedStaffa_outputbudget');
+                        }
+                        else{
+                            $.ajax({
+                                type: "POST",
+                                url: '/Admin/ManageOutputBudgetAllocation',     //your action
+                                data: $('#addform').serialize(),   //your form name.it takes all the values of model
+                                dataType: 'json',
+                                success: function (result) {
+                                    var response = result.rtnmsg;
+
+                                    if (response == "success") {
+                                                $('#targetDivStaffa_outputbudget').empty();
+                                                $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Indicator Saved Successfully. </span>').appendTo('.rssedStaffa_outputbudget');
+
+
+                                                var childGrid = $('#gridsub_'+gridid).data("kendoGrid");
+
+                                                childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutputsSubIndicators_Read?output_transid=" + gridid;
+                                                childGrid.dataSource.read();
+                                                childGrid.refresh();
+
+
+
+                                    }
+                                    else if (response == "pkerror") {
+                                            $('#targetDivStaffa_outputbudget').empty();
+                                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unable to Save. Indicator Already Exist. </span>').appendTo('.rssedStaffa_outputbudget');
+                                            //$('#targetDivStaffa').empty();
+                                    }
+                                    else if (response == "createerror") {
+                                            $('#targetDivStaffa_outputbudget').empty();
+                                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to save indicator</span>').appendTo('.rssedStaffa_outputbudget');
+                                            //$('#targetDivStaffa').empty();
+                                    }
+                                    else if (response == "doesnotexist") {
+                                            $('#targetDivStaffa_outputbudget').empty();
+                                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">No Record: Indicator does not exist</span>').appendTo('.rssedStaffa_outputbudget');
+                                            //$('#targetDivStaffa').empty();
+                                    }
+                                    else {
+                                            $('#targetDivStaffa_outputbudget').empty();
+                                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffa_outputbudget');
+                                            //$('#targetDivStaffa').empty();
+                                    }
+
+                                },
+                                error: function (data) {
+                                        $('#targetDivStaffa_outputbudget').empty();
+                                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffa_outputbudget');
+                                        //$('#targetDivStaffa').empty();
+                                }
+                            })
+                        
+                        }
+
+                
+
+                },
+                error: function (data) {
+        
+                }
+            })
+
+        }
+        
+
+        
+    }
+    else
+    {
+
+    }
+
+});
+</script>
+

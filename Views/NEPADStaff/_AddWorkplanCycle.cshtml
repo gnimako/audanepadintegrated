@@ -61,16 +61,22 @@
                // .Events(c => c.Change("onChange"))
         )
 
+
+        <br />
         <br />
         <br />
 
-
+        <label>Link Workplan Cycle to Budget Lines Loaded on SAP? </label>
+        &nbsp; &nbsp;
+        @(Html.Kendo().SwitchFor(m=>m.WPSAPLinkView)
+               // .Name("PrimaryDirectorate")
+                .Messages(c => c.Checked("YES").Unchecked("NO"))
+               // .Events(c => c.Change("onChange"))
+        )
 
         <br />
-
-
-
-
+        <br />
+        <br />
         <br />
         <div id="targetDivStaffa" class="rssedStaffa">
         </div>
@@ -249,8 +255,21 @@
 
 
 $("#btnSubmita").click(function () {
+    var fyearval= $("#FYearIdent").val();  
+    var fperiodval = $("#FPeriodIdent").val();  
 
-  
+    if(fyearval === "" && typeof fyearval === "string")
+    {
+        $('#targetDivStaffa').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select year. </span>').appendTo('.rssedStaffa');
+
+    }
+    else if (fperiodval === "" && typeof fperiodval === "string")
+    {
+        $('#targetDivStaffa').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select period. </span>').appendTo('.rssedStaffa');
+    }
+    else{
         $.ajax({
             type: "POST",
             url: '/Admin/AddWorkplanCycle',     //your action
@@ -299,6 +318,7 @@ $("#btnSubmita").click(function () {
                     //$('#targetDivStaffa').empty();
             }
         })
+    }
     
         return false;
     });</script>

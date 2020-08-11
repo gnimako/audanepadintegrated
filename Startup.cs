@@ -58,9 +58,10 @@ namespace AUDANEPAD_Integrated
             {
                 //options.ExpireTimeSpan = TimeSpan.FromSeconds(5);
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-                options.LoginPath = "/Account/Login";
-                options.LogoutPath = "/Account/Logout";
+                options.LoginPath = new PathString("/Account/Login");
+                options.LogoutPath = new PathString("/Account/Logout");
                 options.SlidingExpiration = true;
+                
             });
 
          
@@ -131,6 +132,7 @@ namespace AUDANEPAD_Integrated
             services.AddScoped<ILkUp_ProgrammeRepository, ServiceLkUp_Programme>();
             services.AddScoped<ILkUp_ProjectRepository, ServiceLkUp_Project>();
             services.AddScoped<ILkUp_PeriodRepository, ServiceLkUp_Period>();
+            services.AddScoped<ILkUp_IndicatorTypeRepository, ServiceLkUp_IndicatorType>();
             
 
 
@@ -168,6 +170,7 @@ namespace AUDANEPAD_Integrated
             services.AddScoped<ITrans_ProgrammeRepository, ServiceTrans_Programme>();
             services.AddScoped<ITrans_ProjectRepository, ServiceTrans_Project>();
             services.AddScoped<ITrans_PeriodRepository, ServiceTrans_Period>();
+            services.AddScoped<ITrans_IndicatorTypeRepository, ServiceTrans_IndicatorType>();
             services.AddScoped<ISystem_AuditRepository, ServiceSystem_Audit>();
 
             
@@ -175,7 +178,7 @@ namespace AUDANEPAD_Integrated
             services.AddScoped<IEmailSender, ServiceEmailSender>();
 
             //Workplans
-            services.AddScoped<IWP_DispatchRepository, ServiceWP_Dispatch>();
+            services.AddScoped<IWP_DispatchCycleRepository, ServiceWP_DispatchCycle>();
             services.AddScoped<IWP_MainRecordRepository, ServiceWP_MainRecord>();
             services.AddScoped<IWP_OutcomesRepository, ServiceWP_Outcomes>();
             services.AddScoped<IWP_MTPRepository, ServiceWP_MTP>();
@@ -185,6 +188,10 @@ namespace AUDANEPAD_Integrated
             services.AddScoped<IWP_CountryScopeRepository, ServiceWP_CountryScope>();
             services.AddScoped<IWP_OutputsRepository, ServiceWP_Outputs>();
             services.AddScoped<IWP_OutputIndicatorsRepository, ServiceWP_OutputIndicators>();
+            services.AddScoped<IWP_OutputActivitiesRepository, ServiceWP_OutputActivities>();
+            services.AddScoped<IWP_SAPLinkRepository, ServiceWP_SAPLink>();
+            services.AddScoped<IWP_OutputBudgetRepository, ServiceWP_OutputBudget>();
+            services.AddScoped<IWP_OutputActivityCountriesRepository, ServiceWP_OutputActivityCountries>();
 
 
 

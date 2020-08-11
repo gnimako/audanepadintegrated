@@ -15,6 +15,8 @@ namespace AUDANEPAD_Integrated.Models
         public int  Project_Id { get; set; }
         public int  FiscalYear_Id { get; set; }
         public int  Period_Id { get; set; }
+
+        public bool? LinkToSAPExecution  { get; set; }
         public string WP_Status  { get; set; }
         public string WP_ApprovalStatus  { get; set; }
         public bool? ContinentalCoverage { get; set; }

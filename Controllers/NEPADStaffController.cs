@@ -23,7 +23,7 @@ namespace AUDANEPAD_Integrated.Controllers
 {
     public class NEPADStaffController: Controller
     {
-        private readonly IEmployeeRepository _employeeRepository;
+         private readonly IEmployeeRepository _employeeRepository;
         
         private readonly UserManager<ApplicationUser> userManager;
 
@@ -60,6 +60,7 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly ILkUp_ProgrammeRepository _lkupProgrammeRepository;
         private readonly ILkUp_ProjectRepository _lkupProjectRepository;
         private readonly ILkUp_PeriodRepository _lkupPeriodRepository;
+        private readonly ILkUp_IndicatorTypeRepository _lkupIndicatorTypeRepository;
 
 
         private readonly ITrans_ActivityTypeRepository _transActivityTypeRepository;
@@ -90,6 +91,7 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly ITrans_ProgrammeRepository _transProgrammeRepository ;
         private readonly ITrans_ProjectRepository _transProjectRepository  ;
         private readonly ITrans_PeriodRepository _transPeriodRepository ;
+        private readonly ITrans_IndicatorTypeRepository _transIndicatorTypeRepository ;
         private readonly ISystem_AuditRepository _sysSystemAuditRepository;
 
         
@@ -105,7 +107,7 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly IEmailSender _emailSender  ;
 
         //Workplans
-        private readonly IWP_DispatchRepository _wpDispatchRepository;
+        private readonly IWP_DispatchCycleRepository _wpDispatchCycleRepository;
         private readonly IWP_MainRecordRepository _wpMainRecordRepository;
         private readonly IWP_OutcomesRepository _wpOutcomesRepository;
         private readonly IWP_MTPRepository _wpMTPRepository;
@@ -115,6 +117,10 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly IWP_CountryScopeRepository _wpCountryScopeRepository ;
         private readonly IWP_OutputsRepository _wpOutputsRepository ;
         private readonly IWP_OutputIndicatorsRepository _wpOutputIndicatorsRepository ;
+        private readonly IWP_OutputActivitiesRepository _wpOutputActivitiesRepository ;
+        private readonly IWP_SAPLinkRepository _wpSAPLinkRepository  ;
+        private readonly IWP_OutputBudgetRepository _wpOutputBudgetRepository ;
+        private readonly IWP_OutputActivityCountriesRepository _wpOutputActivityCountriesRepository;
 
 
 
@@ -123,7 +129,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
         private readonly IWebHostEnvironment hostingEnvironment;
 
-         public NEPADStaffController(IEmployeeRepository employeeRepository,
+        public NEPADStaffController(IEmployeeRepository employeeRepository,
                                 UserManager<ApplicationUser> userManager,
                                 RoleManager<IdentityRole> roleManager,
                                 SignInManager<ApplicationUser> signInManager,
@@ -159,6 +165,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 ILkUp_ProgrammeRepository lkupProgrammeRepository,
                                 ILkUp_ProjectRepository lkupProjectRepository,
                                 ILkUp_PeriodRepository lkupPeriodRepository,
+                                ILkUp_IndicatorTypeRepository lkupIndicatorTypeRepository,
 
                                 ITrans_ActivityTypeRepository transActivityTypeRepository,
                                 ITrans_DSATypeRepository transDSATypeRepository,
@@ -188,6 +195,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 ITrans_ProgrammeRepository transProgrammeRepository, 
                                 ITrans_ProjectRepository transProjectRepository, 
                                 ITrans_PeriodRepository transPeriodRepository,
+                                ITrans_IndicatorTypeRepository transIndicatorTypeRepository,
                                 ISystem_AuditRepository sysSystemAuditRepository,
                                 IStruc_DirStaffMappingRepository strucDirStaffMappingRepository,
                                 IStruc_DivStaffMappingRepository strucDivStaffMappingRepository,
@@ -197,7 +205,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 IStruc_DivHeadOICRepository strucDivHeadOICRepository,
                                 IEmailSender emailSender,
                                 //workplans
-                                IWP_DispatchRepository wpDispatchRepository,
+                                IWP_DispatchCycleRepository wpDispatchCycleRepository,
                                 IWP_MainRecordRepository wpMainRecordRepository,
                                 IWP_OutcomesRepository wpOutcomesRepository,
                                 IWP_MTPRepository wpMTPRepository,
@@ -206,7 +214,11 @@ namespace AUDANEPAD_Integrated.Controllers
                                 IWP_RegionScopeRepository wpRegionScopeRepository,
                                 IWP_CountryScopeRepository wpCountryScopeRepository,
                                 IWP_OutputsRepository wpOutputsRepository,
-                                IWP_OutputIndicatorsRepository wpOutputIndicatorsRepository)
+                                IWP_OutputIndicatorsRepository wpOutputIndicatorsRepository,
+                                IWP_OutputActivitiesRepository wpOutputActivitiesRepository,
+                                IWP_SAPLinkRepository wpSAPLinkRepository,
+                                IWP_OutputBudgetRepository wpOutputBudgetRepository,
+                                IWP_OutputActivityCountriesRepository wpOutputActivityCountriesRepository)
         {
             this._employeeRepository = employeeRepository;
             this.userManager = userManager;
@@ -236,6 +248,7 @@ namespace AUDANEPAD_Integrated.Controllers
             _lkupProgrammeRepository=lkupProgrammeRepository;
             _lkupProjectRepository=lkupProjectRepository;
             _lkupPeriodRepository=lkupPeriodRepository;
+            _lkupIndicatorTypeRepository=lkupIndicatorTypeRepository;
             _strategyPriorityRepository=strategyPriorityRepository;
             _strategyMTPRepository=strategyMTPRepository;
             _strategyMTPPriorityMappingRepository=strategyMTPPriorityMappingRepository;
@@ -274,6 +287,7 @@ namespace AUDANEPAD_Integrated.Controllers
             _transProgrammeRepository=transProgrammeRepository;
             _transProjectRepository=transProjectRepository;
             _transPeriodRepository=transPeriodRepository;
+            _transIndicatorTypeRepository=transIndicatorTypeRepository;
             _sysSystemAuditRepository=sysSystemAuditRepository;
             _strucDirStaffMappingRepository=strucDirStaffMappingRepository;
             _strucDivStaffMappingRepository=strucDivStaffMappingRepository;
@@ -284,7 +298,7 @@ namespace AUDANEPAD_Integrated.Controllers
             _emailSender=emailSender;
 
             //workplans
-            _wpDispatchRepository=wpDispatchRepository;
+            _wpDispatchCycleRepository=wpDispatchCycleRepository;
             _wpMainRecordRepository=wpMainRecordRepository;
             _wpOutcomesRepository=wpOutcomesRepository;
             _wpMTPRepository=wpMTPRepository;
@@ -294,6 +308,10 @@ namespace AUDANEPAD_Integrated.Controllers
             _wpCountryScopeRepository=wpCountryScopeRepository;
             _wpOutputsRepository=wpOutputsRepository;
             _wpOutputIndicatorsRepository=wpOutputIndicatorsRepository;
+            _wpOutputActivitiesRepository=wpOutputActivitiesRepository;
+            _wpSAPLinkRepository=wpSAPLinkRepository;
+            _wpOutputBudgetRepository=wpOutputBudgetRepository;
+            _wpOutputActivityCountriesRepository=wpOutputActivityCountriesRepository;
       
 
 
@@ -609,7 +627,54 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.WPMainRecordId=wp_mainrec.Transaction_Id;
             else
                 emp_view.WPMainRecordId="";
+
+            //Selected Country Scope Read
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+            var DB_Recs =  _wpCountryScopeRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+
+            int _count =  DB_Recs.Count();
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
    
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                        DropDown_IntId=rec.Country_Id,
+                        DropDown_Name=_lkupCountryRepository.GetCountry(rec.Country_Id).Country_Name
+                    };
+
+                    collection_recs.Add(srec);
+                }
+            }
+
+            emp_view.SelectedCountries=collection_recs;
+
+
+            //Selected REC Scope Read
+            List<DropDownListViewModel> collection_records = new List<DropDownListViewModel>();
+            var DB_Records =  _wpRegionScopeRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+            int _countrec =  DB_Records.Count();
+
+            if (_countrec > 0)
+            {
+                foreach (var rec in DB_Records)
+                {
+   
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                        DropDown_IntId=rec.Region_Id,
+                        DropDown_Name=_lkupRegionScopeRepository.GetRecord(rec.Region_Id).Record_Name
+                    };
+
+                    collection_records.Add(srec);
+                }
+            }
+
+            emp_view.SelectedRECs=collection_records;
+
 
             return View(emp_view);
 
@@ -741,7 +806,7 @@ namespace AUDANEPAD_Integrated.Controllers
             return View(emp_view);
         }
 
-
+        //Partial Window Loads
         public async Task<ActionResult> AddWorkplanCycle()
         {
             var user = await userManager.GetUserAsync(HttpContext.User);
@@ -755,7 +820,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
         public async Task<ActionResult> EditWorkplanCycle(string transid)
         {
-            WP_Dispatch rec = _wpDispatchRepository.GetRecord(transid);
+            WP_DispatchCycle rec = _wpDispatchCycleRepository.GetRecord(transid);
             var user = await userManager.GetUserAsync(HttpContext.User);
             WorkplansViewModel model = new WorkplansViewModel
             {
@@ -772,7 +837,191 @@ namespace AUDANEPAD_Integrated.Controllers
             else
                 model.WPStatus=rec.Dispatch_Status.Value;
 
+            if( rec.LinkToSAPExecution==null)
+                model.WPSAPLinkView=false;
+            else
+                model.WPSAPLinkView=rec.LinkToSAPExecution.Value;
+
             return PartialView("_EditWorkplanCycle", model);
+        }
+
+
+        public async Task<ActionResult> AddSAPLinkage(string transid)
+        {
+            WP_DispatchCycle rec = _wpDispatchCycleRepository.GetRecord(transid);
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            WorkplansViewModel model = new WorkplansViewModel
+            {
+                WPDispatchCycle_Ident=rec.Transaction_Id,
+                Employee_Id = user.Employee_Id,
+                FYearIdent=rec.FiscalYear_Id,
+                FPeriodIdent =rec.Period_Id,
+                FisYear=_lkupFiscalYearRepository.GetRecord(rec.FiscalYear_Id).Record_Name,
+                FisPeriod=_lkupPeriodRepository.GetRecord(rec.Period_Id).Record_Name
+            };
+
+            if( rec.Dispatch_Status==null)
+                model.WPStatus=false;
+            else
+                model.WPStatus=rec.Dispatch_Status.Value;
+
+            if( rec.LinkToSAPExecution==null)
+                model.WPSAPLinkView=false;
+            else
+                model.WPSAPLinkView=rec.LinkToSAPExecution.Value;
+
+            return PartialView("_AddSAPLinkage", model);
+        }
+
+
+        public async Task<ActionResult> AddOutputIndicator(string transid)
+        {
+            WP_Outputs rec = _wpOutputsRepository.GetRecord(transid);
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            
+            WP_OutputIndicatorsVM model = new WP_OutputIndicatorsVM
+            {
+                Transaction_IdOIVM=rec.Transaction_Id,
+                WPMainRecord_idOIVM=rec.WPMainRecord_id,
+                Employee_IdOIVM = user.Employee_Id,
+                FiscalYear_IdOIVM=rec.FiscalYear_Id,
+                Period_IdOIVM =rec.Period_Id,
+                Project_IdOIVM=rec.Project_Id,
+                FisYearOIVM=_lkupFiscalYearRepository.GetRecord(rec.FiscalYear_Id).Record_Name,
+                FisPeriodOIVM=_lkupPeriodRepository.GetRecord(rec.Period_Id).Record_Name
+
+            };
+
+
+
+            return PartialView("_AddOutputIndicator", model);
+        }
+
+
+        public async Task<ActionResult> AddOutputActivity(string transid)
+        {
+            WP_Outputs rec = _wpOutputsRepository.GetRecord(transid);
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            
+            WP_OutputActivitiesVM model = new WP_OutputActivitiesVM
+            {
+                Transaction_IdOAVMMain=rec.Transaction_Id,
+                WPMainRecord_idOAVMMain=rec.WPMainRecord_id,
+                Employee_IdOAVMMain = user.Employee_Id,
+                FiscalYear_IdOAVMMain=rec.FiscalYear_Id,
+                Period_IdOAVMMain =rec.Period_Id,
+                Project_IdOAVMMain=rec.Project_Id,
+                FisYearOAVMMain=_lkupFiscalYearRepository.GetRecord(rec.FiscalYear_Id).Record_Name,
+                FisPeriodOAVMMain=_lkupPeriodRepository.GetRecord(rec.Period_Id).Record_Name
+
+            };
+
+
+
+            return PartialView("_AddOutputActivity", model);
+        }
+
+
+        public async Task<ActionResult> EditOutputActivity(string transid)
+        {
+           // WP_Outputs rec = _wpOutputsRepository.GetRecord(transid);
+
+            WP_OutputActivities rec=_wpOutputActivitiesRepository.GetRecord(transid);
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            
+            WP_OutputActivitiesVM model = new WP_OutputActivitiesVM
+            {
+                Transaction_IdOAVMMain=rec.Transaction_Id,
+                WPMainRecord_idOAVMMain=rec.WPMainRecord_id,
+                Employee_IdOAVMMain = user.Employee_Id,
+                FiscalYear_IdOAVMMain=rec.FiscalYear_Id,
+                Period_IdOAVMMain =rec.Period_Id,
+                Project_IdOAVMMain=rec.Project_Id,
+                ActivityType_IdOAVMMain=rec.ActivityType_Id,
+                ActivityDescriptionOAVMMain=rec.ActivityDescription,
+                ActivityCostOAVMMain=rec.ActivityCost,
+                ActivityStartDateOAVMMain=new DateTime(rec.ActivityStartDate.Year, rec.ActivityStartDate.Month, rec.ActivityStartDate.Day),
+                ActivityEndDateOAVMMain=new DateTime(rec.ActivityEndDate.Year, rec.ActivityEndDate.Month, rec.ActivityEndDate.Day),
+                ImplementationType_IdOAVMMain=rec.ImplementationType_Id,
+                BaselineTechnicalOAVMMain=rec.BaselineTechnical,
+                BaselineFinancialOAVMMain=rec.BaselineFinancial,
+                FisYearOAVMMain=_lkupFiscalYearRepository.GetRecord(rec.FiscalYear_Id).Record_Name,
+                FisPeriodOAVMMain=_lkupPeriodRepository.GetRecord(rec.Period_Id).Record_Name
+
+            };
+
+
+
+            return PartialView("_EditOutputActivity", model);
+        }
+
+        public async Task<ActionResult> ManageOutputBudgetLink(string projid, string fyear, string fperiod, string mainrecordid,  string outputid)
+        {
+           // WP_Outputs rec = _wpOutputsRepository.GetRecord(transid);
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            WP_OutputBudget wpoutputbudget_recfetch=_wpOutputBudgetRepository.GetRecordsByProjectYearPeriodAndOutputId(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod), outputid);
+           
+            WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(mainrecordid);
+            WP_DispatchCycle wpcycle=_wpDispatchCycleRepository.GetRecordByYearAndPeriod(mainrec.FiscalYear_Id, mainrec.Period_Id);
+           
+            WP_OutputBudgetVM model = new WP_OutputBudgetVM();
+            if(wpoutputbudget_recfetch!=null)
+            {
+                    model.Transaction_IdOBVM=wpoutputbudget_recfetch.Transaction_Id;
+                    model.WPMainRecord_idOBVM=wpoutputbudget_recfetch.WPMainRecord_id;
+                    model.Employee_IdOBVM = user.Employee_Id;
+                    model.Project_IdOBVM=wpoutputbudget_recfetch.Project_Id;
+                    model.FiscalYear_IdOBVM=wpoutputbudget_recfetch.FiscalYear_Id;
+                    model.Period_IdOBVM=wpoutputbudget_recfetch.Period_Id;
+                    model.WPOutput_IdOBVM=wpoutputbudget_recfetch.WPOutput_Id;
+                    model.Output_BudgetAmountOBVM=wpoutputbudget_recfetch.Output_BudgetAmount;
+                    model.WPSAPLink_IdOBVM=wpoutputbudget_recfetch.WPSAPLink_Id;
+                    //model.WPSAPBudget_WBSOBVM=_wpSAPLinkRepository.GetRecord(wpoutputbudget_recfetch.WPSAPLink_Id).SAP_WBS;
+                    model.UtilizationPercentageOBVM=wpoutputbudget_recfetch.UtilizationPercentage;
+
+                    if(mainrec.LinkToSAPExecution==true)
+                    {
+                        model.LinkToSAPExecution=true;
+                        model.LinkToSAPExecutionString="true";
+                    }
+                    else
+                    {
+                        model.LinkToSAPExecution=false;
+                        model.LinkToSAPExecutionString="false";
+                    }
+ 
+            }
+            else
+            {
+                    model.Transaction_IdOBVM="";
+                    model.WPMainRecord_idOBVM=mainrecordid;
+                    model.Employee_IdOBVM = user.Employee_Id;
+                    model.Project_IdOBVM=Int32.Parse(projid);
+                    model.FiscalYear_IdOBVM=Int32.Parse(fyear);
+                    model.Period_IdOBVM=Int32.Parse(fperiod);
+                    model.WPOutput_IdOBVM=outputid;
+                    model.Output_BudgetAmountOBVM=0;
+                    model.WPSAPLink_IdOBVM="";
+                    model.WPSAPBudget_WBSOBVM="";
+                    model.UtilizationPercentageOBVM=0;
+
+                    if(mainrec.LinkToSAPExecution==true)
+                    {
+                        model.LinkToSAPExecution=true;
+                        model.LinkToSAPExecutionString="true";
+                    }
+                    else
+                    {
+                        model.LinkToSAPExecution=false;
+                        model.LinkToSAPExecutionString="false";
+                    }
+
+            }
+
+
+
+            return PartialView("_ManageOutputBudgetLink", model);
         }
 
         

@@ -116616,6 +116616,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_AddOutputIndicator.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\_AddOutputIndicator.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Admin/_AddStrucDivision.cshtml",
       "TargetPath": "Views\\Admin\\_AddStrucDivision.cshtml",
       "FileKind": "mvc"
@@ -116643,6 +116648,11 @@
     {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Account/Login.cshtml",
       "TargetPath": "Views\\Account\\Login.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_AddSAPLinkage.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\_AddSAPLinkage.cshtml",
       "FileKind": "mvc"
     },
     {
@@ -116771,6 +116781,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_AddOutputActivity.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\_AddOutputActivity.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Shared/_HomePageLayout.cshtml",
       "TargetPath": "Views\\Shared\\_HomePageLayout.cshtml",
       "FileKind": "mvc"
@@ -116791,6 +116806,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_ManageOutputBudgetLink.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\_ManageOutputBudgetLink.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/MtpPriortyMapping.cshtml",
       "TargetPath": "Views\\NEPADStaff\\MtpPriortyMapping.cshtml",
       "FileKind": "mvc"
@@ -116808,6 +116828,11 @@
     {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Shared/_Layout.cshtml",
       "TargetPath": "Views\\Shared\\_Layout.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_EditOutputActivity.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\_EditOutputActivity.cshtml",
       "FileKind": "mvc"
     },
     {

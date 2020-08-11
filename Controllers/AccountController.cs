@@ -98,7 +98,7 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly IEmailSender _emailSender  ;
 
         //Workplans
-        private readonly IWP_DispatchRepository _wpDispatchRepository;
+        private readonly IWP_DispatchCycleRepository _wpDispatchCycleRepository;
         private readonly IWP_MainRecordRepository _wpMainRecordRepository;
         private readonly IWP_OutcomesRepository _wpOutcomesRepository;
         private readonly IWP_MTPRepository _wpMTPRepository;
@@ -183,7 +183,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 IStruc_DivHeadOICRepository strucDivHeadOICRepository,
                                 IEmailSender emailSender,
                                 //workplans
-                                IWP_DispatchRepository wpDispatchRepository,
+                                IWP_DispatchCycleRepository wpDispatchCycleRepository,
                                 IWP_MainRecordRepository wpMainRecordRepository,
                                 IWP_OutcomesRepository wpOutcomesRepository,
                                 IWP_MTPRepository wpMTPRepository,
@@ -263,7 +263,7 @@ namespace AUDANEPAD_Integrated.Controllers
             _emailSender=emailSender;
 
             //workplans
-            _wpDispatchRepository=wpDispatchRepository;
+            _wpDispatchCycleRepository=wpDispatchCycleRepository;
             _wpMainRecordRepository=wpMainRecordRepository;
             _wpOutcomesRepository=wpOutcomesRepository;
             _wpMTPRepository=wpMTPRepository;

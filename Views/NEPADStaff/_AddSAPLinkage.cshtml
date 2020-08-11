@@ -1,0 +1,435 @@
+
+
+
+
+@model WorkplansViewModel
+
+<form id="addform">
+    <input hidden asp-for="WPDispatchCycle_Ident" class="k-textbox" style="width:100%" value="@Model.WPDispatchCycle_Ident">
+    <input hidden asp-for="Employee_Id" class="k-textbox" style="width:100%" value="@Model.Employee_Id">
+    <input hidden asp-for="FYearIdent" class="k-textbox" style="width:100%" value="@Model.FYearIdent">
+    <input hidden asp-for="FPeriodIdent" class="k-textbox" style="width:100%" value="@Model.FPeriodIdent">
+
+<div class="form-body" style="padding: 0.4rem;">
+
+        @(Html.Kendo().TabStrip()
+          .Name("tabaddsaplink")
+          .Animation(animation => animation.Open(
+                        effect => effect.Fade(FadeDirection.In)))
+          .Items(tabstrip =>
+          {
+              tabstrip.Add().Text("Single Entry")
+                  .Selected(true)
+                  .Content(@<text>
+                        <div>
+                                <br \>
+                                <br \>
+                                @(Html.Kendo().DropDownList()
+                                                .Name("Directorate_Id")
+                                                .HtmlAttributes(new { style = "width:100%" })
+                                                .OptionLabel("Select Directorate...")
+                                                .DataTextField("DropDown_Name")
+                                                .DataValueField("DropDown_IntId")
+                                                .Events(e =>
+                                                {
+                                                    e.Close("onDropDownChangeSAP");
+                                                })
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                        read.Action("GetAllDirectorates", "Admin");
+                                                    });
+                                                })
+                                                // .SelectedIndex(Model.Directorate_Id)
+                                )
+                                <br \>
+                                <br \>
+                                <h6 style="color:#807878"> SAP WBS </h6>
+                                @Html.TextBoxFor(model => model.SAPWBS, new { @class = "k-textbox",  style = "width: 100%;", value=""})
+                                <br />
+                                <br />
+                                <h6 style="color:#807878"> SAP Description </h6>
+                                 @Html.TextAreaFor(model => model.SAPDescription, new { @class = "k-textbox", style = "width: 100%;", value="", rows="3"})
+                                <br />
+                                <br />
+                                <h6 style="color:#807878"> SAP Amount </h6>
+                                @Html.TextBoxFor(model => model.SAPAmount, new { @class = "k-textbox",  style = "width: 100%;", value=""})
+                                <br />
+                                <br />
+                                <div id="targetDivStaffa_sapsingle" class="rssedStaffa_sapsingle">
+                                </div>
+                                <br />
+                                <br />
+                                <div style="align-content:center; text-align:center">
+                                    <a class="k-button" id="btnSubmita_sapsingle">
+                                        <span class="k-icon k-i-save"></span> Add SAP Link
+                                    </a>
+                                </div>
+
+                                <br />
+                                <br />
+                                <div id="container">
+                                    @(Html.Kendo().Grid<WorkplansViewModel>()
+                                            .Name("gridsaplinksingle")
+                                            .Columns(columns =>
+                                            {
+
+                                                columns.Bound(c => c.WPDispatchCycle_Ident).Hidden();
+                                                columns.Bound(c => c.Transaction_Id).Hidden();
+                                                columns.Bound(c => c.Directorate_Id).Hidden();
+                                                columns.Bound(c => c.SAPWBSLinkedProjects).Hidden();
+                                                columns.Bound(c => c.SAPWBS).Title("SAP WBS");
+                                                columns.Bound(c => c.SAPDescription).Title("SAP Description");
+                                                columns.Bound(c => c.SAPAmount).Title("SAP Amount");
+                                                columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("deletesapwbslink")).Title(" ");
+                                            })
+                                            .HtmlAttributes(new { style = "height: 300px;" })
+                                            .Scrollable()
+                                            .Groupable()
+                                            .Sortable()
+                                            .Navigatable()
+                                            .Filterable()
+                                            .Pageable(pageable => pageable
+                                                .Refresh(true)
+                                                .PageSizes(true)
+                                                .ButtonCount(5))
+                                            .DataSource(dataSource => dataSource
+                                                .Ajax()
+                                                .Sort(sort => sort.Add("SAPAmount").Ascending())
+                                                .Read(read => read
+                                                                .Action("DirectorateWPCycleSAPLink_Read", "Admin"))
+                                                .Model(model => model.Id(p => p.Transaction_Id))
+                                                //.Destroy(destroy => destroy.Action("Struc_DirStaffMapping_Delete", "Admin"))
+                                                .PageSize(20)
+                                            )
+                                        )
+
+                                </div>
+
+
+                        </div>
+                        <script>
+                            var grid = $("#gridsaplinksingle").data("kendoGrid"); 
+
+                            $("#gridsaplinksingle").kendoTooltip({
+                                filter: "tbody td",
+                                content: function(e) {
+                                    var target = $(e.target);
+                                    var dataItem = grid.dataItem($(target).closest("tr"));
+
+                                    return dataItem.SAPWBSLinkedProjects;
+
+                                   // return e.target.text();
+                 
+                                },
+                                show: function(e) {
+                                let index = this.target().index(), // Get hovered element's column index
+                                    columns = grid.getOptions().columns, // Get grid's columns
+                                    column = columns[index]; // Get current column
+                                
+                                // If target TD is not under 'ColumnA', prevent tooltip from being showed
+  
+                                    if ( column.title == " ") {
+                                        this.hide();
+                                    }
+                                }
+                            });
+
+
+
+
+                        </script>
+                  </text>);
+
+              tabstrip.Add().Text("File Upload")
+                  .Content(@<text>
+                    <div>
+                          
+                    </div>
+                    <span class="">&nbsp;</span>
+                  </text>);
+            
+              tabstrip.Add().Text("API or Automatic")
+                  .Content(@<text>
+                    <div>
+                          
+                    </div>
+                    <span class="">&nbsp;</span>
+                  </text>);
+
+          })
+    )
+        
+
+    </div>
+  
+
+
+
+
+
+</form>
+
+
+
+<style>
+.k-widget.k-tooltip{
+        color: #353623;
+        background-color: #f6f7e1;
+        border-color: #f6f7e1;
+
+}
+
+/*SWITCH ON*/
+
+    .k-switch-on .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28
+    }
+
+    .k-switch-on:hover .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:hover .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+    .k-switch-on:active .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4
+    }
+
+    .k-switch-on:active .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28
+    }
+
+
+
+    .k-switch-on:visited .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:visited .k-switch-handle{
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+    .k-switch-on:focus .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:focus .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+
+
+    /*SWITCH OFF*/
+
+    .k-switch-off .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+
+    .k-switch-off:hover .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:hover .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+    .k-switch-off:active .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:active .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+    .k-switch-off:visited .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:visited .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+    .k-switch-off:focus .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:focus .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+
+</style>
+
+
+
+
+<script>$("#btnCloseStaffa").click(function () {
+        $(".k-window-content").each(function () {
+            $(this).data("kendoWindow").close();
+        });
+    });
+
+
+
+
+$("#btnSubmita_sapsingle").click(function () {
+        var dir_id = $("#Directorate_Id").val();  
+        var wpcycle_id = $("#WPDispatchCycle_Ident").val();  
+
+        var sapwbs = $("#SAPWBS").val();  
+        var sapdescription = $("#SAPDescription").val();  
+        var sapamount = $("#SAPAmount").val();  
+
+
+        if(dir_id === "" && typeof dir_id === "string")
+        {
+            $('#targetDivStaffa_sapsingle').empty();
+            $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select directorate. </span>').appendTo('.rssedStaffa_sapsingle');
+        }
+        else if (sapwbs === "" && typeof sapwbs === "string")
+        {            
+            $('#targetDivStaffa_sapsingle').empty();
+            $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please provide SAP WBS. </span>').appendTo('.rssedStaffa_sapsingle');
+        }
+        else if (sapdescription === "" && typeof sapdescription === "string")
+        {
+            $('#targetDivStaffa_sapsingle').empty();
+            $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please provide SAP WBS Description. </span>').appendTo('.rssedStaffa_sapsingle');
+        }
+        else if (sapamount === "" && typeof sapamount === "string")
+        {
+            $('#targetDivStaffa_sapsingle').empty();
+            $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please provide SAP WBS Amount. </span>').appendTo('.rssedStaffa_sapsingle');
+        }
+        else
+        {
+            if (isNaN(sapamount)) {
+                $('#targetDivStaffa_sapsingle').empty();
+                $('<span class="alert alert-warning" style="display: block;font-size: 100%">SAP WBS Amount should be a number </span>').appendTo('.rssedStaffa_sapsingle');
+            }
+            else
+            {
+                $.ajax({
+                        type: "POST",
+                        url: '/Admin/AddWPCycleSAPLink',     //your action
+                        data: $('#addform').serialize(),   //your form name.it takes all the values of model
+                        dataType: 'json',
+                        success: function (result) {
+                            var response = result.rtnmsg;
+
+                            if (response == "success") {
+                                        $('#targetDivStaffa_sapsingle').empty();
+                                        $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Saved Successfully. </span>').appendTo('.rssedStaffa_sapsingle');
+
+                                        
+                                        var grid = $("#gridsaplinksingle").data("kendoGrid"); 
+
+                                        grid.dataSource.transport.options.read.url = "/Admin/DirectorateWPCycleSAPLink_Read/?dir_id=" + dir_id+ "&wpcycle_id=" + wpcycle_id ;
+                                        grid.dataSource.read();
+                                        grid.refresh();
+
+                            }
+                            else if (response == "pkerror") {
+                                    $('#targetDivStaffa_sapsingle').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to Save. WBS Already Exist.  Please enter different WBS </span>').appendTo('.rssedStaffa_sapsingle');
+                                    //$('#targetDivStaffa').empty();
+                            }
+                            else if (response == "createerror") {
+                                    $('#targetDivStaffa_sapsingle').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to create SAP link</span>').appendTo('.rssedStaffa_sapsingle');
+                                    //$('#targetDivStaffa').empty();
+                            }
+                            else {
+                                    $('#targetDivStaffa_sapsingle').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffa_sapsingle');
+                                    //$('#targetDivStaffa').empty();
+                            }
+
+                        },
+                        error: function (data) {
+                                $('#targetDivStaffa_sapsingle').empty();
+                                $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffa_sapsingle');
+                                //$('#targetDivStaffa').empty();
+                        }
+                })
+
+            } 
+
+        }
+
+  
+       
+    
+        return false;
+    });</script>
+
+
+
+
+
+
+
+
+
+
+
