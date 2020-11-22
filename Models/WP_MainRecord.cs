@@ -23,6 +23,11 @@ namespace AUDANEPAD_Integrated.Models
 
         public int  Employee_Id { get; set; }
 
+        public string BarCode_Id { get; set; }
+
+        public LocalDate PeriodStartDate { get; set; }
+        public LocalDate PeriodEndDate { get; set; }
+
         public LocalDate TransactionDate { get; set; }
         
     }

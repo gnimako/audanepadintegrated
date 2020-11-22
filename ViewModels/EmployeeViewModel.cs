@@ -25,6 +25,7 @@ namespace AUDANEPAD_Integrated.ViewModels
 
 
         public int Directorate_Id { get; set; }
+        public int Directorate_Ident { get; set; }
         public int Department_Id { get; set; }
 
         public int Division_Id { get; set; }

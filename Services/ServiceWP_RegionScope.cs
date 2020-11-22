@@ -48,6 +48,14 @@ namespace AUDANEPAD_Integrated.Services
 
             return records;
         }
+		public IEnumerable<WP_RegionScope> GetRecordsByProjectYearPeriodAndMainRecId (int projectid, int year, int period, string mainrecid)
+        {
+            var records = context.WP_RegionScope
+                                .Where(s => s.Project_Id==projectid && s.FiscalYear_Id==year && s.Period_Id==period && s.WPMainRecord_id==mainrecid)
+                                .ToList();
+
+            return records;
+        }
         public IEnumerable<WP_RegionScope> GetRecordsByMainRecordId (string recid)
         {
             var records = context.WP_RegionScope

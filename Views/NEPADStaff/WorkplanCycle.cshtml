@@ -35,6 +35,8 @@
                                             columns.Bound(c => c.Employee_Id).Hidden();
                                             columns.Bound(c => c.Transaction_Id).Hidden();
                                             columns.Bound(c => c.WPSAPLinkView_String).Hidden();
+                                            columns.Bound(c => c.PeriodStart).Hidden();
+                                            columns.Bound(c => c.PeriodEnd).Hidden();
                                             columns.Bound(c => c.FisYear).Title("Cycle Year");
                                             columns.Bound(c => c.FisPeriod).Title("Period");
                                             columns.Bound(c => c.WPStatus_String).Title("Status");
@@ -350,12 +352,32 @@
                     grid.dataSource.read();
             }
     }
+    function onRequestEndMobilityLimit(e){
+    
+            var wpcycleid = $("#Transaction_Id").val();  
+
+
+
+            if (e.type === "update" || e.type === "create" || e.type === "destroy" ) {
+                var grid = $("#grid_wpmobilitylimit").data("kendoGrid"); 
+
+                grid.dataSource.transport.options.read.url = "/Admin/WP_MobilityLimit_Read?wpcycleid=" + wpcycleid;
+                grid.dataSource.read();
+
+
+
+            }
+            
+    }
     function editstaffdirmap(e) {
 
          e.preventDefault();
           var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
 
           var transid = dataItem.Transaction_Id;
+          var pstart= dataItem.PeriodStart;
+          var pend= dataItem.PeriodEnd;
+
                   $("#windowstaff").append("<div id='getstaffwindow'></div>");
 
                 var wnd2 = $("#getstaffwindow").kendoWindow({
@@ -364,9 +386,9 @@
                     modal: true,
                     animation: false,
                     resizable: true,
-                    content: "/NEPADStaff/EditWorkplanCycle?transid=" + transid,
+                    content: "/NEPADStaff/EditWorkplanCycle?transid=" + transid + "&pstart=" + kendo.toString(dataItem.PeriodStart, "MM/dd/yyyy")+ "&pend=" + kendo.toString(dataItem.PeriodEnd, "MM/dd/yyyy"),
                     width: 600,
-                    height: 400,
+                    height: 700,
 
                     title: "Edit A Workplan Cycle",
                     // close: onClose,
@@ -499,6 +521,34 @@
                 wnd2.center().open();
 
    });
+
+
+    function onDropDownChange(d)  
+    {  
+
+        var periodid = $("#FPeriodIdent").val();  
+        var otherperiodsdiv = document.getElementById("otherperiodsdiv");
+
+       // .style.display = "initial" 
+
+
+        if(periodid === "8")
+        {
+           // otherperiodsdiv.style.visibility = "visible";
+           otherperiodsdiv.style.display = "initial";
+
+        }
+        else{
+             //otherperiodsdiv.style.visibility = "hidden";
+             otherperiodsdiv.style.display = "none";
+           
+        }
+  
+
+
+
+   }
+
 </script>
 
 

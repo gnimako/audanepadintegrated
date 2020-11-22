@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="ChilkatDnCore" Version="9.5.0.80" />
+    <PackageReference Include="itext7" Version="7.1.12" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.0.0">
@@ -26,6 +27,7 @@
     <PackageReference Include="NodaTime" Version="2.4.7" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.1" />
+    <PackageReference Include="System.Web.Http" Version="4.0.0" />
     <PackageReference Include="Telerik.UI.for.AspNet.Core.Trial" Version="2020.2.513" />
 
   </ItemGroup>

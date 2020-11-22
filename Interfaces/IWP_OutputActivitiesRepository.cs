@@ -8,8 +8,13 @@ namespace AUDANEPAD_Integrated.Interfaces
     {
         WP_OutputActivities GetRecord (string Id);
         IEnumerable<WP_OutputActivities> GetRecordsByMainRecordId (string recid);
+        IEnumerable<WP_OutputActivities> GetRecordsByMainRecordIdMS (string recid);
         IEnumerable<WP_OutputActivities> GetRecordsByMainRecordOutputId (string wpmainrecid, string outputid);
+        IEnumerable<WP_OutputActivities> GetRecordsByMainRecordImpType (string wpmainrecid, int implementationtypeid);
+
+        IEnumerable<WP_OutputActivities> GetRecordsByMainRecIDYearAndWithinMonth(string wpmainrecid, int year, int month);
         IEnumerable<WP_OutputActivities> GetRecordsByOutputId (string outputid);
+        IEnumerable<WP_OutputActivities> GetRecordsByWPSAPLink_Id (string saplinkid);
         IEnumerable<WP_OutputActivities> GetAllRecords();
         IEnumerable<WP_OutputActivities>  GetRecordsByProjectYearAndPeriod (int projectid, int year, int period);
         IEnumerable<WP_OutputActivities>  GetRecordsByProjectYearPeriodAndOutputId (int projectid, int year, int period, string outputid);

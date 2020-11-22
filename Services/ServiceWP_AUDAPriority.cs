@@ -55,11 +55,27 @@ namespace AUDANEPAD_Integrated.Services
 
             return records;
         }
+		public IEnumerable<WP_AUDAPriority>  GetRecordsByProjectYearPeriodAndMainRecId (int projectid, int year, int period, string mainrecid)
+        {
+            var records = context.WP_AUDAPriority
+                                .Where(s => s.Project_Id==projectid && s.FiscalYear_Id==year && s.Period_Id==period && s.WPMainRecord_id==mainrecid)
+                                .ToList();
+
+            return records;
+        }
 
 		public WP_AUDAPriority  GetRecordsByProjectYearPeriodAndPriority (int projectid, int year, int period, int priority)
         {
             var rec = context.WP_AUDAPriority
 						.Where(s => s.Project_Id == projectid && s.FiscalYear_Id==year && s.Period_Id==period && s.Priority_Id==priority)
+						.FirstOrDefault();
+            return rec;
+        }
+
+		public WP_AUDAPriority  GetRecordsByProjectYearPeriodPriorityMainRecId (int projectid, int year, int period, int priority, string mainrecid)
+        {
+            var rec = context.WP_AUDAPriority
+						.Where(s => s.Project_Id == projectid && s.FiscalYear_Id==year && s.Period_Id==period && s.Priority_Id==priority && s.WPMainRecord_id==mainrecid)
 						.FirstOrDefault();
             return rec;
         }

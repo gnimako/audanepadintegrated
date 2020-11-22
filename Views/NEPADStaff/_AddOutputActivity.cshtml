@@ -10,6 +10,7 @@
     <input hidden asp-for="Transaction_IdOAVMMain" class="k-textbox" style="width:100%" value="@Model.Transaction_IdOAVMMain">
     <input hidden asp-for="FiscalYear_IdOAVMMain" class="k-textbox" style="width:100%" value="@Model.FiscalYear_IdOAVMMain">
     <input hidden asp-for="Period_IdOAVMMain" class="k-textbox" style="width:100%" value="@Model.Period_IdOAVMMain">
+    <input hidden asp-for="FisPeriodOAVMMain" class="k-textbox" style="width:100%" value="@Model.FisPeriodOAVMMain">
     <input hidden asp-for="Project_IdOAVMMain" class="k-textbox" style="width:100%" value="@Model.Project_IdOAVMMain">
     <input hidden asp-for="WPMainRecord_idOAVMMain" class="k-textbox" style="width:100%" value="@Model.WPMainRecord_idOAVMMain">
     
@@ -43,7 +44,7 @@
             <div class="div1">
                 <h6 style="color:#807878">Start Date</h6>
                 @(Html.Kendo().DatePickerFor(model => model.ActivityStartDateOAVMMain)
-                .Value(DateTime.Today)
+                .Value(Model.PeriodStartDate)
                 //.HtmlAttributes(new { style = "width: 100%", title = "datepicker" })
                 )
                 <br />
@@ -52,7 +53,7 @@
             <div class="div2">
                 <h6 style="color:#807878">End Date</h6>
                 @(Html.Kendo().DatePickerFor(model => model.ActivityEndDateOAVMMain)
-                .Value(DateTime.Today)
+                .Value(Model.PeriodEndDate)
                 //.HtmlAttributes(new { style = "width: 100%", title = "datepicker" })
                 )
                 <br />
@@ -72,7 +73,7 @@
                 <br />
             </div>
             <div class="div2">
-                <h6 style="color:#807878">Implementation Type</h6>
+                 <h6 style="color:#807878">Implementation Type</h6>
                 @(Html.Kendo().DropDownListFor(model => model.ImplementationType_IdOAVMMain)
                     // .Name("Department_Id")
                     .HtmlAttributes(new { style = "width:100%", id = "ImplementationType_IdOAVMMain" })
@@ -95,52 +96,88 @@
                 <br />
                 <br />
             </div>
-            <h6 style="color:#807878">Baseline Technical Execution Estimate (%)</h6>
-                @(Html.Kendo().Slider()
-                        .Name("BaselineTechnicalOAVMMain")
-                        .Min(0)
-                        .Max(100)
-                        .SmallStep(1)
-                        .LargeStep(50)
-                        .Value(0)
-                        .ShowButtons(false)
-                        .HtmlAttributes(new { style = "width: 100%" ,id = "BaselineTechnicalOAVMMain"})
-                       // .Events(events => events
-                           // .Slide("sliderSlide")
-                           // .Change("sliderChange"))
-                )
 
-            <br />
-            <br />
-            <h6 style="color:#807878">Baseline Financial Execution Estimate (%)</h6>
-                @(Html.Kendo().Slider()
-                        .Name("BaselineFinancialOAVMMain")
-                        .Min(0)
-                        .Max(100)
-                        .SmallStep(1)
-                        .LargeStep(50)
-                        .Value(0)
-                        .ShowButtons(false)
-                        .HtmlAttributes(new { style = "width: 100%" ,id = "BaselineFinancialOAVMMain"})
-                       // .Events(events => events
-                           // .Slide("sliderSlide")
-                           // .Change("sliderChange"))
+            <div class="div1">
+                <h6 style="color:#807878">Development Partner Funding?</h6>
+                @(Html.Kendo().SwitchFor(m=>m.PartnerFundingOAVMMain)
+                    // .Name("PrimaryDirectorate")
+                        .Messages(c => c.Checked("YES").Unchecked("NO"))
+                        .Events(c => c.Change("onChangePartnerFunding"))
                 )
                 <br />
                 <br />
-                <div id="targetDivStaffa_act" class="rssedStaffa_act">
-                </div>
+            </div>
+            <div class="div2">
+                @* <h6 style="color:#807878">Development Partner</h6> *@
+
+                    <div id="partnername"><h6 style="color:#807878"><span id="costinfo">Development Partner</span></h6></div>
+                @Html.TextBoxFor(model => model.PartnerFundingDescrOAVMMain, new { @class = "k-textbox",  style = "width: 100%; ", value="", @readonly="readonly"})
+
                 <br />
+                <br />
+            </div>
 
-                <div style="align-content:center; text-align:center">
-                    <a class="k-button" id="btnSubmita_act">
-                        <span class="k-icon k-i-save"></span> Save
-                    </a>
 
-                    <a class="k-button" id="btnCloseStaffa_act">
-                        <span class="k-icon k-i-cancel"></span> Close
-                    </a>
+
+            <div class="div3">
+                <h6 style="color:#807878">Baseline Technical Execution Estimate (%)</h6>
+                    @(Html.Kendo().Slider()
+                            .Name("BaselineTechnicalOAVMMain")
+                            .Min(0)
+                            .Max(100)
+                            .SmallStep(1)
+                            .LargeStep(50)
+                            .Value(0)
+                            .ShowButtons(false)
+                            .HtmlAttributes(new { style = "width: 100%" ,id = "BaselineTechnicalOAVMMain"})
+                        // .Events(events => events
+                            // .Slide("sliderSlide")
+                            // .Change("sliderChange"))
+                    )
+
+                <br />
+                <br />
+            </div>
+             <div class="div3">
+          
+                <h6 style="color:#807878">Baseline Financial Execution Estimate (%)</h6>
+                    @(Html.Kendo().Slider()
+                            .Name("BaselineFinancialOAVMMain")
+                            .Min(0)
+                            .Max(100)
+                            .SmallStep(1)
+                            .LargeStep(50)
+                            .Value(0)
+                            .ShowButtons(false)
+                            .HtmlAttributes(new { style = "width: 100%" ,id = "BaselineFinancialOAVMMain"})
+                        // .Events(events => events
+                            // .Slide("sliderSlide")
+                            // .Change("sliderChange"))
+                    )
+                    <br />
+                    <br />
                 </div>
+
+
+
+
+                <div class="div3">
+
+                                <div id="targetDivStaffa_act" class="rssedStaffa_act">
+                                </div>
+                                <br />
+
+                                <div style="align-content:center; text-align:center">
+                                    <a class="k-button" id="btnSubmita_act">
+                                        <span class="k-icon k-i-save"></span> Save
+                                    </a>
+
+                                    <a class="k-button" id="btnCloseStaffa_act">
+                                        <span class="k-icon k-i-cancel"></span> Close
+                                    </a>
+                                </div>
+                    </div>
+                
 
 
     </div>
@@ -177,6 +214,7 @@ $("#btnSubmita_act").click(function (e) {
     var projid = $("#Project_IdOAVMMain").val();  
     var fyear = $("#FiscalYear_IdOAVMMain").val();  
     var fperiod = $("#Period_IdOAVMMain").val();  
+    var periodtxt = $("#FisPeriodOAVMMain").val();  
 
     var activitytype= $("#ActivityType_IdOAVMMain").val();  
     var activitydesc = $("#ActivityDescriptionOAVMMain").val();  
@@ -224,7 +262,7 @@ $("#btnSubmita_act").click(function (e) {
         //Work on this...
         $.ajax({
                 type: "POST",
-                url: '/Admin/AddOutputActivity',     //your action
+                url: '/Admin/AddOutputActivityNew',     //your action
                 data: $('#addform').serialize(),   //your form name.it takes all the values of model
                 dataType: 'json',
                 success: function (result) {
@@ -246,6 +284,10 @@ $("#btnSubmita_act").click(function (e) {
                                 grid_outputsbudget.dataSource.transport.options.read.url = "/Admin/WP_OutputsBudget_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
                                 grid_outputsbudget.dataSource.read();
                                 grid_outputsbudget.refresh();
+
+                                var grid_outputsactivities = $("#grid_outputactivities").data("kendoGrid"); 
+                                grid_outputsactivities.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_Activities_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&periodtxt=" + periodtxt;
+                                grid_outputsactivities.dataSource.read();
 
 
                     }
@@ -316,6 +358,12 @@ $("#btnSubmita_act").click(function (e) {
 }
 .div2 {
     width: 50%;
+    float: right;
+    height: 100%;
+}
+
+.div3 {
+    width: 100%;
     float: right;
     height: 100%;
 }

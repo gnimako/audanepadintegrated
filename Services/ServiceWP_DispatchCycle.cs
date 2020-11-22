@@ -4,6 +4,7 @@ using AUDANEPAD_Integrated.Models;
 using AUDANEPAD_Integrated.Interfaces;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 
 
 namespace AUDANEPAD_Integrated.Services
@@ -75,6 +76,14 @@ namespace AUDANEPAD_Integrated.Services
 
             return records;
         }
+		public IEnumerable<WP_DispatchCycle> GetRecordsByYearAndPeriodRecs (int year, int period)
+        {
+            var records = context.WP_DispatchCycle
+                                .Where(s => s.Period_Id==period && s.FiscalYear_Id==year)
+                                .ToList();
+
+            return records;
+        }
 
 		public WP_DispatchCycle GetRecord(string Id)
 		{
@@ -88,6 +97,14 @@ namespace AUDANEPAD_Integrated.Services
             return rec;
         }
 
+		public WP_DispatchCycle GetRecordByYearPStartPEnd (int year, LocalDate pstart, LocalDate pend)
+        {
+            var rec = context.WP_DispatchCycle
+						.Where(s => s.FiscalYear_Id == year && s.PeriodStartDate == pstart && s.PeriodEndDate==pend)
+						.FirstOrDefault();
+            return rec;
+        }
+
 		public WP_DispatchCycle Update(WP_DispatchCycle recChanges)
 		{
 		    var satype = context.WP_DispatchCycle.Attach(recChanges);
@@ -95,6 +112,7 @@ namespace AUDANEPAD_Integrated.Services
 		    context.SaveChanges();
 		    return recChanges;
 		}
-        
+
+
     }
 }

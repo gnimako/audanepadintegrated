@@ -48,6 +48,7 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<LkUp_Project> LkUp_Project { get; set; }
         public DbSet<LkUp_Period> LkUp_Period { get; set; }
         public DbSet<LkUp_IndicatorType> LkUp_IndicatorType { get; set; }
+        public DbSet<LkUp_MobilityLimits> LkUp_MobilityLimits { get; set; }
 
         
         
@@ -79,6 +80,7 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<Trans_StrategyKeyPerformanceArea> Trans_StrategyKeyPerformanceArea { get; set; }
         public DbSet<Trans_StrucDirectorate> Trans_StrucDirectorate { get; set; }
         public DbSet<Trans_StrucDivision> Trans_StrucDivision { get; set; }
+        public DbSet<Trans_MobilityLimits> Trans_MobilityLimits { get; set; }
 
         public DbSet<Struc_DirStaffMapping> Struc_DirStaffMapping { get; set; }
         public DbSet<Struc_DivStaffMapping> Struc_DivStaffMapping { get; set; }
@@ -86,10 +88,12 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<Struc_DirectorOIC> Struc_DirectorOIC { get; set; }
         public DbSet<Struc_DivHead> Struc_DivHead { get; set; }
         public DbSet<Struc_DivHeadOIC> Struc_DivHeadOIC { get; set; }
+        public DbSet<Struc_DirDivIndicators> Struc_DirDivIndicators { get; set; }
         public DbSet<Trans_Programme> Trans_Programme { get; set; }
         public DbSet<Trans_Project> Trans_Project { get; set; }
         public DbSet<Trans_Period> Trans_Period { get; set; }
         public DbSet<Trans_IndicatorType> Trans_IndicatorType { get; set; }
+        public DbSet<Trans_StrucDirDivIndicators> Trans_StrucDirDivIndicators { get; set; }
 
         public DbSet<System_Audit> System_Audit { get; set; }
         
@@ -110,6 +114,10 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<WP_SAPLink> WP_SAPLink { get; set; }
         public DbSet<WP_OutputBudget> WP_OutputBudget { get; set; }
         public DbSet<WP_OutputActivityCountries> WP_OutputActivityCountries { get; set; }
+        public DbSet<WP_Mobility> WP_Mobility { get; set; }
+        public DbSet<WP_MobilityInternalTeam> WP_MobilityInternalTeam { get; set; }
+        public DbSet<WP_MobilityExternalTeam> WP_MobilityExternalTeam { get; set; }
+        public DbSet<WP_MobilityLimit> WP_MobilityLimit { get; set; }
 
 
         
@@ -217,6 +225,10 @@ namespace AUDANEPAD_Integrated.Models
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
 
+            modelBuilder.Entity<LkUp_MobilityLimits>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
             modelBuilder.Entity<Strategy_Priority>()
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
@@ -261,7 +273,14 @@ namespace AUDANEPAD_Integrated.Models
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
 
+   
+
             modelBuilder.Entity<LkUp_IndicatorType>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+
+            modelBuilder.Entity<Trans_StrucDirDivIndicators>()
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
 
@@ -375,6 +394,10 @@ namespace AUDANEPAD_Integrated.Models
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
 
+            modelBuilder.Entity<Trans_MobilityLimits>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
 
             modelBuilder.Entity<Struc_DirStaffMapping>()
             .Property(e => e.TransactionDate)
@@ -433,6 +456,10 @@ namespace AUDANEPAD_Integrated.Models
             .Property(e => e.EndDate)
             .HasConversion(localDateConverter);
 
+            modelBuilder.Entity<Struc_DirDivIndicators>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
             modelBuilder.Entity<Trans_Programme>()
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
@@ -452,6 +479,8 @@ namespace AUDANEPAD_Integrated.Models
 
 
 
+
+
             modelBuilder.Entity<System_Audit>()
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
@@ -462,8 +491,24 @@ namespace AUDANEPAD_Integrated.Models
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
 
+            modelBuilder.Entity<WP_DispatchCycle>()
+            .Property(e => e.PeriodStartDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_DispatchCycle>()
+            .Property(e => e.PeriodEndDate)
+            .HasConversion(localDateConverter);
+
             modelBuilder.Entity<WP_MainRecord>()
             .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_MainRecord>()
+            .Property(e => e.PeriodStartDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_MainRecord>()
+            .Property(e => e.PeriodEndDate)
             .HasConversion(localDateConverter);
 
             modelBuilder.Entity<WP_Outcomes>()
@@ -520,6 +565,54 @@ namespace AUDANEPAD_Integrated.Models
 
             modelBuilder.Entity<WP_OutputActivityCountries>()
             .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_Mobility>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_Mobility>()
+            .Property(e => e.MobilityStartDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_Mobility>()
+            .Property(e => e.MobilityEndDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_MobilityInternalTeam>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_MobilityInternalTeam>()
+            .Property(e => e.PeriodStartDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_MobilityInternalTeam>()
+            .Property(e => e.PeriodEndDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_MobilityExternalTeam>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_MobilityExternalTeam>()
+            .Property(e => e.PeriodStartDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_MobilityExternalTeam>()
+            .Property(e => e.PeriodEndDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_MobilityLimit>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_MobilityLimit>()
+            .Property(e => e.PeriodStartDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_MobilityLimit>()
+            .Property(e => e.PeriodEndDate)
             .HasConversion(localDateConverter);
         }
         

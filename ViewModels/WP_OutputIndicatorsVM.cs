@@ -39,6 +39,17 @@ namespace AUDANEPAD_Integrated.ViewModels
         public string  TargetQuanlitativeOIVM_Proj  { get; set; }
 
 
+        //Directorat Level
+        public int IndicatorIDOIVM_Dir   { get; set; }
+
+        public int IndicatorTypeOIVM_Dir   { get; set; }
+        public string IndicatorStatementOIVM_Dir  { get; set; }
+        public double  BaselineQuantitativeOIVM_Dir { get; set; }
+        public string  BaselineQuanlitativeOIVM_Dir  { get; set; }
+        public double  TargetQuantitativeOIVM_Dir  { get; set; }
+        public string  TargetQuanlitativeOIVM_Dir  { get; set; }
+
+
 
         public DateTime TransactionDate { get; set; }
 

@@ -23,7 +23,7 @@ namespace AUDANEPAD_Integrated.Interfaces
 
         WP_OutputIndicators GetRecordByProjectYearAndPeriodOutputIdIndicatorId (int projectid, int year, int period, string outputid, int indicatorid);
 
-
+        WP_OutputIndicators GetRecordByProjectYearAndPeriodOutputIdIndicatorId_Dir (int projectid, int year, int period, string outputid, int indicatorid);
 		WP_OutputIndicators Add(WP_OutputIndicators rec);
 		WP_OutputIndicators Update(WP_OutputIndicators recChanges);
 		WP_OutputIndicators Delete(string id);

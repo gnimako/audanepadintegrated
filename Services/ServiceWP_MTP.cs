@@ -48,6 +48,14 @@ namespace AUDANEPAD_Integrated.Services
 
             return records;
         }
+		public IEnumerable<WP_MTP>  GetRecordsByProjectYearPeriodMainRecId (int projectid, int year, int period, string mainrecid )
+        {
+            var records = context.WP_MTP
+                                .Where(s => s.Project_Id==projectid && s.FiscalYear_Id==year && s.Period_Id==period && s.WPMainRecord_id==mainrecid)
+                                .ToList();
+
+            return records;
+        }
         public IEnumerable<WP_MTP> GetRecordsByMainRecordId (string recid)
         {
             var records = context.WP_MTP
@@ -61,6 +69,13 @@ namespace AUDANEPAD_Integrated.Services
         {
             var rec = context.WP_MTP
 						.Where(s => s.Project_Id == projectid && s.FiscalYear_Id==year && s.Period_Id==period && s.MTP_Id==mtp)
+						.FirstOrDefault();
+            return rec;
+        }
+		public WP_MTP  GetRecordsByProjectYearPeriodMTPAndMainRecId (int projectid, int year, int period, int mtp, string mainrecid)
+        {
+            var rec = context.WP_MTP
+						.Where(s => s.Project_Id == projectid && s.FiscalYear_Id==year && s.Period_Id==period && s.MTP_Id==mtp && s.WPMainRecord_id==mainrecid)
 						.FirstOrDefault();
             return rec;
         }

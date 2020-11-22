@@ -54,6 +54,21 @@ namespace AUDANEPAD_Integrated.Services
 						.ToList();
             return rec;
         }
+		public IEnumerable<WP_MainRecord>  GetRecordsByProjectYearAndPeriodRecs (int projectid, int year, int period)
+        {
+            var rec = context.WP_MainRecord
+						.Where(s => s.FiscalYear_Id == year && s.Period_Id == period && s.Project_Id==projectid)
+						.ToList();
+            return rec;
+        }
+
+		public IEnumerable<WP_MainRecord> GetDraftRecordsByDivRecs (int div)
+        {
+            var rec = context.WP_MainRecord
+						.Where(s =>  s.Division_Id==div && s.WP_Status=="Drafting Mode")
+						.ToList();
+            return rec;
+        }
         public WP_MainRecord GetRecordByProjectYearAndPeriod (int projectid, int year, int period)
         {
             var rec = context.WP_MainRecord

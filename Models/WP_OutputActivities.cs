@@ -17,12 +17,15 @@ namespace AUDANEPAD_Integrated.Models
         public int ActivityType_Id  { get; set; }
         public string ActivityDescription  { get; set; }
         public double  ActivityCost { get; set; }
+        public bool? PartnerFunding { get; set; }
+        public string PartnerFundingDescr { get; set; }
         public LocalDate ActivityStartDate { get; set; }
         public LocalDate ActivityEndDate { get; set; }
         public int ImplementationType_Id  { get; set; }
         public double  BaselineFinancial { get; set; }
         public double  BaselineTechnical { get; set; }
         public int  Employee_Id { get; set; }
+        public string WPSAPLink_Id  { get; set; }
         public LocalDate TransactionDate { get; set; }
         
     }

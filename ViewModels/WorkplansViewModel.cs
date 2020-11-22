@@ -14,6 +14,8 @@ namespace AUDANEPAD_Integrated.ViewModels
         public string SessionTransaction_Id { get; set; }
 
         public int Directorate_Id { get; set; }
+        public int Division_Id { get; set; }
+        public string Division_Name { get; set; }
         public string SAPWBS { get; set; }
         public string SAPDescription{ get; set; }
 
@@ -25,11 +27,16 @@ namespace AUDANEPAD_Integrated.ViewModels
         public string WPMainRecord_Ident { get; set; }
         public int Employee_Id { get; set; }
 
+        public int Programme_Id { get; set; }
+
         public int ProjectId { get; set; }
+        public string Project_Name { get; set; }
         public int FYearIdent { get; set; }
         public string FisYear { get; set; }
         public int FPeriodIdent { get; set; }
         public string FisPeriod { get; set; }
+
+        public string FisPeriodHidden { get; set; }
         public bool WPStatus { get; set; }
         public bool WPSAPLinkView { get; set; }
         public string WPStatus_String { get; set; }
@@ -62,6 +69,9 @@ namespace AUDANEPAD_Integrated.ViewModels
         public string LinkToSAPExecutionStringVM  { get; set; }
 
         public string LinkToSAPExecutionDisplayVM  { get; set; }
+
+        public DateTime PeriodStart { get; set; }
+        public DateTime PeriodEnd { get; set; }
 
         public DateTime TransactionDate { get; set; }
 

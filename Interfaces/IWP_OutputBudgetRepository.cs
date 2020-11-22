@@ -20,6 +20,7 @@ namespace AUDANEPAD_Integrated.Interfaces
         IEnumerable<WP_OutputBudget>  GetRecordsByProjectYearAndPeriod (int projectid, int year, int period);
 
         WP_OutputBudget  GetRecordsByProjectYearPeriodAndOutputId (int projectid, int year, int period, string outputid);
+        WP_OutputBudget  GetRecordByOutputId (string outputid);
 
         IEnumerable<WP_OutputBudget>  GetRecordsBySAPLinkId (string saplinkid);
 

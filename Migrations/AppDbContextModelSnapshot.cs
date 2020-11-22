@@ -421,6 +421,27 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.ToTable("LkUp_LeadershipStatus");
                 });
 
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_MobilityLimits", b =>
+                {
+                    b.Property<int>("Record_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("MonthlyLimit")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("Record_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Record_Id");
+
+                    b.ToTable("LkUp_MobilityLimits");
+                });
+
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_ParticipantType", b =>
                 {
                     b.Property<int>("Record_Id")
@@ -883,6 +904,39 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.ToTable("Strategy_Priority");
                 });
 
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Struc_DirDivIndicators", b =>
+                {
+                    b.Property<int>("Record_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("Directorate_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Division_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Indicator_Type")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Indicator_Type_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Record_Name")
+                        .HasColumnType("text");
+
+                    b.Property<bool?>("Record_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Record_Id");
+
+                    b.ToTable("Struc_DirDivIndicators");
+                });
+
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.Struc_DirStaffMapping", b =>
                 {
                     b.Property<string>("Transaction_Id")
@@ -1318,6 +1372,22 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.ToTable("Trans_LeadershipStatus");
                 });
 
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_MobilityLimits", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Record_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_MobilityLimits");
+                });
+
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_ParticipantType", b =>
                 {
                     b.Property<string>("Transaction_Id")
@@ -1611,6 +1681,37 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.ToTable("Trans_StrategyPriority");
                 });
 
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_StrucDirDivIndicators", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Directorate_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Division_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Indicator_Type")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Indicator_Type_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Record_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Record_Name")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_StrucDirDivIndicators");
+                });
+
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_StrucDirectorate", b =>
                 {
                     b.Property<string>("Transaction_Id")
@@ -1759,6 +1860,12 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.Property<bool?>("LinkToSAPExecution")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime>("PeriodEndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("PeriodStartDate")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<int>("Period_Id")
                         .HasColumnType("integer");
 
@@ -1806,6 +1913,9 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.Property<string>("Transaction_Id")
                         .HasColumnType("text");
 
+                    b.Property<string>("BarCode_Id")
+                        .HasColumnType("text");
+
                     b.Property<bool?>("ContinentalCoverage")
                         .HasColumnType("boolean");
 
@@ -1823,6 +1933,12 @@ namespace AUDANEPAD_Integrated.Migrations
 
                     b.Property<bool?>("LinkToSAPExecution")
                         .HasColumnType("boolean");
+
+                    b.Property<DateTime>("PeriodEndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("PeriodStartDate")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("Period_Id")
                         .HasColumnType("integer");
@@ -1845,6 +1961,181 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.HasKey("Transaction_Id");
 
                     b.ToTable("WP_MainRecord");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.WP_Mobility", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Country_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FiscalYear_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("MobilityCost")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("MobilityEndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("MobilityStartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Period_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Project_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("WPMainRecord_id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPMobility_Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPOutputActivity_Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPOutput_Id")
+                        .HasColumnType("text");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("WP_Mobility");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.WP_MobilityExternalTeam", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ExternalParticipant_Description")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ExternalParticipant_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ExternalParticipant_Number")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FiscalYear_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("PeriodEndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("PeriodStartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Period_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Project_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("WPMainRecord_id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPMobility_id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPOutputActivity_Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPOutput_Id")
+                        .HasColumnType("text");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("WP_MobilityExternalTeam");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.WP_MobilityInternalTeam", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Employee_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FiscalYear_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("PeriodEndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("PeriodStartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Period_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Project_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("WPMainRecord_id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPMobility_id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPOutputActivity_Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPOutput_Id")
+                        .HasColumnType("text");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("WP_MobilityInternalTeam");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.WP_MobilityLimit", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Employee_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FiscalYear_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MonthlyLimit")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("PeriodEndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("PeriodStartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Period_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Project_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("WPCycle_id")
+                        .HasColumnType("text");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("WP_MobilityLimit");
                 });
 
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.WP_Outcomes", b =>
@@ -1913,6 +2204,12 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.Property<int>("ImplementationType_Id")
                         .HasColumnType("integer");
 
+                    b.Property<bool?>("PartnerFunding")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("PartnerFundingDescr")
+                        .HasColumnType("text");
+
                     b.Property<int>("Period_Id")
                         .HasColumnType("integer");
 
@@ -1926,6 +2223,9 @@ namespace AUDANEPAD_Integrated.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("WPOutput_Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPSAPLink_Id")
                         .HasColumnType("text");
 
                     b.HasKey("Transaction_Id");
@@ -2092,6 +2392,9 @@ namespace AUDANEPAD_Integrated.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("WPMainRecord_id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPSAPLink_Id")
                         .HasColumnType("text");
 
                     b.HasKey("Transaction_Id");

@@ -44,6 +44,10 @@ namespace AUDANEPAD_Integrated
                 opts => opts.UseNpgsql(connectionString)
             );
 
+            //services.AddIdentity<ApplicationUser, IdentityRole>()
+           // .AddEntityFrameworkStores<AppDbContext>()
+           // .AddDefaultTokenProviders();
+
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.Password.RequiredLength = 10;
@@ -51,18 +55,33 @@ namespace AUDANEPAD_Integrated
                 options.Password.RequireNonAlphanumeric = false;
                 //options.Authentication.CookieLifetime = TimeSpan.FromHours(2); 
             })
+            
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
-            services.ConfigureApplicationCookie(options =>
+            services.PostConfigure<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme,
+            options =>
             {
-                //options.ExpireTimeSpan = TimeSpan.FromSeconds(5);
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-                options.LoginPath = new PathString("/Account/Login");
+                options.LoginPath = new PathString("/Account/Login"); 
                 options.LogoutPath = new PathString("/Account/Logout");
                 options.SlidingExpiration = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(10);  
                 
+
             });
+
+            // services.ConfigureApplicationCookie(options =>
+            // {
+            //     //options.ExpireTimeSpan = TimeSpan.FromSeconds(5);
+            //     options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+            //     options.LoginPath = new PathString("/Account/Login");
+            //     options.ReturnUrlParameter = "RedirectUrl";
+            //     options.LogoutPath = new PathString("/Account/Logout");
+            //     options.SlidingExpiration = true;
+                
+            // });
+
+            //
 
          
 
@@ -79,6 +98,21 @@ namespace AUDANEPAD_Integrated
                 .RequireAuthenticatedUser()
                 .Build();
             });
+
+            // services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            //     .AddCookie(x =>
+            //     {
+            //         x.Cookie.Name = "AUDA-NEPAD Annual Planning and Reporting";
+            //         x.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            //         x.Cookie.SameSite = SameSiteMode.Strict;
+            //         x.Cookie.HttpOnly = true;
+            //         x.Cookie.IsEssential = true;
+            //         x.SlidingExpiration = true;
+            //         x.ExpireTimeSpan = TimeSpan.FromMinutes(5);//For Auto Logout 
+            //         x.LoginPath = "/Account/Login";
+            //         x.LogoutPath = "/Account/Logout";
+
+            //     });
 
 
              services.AddMvc().AddJsonOptions(o =>
@@ -129,10 +163,12 @@ namespace AUDANEPAD_Integrated
             services.AddScoped<IStrategy_OutputIndicatorsPriorityMappingRepository, ServiceStrategy_OutputIndicatorsPriorityMapping>();
             services.AddScoped<IStruc_DirectorateRepository, ServiceStruc_Directorate>();
             services.AddScoped<IStruc_DivisionRepository, ServiceStruc_Division>();
+            services.AddScoped<IStruc_DirDivIndicatorsRepository, ServiceStruc_DirDivIndicators>();
             services.AddScoped<ILkUp_ProgrammeRepository, ServiceLkUp_Programme>();
             services.AddScoped<ILkUp_ProjectRepository, ServiceLkUp_Project>();
             services.AddScoped<ILkUp_PeriodRepository, ServiceLkUp_Period>();
             services.AddScoped<ILkUp_IndicatorTypeRepository, ServiceLkUp_IndicatorType>();
+            services.AddScoped<ILkUp_MobilityLimitsRepository, ServiceLkUp_MobilityLimits>();
             
 
 
@@ -155,12 +191,14 @@ namespace AUDANEPAD_Integrated
             services.AddScoped<ITrans_ProcurementLTimeRepository, ServiceTrans_ProcurementLTime>();
             services.AddScoped<ITrans_ProjectScopeRepository, ServiceTrans_ProjectScope>();
             services.AddScoped<ITrans_RegionScopeRepository, ServiceTrans_RegionScope>();
+            services.AddScoped<ITrans_MobilityLimitsRepository, ServiceTrans_MobilityLimits>();
             services.AddScoped<ITrans_StrategyPriorityRepository, ServiceTrans_StrategyPriority>();
             services.AddScoped<ITrans_StrategyMTPRepository, ServiceTrans_StrategyMTPRepository>();
             services.AddScoped<ITrans_StrategyKeyPerformanceAreaRepository, ServiceTrans_StrategyKeyPerformanceArea>();
             services.AddScoped<ITrans_StrategyOutputIndicators, ServiceTrans_StrategyOutputIndicators>();
             services.AddScoped<ITrans_StrucDirectorateRepository, ServiceTrans_StrucDirectorate>();
             services.AddScoped<ITrans_StrucDivisionRepository, ServiceTrans_StrucDivision>();
+            services.AddScoped<ITrans_StrucDirDivIndicatorsRepository, ServiceTrans_StrucDirDivIndicators>();
             services.AddScoped<IStruc_DirStaffMappingRepository, ServiceStruc_DirStaffMapping>();
             services.AddScoped<IStruc_DivStaffMappingRepository, ServiceStruc_DivStaffMapping>();
             services.AddScoped<IStruc_DirectorRepository, ServiceStruc_Director>();
@@ -192,7 +230,12 @@ namespace AUDANEPAD_Integrated
             services.AddScoped<IWP_SAPLinkRepository, ServiceWP_SAPLink>();
             services.AddScoped<IWP_OutputBudgetRepository, ServiceWP_OutputBudget>();
             services.AddScoped<IWP_OutputActivityCountriesRepository, ServiceWP_OutputActivityCountries>();
-
+            services.AddScoped<IWP_MobilityRepository, ServiceWP_Mobility>();
+            services.AddScoped<IWP_MobilityInternalTeamRepository, ServiceWP_MobilityInternalTeam>();
+            services.AddScoped<IWP_MobilityExternalTeamRepository, ServiceWP_MobilityExternalTeam>();
+            services.AddScoped<IWP_MobilityLimitRepository, ServiceWP_MobilityLimit>();
+            
+            //services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
 
 
             
@@ -208,7 +251,11 @@ namespace AUDANEPAD_Integrated
         
 
            services.AddKendo();
-
+                 
+            // Added below Name for session Use
+            // services.AddMvc().AddSessionStateTempDataProvider();
+            services.AddSession();
+            services.AddHttpContextAccessor();
 
            // services.AddControllers();
             //services.AddRazorPages();
@@ -232,6 +279,7 @@ namespace AUDANEPAD_Integrated
             // }
 
             //app.UseHttpsRedirection();
+           // app.UseHttpsRedirection();  
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -253,6 +301,7 @@ namespace AUDANEPAD_Integrated
             //         name: "default",
             //         pattern: "{controller=Home}/{action=Index}/{id?}");
             // });
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

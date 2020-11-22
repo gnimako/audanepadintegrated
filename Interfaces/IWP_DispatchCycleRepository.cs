@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using AUDANEPAD_Integrated.Models;
+using NodaTime;
 
 namespace AUDANEPAD_Integrated.Interfaces
 {
@@ -8,7 +9,10 @@ namespace AUDANEPAD_Integrated.Interfaces
     {
         WP_DispatchCycle GetRecord (string Id);
 
+        WP_DispatchCycle GetRecordByYearPStartPEnd (int year, LocalDate pstart, LocalDate pend);
+
         WP_DispatchCycle GetRecordByYearAndPeriod (int year, int period);
+        IEnumerable<WP_DispatchCycle> GetRecordsByYearAndPeriodRecs (int year, int period);
 
 		IEnumerable<WP_DispatchCycle> GetAllRecords();
         IEnumerable<WP_DispatchCycle> GetAllCurrentAndInactiveWPDispatch();

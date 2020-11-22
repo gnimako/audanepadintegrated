@@ -13,6 +13,8 @@ namespace AUDANEPAD_Integrated.Interfaces
 
         IEnumerable<WP_RegionScope>  GetRecordsByProjectYearAndPeriod (int projectid, int year, int period);
 
+        IEnumerable<WP_RegionScope>  GetRecordsByProjectYearPeriodAndMainRecId (int projectid, int year, int period, string mainrecid);
+
         WP_RegionScope  GetRecordsByProjectYearPeriodAndRegion (int projectid, int year, int period, int region);
 
 		WP_RegionScope Add(WP_RegionScope rec);

@@ -38,6 +38,10 @@
                 .OptionLabel("Select Period...")
                 .DataTextField("DropDown_Name")
                 .DataValueField("DropDown_IntId")
+                .Events(e =>
+                {
+                        e.Close("onDropDownChange");
+                })
                 .DataSource(source =>
                 {
                     source.Read(read =>
@@ -52,6 +56,25 @@
         <br />
         <br />
         <br />
+         <div id="otherperiodsdiv" style="display: none;">
+                <label>Period Start Date</label>
+                @(Html.Kendo().DatePickerFor(model => model.PeriodStart)
+                .Value(DateTime.Today)
+                //.HtmlAttributes(new { style = "width: 100%", title = "datepicker" }) style="visibility: hidden;"
+                )
+                <br />
+                <br />
+
+                <label>Period End Date</label>
+                @(Html.Kendo().DatePickerFor(model => model.PeriodEnd)
+                .Value(DateTime.Today)
+                //.HtmlAttributes(new { style = "width: 100%", title = "datepicker" })
+                )
+
+            <br />
+            <br />
+            <br />
+         </div>
 
         <label>Activate Workplan Cycle? </label>
         &nbsp; &nbsp;
@@ -246,11 +269,16 @@
 
 
 
-<script>$("#btnCloseStaffa").click(function () {
-        $(".k-window-content").each(function () {
-            $(this).data("kendoWindow").close();
-        });
-    });
+<script>
+
+
+
+    
+$("#btnCloseStaffa").click(function () {
+    $(".k-window-content").each(function () {
+                $(this).data("kendoWindow").close();
+            });
+});
 
 
 
@@ -295,6 +323,11 @@ $("#btnSubmita").click(function () {
                         $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to Save. Cycle Already Exist.  Please Select different options </span>').appendTo('.rssedStaffa');
                         //$('#targetDivStaffa').empty();
                 }
+                else if (response == "futuredate") {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to Save. Period End Date should be a future date </span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
                 else if (response == "createerror") {
                         $('#targetDivStaffa').empty();
                         $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to create cycle</span>').appendTo('.rssedStaffa');
@@ -321,7 +354,8 @@ $("#btnSubmita").click(function () {
     }
     
         return false;
-    });</script>
+    });
+</script>
 
 
 

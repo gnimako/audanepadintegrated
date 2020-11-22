@@ -89,6 +89,13 @@ namespace AUDANEPAD_Integrated.Services
             return rec;
         }
 
+		public  WP_OutputIndicators GetRecordByProjectYearAndPeriodOutputIdIndicatorId_Dir (int projectid, int year, int period, string outputid, int indicatorid)
+        {
+            var rec = context.WP_OutputIndicators
+						.Where(s => s.FiscalYear_Id == year && s.Period_Id == period && s.Project_Id==projectid && s.OutputIndicator_Id==indicatorid && s.WPOutput_Id==outputid && s.IndicatorCategory=="Directorate-Level")
+						.FirstOrDefault();
+            return rec;
+        }
 
 
 

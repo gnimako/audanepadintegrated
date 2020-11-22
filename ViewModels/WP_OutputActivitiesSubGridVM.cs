@@ -24,7 +24,8 @@ namespace AUDANEPAD_Integrated.ViewModels
         public double  BaselineFinancialOAVM { get; set; }
         public double  BaselineTechnicalOAVM { get; set; }
         public int  Employee_IdOAVM { get; set; }
-         public string  ShowGridButtons { get; set; }
+        public string  ShowGridButtons { get; set; }
+        public string  Output_ChildGridId { get; set; }
         public DateTime TransactionDateOAVM { get; set; }
         
     }

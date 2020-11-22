@@ -48,6 +48,14 @@ namespace AUDANEPAD_Integrated.Services
 
             return records;
         }
+        public IEnumerable<WP_OutputActivities> GetRecordsByMainRecordIdMS (string recid)
+        {
+            var records = context.WP_OutputActivities
+                                .Where(s => s.WPMainRecord_id==recid && s.PartnerFunding==true)
+                                .ToList();
+
+            return records;
+        }
         public IEnumerable<WP_OutputActivities> GetRecordsByMainRecordOutputId (string wpmainrecid, string outputid)
         {
             var records = context.WP_OutputActivities
@@ -56,10 +64,43 @@ namespace AUDANEPAD_Integrated.Services
 
             return records;
         }
+        public IEnumerable<WP_OutputActivities> GetRecordsByMainRecordImpType (string wpmainrecid, int implementationtypeid)
+        {
+            var records = context.WP_OutputActivities
+                                .Where(s => s.WPMainRecord_id==wpmainrecid && s.ImplementationType_Id==implementationtypeid)
+                                .ToList();
+
+            return records;
+        }
+        public IEnumerable<WP_OutputActivities> GetRecordsByMainRecIDYearAndWithinMonth(string wpmainrecid, int year, int month)
+        {
+            var records = context.WP_OutputActivities
+                                .Where(s => s.WPMainRecord_id==wpmainrecid)//&& s.WPOutput_Id==outputid)
+                                .ToList();
+
+            return records;
+        }
+        public bool WithinMonth(int year, int month, DateTime start, DateTime end)
+        {
+            DateTime monthstart=new DateTime(year, month, 1);
+            DateTime monthend=new DateTime(year, month, DateTime.DaysInMonth(year, month));
+
+            return start >= monthstart && end <= monthend;
+        }
+
 		public IEnumerable<WP_OutputActivities> GetRecordsByOutputId (string outputid)
         {
             var records = context.WP_OutputActivities
                                 .Where(s => s.WPOutput_Id==outputid)
+                                .ToList();
+
+            return records;
+        }
+
+        public IEnumerable<WP_OutputActivities> GetRecordsByWPSAPLink_Id (string saplinkid)
+        {
+            var records = context.WP_OutputActivities
+                                .Where(s => s.WPSAPLink_Id==saplinkid)
                                 .ToList();
 
             return records;

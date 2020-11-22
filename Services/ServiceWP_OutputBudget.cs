@@ -80,6 +80,14 @@ namespace AUDANEPAD_Integrated.Services
 
             return record;
         }
+        public WP_OutputBudget  GetRecordByOutputId (string outputid)
+        {
+            var record = context.WP_OutputBudget
+                                .Where(s => s.WPOutput_Id==outputid)
+                               .FirstOrDefault();
+
+            return record;
+        }
         public IEnumerable<WP_OutputBudget>  GetRecordsBySAPLinkId (string saplinkid)
         {
             var records = context.WP_OutputBudget

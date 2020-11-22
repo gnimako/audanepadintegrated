@@ -17,6 +17,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NodaTime;
+using System.Runtime.Serialization.Json;
+using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System.Web;
+using System.Threading;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.Layout.Properties;
+
+
 
 
 namespace AUDANEPAD_Integrated.Controllers
@@ -50,6 +62,7 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly ILkUp_ProcurementLTimeRepository _lkupProcurementLTimeRepository ;
         private readonly ILkUp_ProjectScopeRepository _lkupProjectScopeRepository ;
         private readonly ILkUp_RegionScopeRepository _lkupRegionScopeRepository ;
+        private readonly ILkUp_MobilityLimitsRepository _lkupMobilityLimitsRepository ;
         private readonly IStrategy_PriorityRepository _strategyPriorityRepository ;
         private readonly IStrategy_MTPRepository _strategyMTPRepository;
         private readonly IStrategy_MTPPriorityMappingRepository _strategyMTPPriorityMappingRepository ;
@@ -58,6 +71,7 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly IStrategy_OutputIndicatorsPriorityMappingRepository _strategyOutputIndicatorsPriorityMappingRepository;
         private readonly IStruc_DirectorateRepository _strucDirectorateRepository ;
         private readonly IStruc_DivisionRepository _strucDivisionRepository;
+        private readonly IStruc_DirDivIndicatorsRepository _strucDirDivIndicatorsRepository;
         private readonly ILkUp_ProgrammeRepository _lkupProgrammeRepository;
         private readonly ILkUp_ProjectRepository _lkupProjectRepository;
         private readonly ILkUp_PeriodRepository _lkupPeriodRepository;
@@ -83,12 +97,14 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly ITrans_ProcurementLTimeRepository _transProcurementLTimeRepository;
         private readonly ITrans_ProjectScopeRepository _transProjectScopeRepository ;
         private readonly ITrans_RegionScopeRepository _transRegionScopeRepository ;
+        private readonly ITrans_MobilityLimitsRepository _transMobilityLimitsRepository ;
         private readonly ITrans_StrategyPriorityRepository _transStrategyPriorityRepository ;
         private readonly ITrans_StrategyMTPRepository _transStrategyMTPRepository ;
         private readonly ITrans_StrategyKeyPerformanceAreaRepository _transStrategyKeyPerformanceAreaRepository  ;
         private readonly ITrans_StrategyOutputIndicators _transStrategyOutputIndicators  ;
         private readonly ITrans_StrucDirectorateRepository _transStrucDirectorateRepository  ;
         private readonly ITrans_StrucDivisionRepository _transStrucDivisionRepository  ;
+        private readonly ITrans_StrucDirDivIndicatorsRepository _transStrucDirDivIndicatorsRepository  ;
         private readonly ITrans_ProgrammeRepository _transProgrammeRepository ;
         private readonly ITrans_ProjectRepository _transProjectRepository  ;
         private readonly ITrans_PeriodRepository _transPeriodRepository ;
@@ -122,6 +138,10 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly IWP_SAPLinkRepository _wpSAPLinkRepository  ;
         private readonly IWP_OutputBudgetRepository _wpOutputBudgetRepository ;
         private readonly IWP_OutputActivityCountriesRepository _wpOutputActivityCountriesRepository;
+        private readonly IWP_MobilityRepository _wpMobilityRepository;
+        private readonly IWP_MobilityInternalTeamRepository _wpMobilityInternalTeamRepository;
+        private readonly IWP_MobilityExternalTeamRepository _wpMobilityExternalTeamRepository;
+        private readonly IWP_MobilityLimitRepository _wpMobilityLimitRepository;
 
 
 
@@ -155,6 +175,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 ILkUp_ProcurementLTimeRepository lkupProcurementLTimeRepository ,
                                 ILkUp_ProjectScopeRepository lkupProjectScopeRepository,
                                 ILkUp_RegionScopeRepository lkupRegionScopeRepository ,
+                                ILkUp_MobilityLimitsRepository lkupMobilityLimitsRepository ,
                                 IStrategy_PriorityRepository strategyPriorityRepository,
                                 IStrategy_MTPRepository strategyMTPRepository,
                                 IStrategy_MTPPriorityMappingRepository strategyMTPPriorityMappingRepository,
@@ -163,6 +184,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 IStrategy_OutputIndicatorsPriorityMappingRepository strategyOutputIndicatorsPriorityMappingRepository,
                                 IStruc_DirectorateRepository strucDirectorateRepository,
                                 IStruc_DivisionRepository strucDivisionRepository,
+                                IStruc_DirDivIndicatorsRepository strucDirDivIndicatorsRepository,
                                 ILkUp_ProgrammeRepository lkupProgrammeRepository,
                                 ILkUp_ProjectRepository lkupProjectRepository,
                                 ILkUp_PeriodRepository lkupPeriodRepository,
@@ -187,12 +209,14 @@ namespace AUDANEPAD_Integrated.Controllers
                                 ITrans_ProcurementLTimeRepository transProcurementLTimeRepository,
                                 ITrans_ProjectScopeRepository transProjectScopeRepository,
                                 ITrans_RegionScopeRepository transRegionScopeRepository,
+                                ITrans_MobilityLimitsRepository transMobilityLimitsRepository,
                                 ITrans_StrategyPriorityRepository transStrategyPriorityRepository,
                                 ITrans_StrategyMTPRepository transStrategyMTPRepository,
                                 ITrans_StrategyKeyPerformanceAreaRepository transStrategyKeyPerformanceAreaRepository,
                                 ITrans_StrategyOutputIndicators transStrategyOutputIndicators,
                                 ITrans_StrucDirectorateRepository transStrucDirectorateRepository,
                                 ITrans_StrucDivisionRepository transStrucDivisionRepository,   
+                                ITrans_StrucDirDivIndicatorsRepository transStrucDirDivIndicatorsRepository ,
                                 ITrans_ProgrammeRepository transProgrammeRepository, 
                                 ITrans_ProjectRepository transProjectRepository, 
                                 ITrans_PeriodRepository transPeriodRepository,
@@ -219,7 +243,11 @@ namespace AUDANEPAD_Integrated.Controllers
                                 IWP_OutputActivitiesRepository wpOutputActivitiesRepository,
                                 IWP_SAPLinkRepository wpSAPLinkRepository,
                                 IWP_OutputBudgetRepository wpOutputBudgetRepository,
-                                IWP_OutputActivityCountriesRepository wpOutputActivityCountriesRepository)
+                                IWP_OutputActivityCountriesRepository wpOutputActivityCountriesRepository,
+                                IWP_MobilityRepository wpMobilityRepository,
+                                IWP_MobilityInternalTeamRepository wpMobilityInternalTeamRepository,
+                                IWP_MobilityExternalTeamRepository wpMobilityExternalTeamRepository,
+                                IWP_MobilityLimitRepository wpMobilityLimitRepository)
         {
             this._employeeRepository = employeeRepository;
             this.userManager = userManager;
@@ -250,6 +278,7 @@ namespace AUDANEPAD_Integrated.Controllers
             _lkupProjectRepository=lkupProjectRepository;
             _lkupPeriodRepository=lkupPeriodRepository;
             _lkupIndicatorTypeRepository=lkupIndicatorTypeRepository;
+            _lkupMobilityLimitsRepository=lkupMobilityLimitsRepository;
             _strategyPriorityRepository=strategyPriorityRepository;
             _strategyMTPRepository=strategyMTPRepository;
             _strategyMTPPriorityMappingRepository=strategyMTPPriorityMappingRepository;
@@ -258,6 +287,7 @@ namespace AUDANEPAD_Integrated.Controllers
             _strategyOutputIndicatorsPriorityMappingRepository=strategyOutputIndicatorsPriorityMappingRepository;
             _strucDirectorateRepository=strucDirectorateRepository;
             _strucDivisionRepository=strucDivisionRepository;
+            _strucDirDivIndicatorsRepository=strucDirDivIndicatorsRepository;
 
 
             _transActivityTypeRepository=transActivityTypeRepository;
@@ -279,12 +309,14 @@ namespace AUDANEPAD_Integrated.Controllers
             _transProcurementLTimeRepository=transProcurementLTimeRepository;
             _transProjectScopeRepository =transProjectScopeRepository;
             _transRegionScopeRepository= transRegionScopeRepository;
+            _transMobilityLimitsRepository= transMobilityLimitsRepository;
             _transStrategyPriorityRepository=transStrategyPriorityRepository;
             _transStrategyMTPRepository=transStrategyMTPRepository;
             _transStrategyKeyPerformanceAreaRepository=transStrategyKeyPerformanceAreaRepository;
             _transStrategyOutputIndicators=transStrategyOutputIndicators;
             _transStrucDirectorateRepository=transStrucDirectorateRepository;
             _transStrucDivisionRepository=transStrucDivisionRepository;
+            _transStrucDirDivIndicatorsRepository=transStrucDirDivIndicatorsRepository;
             _transProgrammeRepository=transProgrammeRepository;
             _transProjectRepository=transProjectRepository;
             _transPeriodRepository=transPeriodRepository;
@@ -313,6 +345,10 @@ namespace AUDANEPAD_Integrated.Controllers
             _wpSAPLinkRepository=wpSAPLinkRepository;
             _wpOutputBudgetRepository=wpOutputBudgetRepository;
             _wpOutputActivityCountriesRepository=wpOutputActivityCountriesRepository;
+            _wpMobilityRepository=wpMobilityRepository;
+            _wpMobilityInternalTeamRepository=wpMobilityInternalTeamRepository;
+            _wpMobilityExternalTeamRepository=wpMobilityExternalTeamRepository;
+            _wpMobilityLimitRepository=wpMobilityLimitRepository;
       
 
 
@@ -930,6 +966,7 @@ namespace AUDANEPAD_Integrated.Controllers
             Chilkat.Csv csv_period =new Chilkat.Csv();
             Chilkat.Csv csv_indicatortype =new Chilkat.Csv();
             Chilkat.Csv csv_roles =new Chilkat.Csv();
+            Chilkat.Csv csv_mobilitylimit =new Chilkat.Csv();
 
 
 
@@ -964,6 +1001,7 @@ namespace AUDANEPAD_Integrated.Controllers
             string period_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/Periods.csv");
             string indicatortype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/IndicatorType.csv");
             string roles_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/Roles.csv");
+            string mobilitylimit_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/MobilityLimits.csv");
             
 
 
@@ -1000,6 +1038,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 bool success_period= csv_period.LoadFile(period_path);
                 bool success_indicatortype= csv_indicatortype.LoadFile(indicatortype_path);
                 bool success_roles= csv_roles.LoadFile(roles_path);
+                bool success_mobilitylimit= csv_mobilitylimit.LoadFile(mobilitylimit_path);
 
 
                 if (success_activitytype == true)
@@ -1370,6 +1409,42 @@ namespace AUDANEPAD_Integrated.Controllers
                             };
 
                             _transParticipantTypeRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_mobilitylimit == true)
+                {
+                    int _count= _lkupMobilityLimitsRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_mobilitylimit.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_MobilityLimits rec = new LkUp_MobilityLimits
+                            {
+
+                                Record_Id = Int32.Parse(csv_mobilitylimit.GetCell(row, 0)),
+                                MonthlyLimit=Int32.Parse(csv_mobilitylimit.GetCell(row, 1)),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupMobilityLimitsRepository.Add(rec);
+
+                            Trans_MobilityLimits rec_trans = new Trans_MobilityLimits
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_mobilitylimit.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transMobilityLimitsRepository.Add(rec_trans);
 
                         }
                     }
@@ -2347,9 +2422,89 @@ namespace AUDANEPAD_Integrated.Controllers
             
             return Json(new [] { record }.ToDataSourceResult(request, ModelState));
         }
+        [AcceptVerbs("Post")]
+		public ActionResult WP_MobilityLimit_Create([DataSourceRequest] DataSourceRequest request, WP_MobilityLimitViewModel record, string wpcycleid)
+        {
+            if (record != null && ModelState.IsValid)
+            { 
+                 if(wpcycleid!=null)
+                 {
+
+                     WP_MobilityLimit rec=_wpMobilityLimitRepository.GetRecordByEmployeeAndCycle(record.Category.CategoryID, wpcycleid);
+
+                     if(rec==null)
+                     {
+                         WP_MobilityLimit rec_to_add = new WP_MobilityLimit
+                        {
+                            Transaction_Id=Guid.NewGuid().ToString(),
+                            WPCycle_id=wpcycleid,
+                            FiscalYear_Id=_wpDispatchCycleRepository.GetRecord(wpcycleid).FiscalYear_Id,
+                            Period_Id=_wpDispatchCycleRepository.GetRecord(wpcycleid).Period_Id,
+                            Employee_Id=record.Category.CategoryID,
+                            MonthlyLimit=record.MonthlyLimitVM,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+
+                        if(_wpDispatchCycleRepository.GetRecord(wpcycleid).Period_Id==8)
+                        {
+                            rec_to_add.PeriodStartDate=_wpDispatchCycleRepository.GetRecord(wpcycleid).PeriodStartDate;
+                            rec_to_add.PeriodEndDate=_wpDispatchCycleRepository.GetRecord(wpcycleid).PeriodEndDate;
+                        }
+
+                        _wpMobilityLimitRepository.Add(rec_to_add);
+                     }
+                 }
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+        [AcceptVerbs("Post")]
+		public ActionResult WP_MobilityExternalParticipants_Create([DataSourceRequest] DataSourceRequest request, WP_OutputMobilityExternalPartVM record, string wpmobilityid)
+        {
+            if (record != null && ModelState.IsValid)
+            { 
+                 if(wpmobilityid!=null)
+                 {
+
+                    WP_MobilityExternalTeam rec=_wpMobilityExternalTeamRepository.GetRecordByMobilityIdExtPartIdAndDesc(wpmobilityid, record.ExternalType.CategoryID, record.ExternalParticipant_DescriptionExtPartVM);
+
+                    WP_Mobility mobrec=_wpMobilityRepository.GetRecord(wpmobilityid);
+
+                    WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(mobrec.WPMainRecord_id);
+                     if(rec==null)
+                     {
+                         WP_MobilityExternalTeam rec_to_add = new WP_MobilityExternalTeam
+                        {
+                            Transaction_Id=Guid.NewGuid().ToString(),
+                            WPMainRecord_id=record.WPMainRecord_idExtPartVM,
+                            Project_Id=mainrec.Project_Id,
+                            FiscalYear_Id=mainrec.FiscalYear_Id,
+                            Period_Id=mainrec.Period_Id,
+                            WPOutput_Id=record.WPOutput_IdExtPartVM,
+                            WPMobility_id=wpmobilityid,
+                            ExternalParticipant_Id=record.ExternalType.CategoryID,
+                            ExternalParticipant_Description=record.ExternalParticipant_DescriptionExtPartVM,
+                            ExternalParticipant_Number=record.ExternalParticipant_NumberExtPartVM,
+                            PeriodStartDate=mainrec.PeriodStartDate,
+                            PeriodEndDate=mainrec.PeriodStartDate,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+
+
+                        _wpMobilityExternalTeamRepository.Add(rec_to_add);
+                     }
+                 }
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
 
         [AcceptVerbs("Post")]
-		public ActionResult WP_Outcomes_Create([DataSourceRequest] DataSourceRequest request, WorkplansViewModel record, string progid, string projid, string fyear, string fperiod, string empid, string dirid, string divid)
+		public ActionResult WP_Outcomes_Create([DataSourceRequest] DataSourceRequest request, WorkplansViewModel record, string progid, string projid, string fyear, string fperiod, string empid, string dirid, string divid, string periodtxt)
         {
             if (record != null && ModelState.IsValid)
             {  
@@ -2357,7 +2512,31 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 if (rec == null && record.Outcome !=null)
                 {
-                        WP_MainRecord wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                        WP_MainRecord wp_mainrec_check=null;
+
+                        if(Int32.Parse(fperiod)==8)
+                        {
+                            var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                            int _countrecs =  DB_Records8.Count();
+                            if(_countrecs>0)
+                            {
+                                foreach (var rec_set in DB_Records8)
+                                {
+                                    DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                                    DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                                    string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                                    if(periodinmain==periodtxt)
+                                        wp_mainrec_check=rec_set;
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                        }
 
                         if(wp_mainrec_check==null)
                         {
@@ -2375,7 +2554,37 @@ namespace AUDANEPAD_Integrated.Controllers
                                 Employee_Id=Int32.Parse(empid),
                                 TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
                             };
-                            WP_DispatchCycle wpcycle=_wpDispatchCycleRepository.GetRecordByYearAndPeriod(Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                            WP_DispatchCycle wpcycle=null;
+
+                            if(Int32.Parse(fperiod)==8)
+                            {
+                                var DB_Records8 =_wpDispatchCycleRepository.GetRecordsByYearAndPeriodRecs(Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                                int _countrecs =  DB_Records8.Count();
+                                if(_countrecs>0)
+                                {
+                                    foreach (var rec_set in DB_Records8)
+                                    {
+                                        DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                                        DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                                        string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                                        if(periodinmain==periodtxt)
+                                        wpcycle=rec_set;
+                                    }
+
+                                    if(wpcycle!=null)
+                                    {
+                                        mainrec_to_add.PeriodStartDate=wpcycle.PeriodStartDate;
+                                        mainrec_to_add.PeriodEndDate=wpcycle.PeriodEndDate;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                wpcycle=_wpDispatchCycleRepository.GetRecordByYearAndPeriod(Int32.Parse(fyear), Int32.Parse(fperiod));
+                            }
 
                             if(wpcycle.LinkToSAPExecution==true)
                                 mainrec_to_add.LinkToSAPExecution=true;
@@ -2384,7 +2593,38 @@ namespace AUDANEPAD_Integrated.Controllers
 
                             _wpMainRecordRepository.Add(mainrec_to_add);
 
-	                        WP_MainRecord wp_mainrec_fetch1=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+
+	                        //WP_MainRecord wp_mainrec_fetch1=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+
+                            //Modified for Period type 8
+                            WP_MainRecord wp_mainrec_fetch1=null;
+
+                            if(Int32.Parse(fperiod)==8)
+                            {
+                                var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                                int _countrecs =  DB_Records8.Count();
+                                if(_countrecs>0)
+                                {
+                                    foreach (var rec_set in DB_Records8)
+                                    {
+                                        DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                                        DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                                        string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                                        if(periodinmain==periodtxt)
+                                        wp_mainrec_fetch1=rec_set;
+                                    }
+                                }
+
+                            }
+                            else
+                            {
+                                wp_mainrec_fetch1=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                            }
+
 
                             //Save the Status
                             WP_ApprovalStatus wpstatus_to_add = new WP_ApprovalStatus
@@ -2417,8 +2657,35 @@ namespace AUDANEPAD_Integrated.Controllers
 
                         }
 
-                        WP_MainRecord wp_mainrec_fetch=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                       // WP_MainRecord wp_mainrec_fetch=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
 
+
+                        //Modified for Period type 8
+                        WP_MainRecord wp_mainrec_fetch=null;
+
+                        if(Int32.Parse(fperiod)==8)
+                        {
+                            var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                            int _countrecs =  DB_Records8.Count();
+                            if(_countrecs>0)
+                            {
+                                foreach (var rec_set in DB_Records8)
+                                {
+                                    DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                                    DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                                    string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                                    if(periodinmain==periodtxt)
+                                    wp_mainrec_fetch=rec_set;
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            wp_mainrec_fetch=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                        }
 
                         WP_Outcomes rec_to_add = new WP_Outcomes
                         {
@@ -2441,12 +2708,41 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
 
+
+
+
         [AcceptVerbs("Post")]
-		public ActionResult WP_Outputs_Create([DataSourceRequest] DataSourceRequest request, WorkplansViewModel record, string progid, string projid, string fyear, string fperiod, string empid, string dirid, string divid)
+		public ActionResult WP_Outputs_Create([DataSourceRequest] DataSourceRequest request, WorkplansViewModel record, string progid, string projid, string fyear, string fperiod, string empid, string dirid, string divid, string periodtxt)
         {
             if (record != null && ModelState.IsValid)
             {  
-                WP_MainRecord wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                //WP_MainRecord wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                WP_MainRecord wp_mainrec_check=null;
+
+                if(Int32.Parse(fperiod)==8)
+                {
+                    var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                    int _countrecs =  DB_Records8.Count();
+                    if(_countrecs>0)
+                    {
+                        foreach (var rec_set in DB_Records8)
+                        {
+                            DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                            DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                            string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                            if(periodinmain==periodtxt)
+                                wp_mainrec_check=rec_set;
+                        }
+                    }
+
+                }
+                else
+                {
+                    wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                }
+
                 WP_Outputs rec = _wpOutputsRepository.GetRecordByOutputStatement(record.Output);
                 if(wp_mainrec_check!=null)
                 {
@@ -2468,6 +2764,19 @@ namespace AUDANEPAD_Integrated.Controllers
                             _wpOutputsRepository.Add(rec_to_add);
                     }
                 }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+
+         [AcceptVerbs("Post")]
+		public ActionResult Struc_DivisionKPI_Create([DataSourceRequest] DataSourceRequest request, DivisionKPIsViewModel record, string dirid, string divid)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                     
                            
             }
             
@@ -2529,6 +2838,53 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(new [] { record }.ToDataSourceResult(request, ModelState));
         }
 
+        [AcceptVerbs("Post")]
+		public ActionResult WP_MobilityLimit_Update([DataSourceRequest] DataSourceRequest request, WP_MobilityLimitViewModel record, string wpcycleid)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                
+                WP_MobilityLimit wp_rec_fetch=_wpMobilityLimitRepository.GetRecord(record.Transaction_IdVM);
+                if (wp_rec_fetch != null)
+                {
+
+                    wp_rec_fetch.MonthlyLimit =record.MonthlyLimitVM;
+                    wp_rec_fetch.TransactionDate=new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+
+                    _wpMobilityLimitRepository.Update(wp_rec_fetch);
+                    
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+        [AcceptVerbs("Post")]
+		public ActionResult WP_MobilityExternalParticipant_Update([DataSourceRequest] DataSourceRequest request, WP_OutputMobilityExternalPartVM record, string wpmobilityid)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                
+                
+                WP_MobilityExternalTeam wp_rec_fetch=_wpMobilityExternalTeamRepository.GetRecord(record.Transaction_IdExtPartVM);
+                WP_Mobility mobrec=_wpMobilityRepository.GetRecord(wpmobilityid);
+
+                if (wp_rec_fetch != null)
+                {
+                    wp_rec_fetch.ExternalParticipant_Id=record.ExternalType.CategoryID;
+                    wp_rec_fetch.ExternalParticipant_Description =record.ExternalParticipant_DescriptionExtPartVM;
+                    wp_rec_fetch.ExternalParticipant_Number=record.ExternalParticipant_NumberExtPartVM;
+                    wp_rec_fetch.TransactionDate=new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+
+                    _wpMobilityExternalTeamRepository.Update(wp_rec_fetch);
+                    
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
         [AcceptVerbs("Post")]
 		public ActionResult WP_Outcomes_Update([DataSourceRequest] DataSourceRequest request, WorkplansViewModel record, string empid)
         {
@@ -2769,6 +3125,43 @@ namespace AUDANEPAD_Integrated.Controllers
             
             return Json(new [] { record }.ToDataSourceResult(request, ModelState));
         }
+        [AcceptVerbs("Post")]
+		public ActionResult WP_MobilityLimit_Delete([DataSourceRequest] DataSourceRequest request, WP_MobilityLimitViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+
+                WP_MobilityLimit rec=_wpMobilityLimitRepository.GetRecord(record.Transaction_IdVM);
+                
+                if (rec != null)
+                {
+                    _wpMobilityLimitRepository.Delete(rec.Transaction_Id);
+
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+        [AcceptVerbs("Post")]
+		public ActionResult WP_MobilityExternalParticipant_Delete([DataSourceRequest] DataSourceRequest request, WP_OutputMobilityExternalPartVM record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+
+                WP_MobilityExternalTeam rec=_wpMobilityExternalTeamRepository.GetRecord(record.Transaction_IdExtPartVM);
+                
+                if (rec != null)
+                {
+                    _wpMobilityExternalTeamRepository.Delete(rec.Transaction_Id);
+
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
 
         [AcceptVerbs("Post")]
 		public ActionResult WP_Outcomes_Delete([DataSourceRequest] DataSourceRequest request, WorkplansViewModel record)
@@ -2802,13 +3195,28 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 } 
 
-                var DB_Recs =  _wpOutputIndicatorsRepository.GetRecordsByMainRecordOutputId(rec.WPMainRecord_id, rec.Transaction_Id);
-
                 //Delete all related indicators
-                foreach (var recordset in DB_Recs)
+                var DB_Recs_indicators =  _wpOutputIndicatorsRepository.GetRecordsByMainRecordOutputId(rec.WPMainRecord_id, rec.Transaction_Id);
+                foreach (var recordset in DB_Recs_indicators)
                 {
                         _wpOutputIndicatorsRepository.Delete(recordset.Transaction_Id);
                 }
+
+                //Delete all related activities
+                var DB_Recs_activities=  _wpOutputActivitiesRepository.GetRecordsByMainRecordOutputId(rec.WPMainRecord_id, rec.Transaction_Id);
+                foreach (var recordset in DB_Recs_activities)
+                {
+                        _wpOutputActivitiesRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete all related budget linees
+                var DB_Recs_budgetlines=  _wpOutputBudgetRepository.GetRecordsByMainRecordOutputId(rec.WPMainRecord_id, rec.Transaction_Id);
+                foreach (var recordset in DB_Recs_budgetlines)
+                {
+                        _wpOutputBudgetRepository.Delete(recordset.Transaction_Id);
+                }
+
+
 
                            
             }
@@ -3022,15 +3430,49 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(collection_recs.ToDataSourceResult(request));
         }
 
-        public ActionResult WP_Outcomes_Read([DataSourceRequest]DataSourceRequest request, string projid, string fyear, string fperiod)
+        public ActionResult WP_Outcomes_Read([DataSourceRequest]DataSourceRequest request, string projid, string fyear, string fperiod, string periodtxt)
         {
 
 
             List<WorkplansViewModel> collection_recs = new List<WorkplansViewModel>();
 
            // WP_MainRecord wp_mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+           WP_MainRecord wp_mainrec_check=null;
 
-            var DB_Recs =  _wpOutcomesRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+            if(Int32.Parse(fperiod)==8)
+            {
+                 var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                int _countrecs =  DB_Records8.Count();
+                if(_countrecs>0)
+                {
+                    foreach (var rec in DB_Records8)
+                    {
+                        DateTime pstart=new DateTime(rec.PeriodStartDate.Year, rec.PeriodStartDate.Month, rec.PeriodStartDate.Day);
+                        DateTime pend=new DateTime(rec.PeriodEndDate.Year, rec.PeriodEndDate.Month, rec.PeriodEndDate.Day);
+                        string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                        if(periodinmain==periodtxt)
+                           wp_mainrec_check=rec;
+                    }
+                }
+
+            }
+            else
+            {
+               wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+            }
+
+
+
+            var DB_Recs =  _wpOutcomesRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod)).ToList();
+
+            if(wp_mainrec_check!=null)
+                DB_Recs=_wpOutcomesRepository.GetRecordsByMainRecordId(wp_mainrec_check.Transaction_Id).ToList();
+            else
+                DB_Recs=_wpOutcomesRepository.GetRecordsByMainRecordId("Null").ToList();
+
+
 
             int _count =  DB_Recs.Count();
 
@@ -3057,15 +3499,149 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(collection_recs.ToDataSourceResult(request));
         }
 
-        public ActionResult WP_Outputs_Read([DataSourceRequest]DataSourceRequest request, string projid, string fyear, string fperiod)
+        public ActionResult WP_MobilityLimit_Read([DataSourceRequest]DataSourceRequest request, string wpcycleid)
+        {
+
+
+            List<WP_MobilityLimitViewModel> collection_recs = new List<WP_MobilityLimitViewModel>();
+
+           // WP_MainRecord wp_mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+       
+            var DB_Recs =  _wpMobilityLimitRepository.GetRecordsByWPCycle(wpcycleid).ToList();
+
+          //  var emp_recs =  _employeeRepository.GetAllEmployee().ToList();
+
+           
+
+
+
+            int _count =  DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+                    var employee=_employeeRepository.GetEmployee(rec.Employee_Id);
+   
+                    WP_MobilityLimitViewModel srec = new WP_MobilityLimitViewModel
+                    {
+                        Transaction_IdVM = rec.Transaction_Id,
+                        WPCycle_idVM=rec.WPCycle_id,
+                        Project_IdVM=rec.Project_Id,
+                        FiscalYear_IdVM=rec.FiscalYear_Id,
+                        Period_IdVM=rec.Period_Id,
+                        MonthlyLimitVM=rec.MonthlyLimit,
+                        Employee_IdVM=rec.Employee_Id,
+                        Category = new CategoryViewModel()
+                        {
+                            CategoryID = employee.Id,
+                            CategoryName = employee.First_Name+" "+employee.Last_Name
+                        },
+
+
+                    };
+
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+        public ActionResult WP_MobilityExternal_Read([DataSourceRequest]DataSourceRequest request, string wpmobilityid)
+        {
+
+
+            List<WP_OutputMobilityExternalPartVM> collection_recs = new List<WP_OutputMobilityExternalPartVM>();
+
+           // WP_MainRecord wp_mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+       
+            var DB_Recs =  _wpMobilityExternalTeamRepository.GetRecordsByMobilityId(wpmobilityid).ToList();
+
+          //  var emp_recs =  _employeeRepository.GetAllEmployee().ToList();
+
+           
+
+
+
+            int _count =  DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+                    var exttype=_lkupExtParticipantTypeRepository.GetRecord(rec.ExternalParticipant_Id);
+   
+                    WP_OutputMobilityExternalPartVM srec = new WP_OutputMobilityExternalPartVM
+                    {
+                        Transaction_IdExtPartVM = rec.Transaction_Id,
+                        WPMainRecord_idExtPartVM=rec.WPMainRecord_id,
+                        WPOutput_IdExtPartVM=rec.WPOutput_Id,
+                        WPMobility_idExtPartVM=rec.WPMobility_id,
+                        ExternalParticipant_IdExtPartVM=rec.ExternalParticipant_Id,
+                        ExternalParticipant_DescriptionExtPartVM=rec.ExternalParticipant_Description,
+                        ExternalParticipant_NumberExtPartVM=rec.ExternalParticipant_Number,
+                        ExternalType = new CategoryViewModel()
+                        {
+                            CategoryID = exttype.Record_Id,
+                            CategoryName = exttype.Record_Name
+                        },
+
+
+                    };
+
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+        public ActionResult WP_Outputs_Read([DataSourceRequest]DataSourceRequest request, string projid, string fyear, string fperiod, string periodtxt)
         {
 
 
             List<WorkplansViewModel> collection_recs = new List<WorkplansViewModel>();
 
            // WP_MainRecord wp_mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+            WP_MainRecord wp_mainrec_check=null;
 
-            var DB_Recs =  _wpOutputsRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+            if(Int32.Parse(fperiod)==8)
+            {
+                var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                int _countrecs =  DB_Records8.Count();
+                if(_countrecs>0)
+                {
+                    foreach (var rec_set in DB_Records8)
+                    {
+                        DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                        DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                        string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                        if(periodinmain==periodtxt)
+                            wp_mainrec_check=rec_set;
+                    }
+                }
+
+            }
+            else
+            {
+                wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+            }
+
+            var DB_Recs =  _wpOutputsRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod)).ToList();
+
+            if(wp_mainrec_check!=null)
+                DB_Recs=_wpOutputsRepository.GetRecordsByMainRecordId(wp_mainrec_check.Transaction_Id).ToList();
+            else
+                DB_Recs=_wpOutputsRepository.GetRecordsByMainRecordId("Null").ToList();
 
             int _count =  DB_Recs.Count();
 
@@ -3080,6 +3656,7 @@ namespace AUDANEPAD_Integrated.Controllers
                         Transaction_Id = rec.Transaction_Id,
                         WPMainRecord_Ident=rec.WPMainRecord_id,
                         Output=rec.Output,
+                       // Output_BudgetAmount= _wpOutputBudgetRepository.GetRecordsByProjectYearPeriodAndOutputId(rec.Project_Id, rec.FiscalYear_Id, rec.Period_Id, rec.Transaction_Id).Output_BudgetAmount,
                         TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
                     };
 
@@ -3093,6 +3670,327 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
 
+
+        public ActionResult WP_Gantt_Read([DataSourceRequest]DataSourceRequest request, string recid)
+        {
+
+
+            List<WorkplansViewModel> collection_recs = new List<WorkplansViewModel>();
+            List<TaskViewModel> collection_recs2 = new List<TaskViewModel>();
+
+           // WP_MainRecord wp_mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+
+            var DB_Recs =  _wpOutputsRepository.GetRecordsByMainRecordId(recid).ToList();
+
+            int _count =  DB_Recs.Count();
+           int _cnt = 0;
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+                    var DB_RecsActivities=_wpOutputActivitiesRepository.GetRecordsByMainRecordOutputId(recid, rec.Transaction_Id);
+                    DateTime? minDate = null, maxDate = null;
+                    double percentcomplete=0;
+                    int count=0;
+                    _cnt=_cnt+1;
+                    int _act_id=0;
+
+                    int _activity_count=DB_RecsActivities.Count();
+
+                    if(_activity_count > 0)
+                    {
+                        foreach (var rec_activity in DB_RecsActivities)
+                        {
+                            DateTime sDate= new DateTime(rec_activity.ActivityStartDate.Year, rec_activity.ActivityStartDate.Month, rec_activity.ActivityStartDate.Day);
+                            DateTime eDate= new DateTime(rec_activity.ActivityEndDate.Year, rec_activity.ActivityEndDate.Month, rec_activity.ActivityEndDate.Day);
+
+                            if ((minDate == null) || (sDate < minDate.Value))
+                                minDate = sDate;
+
+                            if ((maxDate == null) || (eDate > maxDate.Value))
+                                maxDate = eDate;
+
+                            percentcomplete=percentcomplete+rec_activity.BaselineTechnical;
+                            count=count+1;
+
+                            _act_id=(_cnt*1000)+count;
+
+                            TaskViewModel srec_act = new TaskViewModel
+                            {
+                                Output_Id=rec.Transaction_Id,
+                                Activity_Id=rec_activity.Transaction_Id,
+                                TaskID=_act_id,
+                                OrderId=_act_id,
+                                ParentID=_cnt,
+                                Start=DateTime.SpecifyKind(new DateTime(rec_activity.ActivityStartDate.Year, rec_activity.ActivityStartDate.Month, rec_activity.ActivityStartDate.Day), DateTimeKind.Utc),
+                                End=DateTime.SpecifyKind(new DateTime(rec_activity.ActivityEndDate.Year, rec_activity.ActivityEndDate.Month, rec_activity.ActivityEndDate.Day), DateTimeKind.Utc),
+                                Title=rec_activity.ActivityDescription,
+                                PercentComplete=(decimal)(rec_activity.BaselineTechnical/100),
+                                Summary=false,
+                                Expanded=false
+                            };
+                            collection_recs2.Add(srec_act);
+                            
+                        }
+                        percentcomplete=(percentcomplete/count)/100;
+
+                        
+
+                        TaskViewModel srec_main = new TaskViewModel
+                        {
+                            Output_Id=rec.Transaction_Id,
+                            TaskID=_cnt,
+                            OrderId=_cnt,
+                            ParentID=null,
+                            Start=DateTime.SpecifyKind(minDate.Value, DateTimeKind.Utc),
+                            End=DateTime.SpecifyKind(maxDate.Value, DateTimeKind.Utc),
+                            Title=rec.Output,
+                            PercentComplete=(decimal)percentcomplete,
+                            Summary=true,
+                            Expanded=true
+                        };
+                        collection_recs2.Add(srec_main);
+                    }
+                }
+            }
+
+
+
+
+           return Json(collection_recs2.ToDataSourceResult(request));
+        }
+
+        [HttpPost]
+        public ActionResult Pdf_Export_Save(string contentType, string base64, string fileName)
+        {
+            var fileContents = Convert.FromBase64String(base64);
+
+            return File(fileContents, contentType, fileName);
+        }
+
+        public virtual JsonResult WP_Gantt_Update([DataSourceRequest] DataSourceRequest request, TaskViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                //taskService.Update(task, ModelState);
+                if(model.Summary==false)
+                {
+                    if(model.Activity_Id!=null)
+                    {
+                        WP_OutputActivities rec=_wpOutputActivitiesRepository.GetRecord(model.Activity_Id);
+
+                        if(rec!=null)
+                        {
+                            rec.ActivityStartDate=new LocalDate(model.Start.Year, model.Start.Month, model.Start.Day);
+                            rec.ActivityEndDate=new LocalDate(model.End.Year, model.End.Month, model.End.Day);
+                            rec.BaselineTechnical=(double)(model.PercentComplete*100);
+
+                            _wpOutputActivitiesRepository.Update(rec);
+                        }
+                    }
+
+
+                }
+            }
+
+            return Json(new[] { model }.ToDataSourceResult(request, ModelState));
+        }
+
+
+
+        [HttpPost]
+        public virtual JsonResult WP_Gantt_Delete([DataSourceRequest] DataSourceRequest request, TaskViewModel model)
+        {
+            // var user = await userManager.GetUserAsync(HttpContext.User);
+            if (ModelState.IsValid)
+            {
+                if(model.Activity_Id!=null)
+                {
+                    WP_OutputActivities rec=_wpOutputActivitiesRepository.GetRecord(model.Activity_Id);
+
+                    //Now Delete the record
+                    if (rec != null)
+                    {
+                        _wpOutputActivitiesRepository.Delete(rec.Transaction_Id);
+
+                    } 
+
+                    //Delete Mobility Related Records
+
+                    //Delete Procurement Related Records
+
+                    //Delete Communication Related Records
+
+                    //Delete Risk Related Records
+                }
+            }
+
+
+            return Json(new[] { model }.ToDataSourceResult(request, ModelState));
+        }
+
+        
+
+        public ActionResult WP_Outputs_for_Activities_Read([DataSourceRequest]DataSourceRequest request, string projid, string fyear, string fperiod, string periodtxt)
+        {
+
+
+            List<WorkplansViewModel> collection_recs = new List<WorkplansViewModel>();
+            WP_MainRecord wp_mainrec_check=null;
+
+            if(Int32.Parse(fperiod)==8)
+            {
+                var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                int _countrecs =  DB_Records8.Count();
+                if(_countrecs>0)
+                {
+                    foreach (var rec_set in DB_Records8)
+                    {
+                        DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                        DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                        string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                        if(periodinmain==periodtxt)
+                            wp_mainrec_check=rec_set;
+                    }
+                }
+
+            }
+            else
+            {
+                wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+            }
+
+           var DB_Recs =  _wpOutputsRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod)).ToList();
+            //var DB_Recs =  _wpOutputBudgetRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod)).ToList();
+
+            if(wp_mainrec_check!=null)
+                DB_Recs=_wpOutputsRepository.GetRecordsByMainRecordId(wp_mainrec_check.Transaction_Id).ToList();
+            else
+                DB_Recs=_wpOutputsRepository.GetRecordsByMainRecordId("Null").ToList();
+
+            int _count =  DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+                    var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(rec.Transaction_Id);
+                    double total_budget=0;
+                    foreach (var record in DB_Recs_Activities)
+                    {
+                        total_budget=total_budget+record.ActivityCost;
+
+                    }
+
+                    WorkplansViewModel srec1 = new WorkplansViewModel
+                    {
+                        Transaction_Id = rec.Transaction_Id,
+                        WPMainRecord_Ident=rec.WPMainRecord_id,
+                        Output=rec.Output,
+                        Output_BudgetAmount= total_budget,
+                        TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                    };
+
+
+                    collection_recs.Add(srec1);
+                    
+
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+
+        public ActionResult WP_Outputs_for_Mobilities_Read([DataSourceRequest]DataSourceRequest request, string projid, string fyear, string fperiod, string periodtxt)
+        {
+
+
+            List<WorkplansViewModel> collection_recs = new List<WorkplansViewModel>();
+            WP_MainRecord wp_mainrec_check=null;
+
+            if(Int32.Parse(fperiod)==8)
+            {
+                var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                int _countrecs =  DB_Records8.Count();
+                if(_countrecs>0)
+                {
+                    foreach (var rec_set in DB_Records8)
+                    {
+                        DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                        DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                        string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                        if(periodinmain==periodtxt)
+                            wp_mainrec_check=rec_set;
+                    }
+                }
+
+            }
+            else
+            {
+                wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+            }
+
+           var DB_Recs =  _wpOutputsRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod)).ToList();
+            //var DB_Recs =  _wpOutputBudgetRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod)).ToList();
+
+            if(wp_mainrec_check!=null)
+                DB_Recs=_wpOutputsRepository.GetRecordsByMainRecordId(wp_mainrec_check.Transaction_Id).ToList();
+            else
+                DB_Recs=_wpOutputsRepository.GetRecordsByMainRecordId("Null").ToList();
+
+            int _count =  DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+                    var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(rec.Transaction_Id);
+                    double total_budget=0;
+                    foreach (var record in DB_Recs_Activities)
+                    {
+                        total_budget=total_budget+record.ActivityCost;
+
+                    }
+
+                    WorkplansViewModel srec1 = new WorkplansViewModel
+                    {
+                        Transaction_Id = rec.Transaction_Id,
+                        WPMainRecord_Ident=rec.WPMainRecord_id,
+                        Output=rec.Output,
+                        Output_BudgetAmount= total_budget,
+                        TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                    };
+
+
+                    collection_recs.Add(srec1);
+                    
+
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+        [HttpPost]
+        public ActionResult SetExpandedRow(string rowident)
+        {
+            HttpContext.Session.SetString("ExpandedRowId",rowident);
+            ViewData["Nom"] = "bob";
+            return new EmptyResult();
+        }
+
         public ActionResult WP_OutputsBudget_Read([DataSourceRequest]DataSourceRequest request, string projid, string fyear, string fperiod)
         {
 
@@ -3102,28 +4000,38 @@ namespace AUDANEPAD_Integrated.Controllers
            // WP_MainRecord wp_mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
 
             var DB_Recs =  _wpOutputsRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+            var DB_OutputRecords=_wpOutputsRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
 
             int _count =  DB_Recs.Count();
             double grandtotal=0;
 
             if (_count > 0)
             {
-                foreach (var rec in DB_Recs)
+                foreach (var rec in DB_OutputRecords)
                 {
-                    WP_OutputBudget wpoutputbudget_recfetch=_wpOutputBudgetRepository.GetRecordsByProjectYearPeriodAndOutputId(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod), rec.Transaction_Id);
+                   // WP_OutputBudget wpoutputbudget_recfetch=_wpOutputBudgetRepository.GetRecordsByProjectYearPeriodAndOutputId(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod), rec.Transaction_Id);
+                    WP_SAPLink saplinkrec = _wpSAPLinkRepository.GetRecord(rec.WPSAPLink_Id);
+                    var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(rec.Transaction_Id);
                     
-                    if(wpoutputbudget_recfetch!=null)
+                    double total_budget=0;
+                    foreach (var record in DB_Recs_Activities)
                     {
-                        WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(wpoutputbudget_recfetch.WPMainRecord_id);
+                        total_budget=total_budget+record.ActivityCost;
+
+                    }
+                    WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(rec.WPMainRecord_id);
+                    if(rec.WPSAPLink_Id!=null)
+                    {
+                        
                         WorkplansViewModel srec_1 = new WorkplansViewModel
                         {
-                            Transaction_Id = wpoutputbudget_recfetch.Transaction_Id,
+                            Transaction_Id = rec.Transaction_Id,
                             WPMainRecord_Ident=rec.WPMainRecord_id,
                             Output=rec.Output,
                             WPOutput_Id=rec.Transaction_Id,
-                            Output_BudgetAmount=wpoutputbudget_recfetch.Output_BudgetAmount,
-                            WPSAPLink_Id=wpoutputbudget_recfetch.WPSAPLink_Id,
-                            UtilizationPercentage=wpoutputbudget_recfetch.UtilizationPercentage,
+                            Output_BudgetAmount=total_budget,
+                            WPSAPLink_Id=rec.WPSAPLink_Id,
+                            UtilizationPercentage=0,//not implemented
                             TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
                         };
                         if(mainrec.LinkToSAPExecution==true)
@@ -3139,7 +4047,7 @@ namespace AUDANEPAD_Integrated.Controllers
                             
                         }
 
-                        if(wpoutputbudget_recfetch.WPSAPLink_Id!=null)
+                        if(rec.WPSAPLink_Id!=null)
                         {
                             srec_1.LinkToSAPExecutionDisplayVM="Linked to SAP";
 
@@ -3149,7 +4057,6 @@ namespace AUDANEPAD_Integrated.Controllers
                             srec_1.LinkToSAPExecutionDisplayVM="Not Linked to SAP";
 
                         }
-                        grandtotal=grandtotal+wpoutputbudget_recfetch.Output_BudgetAmount;
 
                         collection_recs.Add(srec_1);
                     }
@@ -3161,18 +4068,39 @@ namespace AUDANEPAD_Integrated.Controllers
                             WPMainRecord_Ident=rec.WPMainRecord_id,
                             Output=rec.Output,
                             WPOutput_Id=rec.Transaction_Id,
-                            Output_BudgetAmount=0,
+                            Output_BudgetAmount=total_budget,
                             WPSAPLink_Id="",
-                            UtilizationPercentage=0,
-                            LinkToSAPExecutionVM=false,
-                            LinkToSAPExecutionStringVM="false",
+                            UtilizationPercentage=0,//not implemented
+                           // LinkToSAPExecutionVM=false,
+                           // LinkToSAPExecutionStringVM="false",
                             LinkToSAPExecutionDisplayVM="Not Linked to SAP",
                             TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
                         };
+                        if(mainrec.LinkToSAPExecution==true)
+                        {
+                            srec_2.LinkToSAPExecutionVM=true;
+                            srec_2.LinkToSAPExecutionStringVM="true";
+                            
+                        }
+                        else
+                        {
+                            srec_2.LinkToSAPExecutionVM=false;
+                            srec_2.LinkToSAPExecutionStringVM="false";
+                            
+                        }
 
                         collection_recs.Add(srec_2);
                     }
                     
+
+                }
+
+                var DB_Recs_Activities_for_Main =  _wpOutputActivitiesRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                
+        
+                foreach (var record in DB_Recs_Activities_for_Main)
+                {
+                    grandtotal=grandtotal+record.ActivityCost;
 
                 }
                 WorkplansViewModel srec_3 = new WorkplansViewModel
@@ -3205,24 +4133,34 @@ namespace AUDANEPAD_Integrated.Controllers
             List<WP_OutputBudgetSAPLinkVM> collection_recs = new List<WP_OutputBudgetSAPLinkVM>();
 
 
-            WP_OutputBudget recbudget=  _wpOutputBudgetRepository.GetRecord(transid);
+             WP_Outputs wpoutput_recfetch=_wpOutputsRepository.GetRecord(transid);
 
-            if(recbudget!=null)
+            if(wpoutput_recfetch!=null)
             {
-                if(recbudget.WPSAPLink_Id!=null)
+                if(wpoutput_recfetch.WPSAPLink_Id!=null)
                 {
-                    var DB_BudgetSAPLinks=_wpOutputBudgetRepository.GetRecordsBySAPLinkId(recbudget.WPSAPLink_Id);
-                    WP_SAPLink saplinkrec = _wpSAPLinkRepository.GetRecord(recbudget.WPSAPLink_Id);
+                   // var DB_BudgetSAPLinks=_wpOutputBudgetRepository.GetRecordsBySAPLinkId(recbudget.WPSAPLink_Id);
+                    WP_SAPLink saplinkrec = _wpSAPLinkRepository.GetRecord(wpoutput_recfetch.WPSAPLink_Id);
 
-                    double totalalreadylinkcost=0;
+                 
                     double sapbudgetutilization=0;
 
-                    foreach (var record in DB_BudgetSAPLinks)
+                    var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(wpoutput_recfetch.Transaction_Id);
+                    double total_budget=0;
+                    foreach (var record in DB_Recs_Activities)
                     {
-                        totalalreadylinkcost=totalalreadylinkcost+record.Output_BudgetAmount;
+                        total_budget=total_budget+record.ActivityCost;
+
+                    }
+                    var DB_Recs_Activities_Linked_SAP =  _wpOutputActivitiesRepository.GetRecordsByWPSAPLink_Id(wpoutput_recfetch.WPSAPLink_Id);
+                    double total_use=0;
+                    foreach (var record in DB_Recs_Activities_Linked_SAP)
+                    {
+                        total_use=total_use+record.ActivityCost;
+
                     }
 
-                    sapbudgetutilization=Math.Round((totalalreadylinkcost/saplinkrec.SAP_BudgetAmount)*100);
+                    sapbudgetutilization=Math.Round((total_use/saplinkrec.SAP_BudgetAmount)*100);
 
                     WP_OutputBudgetSAPLinkVM srec = new WP_OutputBudgetSAPLinkVM
                     {
@@ -3270,11 +4208,16 @@ namespace AUDANEPAD_Integrated.Controllers
                         TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
                     };
 
-                    if(rec.IndicatorCategory=="Strategic")
+                    if(rec.IndicatorCategory=="Institutional-Level")
                     {
                         srec.IndicatorStatementOIVM=_strategyOutputIndicatorsRepository.GetRecord(rec.OutputIndicator_Id).Record_Name;
                     }
-                    else if (rec.IndicatorCategory=="Project-Based")
+                    else if (rec.IndicatorCategory=="Directorate-Level")
+                    {
+                        srec.IndicatorStatementOIVM=_strucDirDivIndicatorsRepository.GetRecord(rec.OutputIndicator_Id).Record_Name;
+
+                    }
+                    else if (rec.IndicatorCategory=="Project-Level")
                     {
                         srec.IndicatorStatementOIVM=rec.ProjectBasedIndicatorStatement;
 
@@ -3324,6 +4267,7 @@ namespace AUDANEPAD_Integrated.Controllers
                     WP_OutputActivitiesSubGridVM srec = new WP_OutputActivitiesSubGridVM
                     {
                         Transaction_IdOAVM=rec.Transaction_Id,
+                        Output_ChildGridId=rec.WPOutput_Id,
                         ActivityTypeName_IdOAVM=_lkupActivityTypeRepository.GetActivityType(rec.ActivityType_Id).Activity_Name,
                         ActivityDescriptionOAVM=rec.ActivityDescription,
                         ActivityCostOAVM=rec.ActivityCost,
@@ -3337,15 +4281,15 @@ namespace AUDANEPAD_Integrated.Controllers
                     collection_recs.Add(srec);
                 }
                    
-                WP_OutputActivitiesSubGridVM srectotal = new WP_OutputActivitiesSubGridVM
-                {
-                    Transaction_IdOAVM="",
-                    ActivityTypeName_IdOAVM="",
-                    ActivityDescriptionOAVM="TOTAL COST",
-                    ActivityCostOAVM=totalcost,
-                    ShowGridButtons="NO"
-                };
-                collection_recs.Add(srectotal);
+                // WP_OutputActivitiesSubGridVM srectotal = new WP_OutputActivitiesSubGridVM
+                // {
+                //     Transaction_IdOAVM="",
+                //     ActivityTypeName_IdOAVM="",
+                //     ActivityDescriptionOAVM="TOTAL COST",
+                //     ActivityCostOAVM=totalcost,
+                //     ShowGridButtons="NO"
+                // };
+                // collection_recs.Add(srectotal);
 
 
             }
@@ -3353,6 +4297,131 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
             return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+
+        public ActionResult WP_OutputsSubMobilities_Read([DataSourceRequest]DataSourceRequest request, string output_transid)
+        {
+
+
+            List<WP_OutputMobilityVM> collection_recs = new List<WP_OutputMobilityVM>();
+
+           // WP_MainRecord wp_mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+
+            var DB_Recs =  _wpMobilityRepository.GetRecordsByOutputId(output_transid);
+
+            int _count =  DB_Recs.Count();
+        
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+                    DateTime mstart=new DateTime(rec.MobilityStartDate.Year, rec.MobilityStartDate.Month, rec.MobilityStartDate.Day);
+                    DateTime mend=new DateTime(rec.MobilityEndDate.Year, rec.MobilityEndDate.Month, rec.MobilityEndDate.Day);
+          
+   
+                    WP_OutputMobilityVM srec = new WP_OutputMobilityVM
+                    {
+                        Transaction_IdOMVM=rec.Transaction_Id,
+                        Output_ChildGridIdOMVM=rec.WPOutput_Id,
+                        WPMobility_DescriptionOMVM=rec.WPMobility_Description,
+                        Country_NameOMVM=_lkupCountryRepository.GetCountry(rec.Country_Id).Country_Name,
+                        WPMobilityPeriodOMVM=mstart.Date.ToString("MMM d, yyyy") + " - "+ mend.Date.ToString("MMM d, yyyy"),
+                        No_DaysOMVM = mstart.Date.Subtract(mend.Date).Duration().Days + 1,
+                        InternalParticipantsOMVM=WP_MobilityGetInternalParticipants(rec.Transaction_Id),
+                        ExternalParticipantsOMVM=WP_MobilityGetExternalParticipants(rec.Transaction_Id),
+
+
+                        ShowGridButtons="YES",
+
+                        TransactionDateOMVM= new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                    };
+
+                 
+
+                    collection_recs.Add(srec);
+                }
+                   
+                // WP_OutputActivitiesSubGridVM srectotal = new WP_OutputActivitiesSubGridVM
+                // {
+                //     Transaction_IdOAVM="",
+                //     ActivityTypeName_IdOAVM="",
+                //     ActivityDescriptionOAVM="TOTAL COST",
+                //     ActivityCostOAVM=totalcost,
+                //     ShowGridButtons="NO"
+                // };
+                // collection_recs.Add(srectotal);
+
+
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+        public string WP_MobilityGetInternalParticipants(string id)
+        {
+            string rtnstring = string.Empty;
+            var DB_RecsInt =  _wpMobilityInternalTeamRepository.GetRecordsByMobilityId(id);
+
+            int _countint =  DB_RecsInt.Count();
+            int inntercount=0;
+        
+            if (_countint > 0)
+            {
+                foreach (var recint in DB_RecsInt)
+                {
+                    inntercount=inntercount+1;
+                    Employee employee=_employeeRepository.GetEmployee(recint.Employee_Id);
+
+
+                    if(inntercount==_countint)
+                    {
+                        rtnstring += employee.First_Name.TrimEnd()+ " "+employee.Last_Name.TrimEnd();  
+                    }
+                    else
+                    {
+                        rtnstring += employee.First_Name.TrimEnd()+ " "+employee.Last_Name.TrimEnd()+", ";  
+
+                    }
+                }
+
+            }
+            return rtnstring;
+
+        }
+
+        public string WP_MobilityGetExternalParticipants(string id)
+        {
+            string rtnstring = string.Empty;
+            var DB_RecsExt =  _wpMobilityExternalTeamRepository.GetRecordsByMobilityId(id);
+
+            int _countext =  DB_RecsExt.Count();
+            int inntercount=0;
+        
+            if (_countext > 0)
+            {
+                foreach (var recext in DB_RecsExt)
+                {
+                
+                    inntercount=inntercount+1;
+
+                    if(inntercount==_countext)
+                    {
+                        rtnstring += recext.ExternalParticipant_Description.TrimEnd()+" ("+recext.ExternalParticipant_Number.ToString()+")";  
+                    }
+                    else
+                    {
+                        rtnstring += recext.ExternalParticipant_Description.TrimEnd()+" ("+recext.ExternalParticipant_Number.ToString()+"), ";  
+                    }
+                }
+
+            }
+            return rtnstring;
+
         }
 
 
@@ -3430,7 +4499,7 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
 
-        public ActionResult WP_MTPsActual_Read([DataSourceRequest]DataSourceRequest request, string projid, string fyear, string fperiod)
+        public ActionResult WP_MTPsActual_Read([DataSourceRequest]DataSourceRequest request, string projid, string fyear, string fperiod, string periodtxt)
         {
 
 
@@ -3449,7 +4518,35 @@ namespace AUDANEPAD_Integrated.Controllers
 
             foreach (var rec in DB_RecsTrans)
             {
-                WP_MTP wpmtp_recfetch=_wpMTPRepository.GetRecordsByProjectYearPeriodAndMTP(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod), rec.Record_Id);
+                //Modified for Period type 8
+                WP_MainRecord wp_mainrec_fetch=null;
+
+                if(Int32.Parse(fperiod)==8)
+                {
+                    var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                    int _countrecs =  DB_Records8.Count();
+                    if(_countrecs>0)
+                    {
+                        foreach (var rec_set in DB_Records8)
+                        {
+                            DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                            DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                            string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                            if(periodinmain==periodtxt)
+                            wp_mainrec_fetch=rec_set;
+                        }
+                    }
+
+                }
+                else
+                {
+                    wp_mainrec_fetch=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                }
+                WP_MTP wpmtp_recfetch=null;
+                if(wp_mainrec_fetch!=null)
+                    wpmtp_recfetch=_wpMTPRepository.GetRecordsByProjectYearPeriodMTPAndMainRecId(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod), rec.Record_Id, wp_mainrec_fetch.Transaction_Id);
                 
                 iter=iter+1;
                 if(wpmtp_recfetch!=null)
@@ -3551,7 +4648,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
             return Json(collection_recs.ToDataSourceResult(request));
         }
-        public ActionResult WP_AUDAPrioritiesActual_Read([DataSourceRequest]DataSourceRequest request, string projid, string fyear, string fperiod)
+        public ActionResult WP_AUDAPrioritiesActual_Read([DataSourceRequest]DataSourceRequest request, string projid, string fyear, string fperiod, string periodtxt)
         {
 
 
@@ -3568,7 +4665,35 @@ namespace AUDANEPAD_Integrated.Controllers
 
             foreach (var rec in DB_RecsTrans)
             {
-                WP_AUDAPriority wpaudapriority_recfetch=_wpAUDAPriorityRepository.GetRecordsByProjectYearPeriodAndPriority(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod), rec.Record_Id);
+                 //Modified for Period type 8
+                WP_MainRecord wp_mainrec_fetch=null;
+
+                if(Int32.Parse(fperiod)==8)
+                {
+                    var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                    int _countrecs =  DB_Records8.Count();
+                    if(_countrecs>0)
+                    {
+                        foreach (var rec_set in DB_Records8)
+                        {
+                            DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                            DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                            string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                            if(periodinmain==periodtxt)
+                                wp_mainrec_fetch=rec_set;
+                        }
+                    }
+
+                }
+                else
+                {
+                    wp_mainrec_fetch=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                }
+                WP_AUDAPriority wpaudapriority_recfetch=null;
+                if(wp_mainrec_fetch!=null)
+                    wpaudapriority_recfetch=_wpAUDAPriorityRepository.GetRecordsByProjectYearPeriodPriorityMainRecId(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod), rec.Record_Id, wp_mainrec_fetch.Transaction_Id);
                 
                 iter=iter+1;
                 if(wpaudapriority_recfetch!=null)
@@ -3582,7 +4707,7 @@ namespace AUDANEPAD_Integrated.Controllers
                             MTP_Ident=wpaudapriority_recfetch.MTP_Id,
                             AUDA_PriorityStatement=_strategyPriorityRepository.GetRecord(wpaudapriority_recfetch.Priority_Id).Record_Name,
                             SelectedRow="Selected",
-                            EnableRow=GetEnableStatus(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod), rec.Record_Id),
+                            EnableRow=GetEnableStatus(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod), rec.Record_Id, periodtxt),
                             TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
                         };
                         collection_recs.Add(srec_1);
@@ -3597,7 +4722,7 @@ namespace AUDANEPAD_Integrated.Controllers
                             AUDAPriority_Ident=rec.Record_Id,
                             MTP_Ident=999,
                             SelectedRow="UnSelected",
-                            EnableRow=GetEnableStatus(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod), rec.Record_Id),
+                            EnableRow=GetEnableStatus(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod), rec.Record_Id, periodtxt),
                             AUDA_PriorityStatement=_strategyPriorityRepository.GetRecord(rec.Record_Id).Record_Name,
                             TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
                         };
@@ -3612,11 +4737,40 @@ namespace AUDANEPAD_Integrated.Controllers
 
             return Json(collection_recs.ToDataSourceResult(request));
         }
-        public string GetEnableStatus(int projid, int fyear, int fperiod, int priority)
+        public string GetEnableStatus(int projid, int fyear, int fperiod, int priority, string periodtxt)
         {
+                            //Modified for Period type 8
+            WP_MainRecord wp_mainrec_fetch=null;
 
-            var DB_Recs =  _wpMTPRepository.GetRecordsByProjectYearAndPeriod(projid, fyear, fperiod);
+            if(fperiod==8)
+            {
+                var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(projid, fyear, fperiod);
 
+                int _countrecs =  DB_Records8.Count();
+                if(_countrecs>0)
+                {
+                    foreach (var rec_set in DB_Records8)
+                    {
+                        DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                        DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                        string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                        if(periodinmain==periodtxt)
+                            wp_mainrec_fetch=rec_set;
+                    }
+                }
+
+            }
+            else
+            {
+                wp_mainrec_fetch=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(projid, fyear, fperiod);
+            }
+
+            //var DB_Recs =  _wpMTPRepository.GetRecordsByProjectYearPeriodMainRecId(projid, fyear, fperiod, wp_mainrec_fetch.Transaction_Id);
+            var DB_Recs =  _wpMTPRepository.GetRecordsByProjectYearPeriodMainRecId(projid, fyear, fperiod, "Null");
+            if(wp_mainrec_fetch!=null)
+                DB_Recs =  _wpMTPRepository.GetRecordsByProjectYearPeriodMainRecId(projid, fyear, fperiod, wp_mainrec_fetch.Transaction_Id);
+                
             int _count =  DB_Recs.Count();
 
             string rtnval="No";
@@ -3905,6 +5059,187 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(collection_recs.ToDataSourceResult(request));
         }
 
+        public ActionResult DraftWorkplans_Read ([DataSourceRequest]DataSourceRequest request, string empid)
+        {
+
+
+            List<WorkplansViewModel> collection_recs = new List<WorkplansViewModel>();
+
+            int dirid=_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(Int32.Parse(empid)).Directorate_Id;
+
+            var DB_RecsDivs =  _strucDivStaffMappingRepository.GetAllRecordsByEmployeeAndDirectorate(Int32.Parse(empid),dirid).ToList();
+
+            int _countDivs = DB_RecsDivs.Count();
+
+            if (empid != null)
+            {
+              //  AUDAProgramme prog = _programmeRepository.GetAUDAProgramme(Int32.Parse(programmeid));
+                if(_countDivs>0)
+                {
+                    foreach (var div in DB_RecsDivs)
+                    {
+                        var DB_Recs = _wpMainRecordRepository.GetDraftRecordsByDivRecs(div.Division_Id).ToList();
+
+                        int _countIndicators = DB_Recs.Count();
+                        if (_countIndicators > 0)
+                        {
+                            foreach (var rec in DB_Recs)
+                            {
+
+
+                                string periodinmain="";
+                                string periodinmainhidden="";
+                                if(rec.Period_Id==8)
+                                {
+                                    DateTime pstart=new DateTime(rec.PeriodStartDate.Year, rec.PeriodStartDate.Month, rec.PeriodStartDate.Day);
+                                    DateTime pend=new DateTime(rec.PeriodEndDate.Year, rec.PeriodEndDate.Month, rec.PeriodEndDate.Day);
+                                    periodinmain=pstart.Date.ToString("MMM d, yyyy") + " - "+ pend.Date.ToString("MMM d, yyyy"); 
+                                    periodinmainhidden=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy");
+
+                                }
+                                else
+                                {
+                                    periodinmain=_lkupPeriodRepository.GetRecord(rec.Period_Id).Record_Name;
+                                    periodinmainhidden=_lkupPeriodRepository.GetRecord(rec.Period_Id).Record_Name;
+
+                                }  
+
+                                WorkplansViewModel srec = new WorkplansViewModel
+                                {
+                                    
+                                    WPMainRecord_Ident=rec.Transaction_Id,
+                                    Employee_Id = Int32.Parse(empid),
+                                    Directorate_Id=rec.Directorate_Id,
+                                    Division_Id=rec.Division_Id,
+                                    Division_Name=_strucDivisionRepository.GetRecord(rec.Division_Id).Record_Name,
+                                    Programme_Id=rec.Programme_Id,
+                                    ProjectId=rec.Project_Id,
+                                    Project_Name=_lkupProjectRepository.GetRecord(rec.Project_Id).Record_Name,
+                                    FYearIdent=rec.FiscalYear_Id,
+                                    FisYear=_lkupFiscalYearRepository.GetRecord(rec.FiscalYear_Id).Record_Name,
+                                    FPeriodIdent=rec.Period_Id,
+                                    FisPeriod=periodinmain,
+                                    FisPeriodHidden=periodinmainhidden,
+                                    TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+
+                                };
+
+                                collection_recs.Add(srec);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+
+        public ActionResult DivisionTransKPIs_Read ([DataSourceRequest]DataSourceRequest request, string recid)
+        {
+
+
+            List<DivisionKPIsViewModel> collection_recs = new List<DivisionKPIsViewModel>();
+
+            int dirid=_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(Int32.Parse(recid)).Directorate_Id;
+
+            var DB_RecsDivs =  _strucDivStaffMappingRepository.GetAllRecordsByEmployeeAndDirectorate(Int32.Parse(recid),dirid).ToList();
+
+            int _countDivs = DB_RecsDivs.Count();
+
+            if (recid != null)
+            {
+              //  AUDAProgramme prog = _programmeRepository.GetAUDAProgramme(Int32.Parse(programmeid));
+                if(_countDivs>0)
+                {
+                    foreach (var div in DB_RecsDivs)
+                    {
+                        var DB_RecsIndicators = _transStrucDirDivIndicatorsRepository.GetAllRecordsByDivision(div.Division_Id).ToList();
+
+                        int _countIndicators = DB_RecsIndicators.Count();
+                        if (_countIndicators > 0)
+                        {
+                            foreach (var rec in DB_RecsIndicators)
+                            {
+                                DivisionKPIsViewModel srec = new DivisionKPIsViewModel
+                                {
+                                    
+                                    Transaction_Id=rec.Transaction_Id,
+                                    Record_Id = rec.Record_Id,
+                                    Directorate_Ident=rec.Directorate_Id,
+                                    Division_Ident=rec.Division_Id,
+                                    Division_Name=_strucDivisionRepository.GetRecord(rec.Division_Id).Record_Name,
+                                    Record_Name=rec.Record_Name,
+                                    Indicator_Type_Ident=rec.Indicator_Type_Id,
+                                    Indicator_Type=rec.Indicator_Type,
+                                    TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+
+                                };
+
+                                collection_recs.Add(srec);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+        public ActionResult DivisionDeactivatedKPIs_Read ([DataSourceRequest]DataSourceRequest request, string recid)
+        {
+
+
+            List<DivisionKPIsViewModel> collection_recs = new List<DivisionKPIsViewModel>();
+
+            int dirid=_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(Int32.Parse(recid)).Directorate_Id;
+
+           var DB_RecsDivs =  _strucDivStaffMappingRepository.GetAllRecordsByEmployeeAndDirectorate(Int32.Parse(recid),dirid).ToList();
+
+            int _countDivs = DB_RecsDivs.Count();
+
+            if (recid != null)
+            {
+              //  AUDAProgramme prog = _programmeRepository.GetAUDAProgramme(Int32.Parse(programmeid));
+                if(_countDivs>0)
+                {
+                    foreach (var div in DB_RecsDivs)
+                    {
+                        var DB_RecsIndicators = _strucDirDivIndicatorsRepository.GetAllDeactivatedRecordsByDivision(div.Division_Id).ToList();
+
+                        int _countIndicators = DB_RecsIndicators.Count();
+                        if (_countIndicators > 0)
+                        {
+                            foreach (var rec in DB_RecsIndicators)
+                            {
+                                DivisionKPIsViewModel srec = new DivisionKPIsViewModel
+                                {
+                                    
+                                    Transaction_Id="",
+                                    Record_Id = rec.Record_Id,
+                                    Directorate_Ident=rec.Directorate_Id,
+                                    Division_Ident=rec.Division_Id,
+                                    Division_Name=_strucDivisionRepository.GetRecord(rec.Division_Id).Record_Name,
+                                    Record_Name=rec.Record_Name,
+                                    Indicator_Type_Ident=rec.Indicator_Type_Id,
+                                    Indicator_Type=rec.Indicator_Type,
+                                    TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+
+                                };
+
+                                collection_recs.Add(srec);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
 
         public ActionResult DirectorateWPCycleSAPLink_Read ([DataSourceRequest]DataSourceRequest request, string dir_id, string wpcycle_id)
         {
@@ -3997,6 +5332,8 @@ namespace AUDANEPAD_Integrated.Controllers
                             Employee_Id = rec.Employee_Id,
                             FisYear=_lkupFiscalYearRepository.GetRecord(rec.FiscalYear_Id).Record_Name,
                             FisPeriod=_lkupPeriodRepository.GetRecord(rec.Period_Id).Record_Name,
+                            PeriodStart=new DateTime(rec.PeriodStartDate.Year,rec.PeriodStartDate.Month, rec.PeriodStartDate.Day),
+                            PeriodEnd=new DateTime(rec.PeriodEndDate.Year,rec.PeriodEndDate.Month, rec.PeriodEndDate.Day),
                             WPStatus_String = rec.Dispatch_Status.HasValue? rec.Dispatch_Status.Value? "Current": "Closed": "Inactive",
                             WPSAPLinkView_String= rec.LinkToSAPExecution.HasValue? rec.LinkToSAPExecution.Value? "Linked": "Not Linked": "Not Linked",
                             TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
@@ -4274,6 +5611,76 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
         [HttpPost]
+        public async Task<ActionResult> DeactivateDivisionKPI(string transid)
+        {
+             var user = await userManager.GetUserAsync(HttpContext.User);
+            try
+            {
+                Trans_StrucDirDivIndicators rec = _transStrucDirDivIndicatorsRepository.GetRecord(transid);
+
+
+                if(rec!=null)
+                {
+                    Struc_DirDivIndicators mainrec=_strucDirDivIndicatorsRepository.GetRecord(rec.Record_Id);
+
+                    mainrec.Record_Status=false;
+                    _strucDirDivIndicatorsRepository.Update(mainrec);
+
+                    _transStrucDirDivIndicatorsRepository.Delete(rec.Transaction_Id);
+
+                }
+
+
+                 return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> ActivateDivisionKPI(string recordid)
+        {
+             var user = await userManager.GetUserAsync(HttpContext.User);
+            try
+            {
+
+
+                Struc_DirDivIndicators mainrec=_strucDirDivIndicatorsRepository.GetRecord(Int32.Parse(recordid));
+
+
+                if(mainrec!=null)
+                {
+
+                    mainrec.Record_Status=true;
+                    _strucDirDivIndicatorsRepository.Update(mainrec);
+
+                    Trans_StrucDirDivIndicators rec_to_add_trans = new Trans_StrucDirDivIndicators
+                    {
+                        Transaction_Id=Guid.NewGuid().ToString(),
+                        Record_Id=mainrec.Record_Id,
+                        Directorate_Id= mainrec.Directorate_Id,
+                        Division_Id= mainrec.Division_Id,
+                        Record_Name=mainrec.Record_Name,
+                        Indicator_Type_Id= mainrec.Indicator_Type_Id,
+                        Indicator_Type=mainrec.Indicator_Type,
+                        TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                    };
+                    _transStrucDirDivIndicatorsRepository.Add(rec_to_add_trans);
+
+                }
+
+
+                 return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+        }
+
+        [HttpPost]
         public ActionResult WP_OutputsSubIndicators_Delete(string subindicatorid)
         {
             // var user = await userManager.GetUserAsync(HttpContext.User);
@@ -4286,6 +5693,80 @@ namespace AUDANEPAD_Integrated.Controllers
                     _wpOutputIndicatorsRepository.Delete(rec.Transaction_Id);
 
                 } 
+
+
+                 return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult WP_OutputsSubActivity_Delete(string subactivityid)
+        {
+            // var user = await userManager.GetUserAsync(HttpContext.User);
+            try
+            {
+                WP_OutputActivities rec=_wpOutputActivitiesRepository.GetRecord(subactivityid);
+
+
+                //Now Delete the record
+                if (rec != null)
+                {
+                    _wpOutputActivitiesRepository.Delete(rec.Transaction_Id);
+
+                } 
+
+                //Delete Mobility Related Records
+
+                //Delete Procurement Related Records
+
+                //Delete Communication Related Records
+
+                //Delete Risk Related Records
+
+
+                 return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+        }
+
+
+        [HttpPost]
+        public ActionResult WP_OutputsSubMobility_Delete(string submobilityid)
+        {
+            // var user = await userManager.GetUserAsync(HttpContext.User);
+            try
+            {
+
+                //Delete Mobility Internal Staff Records
+                var records_mobility_internal =  _wpMobilityInternalTeamRepository.GetRecordsByMobilityId(submobilityid);
+                foreach (var record in records_mobility_internal)
+                {
+                    _wpMobilityInternalTeamRepository.Delete(record.Transaction_Id);
+                }
+
+                //Delete Mobility Internal Staff Records
+                var records_mobility_external=  _wpMobilityExternalTeamRepository.GetRecordsByMobilityId(submobilityid);
+                foreach (var record in records_mobility_external)
+                {
+                    _wpMobilityExternalTeamRepository.Delete(record.Transaction_Id);
+                }
+
+                //Now Delete Mobility record
+                WP_Mobility rec_mobility=_wpMobilityRepository.GetRecord(submobilityid);
+                
+                if (rec_mobility != null)
+                {
+                    _wpMobilityRepository.Delete(rec_mobility.Transaction_Id);
+
+                } 
+
 
 
                  return Json(new { rtnmsg = "success" });
@@ -4579,7 +6060,7 @@ namespace AUDANEPAD_Integrated.Controllers
                             Project_Id=model.Project_IdOIVM,
                             FiscalYear_Id=model.FiscalYear_IdOIVM,
                             Period_Id=model.Period_IdOIVM,
-                            IndicatorCategory="Strategic",
+                            IndicatorCategory="Institutional-Level",
                             IndicatorType=_strategyOutputIndicatorsRepository.GetRecord(model.OutputIndicator_IdOIVM).Indicator_Type,
                             OutputIndicator_Id=model.OutputIndicator_IdOIVM,
                             Priority_Id=model.Priority_IdOIVM,
@@ -4596,6 +6077,65 @@ namespace AUDANEPAD_Integrated.Controllers
                         {
                             rec_to_add.BaselineQuanlitative=model.BaselineQuanlitativeOIVM;
                             rec_to_add.TargetQuanlitative=model.TargetQuanlitativeOIVM;
+
+                        }
+
+                        _wpOutputIndicatorsRepository.Add(rec_to_add);
+
+
+                    return Json(new { rtnmsg = "success" });
+                }
+                catch (Exception)
+                {
+                    return Json(new { rtnmsg = "error" });
+                }
+             
+            }
+            else
+            {
+                return Json(new { rtnmsg = "pkerror" });
+            }
+
+
+
+        }
+
+        [HttpPost]
+        public ActionResult AddDirectorateIndicator(WP_OutputIndicatorsVM model)
+        {
+            
+            WP_OutputIndicators rec = _wpOutputIndicatorsRepository.GetRecordByProjectYearAndPeriodOutputIdIndicatorId_Dir(model.Project_IdOIVM, model.FiscalYear_IdOIVM, model.Period_IdOIVM, model.Transaction_IdOIVM, model.IndicatorIDOIVM_Dir);
+
+            
+            if (rec == null)
+            {
+                try
+                {
+                        WP_OutputIndicators rec_to_add = new WP_OutputIndicators
+                        {
+                            Transaction_Id= Guid.NewGuid().ToString(),
+                            WPMainRecord_id= model.WPMainRecord_idOIVM,
+                            WPOutput_Id=model.Transaction_IdOIVM,
+                            Project_Id=model.Project_IdOIVM,
+                            FiscalYear_Id=model.FiscalYear_IdOIVM,
+                            Period_Id=model.Period_IdOIVM,
+                            IndicatorCategory="Directorate-Level",
+                            IndicatorType=_strucDirDivIndicatorsRepository.GetRecord(model.IndicatorIDOIVM_Dir).Indicator_Type,
+                            OutputIndicator_Id=model.IndicatorIDOIVM_Dir,
+                            Priority_Id=model.Priority_IdOIVM,
+                            Employee_Id= model.Employee_IdOIVM,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+                        if(_strucDirDivIndicatorsRepository.GetRecord(model.IndicatorIDOIVM_Dir).Indicator_Type=="Quantitative")
+                        {
+                            rec_to_add.BaselineQuantitative=model.BaselineQuantitativeOIVM_Dir;
+                            rec_to_add.TargetQuantitative=model.TargetQuantitativeOIVM_Dir;
+                        } 
+                        else
+                        {
+                            rec_to_add.BaselineQuanlitative=model.BaselineQuanlitativeOIVM_Dir;
+                            rec_to_add.TargetQuanlitative=model.TargetQuanlitativeOIVM_Dir;
 
                         }
 
@@ -4796,6 +6336,666 @@ namespace AUDANEPAD_Integrated.Controllers
 
         }
 
+
+        [HttpPost]
+        public ActionResult AddOutputActivityNew(WP_OutputActivitiesVM model)
+        {
+            
+            try
+            {
+                                  
+
+                //Check SAP Link Details and Update Total Budget
+                //WP_OutputBudget recbudget=_wpOutputBudgetRepository.GetRecordsByProjectYearPeriodAndOutputId(model.Project_IdOAVMMain, model.FiscalYear_IdOAVMMain, model.Period_IdOAVMMain, model.Transaction_IdOAVMMain);
+                WP_Outputs recoutputrecord=_wpOutputsRepository.GetRecord(model.Transaction_IdOAVMMain);
+
+                if(recoutputrecord.WPSAPLink_Id==null )
+                {
+                    WP_OutputActivities rec_to_add_1 = new WP_OutputActivities
+                    {
+                        Transaction_Id= Guid.NewGuid().ToString(),
+                        WPMainRecord_id= model.WPMainRecord_idOAVMMain,
+                        WPOutput_Id=model.Transaction_IdOAVMMain,
+                        Project_Id=model.Project_IdOAVMMain,
+                        FiscalYear_Id=model.FiscalYear_IdOAVMMain,
+                        Period_Id=model.Period_IdOAVMMain,
+                        ActivityType_Id=model.ActivityType_IdOAVMMain,
+                        ActivityDescription=model.ActivityDescriptionOAVMMain,
+                        ActivityCost=model.ActivityCostOAVMMain,
+                        ActivityStartDate=new LocalDate(model.ActivityStartDateOAVMMain.Year, model.ActivityStartDateOAVMMain.Month, model.ActivityStartDateOAVMMain.Day),
+                        ActivityEndDate=new LocalDate(model.ActivityEndDateOAVMMain.Year, model.ActivityEndDateOAVMMain.Month, model.ActivityEndDateOAVMMain.Day),
+                        ImplementationType_Id=model.ImplementationType_IdOAVMMain,
+                        BaselineTechnical=model.BaselineTechnicalOAVMMain,
+                        BaselineFinancial=model.BaselineFinancialOAVMMain,
+                        Employee_Id= model.Employee_IdOAVMMain,
+                        PartnerFunding=model.PartnerFundingOAVMMain,
+                        PartnerFundingDescr=model.PartnerFundingDescrOAVMMain,
+                        TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                    };
+
+                    _wpOutputActivitiesRepository.Add(rec_to_add_1);
+
+                }
+                else 
+                {
+                    WP_SAPLink saplinkrec = _wpSAPLinkRepository.GetRecord(recoutputrecord.WPSAPLink_Id);
+                   // var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.Transaction_IdOAVMMain);
+                    var DB_Recs_Activities_Linked_SAP =  _wpOutputActivitiesRepository.GetRecordsByWPSAPLink_Id(recoutputrecord.WPSAPLink_Id);
+                    double total_utilization=0;
+                    double totalremainingsapbudget=0;
+                    foreach (var record in DB_Recs_Activities_Linked_SAP)
+                    {
+                        total_utilization=total_utilization+record.ActivityCost;
+
+                    }
+                    totalremainingsapbudget=saplinkrec.SAP_BudgetAmount-total_utilization;
+
+                    if(totalremainingsapbudget>=model.ActivityCostOAVMMain)
+                    {
+                        WP_OutputActivities rec_to_add_2 = new WP_OutputActivities
+                        {
+                            Transaction_Id= Guid.NewGuid().ToString(),
+                            WPMainRecord_id= model.WPMainRecord_idOAVMMain,
+                            WPOutput_Id=model.Transaction_IdOAVMMain,
+                            Project_Id=model.Project_IdOAVMMain,
+                            FiscalYear_Id=model.FiscalYear_IdOAVMMain,
+                            Period_Id=model.Period_IdOAVMMain,
+                            ActivityType_Id=model.ActivityType_IdOAVMMain,
+                            ActivityDescription=model.ActivityDescriptionOAVMMain,
+                            ActivityCost=model.ActivityCostOAVMMain,
+                            ActivityStartDate=new LocalDate(model.ActivityStartDateOAVMMain.Year, model.ActivityStartDateOAVMMain.Month, model.ActivityStartDateOAVMMain.Day),
+                            ActivityEndDate=new LocalDate(model.ActivityEndDateOAVMMain.Year, model.ActivityEndDateOAVMMain.Month, model.ActivityEndDateOAVMMain.Day),
+                            ImplementationType_Id=model.ImplementationType_IdOAVMMain,
+                            BaselineTechnical=model.BaselineTechnicalOAVMMain,
+                            BaselineFinancial=model.BaselineFinancialOAVMMain,
+                            Employee_Id= model.Employee_IdOAVMMain,
+                            WPSAPLink_Id=recoutputrecord.WPSAPLink_Id,
+                            PartnerFunding=model.PartnerFundingOAVMMain,
+                            PartnerFundingDescr=model.PartnerFundingDescrOAVMMain,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+                        _wpOutputActivitiesRepository.Add(rec_to_add_2);
+
+                    }
+                    else
+                    {
+                        return Json(new { rtnmsg = "insufficientsapfunds" });
+
+                    }
+
+
+
+                }
+
+
+                return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+             
+
+
+
+
+        }
+
+        [HttpPost]
+        public ActionResult AddOutputActivityGanttNew(WP_OutputActivitiesVM model)
+        {
+            
+            try
+            {
+                                  
+
+                //Check SAP Link Details and Update Total Budget
+           // WP_OutputBudget recbudget=_wpOutputBudgetRepository.GetRecordsByProjectYearPeriodAndOutputId(model.Project_IdOAVMMain, model.FiscalYear_IdOAVMMain, model.Period_IdOAVMMain, model.WPOutput_IdOAVMMain);
+                WP_Outputs recoutputrecord=_wpOutputsRepository.GetRecord(model.WPOutput_IdOAVMMain);
+
+                if(recoutputrecord.WPSAPLink_Id==null )
+                {
+                    WP_OutputActivities rec_to_add_1 = new WP_OutputActivities
+                    {
+                        Transaction_Id= Guid.NewGuid().ToString(),
+                        WPMainRecord_id= model.WPMainRecord_idOAVMMain,
+                        WPOutput_Id=model.WPOutput_IdOAVMMain,
+                        Project_Id=model.Project_IdOAVMMain,
+                        FiscalYear_Id=model.FiscalYear_IdOAVMMain,
+                        Period_Id=model.Period_IdOAVMMain,
+                        ActivityType_Id=model.ActivityType_IdOAVMMain,
+                        ActivityDescription=model.ActivityDescriptionOAVMMain,
+                        ActivityCost=model.ActivityCostOAVMMain,
+                        ActivityStartDate=new LocalDate(model.ActivityStartDateOAVMMain.Year, model.ActivityStartDateOAVMMain.Month, model.ActivityStartDateOAVMMain.Day),
+                        ActivityEndDate=new LocalDate(model.ActivityEndDateOAVMMain.Year, model.ActivityEndDateOAVMMain.Month, model.ActivityEndDateOAVMMain.Day),
+                        ImplementationType_Id=model.ImplementationType_IdOAVMMain,
+                        BaselineTechnical=model.BaselineTechnicalOAVMMain,
+                        BaselineFinancial=model.BaselineFinancialOAVMMain,
+                        Employee_Id= model.Employee_IdOAVMMain,
+                        PartnerFunding=model.PartnerFundingOAVMMain,
+                        PartnerFundingDescr=model.PartnerFundingDescrOAVMMain,
+                        TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                    };
+
+                    _wpOutputActivitiesRepository.Add(rec_to_add_1);
+
+                }
+                else 
+                {
+                    WP_SAPLink saplinkrec = _wpSAPLinkRepository.GetRecord(recoutputrecord.WPSAPLink_Id);
+                   // var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.Transaction_IdOAVMMain);
+                    var DB_Recs_Activities_Linked_SAP =  _wpOutputActivitiesRepository.GetRecordsByWPSAPLink_Id(recoutputrecord.WPSAPLink_Id);
+                    double total_utilization=0;
+                    double totalremainingsapbudget=0;
+                    foreach (var record in DB_Recs_Activities_Linked_SAP)
+                    {
+                        total_utilization=total_utilization+record.ActivityCost;
+
+                    }
+                    totalremainingsapbudget=saplinkrec.SAP_BudgetAmount-total_utilization;
+
+                    if(totalremainingsapbudget>=model.ActivityCostOAVMMain)
+                    {
+                        WP_OutputActivities rec_to_add_2 = new WP_OutputActivities
+                        {
+                            Transaction_Id= Guid.NewGuid().ToString(),
+                            WPMainRecord_id= model.WPMainRecord_idOAVMMain,
+                            WPOutput_Id=model.WPOutput_IdOAVMMain,
+                            Project_Id=model.Project_IdOAVMMain,
+                            FiscalYear_Id=model.FiscalYear_IdOAVMMain,
+                            Period_Id=model.Period_IdOAVMMain,
+                            ActivityType_Id=model.ActivityType_IdOAVMMain,
+                            ActivityDescription=model.ActivityDescriptionOAVMMain,
+                            ActivityCost=model.ActivityCostOAVMMain,
+                            ActivityStartDate=new LocalDate(model.ActivityStartDateOAVMMain.Year, model.ActivityStartDateOAVMMain.Month, model.ActivityStartDateOAVMMain.Day),
+                            ActivityEndDate=new LocalDate(model.ActivityEndDateOAVMMain.Year, model.ActivityEndDateOAVMMain.Month, model.ActivityEndDateOAVMMain.Day),
+                            ImplementationType_Id=model.ImplementationType_IdOAVMMain,
+                            BaselineTechnical=model.BaselineTechnicalOAVMMain,
+                            BaselineFinancial=model.BaselineFinancialOAVMMain,
+                            Employee_Id= model.Employee_IdOAVMMain,
+                            WPSAPLink_Id=recoutputrecord.WPSAPLink_Id,
+                            PartnerFunding=model.PartnerFundingOAVMMain,
+                            PartnerFundingDescr=model.PartnerFundingDescrOAVMMain,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+                        _wpOutputActivitiesRepository.Add(rec_to_add_2);
+
+                    }
+                    else
+                    {
+                        return Json(new { rtnmsg = "insufficientsapfunds" });
+
+                    }
+
+
+
+                }
+
+
+                return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+             
+
+
+
+
+        }
+
+        [HttpPost]
+        public ActionResult AddOutputMobilityNew(WP_OutputMobilityVMWindow model)
+        {
+            double totalremainingbudget=0;
+
+            try
+            {
+                                  
+                WP_Outputs recoutputrecord=_wpOutputsRepository.GetRecord(model.Transaction_IdOMVMMain);
+
+                //Get the total budget for the output
+                var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.Transaction_IdOMVMMain);
+                double total_outputbudget=0;
+                foreach (var record in DB_Recs_Activities)
+                {
+                    total_outputbudget=total_outputbudget+record.ActivityCost;
+                }
+
+                //Get all mission, procurement, communication and risk costs already captured against this output 
+                double total_missionbudget=0;
+                double total_procurementbudget=0;
+                double total_commsbudget=0;
+                double total_riskbudget=0;
+                
+
+                var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.Transaction_IdOMVMMain);
+                foreach (var record in DB_Recs_Missions)
+                {
+                    total_missionbudget=total_missionbudget+record.MobilityCost;
+                }
+
+                //foreach loop for procurment
+
+                //foreach loop for comms
+
+                //foreach loop for risk
+
+                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
+    
+
+                if(totalremainingbudget>=model.MobilityCostOMVMMain)
+                {
+                    WP_Mobility rec_to_add_2 = new WP_Mobility
+                    {
+                        Transaction_Id=Guid.NewGuid().ToString(),
+                        WPMainRecord_id=model.WPMainRecord_idOMVMMain,
+                        Project_Id=model.Project_IdOMVMMain,
+                        FiscalYear_Id=model.FiscalYear_IdOMVMMain,
+                        Period_Id=model.Period_IdOMVMMain,
+                        WPOutput_Id=model.Transaction_IdOMVMMain,
+                        WPMobility_Description=model.WPMobility_DescriptionOMVMMain,
+                        Country_Id=model.Country_IdOMVMMain,
+                        MobilityStartDate=new LocalDate(model.MobilityStartDateOMVMMain.Year, model.MobilityStartDateOMVMMain.Month,model.MobilityStartDateOMVMMain.Day),
+                        MobilityEndDate=new LocalDate(model.MobilityEndDateOMVMMain.Year, model.MobilityEndDateOMVMMain.Month,model.MobilityEndDateOMVMMain.Day),
+                        MobilityCost=model.MobilityCostOMVMMain,
+                        TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                    };
+
+                    _wpMobilityRepository.Add(rec_to_add_2);
+
+                }
+                else
+                {
+                    return Json(new { rtnmsg = "insufficientfunds", remainfunds= totalremainingbudget.ToString()});
+
+                }
+                return Json(new { rtnmsg = "success", remainfunds= totalremainingbudget.ToString() });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error", remainfunds= totalremainingbudget.ToString() });
+            }
+             
+
+
+
+
+        }
+
+        [HttpPost]
+        public ActionResult AddOutputActivityGantt(WP_OutputActivitiesVM model)
+        {
+            
+            try
+            {
+                                  
+
+                //Check SAP Link Details and Update Total Budget
+                WP_OutputBudget recbudget=_wpOutputBudgetRepository.GetRecordsByProjectYearPeriodAndOutputId(model.Project_IdOAVMMain, model.FiscalYear_IdOAVMMain, model.Period_IdOAVMMain, model.WPOutput_IdOAVMMain);
+
+                if(recbudget==null)
+                {
+                    WP_OutputActivities rec_to_add_1 = new WP_OutputActivities
+                    {
+                        Transaction_Id= Guid.NewGuid().ToString(),
+                        WPMainRecord_id= model.WPMainRecord_idOAVMMain,
+                        WPOutput_Id=model.WPOutput_IdOAVMMain,
+                        Project_Id=model.Project_IdOAVMMain,
+                        FiscalYear_Id=model.FiscalYear_IdOAVMMain,
+                        Period_Id=model.Period_IdOAVMMain,
+                        ActivityType_Id=model.ActivityType_IdOAVMMain,
+                        ActivityDescription=model.ActivityDescriptionOAVMMain,
+                        ActivityCost=model.ActivityCostOAVMMain,
+                        ActivityStartDate=new LocalDate(model.ActivityStartDateOAVMMain.Year, model.ActivityStartDateOAVMMain.Month, model.ActivityStartDateOAVMMain.Day),
+                        ActivityEndDate=new LocalDate(model.ActivityEndDateOAVMMain.Year, model.ActivityEndDateOAVMMain.Month, model.ActivityEndDateOAVMMain.Day),
+                        ImplementationType_Id=model.ImplementationType_IdOAVMMain,
+                        BaselineTechnical=model.BaselineTechnicalOAVMMain,
+                        BaselineFinancial=model.BaselineFinancialOAVMMain,
+                        Employee_Id= model.Employee_IdOAVMMain,
+                        TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                    };
+
+                    _wpOutputActivitiesRepository.Add(rec_to_add_1);
+
+                    WP_OutputBudget recbudget_to_add_1 =new WP_OutputBudget
+                    {
+                        Transaction_Id= Guid.NewGuid().ToString(),
+                        WPMainRecord_id= model.WPMainRecord_idOAVMMain,
+                        WPOutput_Id=model.WPOutput_IdOAVMMain,
+                        Project_Id=model.Project_IdOAVMMain,
+                        FiscalYear_Id=model.FiscalYear_IdOAVMMain,
+                        Period_Id=model.Period_IdOAVMMain,
+                        Output_BudgetAmount=model.ActivityCostOAVMMain,
+                        TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+
+                    };
+                    _wpOutputBudgetRepository.Add(recbudget_to_add_1);
+
+                    var DB_Recs_1 =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.WPOutput_IdOAVMMain);
+                    double totalcost_1=0;
+                    foreach (var record in DB_Recs_1)
+                    {
+                        totalcost_1=totalcost_1+record.ActivityCost;
+
+                    }
+                    
+                    WP_OutputBudget recbudget_1=_wpOutputBudgetRepository.GetRecordsByProjectYearPeriodAndOutputId(model.Project_IdOAVMMain, model.FiscalYear_IdOAVMMain, model.Period_IdOAVMMain, model.WPOutput_IdOAVMMain);
+                    
+                    recbudget_1.Output_BudgetAmount=totalcost_1;
+                    _wpOutputBudgetRepository.Update(recbudget_1);
+
+                }
+                else if (recbudget.WPSAPLink_Id==null)
+                {
+                    WP_OutputActivities rec_to_add_2 = new WP_OutputActivities
+                    {
+                        Transaction_Id= Guid.NewGuid().ToString(),
+                        WPMainRecord_id= model.WPMainRecord_idOAVMMain,
+                        WPOutput_Id=model.WPOutput_IdOAVMMain,
+                        Project_Id=model.Project_IdOAVMMain,
+                        FiscalYear_Id=model.FiscalYear_IdOAVMMain,
+                        Period_Id=model.Period_IdOAVMMain,
+                        ActivityType_Id=model.ActivityType_IdOAVMMain,
+                        ActivityDescription=model.ActivityDescriptionOAVMMain,
+                        ActivityCost=model.ActivityCostOAVMMain,
+                        ActivityStartDate=new LocalDate(model.ActivityStartDateOAVMMain.Year, model.ActivityStartDateOAVMMain.Month, model.ActivityStartDateOAVMMain.Day),
+                        ActivityEndDate=new LocalDate(model.ActivityEndDateOAVMMain.Year, model.ActivityEndDateOAVMMain.Month, model.ActivityEndDateOAVMMain.Day),
+                        ImplementationType_Id=model.ImplementationType_IdOAVMMain,
+                        BaselineTechnical=model.BaselineTechnicalOAVMMain,
+                        BaselineFinancial=model.BaselineFinancialOAVMMain,
+                        Employee_Id= model.Employee_IdOAVMMain,
+                        TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                    };
+
+                    _wpOutputActivitiesRepository.Add(rec_to_add_2);
+
+
+                    var DB_Recs_2 =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.WPOutput_IdOAVMMain);
+                    double totalcost_2=0;
+                    foreach (var record in DB_Recs_2)
+                    {
+                        totalcost_2=totalcost_2+record.ActivityCost;
+
+                    }
+
+                    recbudget.Output_BudgetAmount=totalcost_2;
+                    _wpOutputBudgetRepository.Update(recbudget);
+
+                }
+                else
+                {
+
+                    var DB_BudgetSAPLinks=_wpOutputBudgetRepository.GetRecordsBySAPLinkId(recbudget.WPSAPLink_Id);
+                    WP_SAPLink saplinkrec = _wpSAPLinkRepository.GetRecord(recbudget.WPSAPLink_Id);
+
+                    double totalcost_3=0;
+                    double totalalreadylinkcost_3=0;
+                    double totalremainingsapbudget_3=0;
+
+
+
+                    foreach (var record in DB_BudgetSAPLinks)
+                    {
+                        totalalreadylinkcost_3=totalalreadylinkcost_3+record.Output_BudgetAmount;
+                    }
+
+                    totalremainingsapbudget_3=saplinkrec.SAP_BudgetAmount-totalalreadylinkcost_3;
+                
+
+                    if(totalremainingsapbudget_3>=model.ActivityCostOAVMMain)
+                    {
+                        WP_OutputActivities rec_to_add_3 = new WP_OutputActivities
+                        {
+                            Transaction_Id= Guid.NewGuid().ToString(),
+                            WPMainRecord_id= model.WPMainRecord_idOAVMMain,
+                            WPOutput_Id=model.WPOutput_IdOAVMMain,
+                            Project_Id=model.Project_IdOAVMMain,
+                            FiscalYear_Id=model.FiscalYear_IdOAVMMain,
+                            Period_Id=model.Period_IdOAVMMain,
+                            ActivityType_Id=model.ActivityType_IdOAVMMain,
+                            ActivityDescription=model.ActivityDescriptionOAVMMain,
+                            ActivityCost=model.ActivityCostOAVMMain,
+                            ActivityStartDate=new LocalDate(model.ActivityStartDateOAVMMain.Year, model.ActivityStartDateOAVMMain.Month, model.ActivityStartDateOAVMMain.Day),
+                            ActivityEndDate=new LocalDate(model.ActivityEndDateOAVMMain.Year, model.ActivityEndDateOAVMMain.Month, model.ActivityEndDateOAVMMain.Day),
+                            ImplementationType_Id=model.ImplementationType_IdOAVMMain,
+                            BaselineTechnical=model.BaselineTechnicalOAVMMain,
+                            BaselineFinancial=model.BaselineFinancialOAVMMain,
+                            Employee_Id= model.Employee_IdOAVMMain,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+                        _wpOutputActivitiesRepository.Add(rec_to_add_3);
+
+                        var DB_Recs_3 =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.WPOutput_IdOAVMMain);
+                        foreach (var record in DB_Recs_3)
+                        {
+                            totalcost_3=totalcost_3+record.ActivityCost;
+
+                        }
+
+                        recbudget.Output_BudgetAmount=totalcost_3;
+                        _wpOutputBudgetRepository.Update(recbudget);
+
+                    }
+                    else
+                    {
+                        return Json(new { rtnmsg = "insufficientsapfunds" });
+
+                    }
+
+                }
+
+
+                return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+             
+
+
+
+
+        }
+
+
+        [HttpPost]
+        public ActionResult EditOutputActivity(WP_OutputActivitiesVM model)
+        {
+            
+            try
+            {
+                                  
+
+                //Check SAP Link Details and Update Total Budget
+                
+                WP_OutputActivities rec_activity=_wpOutputActivitiesRepository.GetRecord(model.Transaction_IdOAVMMain);
+            //    WP_OutputBudget recbudget=_wpOutputBudgetRepository.GetRecordsByProjectYearPeriodAndOutputId(model.Project_IdOAVMMain, model.FiscalYear_IdOAVMMain, model.Period_IdOAVMMain, model.WPOutput_IdOAVMMain);
+                WP_Outputs recoutputrecord=_wpOutputsRepository.GetRecord(model.WPOutput_IdOAVMMain);
+
+                if(rec_activity!=null)
+                {
+                    if (recoutputrecord.WPSAPLink_Id==null)
+                    {
+
+                            
+                        rec_activity.WPMainRecord_id= model.WPMainRecord_idOAVMMain;
+                        rec_activity.WPOutput_Id=model.WPOutput_IdOAVMMain;
+                        rec_activity.Project_Id=model.Project_IdOAVMMain;
+                        rec_activity.FiscalYear_Id=model.FiscalYear_IdOAVMMain;
+                        rec_activity.Period_Id=model.Period_IdOAVMMain;
+                        rec_activity.ActivityType_Id=model.ActivityType_IdOAVMMain;
+                        rec_activity.ActivityDescription=model.ActivityDescriptionOAVMMain;
+                        rec_activity.ActivityCost=model.ActivityCostOAVMMain;
+                        rec_activity.ActivityStartDate=new LocalDate(model.ActivityStartDateOAVMMain.Year, model.ActivityStartDateOAVMMain.Month, model.ActivityStartDateOAVMMain.Day);
+                        rec_activity.ActivityEndDate=new LocalDate(model.ActivityEndDateOAVMMain.Year, model.ActivityEndDateOAVMMain.Month, model.ActivityEndDateOAVMMain.Day);
+                        rec_activity.ImplementationType_Id=model.ImplementationType_IdOAVMMain;
+                        rec_activity.BaselineTechnical=model.BaselineTechnicalOAVMMain;
+                        rec_activity.BaselineFinancial=model.BaselineFinancialOAVMMain;
+                        rec_activity.Employee_Id= model.Employee_IdOAVMMain;
+                        rec_activity.PartnerFunding=model.PartnerFundingOAVMMain;
+                        rec_activity.PartnerFundingDescr=model.PartnerFundingDescrOAVMMain;
+                        rec_activity.TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                      
+                        _wpOutputActivitiesRepository.Update(rec_activity);
+
+                    }
+                    else
+                    {
+
+                        WP_SAPLink saplinkrec = _wpSAPLinkRepository.GetRecord(recoutputrecord.WPSAPLink_Id);
+                        // var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.Transaction_IdOAVMMain);
+                        var DB_Recs_Activities_Linked_SAP =  _wpOutputActivitiesRepository.GetRecordsByWPSAPLink_Id(recoutputrecord.WPSAPLink_Id);
+                        double total_utilization=0;
+                        double totalremainingsapbudget=0;
+                        foreach (var record in DB_Recs_Activities_Linked_SAP)
+                        {
+                            total_utilization=total_utilization+record.ActivityCost;
+
+                        }
+                        totalremainingsapbudget=saplinkrec.SAP_BudgetAmount-total_utilization;
+
+                    
+
+                        if(totalremainingsapbudget>=model.ActivityCostOAVMMain)
+                        {
+                            rec_activity.WPMainRecord_id= model.WPMainRecord_idOAVMMain;
+                            rec_activity.WPOutput_Id=model.WPOutput_IdOAVMMain;
+                            rec_activity.Project_Id=model.Project_IdOAVMMain;
+                            rec_activity.FiscalYear_Id=model.FiscalYear_IdOAVMMain;
+                            rec_activity.Period_Id=model.Period_IdOAVMMain;
+                            rec_activity.ActivityType_Id=model.ActivityType_IdOAVMMain;
+                            rec_activity.ActivityDescription=model.ActivityDescriptionOAVMMain;
+                            rec_activity.ActivityCost=model.ActivityCostOAVMMain;
+                            rec_activity.ActivityStartDate=new LocalDate(model.ActivityStartDateOAVMMain.Year, model.ActivityStartDateOAVMMain.Month, model.ActivityStartDateOAVMMain.Day);
+                            rec_activity.ActivityEndDate=new LocalDate(model.ActivityEndDateOAVMMain.Year, model.ActivityEndDateOAVMMain.Month, model.ActivityEndDateOAVMMain.Day);
+                            rec_activity.ImplementationType_Id=model.ImplementationType_IdOAVMMain;
+                            rec_activity.BaselineTechnical=model.BaselineTechnicalOAVMMain;
+                            rec_activity.BaselineFinancial=model.BaselineFinancialOAVMMain;
+                            rec_activity.Employee_Id= model.Employee_IdOAVMMain;
+                            rec_activity.PartnerFunding=model.PartnerFundingOAVMMain;
+                            rec_activity.PartnerFundingDescr=model.PartnerFundingDescrOAVMMain;
+                            rec_activity.TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                        
+                            _wpOutputActivitiesRepository.Update(rec_activity);
+
+                        }
+                        else
+                        {
+                            return Json(new { rtnmsg = "insufficientsapfunds" });
+
+                        }
+
+                    }
+
+                }
+              
+
+
+                return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+             
+
+
+
+
+        }
+
+        [HttpPost]
+        public ActionResult EditOutputMobility(WP_OutputMobilityVMWindow model)
+        {
+            double totalremainingbudget=0;
+            try
+            {
+                                  
+
+                //Check SAP Link Details and Update Total Budget
+                
+                WP_Mobility rec_mobility=_wpMobilityRepository.GetRecord(model.Transaction_IdOMVMMain);
+            //    WP_OutputBudget recbudget=_wpOutputBudgetRepository.GetRecordsByProjectYearPeriodAndOutputId(model.Project_IdOAVMMain, model.FiscalYear_IdOAVMMain, model.Period_IdOAVMMain, model.WPOutput_IdOAVMMain);
+                WP_Outputs recoutputrecord=_wpOutputsRepository.GetRecord(model.WPOutput_IdOMVMMain);
+
+                if(rec_mobility!=null)
+                {
+ 
+
+                    //Get the total budget for the output
+                    var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.WPOutput_IdOMVMMain);
+                    double total_outputbudget=0;
+                    foreach (var record in DB_Recs_Activities)
+                    {
+                        total_outputbudget=total_outputbudget+record.ActivityCost;
+                    }
+
+                    //Get all mission, procurement, communication and risk costs already captured against this output 
+                    double total_missionbudget=0;
+                    double total_procurementbudget=0;
+                    double total_commsbudget=0;
+                    double total_riskbudget=0;
+                    
+
+                    var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.WPOutput_IdOMVMMain);
+                    foreach (var record in DB_Recs_Missions)
+                    {
+                        total_missionbudget=total_missionbudget+record.MobilityCost;
+                    }
+
+                    //foreach loop for procurment
+
+                    //foreach loop for comms
+
+                    //foreach loop for risk
+
+                    totalremainingbudget=(total_outputbudget+rec_mobility.MobilityCost)-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
+
+                
+
+                    if(totalremainingbudget>=model.MobilityCostOMVMMain)
+                    {
+
+                        rec_mobility.WPMainRecord_id=model.WPMainRecord_idOMVMMain;
+                        rec_mobility.Project_Id=model.Project_IdOMVMMain;
+                        rec_mobility.FiscalYear_Id=model.FiscalYear_IdOMVMMain;
+                        rec_mobility.Period_Id=model.Period_IdOMVMMain;
+                        rec_mobility.WPOutput_Id=model.WPOutput_IdOMVMMain;
+                        rec_mobility.WPMobility_Description=model.WPMobility_DescriptionOMVMMain;
+                        rec_mobility.Country_Id=model.Country_IdOMVMMain;
+                        rec_mobility.MobilityStartDate=new LocalDate(model.MobilityStartDateOMVMMain.Year, model.MobilityStartDateOMVMMain.Month,model.MobilityStartDateOMVMMain.Day);
+                        rec_mobility.MobilityEndDate=new LocalDate(model.MobilityEndDateOMVMMain.Year, model.MobilityEndDateOMVMMain.Month,model.MobilityEndDateOMVMMain.Day);
+                        rec_mobility.MobilityCost=model.MobilityCostOMVMMain;
+                        rec_mobility.TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                    
+                        _wpMobilityRepository.Update(rec_mobility);
+
+                    }
+                    else
+                    {
+                        return Json(new { rtnmsg = "insufficientfunds", remainfunds= totalremainingbudget.ToString()});
+
+                    }
+
+                    
+
+                }
+              
+                return Json(new { rtnmsg = "success", remainfunds= totalremainingbudget.ToString() });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error", remainfunds= totalremainingbudget.ToString() });
+            }
+
+        }
+
         [HttpPost]
         public ActionResult AddStrategicIndicator_ProjectBased(WP_OutputIndicatorsVM model)
         {
@@ -4810,7 +7010,7 @@ namespace AUDANEPAD_Integrated.Controllers
                         Project_Id=model.Project_IdOIVM,
                         FiscalYear_Id=model.FiscalYear_IdOIVM,
                         Period_Id=model.Period_IdOIVM,
-                        IndicatorCategory="Project-Based",
+                        IndicatorCategory="Project-Level",
                         ProjectBasedIndicatorStatement=model.ProjectBasedIndicatorStatementOIVM,
                         Employee_Id= model.Employee_IdOIVM,
                         TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
@@ -4848,50 +7048,235 @@ namespace AUDANEPAD_Integrated.Controllers
         [HttpPost]
         public ActionResult AddWorkplanCycle(WorkplansViewModel model)
         {
-            
-            WP_DispatchCycle rec = _wpDispatchCycleRepository.GetRecordByYearAndPeriod(model.FYearIdent, model.FPeriodIdent);
 
-            
-            if (rec == null)
+            if(model.FPeriodIdent==8)
             {
-                    try
+                WP_DispatchCycle rec = _wpDispatchCycleRepository.GetRecordByYearPStartPEnd(model.FYearIdent, new LocalDate(model.PeriodStart.Year, model.PeriodStart.Month, model.PeriodStart.Day), new LocalDate(model.PeriodEnd.Year, model.PeriodEnd.Month, model.PeriodEnd.Day));
+
+                if (rec == null)
+                {
+                    if(model.PeriodStart<=model.PeriodEnd)
                     {
-                        WP_DispatchCycle rec_to_add = new WP_DispatchCycle
+                        try
                         {
-                            Transaction_Id= Guid.NewGuid().ToString(),
-                            FiscalYear_Id= model.FYearIdent,
-                            Period_Id=model.FPeriodIdent,
-                            Employee_Id= model.Employee_Id,
-                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
-                        };
-                        //WP Status
-                        if(model.WPStatus==false)
-                            rec_to_add.Dispatch_Status=null;
-                        else
-                            rec_to_add.Dispatch_Status=model.WPStatus;
+                            WP_DispatchCycle rec_to_add = new WP_DispatchCycle
+                            {
+                                Transaction_Id= Guid.NewGuid().ToString(),
+                                FiscalYear_Id= model.FYearIdent,
+                                Period_Id=model.FPeriodIdent,
+                                Employee_Id= model.Employee_Id,
+                                PeriodStartDate=new LocalDate(model.PeriodStart.Year, model.PeriodStart.Month, model.PeriodStart.Day),
+                                PeriodEndDate=new LocalDate(model.PeriodEnd.Year, model.PeriodEnd.Month, model.PeriodEnd.Day),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+                            //WP Status
+                            if(model.WPStatus==false)
+                                rec_to_add.Dispatch_Status=null;
+                            else
+                                rec_to_add.Dispatch_Status=model.WPStatus;
 
-                        //Link to SAP
-                        if(model.WPSAPLinkView==false)
-                            rec_to_add.LinkToSAPExecution=null;
-                        else
-                            rec_to_add.LinkToSAPExecution=model.WPSAPLinkView;
+                            //Link to SAP
+                            if(model.WPSAPLinkView==false)
+                                rec_to_add.LinkToSAPExecution=null;
+                            else
+                                rec_to_add.LinkToSAPExecution=model.WPSAPLinkView;
 
-                        _wpDispatchCycleRepository.Add(rec_to_add);
+                            _wpDispatchCycleRepository.Add(rec_to_add);
 
-                        
+                            
 
-                        return Json(new { rtnmsg = "success" });
+                            return Json(new { rtnmsg = "success" });
+                        }
+                        catch (Exception)
+                        {
+                            return Json(new { rtnmsg = "error" });
+                        }
+            
                     }
-                    catch (Exception)
+                    else
                     {
-                        return Json(new { rtnmsg = "error" });
+                        return Json(new { rtnmsg = "futuredate" });
                     }
-           
+                }
+                else{
+                    return Json(new { rtnmsg = "pkerror" });
+                }
+
             }
             else
             {
+                WP_DispatchCycle rec = _wpDispatchCycleRepository.GetRecordByYearAndPeriod(model.FYearIdent, model.FPeriodIdent);
+
+                
+                if (rec == null)
+                {
+                        try
+                        {
+                            WP_DispatchCycle rec_to_add = new WP_DispatchCycle
+                            {
+                                Transaction_Id= Guid.NewGuid().ToString(),
+                                FiscalYear_Id= model.FYearIdent,
+                                Period_Id=model.FPeriodIdent,
+                                Employee_Id= model.Employee_Id,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+                            //WP Status
+                            if(model.WPStatus==false)
+                                rec_to_add.Dispatch_Status=null;
+                            else
+                                rec_to_add.Dispatch_Status=model.WPStatus;
+
+                            //Link to SAP
+                            if(model.WPSAPLinkView==false)
+                                rec_to_add.LinkToSAPExecution=null;
+                            else
+                                rec_to_add.LinkToSAPExecution=model.WPSAPLinkView;
+
+                            _wpDispatchCycleRepository.Add(rec_to_add);
+
+                            
+
+                            return Json(new { rtnmsg = "success" });
+                        }
+                        catch (Exception)
+                        {
+                            return Json(new { rtnmsg = "error" });
+                        }
+            
+                }
+                else
+                {
+                    return Json(new { rtnmsg = "pkerror" });
+                }
+            }
+
+
+
+        }
+
+
+
+        [HttpPost]
+        public ActionResult AddDivisionKPI(DivisionKPIsViewModel model)
+        {
+            int dirid=_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(model.Employee_Id).Directorate_Id;
+
+            Struc_DirDivIndicators rec = _strucDirDivIndicatorsRepository.GetRecordByRecordNameDirectorateDivisionAndIndicatorType(model.Record_Name, dirid, model.Division_Ident, model.Indicator_Type_Ident);
+
+            if (rec == null)
+            {
+                try
+                {
+                    //Transaction_Id= Guid.NewGuid().ToString(),
+                    int record_id=_strucDirDivIndicatorsRepository.GetAllRecords().Count() + 1;
+                    Struc_DirDivIndicators rec_to_add = new Struc_DirDivIndicators
+                    {
+                        Record_Id=record_id,
+                        Directorate_Id= dirid,
+                        Division_Id= model.Division_Ident,
+                        Record_Name=model.Record_Name,
+                        Indicator_Type_Id= model.Indicator_Type_Ident,
+                        Indicator_Type=_lkupIndicatorTypeRepository.GetRecord(model.Indicator_Type_Ident).Record_Name,
+                        Record_Status=true,
+                        TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                    };
+                    _strucDirDivIndicatorsRepository.Add(rec_to_add);
+
+                    Trans_StrucDirDivIndicators rec_to_add_trans = new Trans_StrucDirDivIndicators
+                    {
+                        Transaction_Id=Guid.NewGuid().ToString(),
+                        Record_Id=record_id,
+                        Directorate_Id= dirid,
+                        Division_Id= model.Division_Ident,
+                        Record_Name=model.Record_Name,
+                        Indicator_Type_Id= model.Indicator_Type_Ident,
+                        Indicator_Type=_lkupIndicatorTypeRepository.GetRecord(model.Indicator_Type_Ident).Record_Name,
+                        TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                    };
+                    _transStrucDirDivIndicatorsRepository.Add(rec_to_add_trans);
+
+                    
+
+                    return Json(new { rtnmsg = "success" });
+                }
+                catch (Exception)
+                {
+                    return Json(new { rtnmsg = "error" });
+                }
+        
+
+            }
+            else{
                 return Json(new { rtnmsg = "pkerror" });
             }
+
+            
+            
+
+
+
+        }
+
+        [HttpPost]
+        public ActionResult EditDivisionKPI(DivisionKPIsViewModel model)
+        {
+            int dirid=_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(model.Employee_Id).Directorate_Id;
+
+            
+           // string return_message="";
+
+            try
+            {
+                Struc_DirDivIndicators rec_old = _strucDirDivIndicatorsRepository.GetRecordByRecordNameDirectorateDivisionAndIndicatorType(model.Record_Name_Old, dirid, model.Division_Ident_Old, model.Indicator_Type_Ident_Old);
+                Struc_DirDivIndicators rec_new = _strucDirDivIndicatorsRepository.GetRecordByRecordNameDirectorateDivisionAndIndicatorType(model.Record_Name, dirid, model.Division_Ident, model.Indicator_Type_Ident);
+                Trans_StrucDirDivIndicators trans_rec_tobe_updated=_transStrucDirDivIndicatorsRepository.GetRecord(model.Transaction_Id);
+                
+                if(rec_new==null && (rec_old.Record_Id==trans_rec_tobe_updated.Record_Id))
+                {
+                    trans_rec_tobe_updated.Record_Id=model.Record_Id;
+                    trans_rec_tobe_updated.Directorate_Id= model.Directorate_Ident;
+                    trans_rec_tobe_updated.Division_Id= model.Division_Ident;
+                    trans_rec_tobe_updated.Record_Name=model.Record_Name;
+                    trans_rec_tobe_updated.Indicator_Type_Id= model.Indicator_Type_Ident;
+                    trans_rec_tobe_updated.Indicator_Type=_lkupIndicatorTypeRepository.GetRecord(model.Indicator_Type_Ident).Record_Name;
+                    trans_rec_tobe_updated.TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+
+                    _transStrucDirDivIndicatorsRepository.Update(trans_rec_tobe_updated);
+
+                    Struc_DirDivIndicators main_rec_tobe_updated=_strucDirDivIndicatorsRepository.GetRecord(model.Record_Id);
+                    
+                    main_rec_tobe_updated.Directorate_Id= model.Directorate_Ident;
+                    main_rec_tobe_updated.Division_Id= model.Division_Ident;
+                    main_rec_tobe_updated.Record_Name=model.Record_Name;
+                    main_rec_tobe_updated.Indicator_Type_Id= model.Indicator_Type_Ident;
+                    main_rec_tobe_updated.Record_Status=true;
+                    main_rec_tobe_updated.Indicator_Type=_lkupIndicatorTypeRepository.GetRecord(model.Indicator_Type_Ident).Record_Name;
+                    main_rec_tobe_updated.TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+
+                    _strucDirDivIndicatorsRepository.Update(main_rec_tobe_updated);
+
+                    
+                    return Json(new { rtnmsg = "success" });
+                }
+                else if(rec_new!=null)
+                {
+                    return Json(new { rtnmsg = "pkerror" });
+                }
+                else
+                {
+                    return Json(new { rtnmsg = "error" });
+
+                }
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+        
+
+
+            
+            
 
 
 
@@ -5345,7 +7730,7 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddWPMTPPriorities(string projid, string fyear, string fperiod, string selectkeys, string empid, string dirid, string divid,  string progid)
+        public ActionResult AddWPMTPPriorities(string projid, string fyear, string fperiod, string selectkeys, string empid, string dirid, string divid,  string progid, string periodtxt)
         {
 
            // WP_MainRecord mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
@@ -5356,7 +7741,31 @@ namespace AUDANEPAD_Integrated.Controllers
                 string[] selectedkeys = selectkeys.Split(',');
 
 
-                WP_MainRecord wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                WP_MainRecord wp_mainrec_check=null;
+
+                if(Int32.Parse(fperiod)==8)
+                {
+                    var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                    int _countrecs =  DB_Records8.Count();
+                    if(_countrecs>0)
+                    {
+                        foreach (var rec_set in DB_Records8)
+                        {
+                            DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                            DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                            string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                            if(periodinmain==periodtxt)
+                                wp_mainrec_check=rec_set;
+                        }
+                    }
+
+                }
+                else
+                {
+                    wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                }
 
                 if(wp_mainrec_check==null)
                 {
@@ -5374,7 +7783,37 @@ namespace AUDANEPAD_Integrated.Controllers
                         Employee_Id=Int32.Parse(empid),
                         TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
                     };
-                    WP_DispatchCycle wpcycle=_wpDispatchCycleRepository.GetRecordByYearAndPeriod(Int32.Parse(fyear), Int32.Parse(fperiod));
+                    
+                    WP_DispatchCycle wpcycle=null;
+
+                    if(Int32.Parse(fperiod)==8)
+                    {
+                        var DB_Records8 =_wpDispatchCycleRepository.GetRecordsByYearAndPeriodRecs(Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                        int _countrecs =  DB_Records8.Count();
+                        if(_countrecs>0)
+                        {
+                            foreach (var rec_set in DB_Records8)
+                            {
+                                DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                                DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                                string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                                if(periodinmain==periodtxt)
+                                wpcycle=rec_set;
+                            }
+
+                            if(wpcycle!=null)
+                            {
+                                mainrec_to_add.PeriodStartDate=wpcycle.PeriodStartDate;
+                                mainrec_to_add.PeriodEndDate=wpcycle.PeriodEndDate;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        wpcycle=_wpDispatchCycleRepository.GetRecordByYearAndPeriod(Int32.Parse(fyear), Int32.Parse(fperiod));
+                    }
 
                     if(wpcycle.LinkToSAPExecution==true)
                         mainrec_to_add.LinkToSAPExecution=true;
@@ -5383,7 +7822,32 @@ namespace AUDANEPAD_Integrated.Controllers
 
                     _wpMainRecordRepository.Add(mainrec_to_add);
 
-                    WP_MainRecord wp_mainrec_fetch1=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                    //Modified for Period type 8
+                    WP_MainRecord wp_mainrec_fetch1=null;
+
+                    if(Int32.Parse(fperiod)==8)
+                    {
+                        var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                        int _countrecs =  DB_Records8.Count();
+                        if(_countrecs>0)
+                        {
+                            foreach (var rec_set in DB_Records8)
+                            {
+                                DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                                DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                                string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                                if(periodinmain==periodtxt)
+                                wp_mainrec_fetch1=rec_set;
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        wp_mainrec_fetch1=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                    }
 
                     //Save the Status
                     WP_ApprovalStatus wpstatus_to_add = new WP_ApprovalStatus
@@ -5415,11 +7879,42 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 }
 
-                WP_MainRecord wp_mainrec_fetch=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                //Modified for Period type 8
+                WP_MainRecord wp_mainrec_fetch=null;
+
+                if(Int32.Parse(fperiod)==8)
+                {
+                    var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                    int _countrecs =  DB_Records8.Count();
+                    if(_countrecs>0)
+                    {
+                        foreach (var rec_set in DB_Records8)
+                        {
+                            DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                            DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                            string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                            if(periodinmain==periodtxt)
+                            wp_mainrec_fetch=rec_set;
+                        }
+                    }
+
+                }
+                else
+                {
+                    wp_mainrec_fetch=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                }
 
 
                 //delete all related records
                 var records =  _wpMTPRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                if(wp_mainrec_fetch!=null)
+                    records=_wpMTPRepository.GetRecordsByMainRecordId(wp_mainrec_fetch.Transaction_Id);
+                else
+                    records=_wpMTPRepository.GetRecordsByMainRecordId("Null");
+
                 foreach (var record in records)
                 {
                     _wpMTPRepository.Delete(record.Transaction_Id);
@@ -5447,8 +7942,42 @@ namespace AUDANEPAD_Integrated.Controllers
             }
             else
             {
+
+                    //Modified for Period type 8
+                    WP_MainRecord wp_mainrec_fetch=null;
+
+                    if(Int32.Parse(fperiod)==8)
+                    {
+                        var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                        int _countrecs =  DB_Records8.Count();
+                        if(_countrecs>0)
+                        {
+                            foreach (var rec_set in DB_Records8)
+                            {
+                                DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                                DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                                string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                                if(periodinmain==periodtxt)
+                                wp_mainrec_fetch=rec_set;
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        wp_mainrec_fetch=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                    }
                     //delete all related records
                     var records =  _wpMTPRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                    if(wp_mainrec_fetch!=null)
+                        records=_wpMTPRepository.GetRecordsByMainRecordId(wp_mainrec_fetch.Transaction_Id);
+                    else
+                        records=_wpMTPRepository.GetRecordsByMainRecordId("Null");
+
+                    
                     foreach (var record in records)
                     {
                         _wpMTPRepository.Delete(record.Transaction_Id);
@@ -5463,7 +7992,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
         [HttpPost]
-        public ActionResult AddWPMemberStateMultiSelect(string projid, string fyear, string fperiod, string selectkeys, string empid, string dirid, string divid,  string progid)
+        public ActionResult AddWPMemberStateMultiSelect(string projid, string fyear, string fperiod, string selectkeys, string empid, string dirid, string divid,  string progid, string periodtxt)
         {
 
            // WP_MainRecord mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
@@ -5472,8 +8001,34 @@ namespace AUDANEPAD_Integrated.Controllers
             string returnstring="";
 
 
-            WP_MainRecord wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
-            
+          //  WP_MainRecord wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+            WP_MainRecord wp_mainrec_check=null;
+
+            if(Int32.Parse(fperiod)==8)
+            {
+                var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                int _countrecs =  DB_Records8.Count();
+                if(_countrecs>0)
+                {
+                    foreach (var rec_set in DB_Records8)
+                    {
+                        DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                        DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                        string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                        if(periodinmain==periodtxt)
+                            wp_mainrec_check=rec_set;
+                    }
+                }
+
+            }
+            else
+            {
+                wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+            }
+
+
             if(wp_mainrec_check!=null)
             {
                 if(selectkeys!=null)
@@ -5481,7 +8036,7 @@ namespace AUDANEPAD_Integrated.Controllers
                     string[] selectedkeys = selectkeys.Split(',');
 
                     //delete all related records
-                    var records =  _wpCountryScopeRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                    var records =  _wpCountryScopeRepository.GetRecordsByProjectYearPeriodAndMainRecId(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod), wp_mainrec_check.Transaction_Id);
                     foreach (var record in records)
                     {
                         _wpCountryScopeRepository.Delete(record.Transaction_Id);
@@ -5508,7 +8063,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 else
                 {
                     //delete all related records
-                    var records =  _wpCountryScopeRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                    var records =  _wpCountryScopeRepository.GetRecordsByProjectYearPeriodAndMainRecId(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod), wp_mainrec_check.Transaction_Id);
                     foreach (var record in records)
                     {
                         _wpCountryScopeRepository.Delete(record.Transaction_Id);
@@ -5527,6 +8082,284 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
         [HttpPost]
+        public ActionResult AddWPMissionEmployeeMultiSelect_Old(string transid, string wpmainrecid, string wpoutputid, string selectkeys)
+        {
+
+           // WP_MainRecord mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod)); _wpMobilityRepository.Add
+
+
+            string returnstring="";
+            string returnemployee="";
+            WP_Mobility wp_mobility_rec=_wpMobilityRepository.GetRecord(transid);
+            WP_MainRecord wpmainrecord=_wpMainRecordRepository.GetRecord(wpmainrecid);
+
+
+
+
+
+            if(wp_mobility_rec!=null)
+            {
+                if(selectkeys!=null)
+                {
+                    string[] selectedkeys = selectkeys.Split(',');
+
+                    bool allnotexceeded=true;
+
+
+
+                    foreach (string recident in selectedkeys)
+                    {
+                        if(!NotExceededDaysLimit(transid,wpmainrecid,wpoutputid, Int32.Parse(recident)))
+                        {
+                            allnotexceeded=false;  
+                            Employee emp=_employeeRepository.GetEmployee(Int32.Parse(recident));
+                            returnemployee=emp.First_Name+" "+emp.Last_Name;
+                            returnstring="exceededdays";
+
+                
+                        }
+                    }
+
+                    //Now add new selection
+                    if(allnotexceeded)
+                    {
+
+                        //delete all related records GetRecordsByMobilityId
+                        var records =  _wpMobilityInternalTeamRepository.GetRecordsByMobilityId(transid);
+                        foreach (var record in records)
+                        {
+                            _wpMobilityInternalTeamRepository.Delete(record.Transaction_Id);
+                        }
+
+
+                        foreach (string recid in selectedkeys)
+                        {
+                            //Check if Employee has not exceeded the number of mission days for the period
+                           // if(NotExceededDaysLimit(transid,wpmainrecid,wpoutputid, Int32.Parse(recid)))
+                           // {
+                                WP_MobilityInternalTeam rec_to_add = new WP_MobilityInternalTeam
+                                {
+                                    Transaction_Id= Guid.NewGuid().ToString(),
+                                    WPMainRecord_id=wpmainrecid,
+                                    Project_Id=wpmainrecord.Project_Id,
+                                    FiscalYear_Id=wpmainrecord.FiscalYear_Id,
+                                    Period_Id=wpmainrecord.Period_Id,
+                                    WPOutput_Id=wpoutputid,
+                                    WPMobility_id=transid,
+                                    Employee_Id=Int32.Parse(recid),
+                                    PeriodStartDate=wpmainrecord.PeriodStartDate,
+                                    PeriodEndDate=wpmainrecord.PeriodEndDate,
+                                    TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                                };
+                                _wpMobilityInternalTeamRepository.Add(rec_to_add);
+                            //}
+
+                    
+                        }
+                        returnstring="success";
+
+                    } 
+                }
+                else
+                {
+                    //delete all related records
+                    var records =  _wpMobilityInternalTeamRepository.GetRecordsByMobilityId(transid);
+                    foreach (var record in records)
+                    {
+                        _wpMobilityInternalTeamRepository.Delete(record.Transaction_Id);
+                    }
+                }
+                
+            }
+
+
+            return Json(new { rtnmsg = returnstring, rtnemp= returnemployee});
+
+        }
+
+
+        [HttpPost]
+        public ActionResult AddWPMissionEmployeeMultiSelect(string transid, string wpmainrecid, string wpoutputid, string selectkeys)
+        {
+
+           // WP_MainRecord mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod)); _wpMobilityRepository.Add
+
+
+            string returnstring="";
+            string returnemployee="";
+            WP_Mobility wp_mobility_rec=_wpMobilityRepository.GetRecord(transid);
+            WP_MainRecord wpmainrecord=_wpMainRecordRepository.GetRecord(wpmainrecid);
+
+
+
+
+
+            if(wp_mobility_rec!=null)
+            {
+                if(selectkeys!=null)
+                {
+                    string[] selectedkeys = selectkeys.Split(',');
+
+
+
+                    //delete all related records GetRecordsByMobilityId
+                    var records =  _wpMobilityInternalTeamRepository.GetRecordsByMobilityId(transid);
+                    foreach (var record in records)
+                    {
+                        _wpMobilityInternalTeamRepository.Delete(record.Transaction_Id);
+                    }
+
+
+                    foreach (string recid in selectedkeys)
+                    {
+
+                        WP_MobilityInternalTeam rec_to_add = new WP_MobilityInternalTeam
+                        {
+                            Transaction_Id= Guid.NewGuid().ToString(),
+                            WPMainRecord_id=wpmainrecid,
+                            Project_Id=wpmainrecord.Project_Id,
+                            FiscalYear_Id=wpmainrecord.FiscalYear_Id,
+                            Period_Id=wpmainrecord.Period_Id,
+                            WPOutput_Id=wpoutputid,
+                            WPMobility_id=transid,
+                            Employee_Id=Int32.Parse(recid),
+                            PeriodStartDate=wpmainrecord.PeriodStartDate,
+                            PeriodEndDate=wpmainrecord.PeriodEndDate,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+                        _wpMobilityInternalTeamRepository.Add(rec_to_add);
+                
+
+                
+                    }
+                    returnstring="success";
+
+                    
+                }
+                else
+                {
+                    //delete all related records
+                    var records =  _wpMobilityInternalTeamRepository.GetRecordsByMobilityId(transid);
+                    foreach (var record in records)
+                    {
+                        _wpMobilityInternalTeamRepository.Delete(record.Transaction_Id);
+                    }
+
+                    returnstring="empty";
+                }
+                
+            }
+
+
+            return Json(new { rtnmsg = returnstring, rtnemp= returnemployee});
+
+        }
+
+        public bool NotExceededDaysLimit(string mobilityid, string wpmainrecid, string wpoutputid, int empid)
+        {
+            bool rtnval=false;
+
+            int max_month_days=0;
+            int num_of_months=0;
+            int totalnum_of_days_accumulated=0;
+            int totalnum_of_days_allowed=0;
+            int totalnum_of_days_buffer=0;
+
+            int num_of_days=0;
+
+            WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(wpmainrecid);
+            WP_Mobility mobilityrecord=_wpMobilityRepository.GetRecord(mobilityid);
+            WP_MobilityLimit wpmobilitylimit=null;
+
+            //Get max_month_days
+            if(mainrec.Period_Id==8)
+            {
+                wpmobilitylimit=_wpMobilityLimitRepository.GetRecordByEmployeeYearPeriodStartEnd(empid, mainrec.FiscalYear_Id, mainrec.Period_Id, mainrec.PeriodStartDate, mainrec.PeriodEndDate);
+
+                List<MonthAndYear> nummonthobj=GetMonthsInPeriodRange(new DateTime(mainrec.PeriodStartDate.Year,mainrec.PeriodStartDate.Month,mainrec.PeriodStartDate.Day), new DateTime(mainrec.PeriodEndDate.Year,mainrec.PeriodEndDate.Month,mainrec.PeriodEndDate.Day));
+                num_of_months=nummonthobj.Count();
+
+
+                var DB_Records8 =  _wpMobilityInternalTeamRepository.GetRecordsByEmployeeYearPeriodStartEnd(empid, mainrec.FiscalYear_Id, mainrec.Period_Id, mainrec.PeriodStartDate, mainrec.PeriodEndDate);
+                foreach (var recordset in DB_Records8)
+                {
+                    WP_Mobility mobrec=_wpMobilityRepository.GetRecord(recordset.WPMobility_id);
+                    DateTime mstart=new DateTime(mobrec.MobilityStartDate.Year, mobrec.MobilityStartDate.Month, mobrec.MobilityStartDate.Day);
+                    DateTime mend=new DateTime(mobrec.MobilityEndDate.Year, mobrec.MobilityEndDate.Month, mobrec.MobilityEndDate.Day);
+
+                    totalnum_of_days_accumulated=totalnum_of_days_accumulated+(mstart.Date.Subtract(mend.Date).Duration().Days + 1);
+
+                }
+
+            }
+            else
+            {
+                wpmobilitylimit=_wpMobilityLimitRepository.GetRecordByEmployeeYearPeriod(empid, mainrec.FiscalYear_Id, mainrec.Period_Id);
+                if(mainrec.Period_Id==1 || mainrec.Period_Id==2 || mainrec.Period_Id==3 || mainrec.Period_Id==4)
+                    num_of_months=3;
+                else if(mainrec.Period_Id==5 || mainrec.Period_Id==6)
+                    num_of_months=6;
+                else 
+                    num_of_months=12;
+
+                var DB_Records =  _wpMobilityInternalTeamRepository.GetRecordsByEmployeeYearPeriod(empid, mainrec.FiscalYear_Id, mainrec.Period_Id);
+                foreach (var recordset in DB_Records)
+                {
+                    WP_Mobility mobrec=_wpMobilityRepository.GetRecord(recordset.WPMobility_id);
+                    DateTime mstart=new DateTime(mobrec.MobilityStartDate.Year, mobrec.MobilityStartDate.Month, mobrec.MobilityStartDate.Day);
+                    DateTime mend=new DateTime(mobrec.MobilityEndDate.Year, mobrec.MobilityEndDate.Month, mobrec.MobilityEndDate.Day);
+
+                    totalnum_of_days_accumulated=totalnum_of_days_accumulated+(mstart.Date.Subtract(mend.Date).Duration().Days + 1);
+
+                }
+
+            }
+
+            if(wpmobilitylimit!=null)
+            {
+                max_month_days=wpmobilitylimit.MonthlyLimit;
+            }
+            else
+            {
+                Trans_MobilityLimits translkupmoblimit=_transMobilityLimitsRepository.GetFirstOrDefaultRecordSet();
+                max_month_days=_lkupMobilityLimitsRepository.GetRecord(translkupmoblimit.Record_Id).MonthlyLimit;
+            }
+
+
+            DateTime mstart_req=new DateTime(mobilityrecord.MobilityStartDate.Year, mobilityrecord.MobilityStartDate.Month, mobilityrecord.MobilityStartDate.Day);
+            DateTime mend_req=new DateTime(mobilityrecord.MobilityEndDate.Year, mobilityrecord.MobilityEndDate.Month, mobilityrecord.MobilityEndDate.Day);
+
+            num_of_days=mstart_req.Date.Subtract(mend_req.Date).Duration().Days + 1;
+
+            totalnum_of_days_allowed=max_month_days*num_of_months;
+            totalnum_of_days_buffer=totalnum_of_days_allowed-totalnum_of_days_accumulated;
+
+            if(num_of_days<=totalnum_of_days_buffer)
+            {
+                rtnval=true;
+            }
+
+            return rtnval;
+        }
+
+        List<MonthAndYear> GetMonthsInPeriodRange(DateTime date1, DateTime date2)
+        {
+            var monthList = new List<MonthAndYear>();
+
+            while (date1 < date2)
+            {
+                MonthAndYear rec=new MonthAndYear();
+                rec.PMonth=Int32.Parse(date1.ToString("MM"));
+                rec.PYear=Int32.Parse(date1.ToString("yyyy"));
+
+                monthList.Add(rec);
+                date1 = date1.AddMonths(1);
+            }
+
+            return monthList;
+        }
+
+        [HttpPost]
         public ActionResult CheckOutputIndicatorType(string indicatorid)
         {
 
@@ -5535,18 +8368,48 @@ namespace AUDANEPAD_Integrated.Controllers
 
             string returnstring="";
 
-
-            Strategy_OutputIndicators rec=_strategyOutputIndicatorsRepository.GetRecord(Int32.Parse(indicatorid));
-            
-            if(rec!=null && rec.Indicator_Type=="Qualitative")
+            if(indicatorid!=null)
             {
-               
-                returnstring="quanlitative";
+                Strategy_OutputIndicators rec=_strategyOutputIndicatorsRepository.GetRecord(Int32.Parse(indicatorid));
+                
+                if(rec!=null && rec.Indicator_Type=="Qualitative")
+                {
+                
+                    returnstring="quanlitative";
+                }
+                else
+                {
+                    returnstring="quantitative";
+
+                }
             }
-            else
-            {
-                returnstring="quantitative";
 
+            return Json(new { rtnmsg = returnstring });
+
+        }
+        [HttpPost]
+        public ActionResult CheckDirOutputIndicatorType(string indicatorid)
+        {
+
+           // WP_MainRecord mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+
+            string returnstring="";
+
+            if(indicatorid!=null)
+            {
+                Struc_DirDivIndicators rec=_strucDirDivIndicatorsRepository.GetRecord(Int32.Parse(indicatorid));
+                
+                if(rec!=null && rec.Indicator_Type=="Qualitative")
+                {
+                
+                    returnstring="quanlitative";
+                }
+                else
+                {
+                    returnstring="quantitative";
+
+                }
             }
 
             return Json(new { rtnmsg = returnstring });
@@ -5610,31 +8473,48 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
             WP_SAPLink saprec=_wpSAPLinkRepository.GetRecord(sapwbsselect);
-            WP_OutputBudget recbudget=_wpOutputBudgetRepository.GetRecord(transid);
+            WP_Outputs wpoutput_recfetch=_wpOutputsRepository.GetRecord(transid);
 
-            if(saprec.SAP_BudgetAmount<= recbudget.Output_BudgetAmount )
+            var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(wpoutput_recfetch.Transaction_Id);
+            double total_budget=0;
+            foreach (var record in DB_Recs_Activities)
+            {
+                total_budget=total_budget+record.ActivityCost;
+
+            }
+
+            if(saprec.SAP_BudgetAmount< total_budget )
             {
                 returnstring="budgetexceedssapamount";
             }
             else
             {
-                double totalutilization=0;
+                var DB_Recs_Activities_Linked_SAP =  _wpOutputActivitiesRepository.GetRecordsByWPSAPLink_Id(sapwbsselect);
+                double total_use=0;
 
-                var records =  _wpOutputBudgetRepository.GetRecordsBySAPLinkId(sapwbsselect);
-
-                foreach (var record in records)
+                foreach (var record in DB_Recs_Activities_Linked_SAP)
                 {
-                    totalutilization=totalutilization+record.Output_BudgetAmount;
+                    total_use=total_use+record.ActivityCost;
+
                 }
 
-                if(saprec.SAP_BudgetAmount<=totalutilization)
+                if((saprec.SAP_BudgetAmount-total_use)<total_budget)
                 {
                     returnstring="insufficientfunds";
                 }
                 else
                 {
-                    recbudget.WPSAPLink_Id=sapwbsselect;
-                    _wpOutputBudgetRepository.Update(recbudget);
+                    //Update Output with SAP Link
+                    wpoutput_recfetch.WPSAPLink_Id=sapwbsselect;
+                    _wpOutputsRepository.Update(wpoutput_recfetch);
+
+                    //Update Output Activities with SAP Link
+                    foreach (var record in DB_Recs_Activities)
+                    {
+                        record.WPSAPLink_Id=sapwbsselect;
+                        _wpOutputActivitiesRepository.Update(record);
+
+                    }
                     returnstring="success";
                 }
 
@@ -5653,13 +8533,23 @@ namespace AUDANEPAD_Integrated.Controllers
         {
             try
             {
-                WP_OutputBudget recbudget=_wpOutputBudgetRepository.GetRecord(transid);
+                WP_Outputs wpoutput_recfetch=_wpOutputsRepository.GetRecord(transid);
 
-                if (recbudget != null)
+                if (wpoutput_recfetch.WPSAPLink_Id != null)
                 {
-                    recbudget.WPSAPLink_Id=null;
-                    _wpOutputBudgetRepository.Update(recbudget); 
+                    wpoutput_recfetch.WPSAPLink_Id=null;
+                    _wpOutputsRepository.Update(wpoutput_recfetch); 
+
+
+                    var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(wpoutput_recfetch.Transaction_Id);
+                    foreach (var record in DB_Recs_Activities)
+                    {
+                        record.WPSAPLink_Id=null;
+                        _wpOutputActivitiesRepository.Update(record);
+
+                    }
                 }
+
                 return Json(new { rtnmsg = "success" });
             }
             catch (Exception)
@@ -5732,12 +8622,39 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
          [HttpPost]
-        public ActionResult AddWPRECCoverageMultiSelect(string projid, string fyear, string fperiod, string selectkeys, string empid, string dirid, string divid,  string progid)
+        public ActionResult AddWPRECCoverageMultiSelect(string projid, string fyear, string fperiod, string selectkeys, string empid, string dirid, string divid,  string progid, string periodtxt)
         {
 
            // WP_MainRecord mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
             string returnstring="";
-            WP_MainRecord wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+           // WP_MainRecord wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+            WP_MainRecord wp_mainrec_check=null;
+
+            if(Int32.Parse(fperiod)==8)
+            {
+                var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                int _countrecs =  DB_Records8.Count();
+                if(_countrecs>0)
+                {
+                    foreach (var rec_set in DB_Records8)
+                    {
+                        DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                        DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                        string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                        if(periodinmain==periodtxt)
+                            wp_mainrec_check=rec_set;
+                    }
+                }
+
+            }
+            else
+            {
+                wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+            }
+
+
             if(wp_mainrec_check!=null)
             {
                 if(selectkeys!=null)
@@ -5748,7 +8665,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
                     //delete all related records
-                    var records =  _wpRegionScopeRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                    var records =  _wpRegionScopeRepository.GetRecordsByProjectYearPeriodAndMainRecId(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod), wp_mainrec_check.Transaction_Id);
                     foreach (var record in records)
                     {
                         _wpRegionScopeRepository.Delete(record.Transaction_Id);
@@ -5777,7 +8694,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 else
                 {
                         //delete all related records
-                        var records =  _wpRegionScopeRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                        var records =  _wpRegionScopeRepository.GetRecordsByProjectYearPeriodAndMainRecId(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod), wp_mainrec_check.Transaction_Id);
                         foreach (var record in records)
                         {
                             _wpRegionScopeRepository.Delete(record.Transaction_Id);
@@ -5796,13 +8713,38 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddContinentalCoverage(string projid, string fyear, string fperiod, string empid, string contstatus)
+        public ActionResult AddContinentalCoverage(string projid, string fyear, string fperiod, string empid, string contstatus, string periodtxt)
         {
 
                 string returnstring="";
 
 
-                WP_MainRecord wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+               // WP_MainRecord wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                WP_MainRecord wp_mainrec_check=null;
+
+                if(Int32.Parse(fperiod)==8)
+                {
+                    var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                    int _countrecs =  DB_Records8.Count();
+                    if(_countrecs>0)
+                    {
+                        foreach (var rec_set in DB_Records8)
+                        {
+                            DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                            DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                            string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                            if(periodinmain==periodtxt)
+                                wp_mainrec_check=rec_set;
+                        }
+                    }
+
+                }
+                else
+                {
+                    wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                }
 
                 if(wp_mainrec_check!=null)
                 {
@@ -5838,7 +8780,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
         [HttpPost]
-        public ActionResult AddWPAUDAPriorities(string projid, string fyear, string fperiod, string selectkeys, string empid, string dirid, string divid,  string progid)
+        public ActionResult AddWPAUDAPriorities(string projid, string fyear, string fperiod, string selectkeys, string empid, string dirid, string divid,  string progid, string periodtxt)
         {
 
            // WP_MainRecord mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
@@ -5849,7 +8791,31 @@ namespace AUDANEPAD_Integrated.Controllers
                 string[] selectedkeys = selectkeys.Split(',');
 
 
-                WP_MainRecord wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                WP_MainRecord wp_mainrec_check=null;
+
+                if(Int32.Parse(fperiod)==8)
+                {
+                    var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                    int _countrecs =  DB_Records8.Count();
+                    if(_countrecs>0)
+                    {
+                        foreach (var rec_set in DB_Records8)
+                        {
+                            DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                            DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                            string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                            if(periodinmain==periodtxt)
+                                wp_mainrec_check=rec_set;
+                        }
+                    }
+
+                }
+                else
+                {
+                    wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                }
 
                 if(wp_mainrec_check==null)
                 {
@@ -5868,7 +8834,36 @@ namespace AUDANEPAD_Integrated.Controllers
                         TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
                     };
 
-                    WP_DispatchCycle wpcycle=_wpDispatchCycleRepository.GetRecordByYearAndPeriod(Int32.Parse(fyear), Int32.Parse(fperiod));
+                    WP_DispatchCycle wpcycle=null;
+
+                    if(Int32.Parse(fperiod)==8)
+                    {
+                        var DB_Records8 =_wpDispatchCycleRepository.GetRecordsByYearAndPeriodRecs(Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                        int _countrecs =  DB_Records8.Count();
+                        if(_countrecs>0)
+                        {
+                            foreach (var rec_set in DB_Records8)
+                            {
+                                DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                                DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                                string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                                if(periodinmain==periodtxt)
+                                wpcycle=rec_set;
+                            }
+
+                            if(wpcycle!=null)
+                            {
+                                mainrec_to_add.PeriodStartDate=wpcycle.PeriodStartDate;
+                                mainrec_to_add.PeriodEndDate=wpcycle.PeriodEndDate;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        wpcycle=_wpDispatchCycleRepository.GetRecordByYearAndPeriod(Int32.Parse(fyear), Int32.Parse(fperiod));
+                    }
 
                     if(wpcycle.LinkToSAPExecution==true)
                         mainrec_to_add.LinkToSAPExecution=true;
@@ -5877,7 +8872,32 @@ namespace AUDANEPAD_Integrated.Controllers
 
                     _wpMainRecordRepository.Add(mainrec_to_add);
 
-                    WP_MainRecord wp_mainrec_fetch1=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                    //Modified for Period type 8
+                    WP_MainRecord wp_mainrec_fetch1=null;
+
+                    if(Int32.Parse(fperiod)==8)
+                    {
+                        var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                        int _countrecs =  DB_Records8.Count();
+                        if(_countrecs>0)
+                        {
+                            foreach (var rec_set in DB_Records8)
+                            {
+                                DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                                DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                                string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                                if(periodinmain==periodtxt)
+                                wp_mainrec_fetch1=rec_set;
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        wp_mainrec_fetch1=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                    }
 
                     //Save the Status
                     WP_ApprovalStatus wpstatus_to_add = new WP_ApprovalStatus
@@ -5909,11 +8929,40 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 }
 
-                WP_MainRecord wp_mainrec_fetch=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                //Modified for Period type 8
+                WP_MainRecord wp_mainrec_fetch=null;
 
+                if(Int32.Parse(fperiod)==8)
+                {
+                    var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
 
+                    int _countrecs =  DB_Records8.Count();
+                    if(_countrecs>0)
+                    {
+                        foreach (var rec_set in DB_Records8)
+                        {
+                            DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                            DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                            string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                            if(periodinmain==periodtxt)
+                            wp_mainrec_fetch=rec_set;
+                        }
+                    }
+
+                }
+                else
+                {
+                    wp_mainrec_fetch=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                }
                 //delete all related records
                 var records =  _wpAUDAPriorityRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                if(wp_mainrec_fetch!=null)
+                    records=_wpAUDAPriorityRepository.GetRecordsByMainRecordId(wp_mainrec_fetch.Transaction_Id);
+                else
+                    records=_wpAUDAPriorityRepository.GetRecordsByMainRecordId("Null");
+
                 foreach (var record in records)
                 {
                     _wpAUDAPriorityRepository.Delete(record.Transaction_Id);
@@ -5942,8 +8991,39 @@ namespace AUDANEPAD_Integrated.Controllers
             }
             else
             {
+                    //Modified for Period type 8
+                    WP_MainRecord wp_mainrec_fetch=null;
+
+                    if(Int32.Parse(fperiod)==8)
+                    {
+                        var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                        int _countrecs =  DB_Records8.Count();
+                        if(_countrecs>0)
+                        {
+                            foreach (var rec_set in DB_Records8)
+                            {
+                                DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                                DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                                string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                                if(periodinmain==periodtxt)
+                                wp_mainrec_fetch=rec_set;
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        wp_mainrec_fetch=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                    }
                     //delete all related records
                     var records =  _wpAUDAPriorityRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+                    if(wp_mainrec_fetch!=null)
+                        records=_wpAUDAPriorityRepository.GetRecordsByMainRecordId(wp_mainrec_fetch.Transaction_Id);
+                    else
+                        records=_wpAUDAPriorityRepository.GetRecordsByMainRecordId("Null");
+
                     foreach (var record in records)
                     {
                         _wpAUDAPriorityRepository.Delete(record.Transaction_Id);
@@ -5959,10 +9039,35 @@ namespace AUDANEPAD_Integrated.Controllers
         
 
         [HttpPost]
-        public ActionResult CheckMainWPRecordStatus(string projid, string fyear, string fperiod, string empid, string dirid, string divid,  string progid)
+        public ActionResult CheckMainWPRecordStatus(string projid, string fyear, string fperiod, string empid, string dirid, string divid,  string progid, string periodtxt)
         {
 
-            WP_MainRecord wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+            //WP_MainRecord wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+            WP_MainRecord wp_mainrec_check=null;
+
+            if(Int32.Parse(fperiod)==8)
+            {
+                 var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                int _countrecs =  DB_Records8.Count();
+                if(_countrecs>0)
+                {
+                    foreach (var rec in DB_Records8)
+                    {
+                        DateTime pstart=new DateTime(rec.PeriodStartDate.Year, rec.PeriodStartDate.Month, rec.PeriodStartDate.Day);
+                        DateTime pend=new DateTime(rec.PeriodEndDate.Year, rec.PeriodEndDate.Month, rec.PeriodEndDate.Day);
+                        string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                        if(periodinmain==periodtxt)
+                           wp_mainrec_check=rec;
+                    }
+                }
+
+            }
+            else
+            {
+               wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+            }
 
             string rtnmsg="";
 
@@ -6394,10 +9499,10 @@ namespace AUDANEPAD_Integrated.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public JsonResult GetWPStrategicPriorities(string projid, string fyear, string fperiod)
+        public JsonResult GetWPStrategicPriorities(string projid, string fyear, string fperiod, string mainrecid)
         {
           
-            var recs=_wpAUDAPriorityRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid),Int32.Parse(fyear),Int32.Parse(fperiod)).ToList();
+            var recs=_wpAUDAPriorityRepository.GetRecordsByProjectYearPeriodAndMainRecId(Int32.Parse(projid),Int32.Parse(fyear),Int32.Parse(fperiod), mainrecid).ToList();
             int _count = recs.Count();
 
             List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
@@ -6417,6 +9522,50 @@ namespace AUDANEPAD_Integrated.Controllers
                     collection_recs.Add(srec);
                 }
             }
+
+            return Json(collection_recs.ToList());
+
+        }
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetDirectorateLevelTransIndicators(string empid)
+        {
+          
+            int dirid=_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(Int32.Parse(empid)).Directorate_Id;
+
+           var DB_RecsDivs =  _strucDivStaffMappingRepository.GetAllRecordsByEmployeeAndDirectorate(Int32.Parse(empid),dirid).ToList();
+
+            int _countDivs = DB_RecsDivs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+            if (empid != null)
+            {
+                if (_countDivs > 0)
+                {
+                    foreach (var div in DB_RecsDivs)
+                    {
+                        var DB_RecsIndicators = _transStrucDirDivIndicatorsRepository.GetAllRecordsByDivision(div.Division_Id).ToList();
+
+                        int _countIndicators = DB_RecsIndicators.Count();
+                        if (_countIndicators > 0)
+                        {
+                            foreach (var rec in DB_RecsIndicators)
+                            {
+                    
+                                DropDownListViewModel srec = new DropDownListViewModel
+                                {
+                                        DropDown_IntId = rec.Record_Id,
+                                        DropDown_Name = rec.Record_Name
+                                };
+                        // EmployeeDropDownViewModel me = DB_Employees[_count];
+                                collection_recs.Add(srec);
+                            }
+                        }
+                    }
+                }
+            }
+            
 
             return Json(collection_recs.ToList());
 
@@ -6443,6 +9592,35 @@ namespace AUDANEPAD_Integrated.Controllers
                     {
                             DropDown_StringId = rec.Transaction_Id,
                             DropDown_Name = _wpSAPLinkRepository.GetRecord(rec.Transaction_Id).SAP_WBS+"-"+_wpSAPLinkRepository.GetRecord(rec.Transaction_Id).SAP_Description
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+                }
+            }
+
+            return Json(collection_recs.ToList());
+
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetAllOutputsForMainRecord(string mainrecid)
+        {
+            var recs=_wpOutputsRepository.GetRecordsByMainRecordId(mainrecid).ToList();
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                   
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_StringId = rec.Transaction_Id,
+                            DropDown_Name = rec.Output
                     };
                     // EmployeeDropDownViewModel me = DB_Employees[_count];
                     collection_recs.Add(srec);
@@ -6559,12 +9737,20 @@ namespace AUDANEPAD_Integrated.Controllers
             {
                 foreach (var rec in recs)
                 {
-                   
                     DropDownListViewModel srec = new DropDownListViewModel
                     {
-                            DropDown_IntId = rec.Period_Id,
-                            DropDown_Name = _lkupPeriodRepository.GetRecord(rec.Period_Id).Record_Name
+                            DropDown_IntId = rec.Period_Id
                     };
+                    if(rec.Period_Id==8)
+                    {
+                        DateTime pstart=new DateTime(rec.PeriodStartDate.Year, rec.PeriodStartDate.Month, rec.PeriodStartDate.Day);
+                        DateTime pend=new DateTime(rec.PeriodEndDate.Year, rec.PeriodEndDate.Month, rec.PeriodEndDate.Day);
+                        srec.DropDown_Name = pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy");      
+                    }
+                    else
+                    {
+                        srec.DropDown_Name = _lkupPeriodRepository.GetRecord(rec.Period_Id).Record_Name;  
+                    }
                     // EmployeeDropDownViewModel me = DB_Employees[_count];
                     collection_recs.Add(srec);
                 }
@@ -6701,6 +9887,39 @@ namespace AUDANEPAD_Integrated.Controllers
 
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetIndicatorType()
+        {
+
+
+           var recs = _transIndicatorTypeRepository.GetAllRecords().ToList();
+
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                   
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = rec.Record_Id,
+                            DropDown_Name = _lkupIndicatorTypeRepository.GetRecord(rec.Record_Id).Record_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+                }
+            }
+
+            return Json(collection_recs.ToList());
+
+        }
+
 
         [HttpGet]
         [AllowAnonymous]
@@ -6765,6 +9984,42 @@ namespace AUDANEPAD_Integrated.Controllers
                         // EmployeeDropDownViewModel me = DB_Employees[_count];
                         collection_recs.Add(srec);
                    }
+                }
+            }
+
+            return Json(collection_recs.ToList());
+
+        }
+
+         [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetAllTransCountries()
+        {
+
+
+           var recs =  _transCountryRepository.GetAllTrans_Country().ToList();
+
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                    LkUp_Country fetched_rec=_lkupCountryRepository.GetCountry(rec.Country_Id);
+
+
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = rec.Country_Id,
+                            DropDown_Name = _lkupCountryRepository.GetCountry(rec.Country_Id).Country_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+
                 }
             }
 

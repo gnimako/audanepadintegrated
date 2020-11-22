@@ -840,6 +840,7 @@ p {
 .hero-section {
   padding-top: 275px;
   overflow: hidden;
+  /* height:100%;*/
 }
 
 .home-img {

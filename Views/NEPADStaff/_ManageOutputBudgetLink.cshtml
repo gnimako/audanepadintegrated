@@ -57,7 +57,7 @@
                                             .Resizable(r=>r.Columns(true))
                                             .DataSource(dataSource => dataSource
                                                 .Ajax()
-                                                .Read(read => read.Action("WP_OutputsBudgetLink_Read", "Admin", new {transid=Model.Transaction_IdOBVM}))
+                                                .Read(read => read.Action("WP_OutputsBudgetLink_Read", "Admin", new {transid=Model.WPOutput_IdOBVM}))
                                                 .Model(model => 
                                                     {
                                                         model.Id(p => p.Transaction_IdSAPVM);

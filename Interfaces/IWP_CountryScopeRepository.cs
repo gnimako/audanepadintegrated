@@ -12,6 +12,7 @@ namespace AUDANEPAD_Integrated.Interfaces
 		IEnumerable<WP_CountryScope> GetAllRecords();
 
         IEnumerable<WP_CountryScope>  GetRecordsByProjectYearAndPeriod (int projectid, int year, int period);
+        IEnumerable<WP_CountryScope>  GetRecordsByProjectYearPeriodAndMainRecId (int projectid, int year, int period, string mainrecid);
 
         WP_CountryScope  GetRecordsByProjectYearPeriodAndCountry (int projectid, int year, int period, int country);
 

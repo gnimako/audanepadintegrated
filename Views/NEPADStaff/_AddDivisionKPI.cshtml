@@ -1,0 +1,183 @@
+
+
+
+
+@model DivisionKPIsViewModel
+
+<form id="addform">
+
+    <input hidden asp-for="Employee_Id" class="k-textbox" style="width:100%" value="@Model.Employee_Id">
+    <div class="form-body" style="padding: 1.25rem;">
+        <h5 style="color:#807878"> Select Division </h5>
+        @(Html.Kendo().DropDownList()
+            .Name("Division_Ident")
+            .HtmlAttributes(new { style = "width:100%" })
+            .OptionLabel("Select Division...")
+            .DataTextField("DropDown_Name")
+            .DataValueField("DropDown_IntId")
+            .DataSource(source =>
+            {
+                source.Read(read =>
+                {
+                    read.Action("GetMappedDivisionsByEmployeeAndDirectorate", "Admin", new { empid = @Model.Employee_Id});
+                });
+            })
+            // .SelectedIndex(Model.Directorate_Id)
+        )
+        <br />
+        <br />
+
+
+
+        <h5 style="color:#807878"> Indicator </h5>
+        @Html.TextAreaFor(model => model.Record_Name, new { @class = "k-textbox", style = "width: 100%;", value="", rows="3"})
+        <br />
+        <br />
+
+        <h5 style="color:#807878"> Type of Indicator</h5>
+        @(Html.Kendo().DropDownList()
+            .Name("Indicator_Type_Ident")
+            .HtmlAttributes(new { style = "width:100%" })
+            .OptionLabel("Select Type...")
+            .DataTextField("DropDown_Name")
+            .DataValueField("DropDown_IntId")
+            .DataSource(source =>
+            {
+                source.Read(read =>
+                {
+                    read.Action("GetIndicatorType", "Admin");
+                });
+            })
+            // .SelectedIndex(Model.Directorate_Id)
+        )
+        <br />
+        <br />
+        <div id="targetDivStaffa" class="rssedStaffa">
+        </div>
+        <br />
+        <br />
+        <div style="align-content:center; text-align:center">
+            <a class="k-button" id="btnSubmita">
+                <span class="k-icon k-i-save"></span> Save
+            </a>
+
+            <a class="k-button" id="btnCloseStaffa">
+                <span class="k-icon k-i-cancel"></span> Close
+            </a>
+        </div>
+
+    </div>
+
+
+
+
+
+</form>
+
+
+
+
+
+
+
+
+<script>
+
+
+
+    
+$("#btnCloseStaffa").click(function () {
+    $(".k-window-content").each(function () {
+                $(this).data("kendoWindow").close();
+            });
+});
+
+
+
+$("#btnSubmita").click(function () {
+    var divid = $("#Division_Id").val();  
+    var indicator_txt = $("#Record_Name").val();  
+    var indicator_type = $("#Indicator_Type_Ident").val();  
+    var recid = $("#Employee_Id").val();  
+
+    if(divid === "" && typeof divid === "string")
+    {
+        $('#targetDivStaffa').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select division. </span>').appendTo('.rssedStaffa');
+
+    }
+    else if (indicator_txt === "" && typeof indicator_txt === "string")
+    {
+        $('#targetDivStaffa').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">Please provide the text for the indicator. </span>').appendTo('.rssedStaffa');
+    }
+    else if (indicator_type === "" && typeof indicator_type === "string")
+    {
+        $('#targetDivStaffa').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">Selection : Please select the type of indicator.  </span>').appendTo('.rssedStaffa');
+    }
+    else{
+        $.ajax({
+            type: "POST",
+            url: '/Admin/AddDivisionKPI',     //your action
+            data: $('#addform').serialize(),   //your form name.it takes all the values of model
+            dataType: 'json',
+            success: function (result) {
+                var response = result.rtnmsg;
+
+                if (response == "success") {
+                            $('#targetDivStaffa').empty();
+                            $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Indicator Saved Successfully. </span>').appendTo('.rssedStaffa');
+
+                             
+                            var grid = $("#gridkpis").data("kendoGrid"); 
+
+                            grid.dataSource.transport.options.read.url = "/Admin/DivisionTransKPIs_Read/?recid=" + recid;
+                            grid.dataSource.read();
+                            grid.refresh();
+
+                }
+                else if (response == "pkerror") {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to Save. Indicator Already Exist.  Please use different options </span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
+                else if (response == "createerror") {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to save indicator</span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
+                else if (response == "doesnotexist") {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">No Record: Indicator does not exist</span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
+                else {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
+
+            },
+            error: function (data) {
+                    $('#targetDivStaffa').empty();
+                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffa');
+                    //$('#targetDivStaffa').empty();
+            }
+        })
+    }
+    
+        return false;
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+

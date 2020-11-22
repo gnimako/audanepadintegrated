@@ -85,9 +85,17 @@
               "target": "Package",
               "version": "[1.1.1, )"
             },
+            "System.Web.Http": {
+              "target": "Package",
+              "version": "[4.0.0, )"
+            },
             "Telerik.UI.for.AspNet.Core.Trial": {
               "target": "Package",
               "version": "[2020.2.513, )"
+            },
+            "itext7": {
+              "target": "Package",
+              "version": "[7.1.12, )"
             }
           },
           "imports": [

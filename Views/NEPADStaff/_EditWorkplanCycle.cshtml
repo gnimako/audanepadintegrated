@@ -15,6 +15,8 @@
 
 
         <br />
+        <br />
+
  
         <label style="color: #1b406c;">Period:  </label>
         &nbsp; &nbsp;
@@ -22,7 +24,8 @@
  
         <br />
         <br />
-        <br />
+
+
 
         <label>Activate Workplan Cycle? </label>
         &nbsp; &nbsp;
@@ -34,7 +37,7 @@
 
         <br />
         <br />
-        <br />
+
 
         <label>Link Workplan Cycle to Budget Lines Loaded on SAP? </label>
         &nbsp; &nbsp;
@@ -46,12 +49,54 @@
 
         <br />
         <br />
+
+    <label>Add new Monthly Mobility Limit for an employee, if any </label>
+     <br />
+        @(Html.Kendo().Grid<WP_MobilityLimitViewModel>()
+                .Name("grid_wpmobilitylimit")
+                .Columns(columns =>
+                {
+                    columns.Bound(c => c.Transaction_IdVM).Hidden();
+                    columns.Bound(c => c.WPCycle_idVM).Hidden();
+                    //columns.Bound(c => c.Employee_IdVM).Title("Employee");   
+                    columns.Bound(c => c.Category).ClientTemplate("#=Category.CategoryName#").Title("Employee").Width(300);
+                    columns.Bound(c => c.MonthlyLimitVM).Title("Limit").Width(80);                                          
+
+                    columns.Command(command => { command.Edit().Text(" Edit").IconClass("k-icon k-i-track-changes"); });
+                    columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
+
+                })
+                .ToolBar(toolbar => toolbar.Create().Text(" Add a Limit").IconClass("k-icon k-i-plus-outline"))
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                .Resizable(r=>r.Columns(true))
+                .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .Model(model =>
+                    {
+                        model.Id(p => p.Transaction_IdVM);
+                        model.Field(p => p.Transaction_IdVM).Editable(false);
+                        model.Field(p => p.Category).DefaultValue(
+                            ViewData["defaultCategory"] as CategoryViewModel);
+                    })
+                    .Read(read => read.Action("WP_MobilityLimit_Read", "Admin", new {wpcycleid=Model.Transaction_Id}))
+                    .Model(model => 
+                        {
+                            model.Id(p => p.Transaction_IdVM);
+                            //model.Field(field => field.LookUp_Status).Editable(false);
+                        })
+                    .Create(create => create.Action("WP_MobilityLimit_Create", "Admin", new {wpcycleid=Model.Transaction_Id}))
+                    .Update(update => update.Action("WP_MobilityLimit_Update", "Admin", new {wpcycleid=Model.Transaction_Id}))
+                    .Destroy(destroy => destroy.Action("WP_MobilityLimit_Delete", "Admin"))
+                   // .PageSize(20)
+                    .Events(events => events.Error("error_handler")
+                                            .RequestEnd("onRequestEndMobilityLimit"))
+                    
+                )
+        )
+
+        <br />
         <br />
 
-
-
-
-        <br />
         <div id="targetDivStaffa" class="rssedStaffa">
         </div>
         <br />
@@ -217,7 +262,24 @@
 
 </style>
 
+<script type="text/javascript">
+    function error_handler(e) {    
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function() {
+                        message += this + "\n";
+                    });
+                }
+            });        
+            alert(message);
+        }
+    }
 
+
+    
+</script>
 
 
 <script>$("#btnCloseStaffa").click(function () {

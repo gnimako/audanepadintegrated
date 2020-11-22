@@ -81,9 +81,12 @@
                         <div class="row m-0">
                             <div class="col-md-4 p-4 bg-img">
                                 <h2 class="title">AUDA-NEPAD Integrated Planning System</h2>
-                                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Asperiores natus laboriosam fugit, consequatur.
+                                <p>This is an integrated data platform for planning and reporting AUDA-NEPAD’s delivering on its mandate and strategic plan.  
+                                    The goal of the strategic plan is to accelerate the integration of African economies, improve development 
+                                    results and ultimately deliver enhanced quality of life for all Africans. The system unifies the assessment of AUDA-NEPAD programmatic performance by providing the tools and 
+                                    instruments for capturing, monitoring and assessing the extent to which project/programme results are contributing to strategic priorities.
                                 </p>
-                                <p class="mb-4">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Exercitationem odio amet eos dolore suscipit placeat.</p>
+                                @* <p class="mb-4">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Exercitationem odio amet eos dolore suscipit placeat.</p> *@
                                 <button class="btn btn-lg btn-rounded btn-outline-warning">Learn More</button>
                             </div>
                             <div class="col-md-4 p-4">
@@ -227,12 +230,6 @@
                     <li class="nav-item"><a class="nav-item-hold" asp-controller="nepadstaff" asp-action="index"><i class="nav-icon i-Shop-4"></i><span class="nav-text">Dashboard</span></a>
                         <div class="triangle"></div>
                     </li>
-                    <li class="nav-item" data-item="workplans"><a class="nav-item-hold" href="#"><i class="nav-icon i-Folders"></i><span class="nav-text">Workplans</span></a>
-                        <div class="triangle"></div>
-                    </li>
-                    <li class="nav-item"><a class="nav-item-hold" href="#"><i class="nav-icon i-Bar-Chart"></i><span class="nav-text">Reporting</span></a>
-                        <div class="triangle"></div>
-                    </li>
                     <li class="nav-item" data-item="widgets">
                         <a class="nav-item-hold" href="#">
                             <span class="badge badge-primary" style="position: absolute; border-radius: 10px;">3</span>
@@ -241,7 +238,15 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
-                    <li class="nav-item" data-item="sessions"><a class="nav-item-hold" href="#"><i class="nav-icon i-Files"></i><span class="nav-text">Programmes</span></a>
+                    <li class="nav-item" data-item="workplans"><a class="nav-item-hold" href="#"><i class="nav-icon i-Folders"></i><span class="nav-text">Workplans</span></a>
+                        <div class="triangle"></div>
+                    </li>
+                    <li class="nav-item"><a class="nav-item-hold" href="#"><i class="nav-icon i-Bar-Chart"></i><span class="nav-text">Reporting</span></a>
+                        <div class="triangle"></div>
+                    </li>
+
+
+                    <li class="nav-item" data-item="department"><a class="nav-item-hold" href="#"><i class="nav-icon i-Building"></i><span class="nav-text">Department</span></a>
                         <div class="triangle"></div>
                     </li>
 
@@ -261,11 +266,10 @@
             <div class="sidebar-left-secondary rtl-ps-none" data-perfect-scrollbar="" data-suppress-scroll-x="true">
        
                 <ul class="childNav" data-parent="workplans">
-                    <li class="nav-item"><a asp-controller="nepadstaff" asp-action="workplan"><i class="nav-icon i-Management"></i><span class="item-name">Manage Workplans</span></a></li>
-                    <li class="nav-item"><a href="#"><i class="nav-icon i-Split-Four-Square-Window"></i><span class="item-name">Preview Workplans</span></a></li>
-                    <li class="nav-item"><a href="#"><i class="nav-icon i-Arrow-Right-in-Circle"></i><span class="item-name">Submit Workplan</span></a></li>
-                    <li class="nav-item"><a href="#"><i class="nav-icon i-File-Edit"></i><span class="item-name">Reviews</span></a></li>
-                    <li class="nav-item"><a href="#"><i class="nav-icon i-Big-Data"></i><span class="item-name">Archives</span></a></li>
+                    <li class="nav-item"><a asp-controller="nepadstaff" asp-action="workplan"><i class="nav-icon i-Management"></i><span class="item-name">New Workplan</span></a></li>
+                    <li class="nav-item"><a asp-controller="nepadstaff" asp-action="workplandraftlist"><i class="nav-icon i-Edit"></i><span class="item-name">Draft Workplans</span></a></li>
+                    <li class="nav-item"><a href="#"><i class="nav-icon i-Yes"></i><span class="item-name">Approved Workplans</span></a></li>
+                    <li class="nav-item"><a href="#"><i class="nav-icon i-Lock-2"></i><span class="item-name">Closed Workplans</span></a></li>
                 </ul>
 
                 <ul class="childNav" data-parent="widgets">
@@ -275,17 +279,21 @@
                     <li class="nav-item"><a href="widget-app.html"><i class="nav-icon i-Receipt-4"></i><span class="item-name">Widget App <span class="ml-2 badge badge-pill badge-danger"> New</span></span></a></li>
                     <li class="nav-item"><a href="weather-card.html"><i class="nav-icon i-Receipt-4"></i><span class="item-name">Weather App <span class="ml-2 badge badge-pill badge-danger"> New</span></span></a></li>
                 </ul>
-                
-                <ul class="childNav" data-parent="sessions">
-                    <li class="nav-item"><a href="../sessions/signin.html"><i class="nav-icon i-Checked-User"></i><span class="item-name">Sign in</span></a></li>
-                    <li class="nav-item"><a href="../sessions/signup.html"><i class="nav-icon i-Add-User"></i><span class="item-name">Sign up</span></a></li>
-                    <li class="nav-item"><a href="../sessions/forgot.html"><i class="nav-icon i-Find-User"></i><span class="item-name">Forgot</span></a></li>
+            
+
+                <ul class="childNav" data-parent="department">
+                    <li class="nav-item"><a href="../sessions/signin.html"><i class="nav-icon i-File-Edit"></i><span class="item-name">Manage Projects</span></a></li>
+                    <li class="nav-item"><a href="../sessions/signup.html"><i class="nav-icon i-Files"></i><span class="item-name">Programmes</span></a></li>
+                     <li class="nav-item"><a asp-controller="nepadstaff" asp-action="divisionkpis"><i class="nav-icon i-Bar-Chart-3"></i><span class="item-name">Manage KPIs</span></a></li>
+                    @* <li class="nav-item"><a asp-controller="nepadstaff" asp-action="divisionkpis"><i class="nav-icon i-Bar-Chart-3"></i><span class="item-name">Manage KPIs</span></a></li> *@
                 </ul>
 
                 <ul class="childNav" data-parent="pipd">
                     <li class="nav-item"><a asp-controller="nepadstaff" asp-action="workplancycle"><i class="nav-icon i-Blinklist"></i><span class="item-name">Workplan Cycles</span></a></li>
                      <li class="nav-item"><a asp-controller="nepadstaff" asp-action="mtppriortymapping"><i class="nav-icon i-Link-2"></i><span class="item-name">MTP Mappings</span></a></li>
                 </ul>
+
+                
 
             </div>
             <div class="sidebar-overlay"></div>

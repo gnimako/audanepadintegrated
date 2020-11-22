@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Extensions; 
 using Microsoft.AspNetCore.Identity;
 using AUDANEPAD_Integrated.Models;
 using AUDANEPAD_Integrated.ViewModels;
