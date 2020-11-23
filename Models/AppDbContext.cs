@@ -110,6 +110,7 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<WP_CountryScope> WP_CountryScope { get; set; }
         public DbSet<WP_Outputs> WP_Outputs { get; set; }
         public DbSet<WP_OutputIndicators> WP_OutputIndicators { get; set; }
+        public DbSet<WP_OutcomeIndicators> WP_OutcomeIndicators { get; set; }
         public DbSet<WP_OutputActivities> WP_OutputActivities { get; set; }
         public DbSet<WP_SAPLink> WP_SAPLink { get; set; }
         public DbSet<WP_OutputBudget> WP_OutputBudget { get; set; }
@@ -540,6 +541,10 @@ namespace AUDANEPAD_Integrated.Models
             .HasConversion(localDateConverter);
 
             modelBuilder.Entity<WP_OutputIndicators>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_OutcomeIndicators>()
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
 

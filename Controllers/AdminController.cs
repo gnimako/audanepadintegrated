@@ -133,6 +133,7 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly IWP_RegionScopeRepository _wpRegionScopeRepository;
         private readonly IWP_CountryScopeRepository _wpCountryScopeRepository ;
         private readonly IWP_OutputsRepository _wpOutputsRepository ;
+        private readonly IWP_OutcomeIndicatorsRepository _wpOutcomeIndicatorsRepository ;
         private readonly IWP_OutputIndicatorsRepository _wpOutputIndicatorsRepository ;
         private readonly IWP_OutputActivitiesRepository _wpOutputActivitiesRepository ;
         private readonly IWP_SAPLinkRepository _wpSAPLinkRepository  ;
@@ -239,6 +240,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 IWP_RegionScopeRepository wpRegionScopeRepository,
                                 IWP_CountryScopeRepository wpCountryScopeRepository,
                                 IWP_OutputsRepository wpOutputsRepository,
+                                IWP_OutcomeIndicatorsRepository wpOutcomeIndicatorsRepository,
                                 IWP_OutputIndicatorsRepository wpOutputIndicatorsRepository,
                                 IWP_OutputActivitiesRepository wpOutputActivitiesRepository,
                                 IWP_SAPLinkRepository wpSAPLinkRepository,
@@ -340,6 +342,7 @@ namespace AUDANEPAD_Integrated.Controllers
             _wpRegionScopeRepository=wpRegionScopeRepository;
             _wpCountryScopeRepository=wpCountryScopeRepository;
             _wpOutputsRepository=wpOutputsRepository;
+            _wpOutcomeIndicatorsRepository=wpOutcomeIndicatorsRepository;
             _wpOutputIndicatorsRepository=wpOutputIndicatorsRepository;
             _wpOutputActivitiesRepository=wpOutputActivitiesRepository;
             _wpSAPLinkRepository=wpSAPLinkRepository;
@@ -523,6 +526,118 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
         public async Task<ActionResult> ManageStrucDirectorate()
+        {
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+
+
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            // DateTime test = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day);
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                // DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank,
+                ExistingPhotoPath = employee.PhotoPath
+
+            };
+
+
+
+            return View(emp_view);
+
+        }
+
+        public async Task<ActionResult> ManageLkUpProjects()
+        {
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+
+
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            // DateTime test = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day);
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                // DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank,
+                ExistingPhotoPath = employee.PhotoPath
+
+            };
+
+
+
+            return View(emp_view);
+
+        }
+
+        public async Task<ActionResult> ManageLkUpProgrammes()
         {
 
             var user = await userManager.GetUserAsync(HttpContext.User);
@@ -803,6 +918,62 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
         public async Task<ActionResult> StaffDivisionMapping()
+        {
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+
+
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            // DateTime test = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day);
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                // DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank,
+                ExistingPhotoPath = employee.PhotoPath
+
+            };
+
+
+
+            return View(emp_view);
+
+        }
+
+        public async Task<ActionResult> ProjProgMapping()
         {
 
             var user = await userManager.GetUserAsync(HttpContext.User);
@@ -2239,6 +2410,164 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
 
+
+        [HttpPost]
+        public async Task<ActionResult> InitializeForFirstUse()
+        {
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            try
+            {
+
+                //Delete All WP_DispatchCycle
+                var DB_Recs_WP_DispatchCycle =  _wpDispatchCycleRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_DispatchCycle)
+                {
+                    _wpDispatchCycleRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete All WP_MainRecord
+                var DB_Recs_WP_MainRecord =  _wpMainRecordRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_MainRecord)
+                {
+                    _wpMainRecordRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete All WP_Outcomes
+                var DB_Recs_WP_Outcomes =  _wpOutcomesRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_Outcomes)
+                {
+                    _wpOutcomesRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete All WP_MTP
+                var DB_Recs_WP_MTP =  _wpMTPRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_MTP)
+                {
+                    _wpMTPRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete All WP_AUDAPriority
+                var DB_Recs_WP_AUDAPriority =  _wpAUDAPriorityRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_AUDAPriority)
+                {
+                    _wpAUDAPriorityRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete All WP_ApprovalStatus
+                var DB_Recs_WP_ApprovalStatus =  _wpApprovalStatusRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_ApprovalStatus)
+                {
+                    _wpApprovalStatusRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete All WP_RegionScope
+                var DB_Recs_WP_RegionScope =  _wpRegionScopeRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_RegionScope)
+                {
+                    _wpRegionScopeRepository.Delete(recordset.Transaction_Id);
+                }
+
+
+                //Delete All WP_CountryScope
+                var DB_Recs_WP_CountryScope =  _wpCountryScopeRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_CountryScope)
+                {
+                    _wpCountryScopeRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete All WP_Outputs
+                var DB_Recs_WP_Outputs =  _wpOutputsRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_Outputs)
+                {
+                    _wpOutputsRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete All WP_OutputIndicators
+                var DB_Recs_WP_OutputIndicators =  _wpOutputIndicatorsRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_OutputIndicators)
+                {
+                    _wpOutputIndicatorsRepository.Delete(recordset.Transaction_Id);
+                }
+
+
+                //Delete All WP_OutputActivities
+                var DB_Recs_WP_OutputActivities =  _wpOutputActivitiesRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_OutputActivities)
+                {
+                    _wpOutputActivitiesRepository.Delete(recordset.Transaction_Id);
+                }
+
+
+
+                //Delete All WP_SAPLink
+                var DB_Recs_WP_SAPLink =  _wpSAPLinkRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_SAPLink)
+                {
+                    _wpSAPLinkRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete All WP_OutputBudget
+                var DB_Recs_WP_OutputBudget =  _wpOutputBudgetRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_OutputBudget)
+                {
+                    _wpOutputBudgetRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete All WP_OutputActivityCountries
+                var DB_Recs_WP_OutputActivityCountries =  _wpOutputActivityCountriesRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_OutputActivityCountries)
+                {
+                    _wpOutputActivityCountriesRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete All WP_Mobility
+                var DB_Recs_WP_Mobility =  _wpMobilityRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_Mobility)
+                {
+                    _wpMobilityRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete All WP_MobilityInternalTeam
+                var DB_Recs_WP_MobilityInternalTeam =  _wpMobilityInternalTeamRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_MobilityInternalTeam)
+                {
+                    _wpMobilityInternalTeamRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete All WP_MobilityExternalTeam
+                var DB_Recs_WP_MobilityExternalTeam =  _wpMobilityExternalTeamRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_MobilityExternalTeam)
+                {
+                    _wpMobilityExternalTeamRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete All WP_MobilityLimit
+                var DB_Recs_WP_MobilityLimit =  _wpMobilityLimitRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_MobilityLimit)
+                {
+                    _wpMobilityLimitRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete All WP_OutputIndicators
+                var DB_Recs_WP_OutcomeIndicators =  _wpOutcomeIndicatorsRepository.GetAllRecords().ToList();
+                foreach (var recordset in DB_Recs_WP_OutcomeIndicators)
+                {
+                    _wpOutcomeIndicatorsRepository.Delete(recordset.Transaction_Id);
+                }
+
+
+                return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+
+        }
+
+
+
         [HttpPost]
         public ActionResult SetTestStaffEmails()
         {
@@ -2416,6 +2745,85 @@ namespace AUDANEPAD_Integrated.Controllers
                         };
 
                         _strucDirectorateRepository.Add(rec_to_add);
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+
+
+         [AcceptVerbs("Post")]
+		public ActionResult Trans_Project_Create([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                LkUp_Project rec = _lkupProjectRepository.GetRecordByName(record.LookUp_Name);
+
+                if (rec == null && record.LookUp_Name !=null)
+                {
+
+                        var DB_Recs = _lkupProjectRepository.GetAllRecords();
+                        int _count = DB_Recs.Count()+1;
+
+                        LkUp_Project rec_to_add = new LkUp_Project
+                        {
+                            Record_Id=_count,
+                            Record_Name=record.LookUp_Name,
+                            Record_Status=false,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+                        _lkupProjectRepository.Add(rec_to_add);
+
+                        
+                        Trans_Project trans_rec_to_add = new Trans_Project
+                        {
+                            Transaction_Id=Guid.NewGuid().ToString(),
+                            MainProject_Id=_count,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+                         _transProjectRepository.Add(trans_rec_to_add);
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+
+        [AcceptVerbs("Post")]
+		public ActionResult Trans_Programme_Create([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                LkUp_Programme rec = _lkupProgrammeRepository.GetRecordByName(record.LookUp_Name);
+
+                if (rec == null && record.LookUp_Name !=null)
+                {
+
+                        var DB_Recs = _lkupProgrammeRepository.GetAllRecords();
+                        int _count = DB_Recs.Count()+1;
+
+                        LkUp_Programme rec_to_add = new LkUp_Programme
+                        {
+                            Record_Id=_count,
+                            Record_Name=record.LookUp_Name,
+                            Record_Status=false,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+                        _lkupProgrammeRepository.Add(rec_to_add);
+
+                        
+                        Trans_Programme trans_rec_to_add = new Trans_Programme
+                        {
+                            Transaction_Id=Guid.NewGuid().ToString(),
+                            MainProgramme_Id=_count,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+                         _transProgrammeRepository.Add(trans_rec_to_add);
                 }      
                            
             }
@@ -2839,6 +3247,61 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
         [AcceptVerbs("Post")]
+		public ActionResult Trans_Project_Update([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                LkUp_Project rec = _lkupProjectRepository.GetRecord(record.LookUp_Id);
+                
+                if (rec != null)
+                {
+
+                        LkUp_Project rec_already_exist = _lkupProjectRepository.GetRecordByName(record.LookUp_Name);
+
+                        if(rec_already_exist==null)
+                        {
+                            rec.Record_Name=record.LookUp_Name;
+                            rec.TransactionDate=new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+
+
+                            _lkupProjectRepository.Update(rec);
+                        }
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+
+        [AcceptVerbs("Post")]
+		public ActionResult Trans_Programme_Update([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                LkUp_Programme rec = _lkupProgrammeRepository.GetRecord(record.LookUp_Id);
+                
+                if (rec != null)
+                {
+
+                        LkUp_Programme rec_already_exist = _lkupProgrammeRepository.GetRecordByName(record.LookUp_Name);
+
+                        if(rec_already_exist==null)
+                        {
+                            rec.Record_Name=record.LookUp_Name;
+                            rec.TransactionDate=new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+
+
+                            _lkupProgrammeRepository.Update(rec);
+                        }
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+        [AcceptVerbs("Post")]
 		public ActionResult WP_MobilityLimit_Update([DataSourceRequest] DataSourceRequest request, WP_MobilityLimitViewModel record, string wpcycleid)
         {
             if (record != null && ModelState.IsValid)
@@ -3119,6 +3582,45 @@ namespace AUDANEPAD_Integrated.Controllers
                         {
                             _strucDirectorateRepository.Delete(rec.Record_Id);
                         }
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+        [AcceptVerbs("Post")]
+		public ActionResult Trans_Project_Delete ([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                Trans_Project rec = _transProjectRepository.GetRecord(record.TransLookUp_Id);
+                
+                if (rec != null)
+                {
+                    _transProjectRepository.Delete(rec.Transaction_Id);
+                        
+                }  
+
+                
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+
+        [AcceptVerbs("Post")]
+		public ActionResult Trans_Programme_Delete ([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                Trans_Programme rec = _transProgrammeRepository.GetRecord(record.TransLookUp_Id);
+                
+                if (rec != null)
+                {
+                    _transProgrammeRepository.Delete(rec.Transaction_Id);
+                        
                 }      
                            
             }
@@ -3430,6 +3932,84 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(collection_recs.ToDataSourceResult(request));
         }
 
+        public ActionResult Trans_Project_Read([DataSourceRequest]DataSourceRequest request, string text)
+        {
+
+
+            List<LookUpTablesViewModel> collection_recs = new List<LookUpTablesViewModel>();
+
+
+
+            var DB_Recs =  _transProjectRepository.GetAllRecords().ToList();
+
+
+
+
+            int _count =  DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+   
+                    LookUpTablesViewModel srec = new LookUpTablesViewModel
+                    {
+                        TransLookUp_Id=rec.Transaction_Id,
+                        LookUp_Id = rec.MainProject_Id,
+                        LookUp_Name =_lkupProjectRepository.GetRecord(rec.MainProject_Id).Record_Name,
+                      //  LookUp_Status = _lkupProjectRepository.GetRecord(rec.MainProject_Id).Record_Status.HasValue? rec.Record_Status.Value? "Transactional": "Active": "Inactive", //implement later
+                        TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                    };
+
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+        public ActionResult Trans_Programme_Read([DataSourceRequest]DataSourceRequest request, string text)
+        {
+
+
+            List<LookUpTablesViewModel> collection_recs = new List<LookUpTablesViewModel>();
+
+
+
+            var DB_Recs =  _transProgrammeRepository.GetAllRecords().ToList();
+
+
+
+
+            int _count =  DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+   
+                    LookUpTablesViewModel srec = new LookUpTablesViewModel
+                    {
+                        TransLookUp_Id=rec.Transaction_Id,
+                        LookUp_Id = rec.MainProgramme_Id,
+                        LookUp_Name =_lkupProgrammeRepository.GetRecord(rec.MainProgramme_Id).Record_Name,
+                      //  LookUp_Status = _lkupProjectRepository.GetRecord(rec.MainProject_Id).Record_Status.HasValue? rec.Record_Status.Value? "Transactional": "Active": "Inactive", //implement later
+                        TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                    };
+
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
         public ActionResult WP_Outcomes_Read([DataSourceRequest]DataSourceRequest request, string projid, string fyear, string fperiod, string periodtxt)
         {
 
@@ -3669,6 +4249,8 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(collection_recs.ToDataSourceResult(request));
         }
 
+
+        
 
 
         public ActionResult WP_Gantt_Read([DataSourceRequest]DataSourceRequest request, string recid)
@@ -4233,6 +4815,62 @@ namespace AUDANEPAD_Integrated.Controllers
                     {
                         srec.BaselineOIVM=rec.BaselineQuanlitative;
                         srec.TargetOIVM=rec.TargetQuanlitative;
+
+                    }
+
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+
+        public ActionResult WP_OutcomesSubIndicators_Read([DataSourceRequest]DataSourceRequest request, string outcome_transid)
+        {
+
+
+            List<WP_OutcomeIndicatorsSubGridVM> collection_recs = new List<WP_OutcomeIndicatorsSubGridVM>();
+
+           // WP_MainRecord wp_mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+
+            var DB_Recs =  _wpOutcomeIndicatorsRepository.GetRecordsByOutcomeId(outcome_transid);
+
+            int _count =  DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+   
+                    WP_OutcomeIndicatorsSubGridVM srec = new WP_OutcomeIndicatorsSubGridVM
+                    {
+                        Transaction_IndicatorId = rec.WPOutcome_Id,
+                        Outcome_ChildGridId = rec.WPOutcome_Id,
+                        Transaction_IdOCIVM=rec.Transaction_Id,
+                        TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                    };
+
+
+                    if (rec.IndicatorCategory=="Project-Level")
+                    {
+                        srec.IndicatorStatementOCIVM=rec.ProjectBasedIndicatorStatement;
+
+                    }
+
+
+                    if(rec.IndicatorType=="Quantitative")
+                    {
+                        srec.BaselineOCIVM=rec.BaselineQuantitative.ToString();
+                        srec.TargetOCIVM=rec.TargetQuantitative.ToString();
+                    }
+                    else
+                    {
+                        srec.BaselineOCIVM=rec.BaselineQuanlitative;
+                        srec.TargetOCIVM=rec.TargetQuanlitative;
 
                     }
 
@@ -5560,6 +6198,48 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(collection_recs.ToDataSourceResult(request));
         }
 
+
+        public ActionResult ProjProgMapping_Read([DataSourceRequest]DataSourceRequest request, string recid)
+        {
+
+
+            List<EmployeeMappingViewModel> collection_recs = new List<EmployeeMappingViewModel>();
+
+            if (recid != null)
+            {
+              //  AUDAProgramme prog = _programmeRepository.GetAUDAProgramme(Int32.Parse(programmeid));
+                var DB_Recs = _transProjectRepository.GetAllRecordsByDivisionID(Int32.Parse(recid));
+
+                int _count = DB_Recs.Count();
+                if (_count > 0)
+                {
+                    foreach (var rec in DB_Recs)
+                    {
+                        LkUp_Project project = _lkupProjectRepository.GetRecord(rec.MainProject_Id);
+                        LkUp_Programme programme=_lkupProgrammeRepository.GetRecord(rec.MainProgramme_Id);
+
+                        EmployeeMappingViewModel srec = new EmployeeMappingViewModel
+                        {
+                            ProjectTransaction_Id = rec.Transaction_Id,
+                            ProgrammeTransaction_Id=rec.TransProgramme_Id,
+                            Project_IdGM=rec.MainProject_Id,
+                            Programme_IdGM=rec.MainProgramme_Id,
+                            Project_Name=project.Record_Name,
+                            Programme_Name=programme.Record_Name,
+                            Directorate_IdGM=rec.Directorate_Id,
+                            Division_IdGM=rec.Division_Id,
+                            TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                        };
+
+                        collection_recs.Add(srec);
+                    }
+                }
+            }
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
         //**************GRID COMMAND ACTIONS******************///
         [HttpPost]
         public ActionResult MakeActivityTypeTrans(string recid)
@@ -5691,6 +6371,29 @@ namespace AUDANEPAD_Integrated.Controllers
                 if (rec != null)
                 {
                     _wpOutputIndicatorsRepository.Delete(rec.Transaction_Id);
+
+                } 
+
+
+                 return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult WP_OutcomesSubIndicators_Delete(string subindicatorid)
+        {
+            // var user = await userManager.GetUserAsync(HttpContext.User);
+            try
+            {
+                WP_OutcomeIndicators rec=_wpOutcomeIndicatorsRepository.GetRecord(subindicatorid);
+                
+                if (rec != null)
+                {
+                    _wpOutcomeIndicatorsRepository.Delete(rec.Transaction_Id);
 
                 } 
 
@@ -7031,6 +7734,56 @@ namespace AUDANEPAD_Integrated.Controllers
                     }
 
                     _wpOutputIndicatorsRepository.Add(rec_to_add);
+
+
+                return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+   
+
+
+
+        }
+
+
+        [HttpPost]
+        public ActionResult AddStrategicOutcomeIndicator_ProjectBased(WP_OutputIndicatorsVM model)
+        {
+            
+            try
+            {
+                    WP_OutcomeIndicators rec_to_add = new WP_OutcomeIndicators
+                    {
+                        Transaction_Id= Guid.NewGuid().ToString(),
+                        WPMainRecord_id= model.WPMainRecord_idOIVM,
+                        WPOutcome_Id=model.Transaction_IdOIVM,
+                        Project_Id=model.Project_IdOIVM,
+                        FiscalYear_Id=model.FiscalYear_IdOIVM,
+                        Period_Id=model.Period_IdOIVM,
+                        IndicatorCategory="Project-Level",
+                        ProjectBasedIndicatorStatement=model.ProjectBasedIndicatorStatementOIVM,
+                        Employee_Id= model.Employee_IdOIVM,
+                        TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                    };
+
+                    if(model.IndicatorTypeOIVM_Proj== 1)
+                    {
+                        rec_to_add.BaselineQuantitative=model.BaselineQuantitativeOIVM_Proj;
+                        rec_to_add.TargetQuantitative=model.TargetQuantitativeOIVM_Proj;
+                        rec_to_add.IndicatorType="Quantitative";
+                    } 
+                    else
+                    {
+                        rec_to_add.BaselineQuanlitative=model.BaselineQuanlitativeOIVM_Proj;
+                        rec_to_add.TargetQuanlitative=model.TargetQuanlitativeOIVM_Proj;
+                        rec_to_add.IndicatorType="Qualitative";
+
+                    }
+
+                    _wpOutcomeIndicatorsRepository.Add(rec_to_add);
 
 
                 return Json(new { rtnmsg = "success" });
@@ -9275,6 +10028,126 @@ namespace AUDANEPAD_Integrated.Controllers
 
         }
 
+
+        [HttpPost]
+        public async Task<ActionResult> AddProjProgMapping(EmployeeViewModel model)
+        {
+            Employee emp = _employeeRepository.GetEmployee(model.Employee_Id);
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            Trans_Project transproject=_transProjectRepository.GetRecordByMainProjectID(model.Project_Id);
+
+        
+
+          
+
+            if (transproject != null)
+            {
+
+                try
+                {
+                    Trans_Programme transprogramme =_transProgrammeRepository.GetRecordByMainProgrammeID(model.Programme_Id);
+                    LkUp_Programme lkupprogramme=_lkupProgrammeRepository.GetRecord(model.Programme_Id);
+                    LkUp_Project lkupproject=_lkupProjectRepository.GetRecord(model.Project_Id);
+
+                    if(transproject.MainProgramme_Id==0)
+                    {
+                        transproject.MainProgramme_Id=model.Programme_Id;
+                        lkupproject.Programme_Id=model.Programme_Id;
+                    }
+                    if(transprogramme!=null)
+                    {
+                        transproject.TransProgramme_Id=transprogramme.Transaction_Id;
+                    }
+
+                    //Directorate
+                    if(transproject.Directorate_Id==0)
+                    {
+                        transproject.Directorate_Id=model.Directorate_Id;
+                    }
+                    if(lkupproject.Directorate_Id==0)
+                    {
+                        lkupproject.Directorate_Id=model.Directorate_Id;
+                    }
+
+                    if(transprogramme!=null)
+                    {
+                        if(transprogramme.Directorate_Id==0)
+                        {
+                            transprogramme.Directorate_Id=model.Directorate_Id;
+                        }
+                    }
+                    if(lkupprogramme!=null)
+                    {
+                        if(lkupprogramme.Directorate_Id==0)
+                        {
+                            lkupprogramme.Directorate_Id=model.Directorate_Id;
+                        }
+                    }
+
+                    //Division
+
+                    if(transproject.Division_Id==0)
+                    {
+                        transproject.Division_Id=model.Division_Id;
+                    }
+                    if(lkupproject.Division_Id==0)
+                    {
+                        lkupproject.Division_Id=model.Division_Id;
+                    }
+
+                    if(transprogramme!=null)
+                    {
+                        if(transprogramme.Division_Id==0)
+                        {
+                            transprogramme.Division_Id=model.Division_Id;
+                        }
+                    }
+                    if(lkupprogramme!=null)
+                    {
+                        if(lkupprogramme.Division_Id==0)
+                        {
+                            lkupprogramme.Division_Id=model.Division_Id;
+                        }
+                    }
+
+                    //Now start Saving
+
+                    _transProjectRepository.Update(transproject);
+
+                    if(transprogramme!=null)
+                    {
+                        _transProgrammeRepository.Update(transprogramme);
+                    }
+
+                    if(lkupprogramme!=null)
+                    {
+                        _lkupProgrammeRepository.Update(lkupprogramme);
+                    }
+
+                    if(lkupproject!=null)
+                    {
+                        _lkupProjectRepository.Update(lkupproject);
+                    }
+
+        
+
+                    return Json(new { rtnmsg = "success" });
+                }
+                catch (Exception)
+                {
+                    return Json(new { rtnmsg = "error" });
+                }
+        
+            }
+            else
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+
+
+
+        }
+
         //**************DROP DOWN READS******************///
 
         [HttpGet]
@@ -9301,6 +10174,78 @@ namespace AUDANEPAD_Integrated.Controllers
                     {
                             DropDown_IntId = rec.Record_Id,
                             DropDown_Name = _strucDirectorateRepository.GetRecord(rec.Record_Id).Record_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+            return Json(collection_recs.ToList());
+
+        }
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetAllTransProgramme()
+        {
+            // IEnumerable<Employee> DB_Employees = new List<Employee>();
+            
+
+            var recs =  _transProgrammeRepository.GetAllRecords().ToList();
+
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                   
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = rec.MainProgramme_Id,
+                            DropDown_Name = _lkupProgrammeRepository.GetRecord(rec.MainProgramme_Id).Record_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+            return Json(collection_recs.ToList());
+
+        }
+
+
+         [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetAllTransProject()
+        {
+            // IEnumerable<Employee> DB_Employees = new List<Employee>();
+            
+
+            var recs =  _transProjectRepository.GetAllRecords().ToList();
+
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                   
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = rec.MainProject_Id,
+                            DropDown_Name = _lkupProjectRepository.GetRecord(rec.MainProject_Id).Record_Name
                     };
                     // EmployeeDropDownViewModel me = DB_Employees[_count];
                     collection_recs.Add(srec);

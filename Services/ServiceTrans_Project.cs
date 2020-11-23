@@ -37,6 +37,23 @@ namespace AUDANEPAD_Integrated.Services
 		    }
 		    return rec;
 		}
+		public Trans_Project GetRecordByMainProjectID(int Id)
+        {
+                        var rec = context.Trans_Project
+                                .Where(s => s.MainProject_Id == Id)
+                                .FirstOrDefault();
+
+                        return rec;
+        }
+
+		public Trans_Project GetRecordByMainProjectIDAndProgrammeID (int ProjId, int ProgId)
+        {
+                        var rec = context.Trans_Project
+                                .Where(s => s.MainProject_Id == ProjId && s.MainProgramme_Id==ProgId)
+                                .FirstOrDefault();
+
+                        return rec;
+        }
 
 		public IEnumerable<Trans_Project> GetAllRecords()
 		{

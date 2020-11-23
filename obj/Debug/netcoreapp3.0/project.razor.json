@@ -75703,6 +75703,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_AddOutcomeIndicator.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\_AddOutcomeIndicator.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Home/Index.cshtml",
       "TargetPath": "Views\\Home\\Index.cshtml",
       "FileKind": "mvc"
@@ -75715,6 +75720,11 @@
     {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_AddOutputIndicator.cshtml",
       "TargetPath": "Views\\NEPADStaff\\_AddOutputIndicator.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Admin/ManageLkUpProgrammes.cshtml",
+      "TargetPath": "Views\\Admin\\ManageLkUpProgrammes.cshtml",
       "FileKind": "mvc"
     },
     {
@@ -75868,6 +75878,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Admin/ManageLkUpProjects.cshtml",
+      "TargetPath": "Views\\Admin\\ManageLkUpProjects.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Admin/EditorTemplates/ClientCategory.cshtml",
       "TargetPath": "Views\\Admin\\EditorTemplates\\ClientCategory.cshtml",
       "FileKind": "mvc"
@@ -75920,6 +75935,11 @@
     {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_AddOutputActivity.cshtml",
       "TargetPath": "Views\\NEPADStaff\\_AddOutputActivity.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Admin/ProjProgMapping.cshtml",
+      "TargetPath": "Views\\Admin\\ProjProgMapping.cshtml",
       "FileKind": "mvc"
     },
     {

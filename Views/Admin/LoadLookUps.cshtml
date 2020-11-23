@@ -19,7 +19,7 @@
                                  <input hidden asp-for="IdentityUserId" class="k-textbox" style="width:100%" value="@Model.IdentityUserId">
                                     <input hidden asp-for="ExistingPhotoPath" />
                                     <div class="form-body">
-                                        <h3 class="card-title">All LookUp Tables</h3>
+                                        <h3 class="card-title">All LookUp Tables and Initialization</h3>
                                         <hr>
 
                                             <div id="targetDivStaffa" class="rssedStaffa">
@@ -29,6 +29,13 @@
                                                 <div class="form-group">
                                             <a class="k-button"  id="btnLoadAllLookUps" style="color:#000;">
                                                 <span class="k-icon k-i-reset"></span>&nbsp; Load and Iniitialize All LookUps
+                                            </a>
+
+                                            <br \>
+                                            <br \>
+
+                                            <a class="k-button"  id="btnWPInitialise" style="color:#000;">
+                                                <span class="k-icon k-i-reset"></span>&nbsp; Initialize the System for First Use
                                             </a>
                                             </div>
 
@@ -100,6 +107,43 @@ $("#btnLoadAllLookUps").click(function () {
                 if (response == "success") {
                             $('#targetDivStaffa').empty();
                             $('<span class="alert alert-success" style="display: block;font-size: 100%"><b>Success : All Look Up Tables Loaded Successfully. </b> </span>').appendTo('.rssedStaffa');
+
+                }
+                else if (response == "error") {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Error occurred whiles loading</b> </span>').appendTo('.rssedStaffa');
+
+                }
+                else {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Unknown Error: Please try Again</b> </span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
+
+            },
+            error: function (data) {
+                    $('#targetDivStaffa').empty();
+                    $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Error: Error Occurred whiles saving</b> </span>').appendTo('.rssedStaffa');
+                    //$('#targetDivStaffa').empty();
+            }
+        })
+
+    });
+
+
+    $("#btnWPInitialise").click(function () {
+
+  
+        $.ajax({
+            type: "POST",
+            url: '/Admin/InitializeForFirstUse',     //your action
+            dataType: 'json',
+            success: function (result) {
+                var response = result.rtnmsg;
+
+                if (response == "success") {
+                            $('#targetDivStaffa').empty();
+                            $('<span class="alert alert-success" style="display: block;font-size: 100%"><b>Success : Initialization Successful. </b> </span>').appendTo('.rssedStaffa');
 
                 }
                 else if (response == "error") {

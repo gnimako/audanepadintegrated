@@ -2138,6 +2138,67 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.ToTable("WP_MobilityLimit");
                 });
 
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.WP_OutcomeIndicators", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("BaselineQuanlitative")
+                        .HasColumnType("text");
+
+                    b.Property<double>("BaselineQuantitative")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("Employee_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FiscalYear_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("IndicatorCategory")
+                        .HasColumnType("text");
+
+                    b.Property<string>("IndicatorType")
+                        .HasColumnType("text");
+
+                    b.Property<int>("KeyPerformanceArea_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OutcomeIndicator_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Period_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Priority_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ProjectBasedIndicatorStatement")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Project_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TargetQuanlitative")
+                        .HasColumnType("text");
+
+                    b.Property<double>("TargetQuantitative")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("WPMainRecord_id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPOutcome_Id")
+                        .HasColumnType("text");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("WP_OutcomeIndicators");
+                });
+
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.WP_Outcomes", b =>
                 {
                     b.Property<string>("Transaction_Id")

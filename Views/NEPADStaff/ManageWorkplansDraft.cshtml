@@ -353,7 +353,59 @@
                                                             <br \>
                                                             <br \>
 
-                                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">6</span> What are the indicators for measuring progress towards the outputs?</h6>
+                                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">6</span> What are the indicators for measuring progress towards the outcomes and outputs?</h6>
+                                                                <div style="padding-left: 1em;">
+                                                                     <h6 class="pb-2" style="color: #022754;"><b>OUTCOME INDICATORS</b></h6>
+                                                                </div>
+                                                                <div style="padding-left: 2em;">
+                                                                    @(Html.Kendo().Grid<WorkplansViewModel>()
+                                                                                    .Name("grid_outcomeindicators")
+                                                                                    .Columns(columns =>
+                                                                                    {
+                                                                                        columns.Bound(c => c.Transaction_Id).Hidden();
+                                                                                        columns.Bound(c => c.WPMainRecord_Ident).Hidden();
+                                                                                        columns.Bound(c => c.ProjectId).Hidden();
+                                                                                        columns.Bound(c => c.FYearIdent).Hidden();
+                                                                                        columns.Bound(c => c.FPeriodIdent).Hidden();
+                                                                                        columns.Bound(c => c.ViewNumbering).Title("No").Width(20).Hidden(); 
+                                                                                        columns.Bound(c => c.Outcome).Title("Define Indicators for each Outcome").HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                        //.HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                                                                
+
+                                                                                    
+                                                                                    columns.Command(command => command.Custom(" Add Indicator").IconClass("k-icon k-i-column-stacked").Click("addoutcomeindicator").HtmlAttributes(new { style = "border-radius: 12px;" })).Width(200).Title("ClickButton").HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                        //columns.Command(command => command.Custom(" Add Indicator").IconClass("k-icon k-i-column-stacked"));
+                                                                                        //.HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                        
+
+                                                                                    })
+                                                                                    
+                                                                                    
+                                                                                    .Resizable(r=>r.Columns(true))
+                                                                                    .ClientDetailTemplateId("templateoutcomeindicators")
+                                                                                    .DataSource(dataSource => dataSource
+                                                                                        .Ajax()
+                                                                                        .Read(read => read.Action("WP_Outcomes_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod, periodtxt=Model.FisPeriod}))
+                                                                                        .Model(model => 
+                                                                                            {
+                                                                                                model.Id(p => p.Transaction_Id);
+                                                                                                //model.Field(field => field.LookUp_Status).Editable(false);
+                                                                                            })
+                                                                            
+                                                                                    // .PageSize(20)
+                                                                                        .Events(events => events.Error("error_handler"))
+                                                                                                            
+                                                                                        
+                                                                                    )
+                                                                                    .Events(events => events.DataBound("dataBoundOutcomeIndicators"))
+                                                                    )
+                                                                    </div>
+                                                                <br \>
+                                                                  <br \>
+                                                                    <br \>
+                                                                <div style="padding-left: 1em;">
+                                                                     <h6 class="pb-2" style="color: #022754;"><b>OUTPUT INDICATORS</b></h6>
+                                                                </div>
                                                                <div style="padding-left: 2em;">
                                                              @(Html.Kendo().Grid<WorkplansViewModel>()
                                                                             .Name("grid_outputindicators")
@@ -642,6 +694,28 @@
             .ToClientTemplate()
     )
 </script>
+
+<script id="templateoutcomeindicators" type="text/kendo-tmpl">
+    @(Html.Kendo().Grid<WP_OutcomeIndicatorsSubGridVM>()
+            .Name("gridsuboutcome_#=Transaction_Id#")
+            .Columns(columns =>
+            {
+                columns.Bound(o => o.Outcome_ChildGridId).Hidden();
+                columns.Bound(o => o.Transaction_IdOCIVM).Hidden();
+                columns.Bound(o => o.IndicatorStatementOCIVM).Title("Indicator");
+                columns.Bound(o => o.BaselineOCIVM).Width(110).Title("Baseline");
+                columns.Bound(o => o.TargetOCIVM).Title("Target");
+                columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("deleteoutcomeindicator")).Width(100);
+            })
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(10)
+                .Read(read => read.Action("WP_OutcomesSubIndicators_Read", "Admin", new { outcome_transid = "#=Transaction_Id#" }))
+            )
+            .Events(events => events.DataBound("dataBoundOutcomeIndChild"))
+            .ToClientTemplate()
+    )
+</script>
 <script id="templateoutputactivities" type="text/kendo-tmpl">
     @(Html.Kendo().Grid<WP_OutputActivitiesSubGridVM>()
             .Name("gridactivitysub_#=Transaction_Id#")
@@ -712,6 +786,42 @@
         return dataItem.LinkToSAPExecutionStringVM == "true";
     }
     function dataBoundOutputIndicators(e) {
+        // this.expandRow(this.tbody.find("tr.k-master-row").first());
+        // this.expandRow(this.tbody.find("tr.k-master-row"));
+
+        var grid = e.sender;
+   
+        grid.tbody.find("tr.k-master-row").click(function(e){                           
+        var target = $(e.target);  
+
+        var row = $(this).closest("tr");
+
+        //var colIdx = $("td", row).index(this);   
+        // var colName = $('#grid_outputindicators').find('th').eq(colIdx).text();
+
+
+        if((target.hasClass("k-i-expand"))||(target.hasClass("k-i-collapse"))){
+            return;
+        }         
+            
+        var row = target.closest("tr.k-master-row");
+        var icon = row.find(".k-i-expand");
+        grid.expandRow(row);
+
+           // if(icon.length)
+         //   {
+             //   grid.expandRow(row);
+           // }
+          //  else
+           // {
+            //    grid.collapseRow(row);    
+          //  }  
+            
+ 
+        });
+    }
+
+    function dataBoundOutcomeIndicators(e) {
         // this.expandRow(this.tbody.find("tr.k-master-row").first());
         // this.expandRow(this.tbody.find("tr.k-master-row"));
 
@@ -1071,6 +1181,53 @@
 
 
     }
+
+
+     function dataBoundOutcomeIndChild(e) {
+            // iterate the table rows and apply custom row and cell styling
+
+
+        var rows = e.sender.tbody.children();
+        var row_alt = true;
+        for (var j = 0; j < rows.length; j++) {
+            var row = $(rows[j]);
+            var dataItem = e.sender.dataItem(row);
+
+        
+            var cellIndex_2=2;
+            var cellIndex_3=3;
+            var cellIndex_4=4;
+            var cellIndex_5=5;
+
+
+            var cell_2 = row.find("td:eq(" + cellIndex_2 + ")");
+            var cell_3 = row.find("td:eq(" + cellIndex_3 + ")");
+            var cell_4 = row.find("td:eq(" + cellIndex_4 + ")");
+            var cell_5 = row.find("td:eq(" + cellIndex_5 + ")");
+
+
+            if(row_alt==false)
+            {
+                cell_2.addClass("outputactsubgridcss");
+                cell_3.addClass("outputactsubgridcss");
+                cell_4.addClass("outputactsubgridcss");
+                cell_5.addClass("outputactsubgridcss");
+            }
+            else
+            {
+                cell_2.addClass("outputactsubgridcss_2");
+                cell_3.addClass("outputactsubgridcss_2");
+                cell_4.addClass("outputactsubgridcss_2");
+                cell_5.addClass("outputactsubgridcss_2");
+
+            }
+            row_alt=ToggleBoolean(row_alt);
+        
+
+       }
+
+
+    }
     function ColorMeBad(e) {
 
 
@@ -1291,6 +1448,54 @@ function addoutputindicator(e) {
             height: 600,
 
             title: "Add an Output Indicator",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+
+
+
+
+        $('.k-widget.k-window .k-window-titlebar').css({
+               // 'background-color': '#003473' ,
+                //'border-color': '#003473' ,
+               // 'color': '#fff' ,
+                'border-top-left-radius': '0px',
+                'border-top-right-radius': '0px'
+        });
+         
+
+}
+
+function addoutcomeindicator(e) {
+
+    e.preventDefault();
+
+
+
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+    var transid = dataItem.Transaction_Id;
+   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
+    
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/NEPADStaff/AddOutcomeIndicator?transid=" + transid,
+            width: 700,
+            height: 600,
+
+            title: "Add an Outcome Indicator",
             // close: onClose,
             deactivate: function () {
                 this.destroy();
@@ -1549,6 +1754,72 @@ function deleteoutputindicator(e) {
                             var childGrid = $('#gridsub_'+childgridident).data("kendoGrid");
 
                             childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutputsSubIndicators_Read?output_transid=" + childgridident;
+                            childGrid.dataSource.read();
+                            childGrid.refresh();
+
+                        },
+                        error: function (data) {
+
+                        }
+                    })
+                    return true;
+                },
+                primary: true
+
+            },
+            { text: 'Cancel' }
+        ],
+        close: onClose
+    });
+
+    dialog.data("kendoDialog").open();
+    undo.fadeOut();
+
+}
+
+
+function deleteoutcomeindicator(e) {
+    e.preventDefault();
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    //var subindicatorid = dataItem.Transaction_IndicatorId;
+    var subindicatorid = dataItem.Transaction_IdOCIVM;
+    var childgridident = dataItem.Outcome_ChildGridId;
+
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+
+
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+    dialog.kendoDialog({
+        width: "450px",
+        title: "Confirmation",
+        closable: false,
+        modal: true,
+        content: "<p>Please confirm the DELETE action.<p>",
+        actions: [
+            {
+                text: 'Confirm',
+                action: function (e) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/Admin/WP_OutcomesSubIndicators_Delete',     //your action
+                        data: { "subindicatorid": subindicatorid},
+                        dataType: 'json',
+                        success: function (result) {
+
+                          //  var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+
+                            var childGrid = $('#gridsuboutcome_'+childgridident).data("kendoGrid");
+
+                            childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutcomesSubIndicators_Read?outcome_transid=" + childgridident;
                             childGrid.dataSource.read();
                             childGrid.refresh();
 
@@ -2796,9 +3067,13 @@ function onChangePriority(arg) {
 
             if (e.type === "update" || e.type === "create" || e.type === "destroy" ) {
                 var grid = $("#grid_main").data("kendoGrid"); 
-
                 grid.dataSource.transport.options.read.url = "/Admin/WP_Outcomes_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&periodtxt=" + periodtxt;
                 grid.dataSource.read();
+
+
+                var gridoutcomeindicators = $("#grid_outcomeindicators").data("kendoGrid"); 
+                gridoutcomeindicators.dataSource.transport.options.read.url = "/Admin/WP_Outcomes_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&periodtxt=" + periodtxt;
+                gridoutcomeindicators.dataSource.read();
 
                 norecord.style.visibility = "hidden";
                 recordstatus.style.visibility = "visible";
@@ -3533,6 +3808,91 @@ function onRequestEndOutputActivity(e){
 
 /* End  AUDA-NEPAD Outputs Indicators  Grid CSS*/
 
+/* Begin  AUDA-NEPAD Outcomes Indicators Grid CSS*/
+
+#grid_outcomeindicators tr.k-alt {
+    background-color: #fff ;
+    }
+
+    #grid_outcomeindicators td {
+    border-style: solid;
+   /* border-width: 1px 0px 0px 1px;*/
+    border-width: 0px ;
+    padding: .4em .6em;
+    overflow: hidden;
+    line-height: 1.6em;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    }
+
+     #grid_outcomeindicators tr.k-alt.k-state-selected {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+
+    #grid_outcomeindicators tr.k-state-selected  {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+    #grid_outcomeindicators tr:hover {
+        background-color:  transparent;
+        
+    }
+    #grid_outcomeindicators tr.k-state-selected:hover {
+        background-color: transparent;
+    }
+    #grid_outcomeindicators tr.k-alt:hover {
+        background-color:  transparent;
+        
+    }
+    #grid_outcomeindicators tr.k-alt.k-state-selected:hover {
+        background-color: transparent;
+    }
+    
+    #grid_outcomeindicators>.k-grid-header tr, .hidden{
+        height: 0;
+        border-bottom-width: 0;
+        visibility: hidden;
+        overflow: hidden;
+        display: none;
+    }
+    .k-hierarchy-cell.k-header
+    {
+        height: 0;
+        border-bottom-width: 0;
+        visibility: hidden;
+        overflow: hidden;
+        display: none;
+
+
+    }
+    #grid_outcomeindicators {
+        border-color: #ffffff;
+    }
+
+
+    /****Sub Grids******/
+
+
+    div[name^='gridsuboutcome_'] td {
+        border-style: solid;
+    /* border-width: 1px 0px 0px 1px;*/
+        border-top-width: 1px ;
+        padding: .4em .6em;
+        overflow: hidden;
+        line-height: 1.6em;
+        vertical-align: middle;
+        text-overflow: ellipsis;
+    }
+
+
+ 
+
+/* End  AUDA-NEPAD Outputs Indicators  Grid CSS*/
 
 
 /* Begin  AUDA-NEPAD Outputs Activities Grid CSS*/

@@ -9,6 +9,7 @@ namespace AUDANEPAD_Integrated.ViewModels
     public class LookUpTablesViewModel
     {
         public int  LookUp_Id { get; set; }
+         public string  TransLookUp_Id { get; set; }
 
         public int  ParentLink_Id { get; set; }
         public string  Trans_LookUp_Id { get; set; }

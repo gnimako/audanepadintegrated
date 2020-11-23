@@ -1,0 +1,831 @@
+
+
+
+
+@model WP_OutputIndicatorsVM
+
+<form id="addform">
+
+    <input hidden asp-for="Employee_IdOIVM" class="k-textbox" style="width:100%" value="@Model.Employee_IdOIVM">
+    <input hidden asp-for="Transaction_IdOIVM" class="k-textbox" style="width:100%" value="@Model.Transaction_IdOIVM">
+    <input hidden asp-for="FiscalYear_IdOIVM" class="k-textbox" style="width:100%" value="@Model.FiscalYear_IdOIVM">
+    <input hidden asp-for="Period_IdOIVM" class="k-textbox" style="width:100%" value="@Model.Period_IdOIVM">
+    <input hidden asp-for="Project_IdOIVM" class="k-textbox" style="width:100%" value="@Model.Project_IdOIVM">
+    <input hidden asp-for="WPMainRecord_idOIVM" class="k-textbox" style="width:100%" value="@Model.WPMainRecord_idOIVM">
+    
+    <div class="form-body" style="padding: 1.25rem;">
+
+        @(Html.Kendo().TabStrip()
+          .Name("taboutputindicators")
+          .Animation(animation => 
+              animation.Open(effect => 
+                  effect.Fade(FadeDirection.In)))
+          .Items(tabstrip =>
+          {
+             
+
+              tabstrip.Add().Text("Project Level Indicators")
+                  .Selected(true)
+                  .Content(@<text>
+                    <div>
+                            <br />
+                            <br />
+                            @(Html.Kendo().DropDownListFor(model => model.IndicatorTypeOIVM_Proj)
+                                // .Name("Department_Id")
+                                .HtmlAttributes(new { style = "width:100%", id = "IndicatorTypeOIVM_Proj" })
+                                .OptionLabel("Select the type of indicator...")
+                                .DataTextField("DropDown_Name")
+                                .DataValueField("DropDown_IntId")
+                                .Events(e =>
+                                {
+                                        e.Close("onDropDownChangeOutputIndicator_Proj");
+                                })
+                                .DataSource(source =>
+                                {
+                                    source.Read(read =>
+                                    {
+                                            read.Action("GetWPProjectBasedTypeOfIndicator", "Admin");
+                                        
+                                    })
+                                    .ServerFiltering(true);
+                                })
+                            
+                                //.SelectedIndex(Model.Department_Id)
+                            )
+                             <br />
+                            <br />
+                            <br />
+                            <div id="indicator_statement">
+                                <h5 style="color:#807878"> Indicator Statement </h5>
+                                @Html.TextAreaFor(model => model.ProjectBasedIndicatorStatementOIVM, new { @class = "k-textbox",  style = "width: 100%;", value="", rows="3"})
+                                <br />
+                                <br />
+                                <br />
+                            </div>
+                            
+                            <div id="quantitativediv_proj">
+                                <h5 style="color:#807878"> Baseline </h5>
+                                @Html.TextAreaFor(model => model.BaselineQuantitativeOIVM_Proj, new { @class = "k-textbox",  style = "width: 100%;", value="", rows="3"})
+                                <br />
+                                <br />
+                                <br />
+                                <h5 style="color:#807878"> Target </h5>
+                                @Html.TextAreaFor(model => model.TargetQuantitativeOIVM_Proj, new { @class = "k-textbox", style = "width: 100%;",  value="", rows="3"})
+                            </div>
+
+                            <div id="qualitativediv_proj" hidden>
+                                <h5 style="color:#807878"> Baseline </h5>
+                                @Html.TextAreaFor(model => model.BaselineQuanlitativeOIVM_Proj, new { @class = "k-textbox", style = "width: 100%;", value="", rows="3"})
+                                <br />
+                                <br />
+                                <br />
+                                <h5 style="color:#807878"> Target </h5>
+                                @Html.TextAreaFor(model => model.TargetQuanlitativeOIVM_Proj, new { @class = "k-textbox", style = "width: 100%;",  value="", rows="3"})
+                            </div>
+                            <br />
+                            <div id="targetDivStaffa_proj" class="rssedStaffa_proj">
+                            </div>
+                            <br />
+                            <br />
+                            <div style="align-content:center; text-align:center">
+                                <a class="k-button" id="btnSubmita_proj">
+                                    <span class="k-icon k-i-save"></span> Save
+                                </a>
+
+                                <a class="k-button" id="btnCloseStaffa_proj">
+                                    <span class="k-icon k-i-cancel"></span> Close
+                                </a>
+                            </div>
+                    </div>
+                    <span class="">&nbsp;</span>
+                  </text>);
+
+
+
+
+
+          })
+    )
+        
+
+    </div>
+
+
+
+
+
+</form>
+
+
+
+<style>
+
+/*SWITCH ON*/
+
+    .k-switch-on .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28
+    }
+
+    .k-switch-on:hover .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:hover .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+    .k-switch-on:active .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4
+    }
+
+    .k-switch-on:active .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28
+    }
+
+
+
+    .k-switch-on:visited .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:visited .k-switch-handle{
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+    .k-switch-on:focus .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:focus .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+
+
+    /*SWITCH OFF*/
+
+    .k-switch-off .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+
+    .k-switch-off:hover .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:hover .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+    .k-switch-off:active .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:active .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+    .k-switch-off:visited .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:visited .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+    .k-switch-off:focus .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:focus .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+
+</style>
+
+
+
+
+<script>
+    
+    $("#btnCloseStaffa").click(function () {
+        $(".k-window-content").each(function () {
+            $(this).data("kendoWindow").close();
+        });
+    });
+
+    $("#btnCloseStaffa_proj").click(function () {
+        $(".k-window-content").each(function () {
+            $(this).data("kendoWindow").close();
+        });
+    });
+
+    $("#btnCloseStaffa_dir").click(function () {
+        $(".k-window-content").each(function () {
+            $(this).data("kendoWindow").close();
+        });
+    });
+
+
+
+
+$("#btnSubmita").click(function (e) {
+
+    var gridid = $("#Transaction_IdOIVM").val(); 
+
+    var projid = $("#Project_IdOIVM").val();  
+    var fyear = $("#FiscalYear_IdOIVM").val();  
+    var fperiod = $("#Period_IdOIVM").val();  
+
+    var priority= $("#Priority_IdOIVM").val();  
+    var outputindicator = $("#OutputIndicator_IdOIVM").val();  
+
+    var quantbaseline = $("#BaselineQuantitativeOIVM").val();  
+    var quanttarget = $("#TargetQuantitativeOIVM").val();  
+    
+
+
+
+    if(priority === "" && typeof priority === "string")
+    {
+        $('#targetDivStaffa').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select a strategic priority. </span>').appendTo('.rssedStaffa');
+    }
+    else if(outputindicator === "" && typeof outputindicator === "string")
+    {
+        $('#targetDivStaffa').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select an indicator. </span>').appendTo('.rssedStaffa');
+    }
+    else{
+
+        $.ajax({
+            type: "POST",
+            url: '/Admin/CheckOutputIndicatorType',     //your action
+            data:{"indicatorid": outputindicator},
+            //data: { selectkeys: dataItem},
+            dataType: 'json',
+            success: function (result) {
+                var response = result.rtnmsg;
+
+                if (response == "quantitative") {
+
+                    if (isNaN(quantbaseline)) {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-warning" style="display: block;font-size: 100%">Baseline should be a number </span>').appendTo('.rssedStaffa');
+                    } 
+                    else if (isNaN(quanttarget)) {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-warning" style="display: block;font-size: 100%">Target should be a number </span>').appendTo('.rssedStaffa');
+                    }
+                    else if (quantbaseline==quanttarget){
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-warning" style="display: block;font-size: 100%">Baseline and Target cannot be the same </span>').appendTo('.rssedStaffa');
+                    }
+                    else{
+                        $.ajax({
+                            type: "POST",
+                            url: '/Admin/AddStrategicIndicator',     //your action
+                            data: $('#addform').serialize(),   //your form name.it takes all the values of model
+                            dataType: 'json',
+                            success: function (result) {
+                                var response = result.rtnmsg;
+
+                                if (response == "success") {
+                                            $('#targetDivStaffa').empty();
+                                            $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Indicator Saved Successfully. </span>').appendTo('.rssedStaffa');
+
+
+                                            var childGrid = $('#gridsub_'+gridid).data("kendoGrid");
+
+                                            childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutputsSubIndicators_Read?output_transid=" + gridid;
+                                            childGrid.dataSource.read();
+                                            childGrid.refresh();
+
+
+
+
+
+                                }
+                                else if (response == "pkerror") {
+                                        $('#targetDivStaffa').empty();
+                                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unable to Save. Indicator Already Exist. </span>').appendTo('.rssedStaffa');
+                                        //$('#targetDivStaffa').empty();
+                                }
+                                else if (response == "createerror") {
+                                        $('#targetDivStaffa').empty();
+                                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to save indicator</span>').appendTo('.rssedStaffa');
+                                        //$('#targetDivStaffa').empty();
+                                }
+                                else if (response == "doesnotexist") {
+                                        $('#targetDivStaffa').empty();
+                                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">No Record: Indicator does not exist</span>').appendTo('.rssedStaffa');
+                                        //$('#targetDivStaffa').empty();
+                                }
+                                else {
+                                        $('#targetDivStaffa').empty();
+                                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffa');
+                                        //$('#targetDivStaffa').empty();
+                                }
+
+                            },
+                            error: function (data) {
+                                    $('#targetDivStaffa').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffa');
+                                    //$('#targetDivStaffa').empty();
+                            }
+                        })
+                   
+                    }
+
+                }
+                else
+                {
+                    $.ajax({
+                        type: "POST",
+                        url: '/Admin/AddStrategicIndicator',     //your action
+                        data: $('#addform').serialize(),   //your form name.it takes all the values of model
+                        dataType: 'json',
+                        success: function (result) {
+                            var response = result.rtnmsg;
+
+                            if (response == "success") {
+                                        $('#targetDivStaffa').empty();
+                                        $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Indicator Saved Successfully. </span>').appendTo('.rssedStaffa');
+
+
+                                        var childGrid = $('#gridsub_'+gridid).data("kendoGrid");
+
+                                        childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutputsSubIndicators_Read?output_transid=" + gridid;
+                                        childGrid.dataSource.read();
+                                        childGrid.refresh();
+
+
+
+                            }
+                            else if (response == "pkerror") {
+                                    $('#targetDivStaffa').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unable to Save. Indicator Already Exist. </span>').appendTo('.rssedStaffa');
+                                    //$('#targetDivStaffa').empty();
+                            }
+                            else if (response == "createerror") {
+                                    $('#targetDivStaffa').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to save indicator</span>').appendTo('.rssedStaffa');
+                                    //$('#targetDivStaffa').empty();
+                            }
+                            else if (response == "doesnotexist") {
+                                    $('#targetDivStaffa').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">No Record: Indicator does not exist</span>').appendTo('.rssedStaffa');
+                                    //$('#targetDivStaffa').empty();
+                            }
+                            else {
+                                    $('#targetDivStaffa').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffa');
+                                    //$('#targetDivStaffa').empty();
+                            }
+
+                        },
+                        error: function (data) {
+                                $('#targetDivStaffa').empty();
+                                $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffa');
+                                //$('#targetDivStaffa').empty();
+                        }
+                    })
+
+                }
+
+            },
+            error: function (data) {
+    
+            }
+        })
+
+
+
+
+
+
+
+
+        
+    }
+    
+    return false;
+});
+
+
+$("#btnSubmita_dir").click(function (e) {
+
+    var gridid = $("#Transaction_IdOIVM").val(); 
+
+    var projid = $("#Project_IdOIVM").val();  
+    var fyear = $("#FiscalYear_IdOIVM").val();  
+    var fperiod = $("#Period_IdOIVM").val();  
+
+    var priority= $("#Priority_IdOIVM").val();  
+    var outputindicator = $("#IndicatorIDOIVM_Dir").val();  
+
+    var quantbaseline = $("#BaselineQuantitativeOIVM_Dir").val();  
+    var quanttarget = $("#TargetQuantitativeOIVM_Dir").val();  
+    
+
+
+    if(outputindicator === "" && typeof outputindicator === "string")
+    {
+        $('#targetDivStaffa_dir').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select an indicator. </span>').appendTo('.rssedStaffa_dir');
+    }
+    else{
+
+        $.ajax({
+            type: "POST",
+            url: '/Admin/CheckDirOutputIndicatorType',     //your action
+            data:{"indicatorid": outputindicator},
+            //data: { selectkeys: dataItem},
+            dataType: 'json',
+            success: function (result) {
+                var response = result.rtnmsg;
+
+                if (response == "quantitative") {
+
+                    if (isNaN(quantbaseline)) {
+                        $('#targetDivStaffa_dir').empty();
+                        $('<span class="alert alert-warning" style="display: block;font-size: 100%">Baseline should be a number </span>').appendTo('.rssedStaffa_dir');
+                    } 
+                    else if (isNaN(quanttarget)) {
+                        $('#targetDivStaffa_dir').empty();
+                        $('<span class="alert alert-warning" style="display: block;font-size: 100%">Target should be a number </span>').appendTo('.rssedStaffa_dir');
+                    }
+                    else if (quantbaseline==quanttarget){
+                        $('#targetDivStaffa_dir').empty();
+                        $('<span class="alert alert-warning" style="display: block;font-size: 100%">Baseline and Target cannot be the same </span>').appendTo('.rssedStaffa_dir');
+                    }
+                    else{
+                        $.ajax({
+                            type: "POST",
+                            url: '/Admin/AddDirectorateIndicator',     //your action
+                            data: $('#addform').serialize(),   //your form name.it takes all the values of model
+                            dataType: 'json',
+                            success: function (result) {
+                                var response = result.rtnmsg;
+
+                                if (response == "success") {
+                                            $('#targetDivStaffa_dir').empty();
+                                            $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Indicator Saved Successfully. </span>').appendTo('.rssedStaffa_dir');
+
+
+                                            var childGrid = $('#gridsub_'+gridid).data("kendoGrid");
+
+                                            childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutputsSubIndicators_Read?output_transid=" + gridid;
+                                            childGrid.dataSource.read();
+                                            childGrid.refresh();
+
+
+
+
+
+                                }
+                                else if (response == "pkerror") {
+                                        $('#targetDivStaffa_dir').empty();
+                                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unable to Save. Indicator Already Exist. </span>').appendTo('.rssedStaffa_dir');
+                                        //$('#targetDivStaffa').empty();
+                                }
+                                else if (response == "createerror") {
+                                        $('#targetDivStaffa_dir').empty();
+                                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to save indicator</span>').appendTo('.rssedStaffa_dir');
+                                        //$('#targetDivStaffa').empty();
+                                }
+                                else if (response == "doesnotexist") {
+                                        $('#targetDivStaffa_dir').empty();
+                                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">No Record: Indicator does not exist</span>').appendTo('.rssedStaffa_dir');
+                                        //$('#targetDivStaffa').empty();
+                                }
+                                else {
+                                        $('#targetDivStaffa_dir').empty();
+                                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffa_dir');
+                                        //$('#targetDivStaffa').empty();
+                                }
+
+                            },
+                            error: function (data) {
+                                    $('#targetDivStaffa_dir').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffa_dir');
+                                    //$('#targetDivStaffa').empty();
+                            }
+                        })
+                   
+                    }
+
+                }
+                else
+                {
+                    $.ajax({
+                        type: "POST",
+                        url: '/Admin/AddDirectorateIndicator',     //your action
+                        data: $('#addform').serialize(),   //your form name.it takes all the values of model
+                        dataType: 'json',
+                        success: function (result) {
+                            var response = result.rtnmsg;
+
+                            if (response == "success") {
+                                        $('#targetDivStaffa_dir').empty();
+                                        $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Indicator Saved Successfully. </span>').appendTo('.rssedStaffa_dir');
+
+
+                                        var childGrid = $('#gridsub_'+gridid).data("kendoGrid");
+
+                                        childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutputsSubIndicators_Read?output_transid=" + gridid;
+                                        childGrid.dataSource.read();
+                                        childGrid.refresh();
+
+
+
+                            }
+                            else if (response == "pkerror") {
+                                    $('#targetDivStaffa_dir').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unable to Save. Indicator Already Exist. </span>').appendTo('.rssedStaffa_dir');
+                                    //$('#targetDivStaffa').empty();
+                            }
+                            else if (response == "createerror") {
+                                    $('#targetDivStaffa_dir').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to save indicator</span>').appendTo('.rssedStaffa_dir');
+                                    //$('#targetDivStaffa').empty();
+                            }
+                            else if (response == "doesnotexist") {
+                                    $('#targetDivStaffa_dir').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">No Record: Indicator does not exist</span>').appendTo('.rssedStaffa_dir');
+                                    //$('#targetDivStaffa').empty();
+                            }
+                            else {
+                                    $('#targetDivStaffa_dir').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffa_dir');
+                                    //$('#targetDivStaffa').empty();
+                            }
+
+                        },
+                        error: function (data) {
+                                $('#targetDivStaffa_dir').empty();
+                                $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffa_dir');
+                                //$('#targetDivStaffa').empty();
+                        }
+                    })
+
+                }
+
+            },
+            error: function (data) {
+    
+            }
+        })
+
+
+
+
+
+
+
+
+        
+    }
+    
+    return false;
+});
+
+
+
+
+$("#btnSubmita_proj").click(function () {
+
+    var gridid = $("#Transaction_IdOIVM").val(); 
+
+    var projid = $("#Project_IdOIVM").val();  
+    var fyear = $("#FiscalYear_IdOIVM").val();  
+    var fperiod = $("#Period_IdOIVM").val();  
+
+    var outputindicatortype = $("#IndicatorTypeOIVM_Proj").val();  
+    var outputindicator = $("#ProjectBasedIndicatorStatementOIVM").val();  
+
+    var quantbaseline = $("#BaselineQuantitativeOIVM_Proj").val();  
+    var quanttarget = $("#TargetQuantitativeOIVM_Proj").val();  
+    
+
+
+
+    if(outputindicatortype === "" && typeof outputindicatortype === "string")
+    {
+        $('#targetDivStaffa_proj').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select type of indicator. </span>').appendTo('.rssedStaffa_proj');
+    }
+    else if(outputindicator === "" && typeof outputindicator === "string")
+    {
+        $('#targetDivStaffa_proj').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please provide indicator statement. </span>').appendTo('.rssedStaffa_proj');
+    }
+    else{
+
+                if (outputindicatortype == "1") {
+
+                    if (isNaN(quantbaseline)) {
+                        $('#targetDivStaffa_proj').empty();
+                        $('<span class="alert alert-warning" style="display: block;font-size: 100%">Baseline should be a number </span>').appendTo('.rssedStaffa_proj');
+                    } 
+                    else if (isNaN(quanttarget)) {
+                        $('#targetDivStaffa_proj').empty();
+                        $('<span class="alert alert-warning" style="display: block;font-size: 100%">Target should be a number </span>').appendTo('.rssedStaffa_proj');
+                    }
+                    else if (quantbaseline==quanttarget){
+                        $('#targetDivStaffa_proj').empty();
+                        $('<span class="alert alert-warning" style="display: block;font-size: 100%">Baseline and Target cannot be the same </span>').appendTo('.rssedStaffa_proj');
+                    }
+                    else{
+                        $.ajax({
+                            type: "POST",
+                            url: '/Admin/AddStrategicOutcomeIndicator_ProjectBased',     //your action
+                            data: $('#addform').serialize(),   //your form name.it takes all the values of model
+                            dataType: 'json',
+                            success: function (result) {
+                                var response = result.rtnmsg;
+
+                                if (response == "success") {
+                                            $('#targetDivStaffa_proj').empty();
+                                            $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Indicator Saved Successfully. </span>').appendTo('.rssedStaffa_proj');
+
+
+                                            var childGrid = $('#gridsuboutcome_'+gridid).data("kendoGrid");
+
+                                            childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutcomesSubIndicators_Read?outcome_transid=" + gridid;
+                                            childGrid.dataSource.read();
+                                            childGrid.refresh();
+
+
+
+                                }
+                                else if (response == "pkerror") {
+                                        $('#targetDivStaffa_proj').empty();
+                                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unable to Save. Indicator Already Exist. </span>').appendTo('.rssedStaffa_proj');
+                                        //$('#targetDivStaffa').empty();
+                                }
+                                else if (response == "createerror") {
+                                        $('#targetDivStaffa_proj').empty();
+                                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to save indicator</span>').appendTo('.rssedStaffa_proj');
+                                        //$('#targetDivStaffa').empty();
+                                }
+                                else if (response == "doesnotexist") {
+                                        $('#targetDivStaffa_proj').empty();
+                                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">No Record: Indicator does not exist</span>').appendTo('.rssedStaffa_proj');
+                                        //$('#targetDivStaffa').empty();
+                                }
+                                else {
+                                        $('#targetDivStaffa_proj').empty();
+                                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffa_proj');
+                                        //$('#targetDivStaffa').empty();
+                                }
+
+                            },
+                            error: function (data) {
+                                    $('#targetDivStaffa_proj').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffa_proj');
+                                    //$('#targetDivStaffa').empty();
+                            }
+                        })
+                   
+                    }
+
+                }
+                else
+                {
+                    $.ajax({
+                        type: "POST",
+                        url: '/Admin/AddStrategicOutcomeIndicator_ProjectBased',     //your action
+                        data: $('#addform').serialize(),   //your form name.it takes all the values of model
+                        dataType: 'json',
+                        success: function (result) {
+                            var response = result.rtnmsg;
+
+                            if (response == "success") {
+                                        $('#targetDivStaffa_proj').empty();
+                                        $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Indicator Saved Successfully. </span>').appendTo('.rssedStaffa_proj');
+
+
+                                        var childGrid = $('#gridsuboutcome_'+gridid).data("kendoGrid");
+
+                                        childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutcomesSubIndicators_Read?outcome_transid=" + gridid;
+                                        childGrid.dataSource.read();
+                                        childGrid.refresh();
+
+
+
+                            }
+                            else if (response == "pkerror") {
+                                    $('#targetDivStaffa_proj').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unable to Save. Indicator Already Exist. </span>').appendTo('.rssedStaffa_proj');
+                                    //$('#targetDivStaffa').empty();
+                            }
+                            else if (response == "createerror") {
+                                    $('#targetDivStaffa_proj').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to save indicator</span>').appendTo('.rssedStaffa_proj');
+                                    //$('#targetDivStaffa').empty();
+                            }
+                            else if (response == "doesnotexist") {
+                                    $('#targetDivStaffa_proj').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">No Record: Indicator does not exist</span>').appendTo('.rssedStaffa_proj');
+                                    //$('#targetDivStaffa').empty();
+                            }
+                            else {
+                                    $('#targetDivStaffa_proj').empty();
+                                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffa_proj');
+                                    //$('#targetDivStaffa').empty();
+                            }
+
+                        },
+                        error: function (data) {
+                                $('#targetDivStaffa_proj').empty();
+                                $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffa_proj');
+                                //$('#targetDivStaffa').empty();
+                        }
+                    })
+
+                }
+
+
+
+
+
+
+
+
+
+
+        
+    }
+    
+    return false;
+});
+
+</script>
+
+
+
+
+
+
+
+
+
+
+

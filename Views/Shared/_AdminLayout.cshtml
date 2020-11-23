@@ -489,15 +489,13 @@
                         <li>
                             <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-animation"></i><span class="hide-menu">AUDA Projects</span></a>
                             <ul aria-expanded="false" class="collapse">
-                                <li><a asp-controller="admin" asp-action="manageoutcomes">Manage AUDA Projects</a></li>
-                                <li><a asp-controller="admin" asp-action="outcomesessionalmapping">AUDA Programme-Projects Mapping</a></li>
+                                <li><a asp-controller="admin" asp-action="managelkupprojects">Manage Projects</a></li>
                             </ul>
                         </li>
                        <li>
                             <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-arrow-compress-all"></i><span class="hide-menu">AUDA Programmes</span></a>
                             <ul aria-expanded="false" class="collapse">
-                                <li><a asp-controller="admin" asp-action="manageoutcomes">Manage AUDA Programmes</a></li>
-                                <li><a asp-controller="admin" asp-action="outcomesessionalmapping">Transactional AUDA Programmes</a></li>
+                                <li><a asp-controller="admin" asp-action="managelkupprogrammes">Manage Programmes</a></li>
                             </ul>
                         </li>
 
@@ -534,8 +532,9 @@
                                 <li><a asp-controller="admin" asp-action="managestrucdivision">Manage Divisions</a></li>
                                 <li><a asp-controller="admin" asp-action="staffdivisionmapping">Staff Mapping</a></li>
                                 <li><a asp-controller="admin" asp-action="staffdivisionheadmapping">Heads of Divisions Mapping</a></li>
-                                <li><a href="table-layout.html">Projects Mapping</a></li>
-                                <li><a href="form-basic.html">Programmes Mapping</a></li>
+                                <li><a asp-controller="admin" asp-action="projprogmapping">Programmes/Projects Mapping</a></li>
+
+                            
                                 
                             </ul>
                         </li>

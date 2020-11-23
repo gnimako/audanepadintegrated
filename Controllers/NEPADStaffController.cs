@@ -42,7 +42,7 @@ namespace AUDANEPAD_Integrated.Controllers
 {
     public class NEPADStaffController: Controller
     {
-        private readonly IEmployeeRepository _employeeRepository;
+          private readonly IEmployeeRepository _employeeRepository;
         
         private readonly UserManager<ApplicationUser> userManager;
 
@@ -139,6 +139,7 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly IWP_RegionScopeRepository _wpRegionScopeRepository;
         private readonly IWP_CountryScopeRepository _wpCountryScopeRepository ;
         private readonly IWP_OutputsRepository _wpOutputsRepository ;
+        private readonly IWP_OutcomeIndicatorsRepository _wpOutcomeIndicatorsRepository ;
         private readonly IWP_OutputIndicatorsRepository _wpOutputIndicatorsRepository ;
         private readonly IWP_OutputActivitiesRepository _wpOutputActivitiesRepository ;
         private readonly IWP_SAPLinkRepository _wpSAPLinkRepository  ;
@@ -245,6 +246,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 IWP_RegionScopeRepository wpRegionScopeRepository,
                                 IWP_CountryScopeRepository wpCountryScopeRepository,
                                 IWP_OutputsRepository wpOutputsRepository,
+                                IWP_OutcomeIndicatorsRepository wpOutcomeIndicatorsRepository,
                                 IWP_OutputIndicatorsRepository wpOutputIndicatorsRepository,
                                 IWP_OutputActivitiesRepository wpOutputActivitiesRepository,
                                 IWP_SAPLinkRepository wpSAPLinkRepository,
@@ -346,6 +348,7 @@ namespace AUDANEPAD_Integrated.Controllers
             _wpRegionScopeRepository=wpRegionScopeRepository;
             _wpCountryScopeRepository=wpCountryScopeRepository;
             _wpOutputsRepository=wpOutputsRepository;
+            _wpOutcomeIndicatorsRepository=wpOutcomeIndicatorsRepository;
             _wpOutputIndicatorsRepository=wpOutputIndicatorsRepository;
             _wpOutputActivitiesRepository=wpOutputActivitiesRepository;
             _wpSAPLinkRepository=wpSAPLinkRepository;
@@ -1168,18 +1171,36 @@ namespace AUDANEPAD_Integrated.Controllers
                 .SetBorderTop(Border.NO_BORDER)
                 .SetBorderBottom(Border.NO_BORDER);
 
-               Cell cell42 = new Cell(1, 1)
-                  .SetTextAlignment(TextAlignment.LEFT)
-                  .Add(new Paragraph(_lkupProjectRepository.GetRecord(mainrec.Project_Id).Record_Name)
-                                .SetFont(ft_montserrat_reg)
-                                .SetFixedLeading(9f)
-                                .SetFontColor(cl_grayDark)
-                                .SetFontSize(10))
-                .SetBackgroundColor(cl_tablecontent_22)
-                .SetBorderLeft(Border.NO_BORDER)
-                .SetBorderRight(Border.NO_BORDER)
-                .SetBorderTop(Border.NO_BORDER)
-                .SetBorderBottom(Border.NO_BORDER);
+               Cell cell42 = new Cell(1, 1);
+                if(_lkupProjectRepository.GetRecord(mainrec.Project_Id).Record_Status==true)
+                {
+                    cell42.SetTextAlignment(TextAlignment.LEFT)
+                    .Add(new Paragraph(_lkupProjectRepository.GetRecord(mainrec.Project_Id).Record_Name)
+                                    .SetFont(ft_montserrat_reg)
+                                    .SetFixedLeading(9f)
+                                    .SetFontColor(cl_grayDark)
+                                    .SetFontSize(10))
+                    .SetBackgroundColor(cl_tablecontent_22)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                }
+                else
+                {
+                    cell42.SetTextAlignment(TextAlignment.LEFT)
+                    .Add(new Paragraph(_lkupProjectRepository.GetRecord(mainrec.Project_Id).Record_Name+"   <-- Project Document Does Not Exist")
+                                    .SetFont(ft_montserrat_reg)
+                                    .SetFixedLeading(9f)
+                                    .SetFontColor(cl_grayDark)
+                                    .SetFontSize(10))
+                    .SetBackgroundColor(cl_tablecontent_22)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+
+                }
 
                 //Row 5
                 Cell cell51 = new Cell(1, 1)
@@ -1479,6 +1500,300 @@ namespace AUDANEPAD_Integrated.Controllers
                     tableactivity_outer.AddCell(celltxt);
 
                     document.Add(tableactivity_outer);
+                    document.Add(txt);
+
+
+
+                    float indentmargin=document.GetLeftMargin()+77;
+                    Table tableindicators = new Table(UnitValue.CreatePercentArray(new float[]{40, 8, 14, 19, 19}), false)
+                                        .SetWidth(PageSize.A3.GetHeight()-indentmargin)
+                                        .SetMarginLeft(40)
+                                        .SetHorizontalAlignment(HorizontalAlignment.LEFT);
+
+                    var DB_Indicators=_wpOutcomeIndicatorsRepository.GetRecordsByMainRecordOutcomeId(mainrec.Transaction_Id, recordset.Transaction_Id);
+
+                    if(DB_Indicators.Count()>=1)
+                    {
+                        
+
+
+
+                        //Row Header
+                        Cell cellheader01 = new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.LEFT)
+                        .Add(new Paragraph("Indicator")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                            .SetBackgroundColor(cl_tableheader);
+
+                        tableindicators.AddCell(cellheader01);
+
+                        Cell cellheader02 = new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph("Type")
+                                            .SetFont(ft_bold)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tableheader)
+                                            .SetFontSize(11))
+                            .SetBackgroundColor(cl_tableheader);
+                        tableindicators.AddCell(cellheader02);
+
+                        Cell cellheader02b = new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph("Category of Indicator")
+                                            .SetFont(ft_bold)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tableheader)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tableheader);
+                        tableindicators.AddCell(cellheader02b);
+
+
+                        Cell cellheader03 = new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph("Baseline")
+                                            .SetFont(ft_bold)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tableheader)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tableheader);
+                        tableindicators.AddCell(cellheader03);
+
+                        Cell cellheader04 = new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph("Target")
+                                            .SetFont(ft_bold)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tableheader)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tableheader);
+                        tableindicators.AddCell(cellheader04);
+
+                        int activitycount=DB_Indicators.Count();
+
+
+
+
+                        foreach (var indicator in DB_Indicators)
+                        {
+                            inneriter=inneriter+1;
+
+                            Cell cell1 = new Cell(1, 1);
+                            Cell cell2 = new Cell(1, 1);
+                            Cell cell2b = new Cell(1, 1);
+                            Cell cell3 = new Cell(1, 1);
+                            Cell cell4 = new Cell(1, 1);
+    
+                            string indicatorname="";
+
+                            if(indicator.IndicatorCategory=="Institutional-Level")
+                            {
+                                indicatorname=_strategyOutputIndicatorsRepository.GetRecord(indicator.OutcomeIndicator_Id).Record_Name;
+
+                            }
+                            else if (indicator.IndicatorCategory=="Directorate-Level")
+                            {
+                                indicatorname=_strucDirDivIndicatorsRepository.GetRecord(indicator.OutcomeIndicator_Id).Record_Name;
+
+                            }
+                            else
+                            {
+                                indicatorname=indicator.ProjectBasedIndicatorStatement;
+                            }
+
+
+
+                            string baselinename="";
+                            string targetname="";
+
+
+                            if(indicator.IndicatorType=="Quantitative")
+                            {
+                                baselinename=indicator.BaselineQuantitative.ToString();
+                                targetname=indicator.TargetQuantitative.ToString();
+
+                            }
+                            else
+                            {
+                                baselinename=indicator.BaselineQuanlitative;
+                                targetname=indicator.TargetQuanlitative;
+                            }
+
+                            if(row_alt==false)
+                            {
+                                //Row Rows
+                                cell1.SetTextAlignment(TextAlignment.JUSTIFIED)
+                                .Add(new Paragraph(indicatorname)
+                                                //.SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_1)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+
+
+                             
+                                    cell2.SetTextAlignment(TextAlignment.LEFT)
+                                    .Add(new Paragraph(indicator.IndicatorType)
+                                                    //.SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_1)
+                                                    .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_1)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+
+                                    cell2b.SetTextAlignment(TextAlignment.LEFT)
+                                    .Add(new Paragraph(indicator.IndicatorCategory)
+                                                    //.SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_1)
+                                                    .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_1)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+
+
+
+
+                                    cell3.SetTextAlignment(TextAlignment.LEFT)
+                                    .Add(new Paragraph(baselinename)
+                                                   // .SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_1)
+                                                    .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_1)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+
+
+
+                                cell4.SetTextAlignment(TextAlignment.LEFT)
+                                    .Add(new Paragraph(targetname)
+                                                   // .SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_1)
+                                                    .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_1)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+
+                            }
+                            else
+                            {
+                                //Row Rows
+
+                                cell1.SetTextAlignment(TextAlignment.JUSTIFIED)
+                                    .Add(new Paragraph(indicatorname)
+                                                   // .SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_2)
+                                                    .SetFontSize(10))
+                                        .SetBackgroundColor(cl_tablecontent_2)
+                                        .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+
+
+
+                                cell2.SetTextAlignment(TextAlignment.LEFT)
+                                    .Add(new Paragraph(indicator.IndicatorType)
+                                                   // .SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_2)
+                                                    .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_2)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+
+                                cell2b.SetTextAlignment(TextAlignment.LEFT)
+                                    .Add(new Paragraph(indicator.IndicatorCategory)
+                                                   // .SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_2)
+                                                    .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_2)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+    
+
+
+
+                                cell3.SetTextAlignment(TextAlignment.LEFT)
+                                    .Add(new Paragraph(baselinename)
+                                                   // .SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_2)
+                                                    .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_2)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+   
+
+
+                                cell4.SetTextAlignment(TextAlignment.LEFT)
+                                    .Add(new Paragraph(targetname)
+                                                    //.SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_2)
+                                                    .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_2)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+                                
+
+                            }
+
+                            row_alt=ToggleBoolean(row_alt);
+                            if(inneriter==activitycount)
+                            {
+                                cell1.SetBorderBottom(new SolidBorder(1f));
+                                cell2.SetBorderBottom(new SolidBorder(1f));
+                                cell2b.SetBorderBottom(new SolidBorder(1f));
+                                cell3.SetBorderBottom(new SolidBorder(1f));
+                                cell4.SetBorderBottom(new SolidBorder(1f));
+
+                            }
+
+                            tableindicators.AddCell(cell1);
+                            tableindicators.AddCell(cell2);
+                            tableindicators.AddCell(cell2b);
+                            tableindicators.AddCell(cell3);   
+                            tableindicators.AddCell(cell4);
+
+                            
+
+                        }
+
+                       
+
+                        inneriter=0;
+                        row_alt=true;
+                        document.Add(tableindicators);
+
+                       
+                    }
+
+
+
+                    document.Add(txt);
                     document.Add(txt);
 
 
@@ -10602,6 +10917,30 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
             return PartialView("_AddOutputIndicator", model);
+        }
+
+
+        public async Task<ActionResult> AddOutcomeIndicator(string transid)
+        {
+            WP_Outcomes rec = _wpOutcomesRepository.GetRecord(transid);
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            
+            WP_OutputIndicatorsVM model = new WP_OutputIndicatorsVM
+            {
+                Transaction_IdOIVM=rec.Transaction_Id,
+                WPMainRecord_idOIVM=rec.WPMainRecord_id,
+                Employee_IdOIVM = user.Employee_Id,
+                FiscalYear_IdOIVM=rec.FiscalYear_Id,
+                Period_IdOIVM =rec.Period_Id,
+                Project_IdOIVM=rec.Project_Id,
+                FisYearOIVM=_lkupFiscalYearRepository.GetRecord(rec.FiscalYear_Id).Record_Name,
+                FisPeriodOIVM=_lkupPeriodRepository.GetRecord(rec.Period_Id).Record_Name
+
+            };
+
+
+
+            return PartialView("_AddOutcomeIndicator", model);
         }
 
 

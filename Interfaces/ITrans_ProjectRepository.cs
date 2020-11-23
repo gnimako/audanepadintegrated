@@ -9,6 +9,9 @@ namespace AUDANEPAD_Integrated.Interfaces
 
        	Trans_Project GetRecord (string Id);
 
+        Trans_Project GetRecordByMainProjectID (int Id);
+        Trans_Project GetRecordByMainProjectIDAndProgrammeID (int ProjId, int ProgId);
+
 		IEnumerable<Trans_Project> GetAllRecords();
 
         IEnumerable<Trans_Project> GetAllRecordsByTransProgrammeID(string TransID);

@@ -51,7 +51,7 @@ namespace AUDANEPAD_Integrated.Services
         public IEnumerable<WP_OutputActivities> GetRecordsByMainRecordIdMS (string recid)
         {
             var records = context.WP_OutputActivities
-                                .Where(s => s.WPMainRecord_id==recid && s.PartnerFunding==true)
+                                .Where(s => s.WPMainRecord_id==recid && s.PartnerFunding==false)
                                 .ToList();
 
             return records;

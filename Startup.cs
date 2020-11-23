@@ -234,6 +234,7 @@ namespace AUDANEPAD_Integrated
             services.AddScoped<IWP_MobilityInternalTeamRepository, ServiceWP_MobilityInternalTeam>();
             services.AddScoped<IWP_MobilityExternalTeamRepository, ServiceWP_MobilityExternalTeam>();
             services.AddScoped<IWP_MobilityLimitRepository, ServiceWP_MobilityLimit>();
+            services.AddScoped<IWP_OutcomeIndicatorsRepository, ServiceWP_OutcomeIndicators>();
             
             //services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
 
