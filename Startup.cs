@@ -235,7 +235,15 @@ namespace AUDANEPAD_Integrated
             services.AddScoped<IWP_MobilityExternalTeamRepository, ServiceWP_MobilityExternalTeam>();
             services.AddScoped<IWP_MobilityLimitRepository, ServiceWP_MobilityLimit>();
             services.AddScoped<IWP_OutcomeIndicatorsRepository, ServiceWP_OutcomeIndicators>();
-            
+
+
+            services.AddScoped<IWP_BarCodeIdentsRepository, ServiceWP_BarCodeIdents>();
+            services.AddScoped<IWP_CommunicationRepository, ServiceWP_Communication>();
+            services.AddScoped<IWP_PRCBudgetLimitsRepository, ServiceWP_PRCBudgetLimits>();
+            services.AddScoped<IWP_ProcurementRepository, ServiceWP_Procurement>();
+            services.AddScoped<IWP_RiskProfileRepository, ServiceWP_RiskProfile>();
+            services.AddScoped<IWP_RiskProfileCountriesRepository, ServiceWP_RiskProfileCountries>();
+
             //services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
 
 

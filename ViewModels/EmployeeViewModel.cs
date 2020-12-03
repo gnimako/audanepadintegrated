@@ -8,6 +8,7 @@ namespace AUDANEPAD_Integrated.ViewModels
     public class EmployeeViewModel
     {
 		public int Id { get; set; }
+        public string DispatchCycle_Id { get; set; }
         public int Employee_Id { get; set; }
         public int Programme_Id { get; set; }
         public string Programme_Name { get; set; }
@@ -16,6 +17,8 @@ namespace AUDANEPAD_Integrated.ViewModels
 
         public string IdentityUserId { get; set; }
 		public string Staff_Number { get; set; }
+
+        public string Role_Id { get; set; }
 
 		public int Rank { get; set; }
 
@@ -102,6 +105,9 @@ namespace AUDANEPAD_Integrated.ViewModels
 
         //Workplans
         public string WPMainRecordId { get; set; }
+        public double PRCThresold_Max { get; set; }
+        public double Project_Max { get; set; }
+
 
         public List<DropDownListViewModel> SelectedCountries { get; set; }
 

@@ -369,6 +369,24 @@
             }
             
     }
+
+    function onRequestEndPRCLimit(e){
+    
+            var wpcycleid = $("#Transaction_Id").val();  
+
+
+
+            if (e.type === "update" || e.type === "create" || e.type === "destroy" ) {
+                var grid = $("#grid_wpprclimit").data("kendoGrid"); 
+
+                grid.dataSource.transport.options.read.url = "/Admin/WP_PRCLimit_Read?wpcycleid=" + wpcycleid;
+                grid.dataSource.read();
+
+
+
+            }
+            
+    }
     function editstaffdirmap(e) {
 
          e.preventDefault();
@@ -387,7 +405,7 @@
                     animation: false,
                     resizable: true,
                     content: "/NEPADStaff/EditWorkplanCycle?transid=" + transid + "&pstart=" + kendo.toString(dataItem.PeriodStart, "MM/dd/yyyy")+ "&pend=" + kendo.toString(dataItem.PeriodEnd, "MM/dd/yyyy"),
-                    width: 600,
+                    width: 800,
                     height: 700,
 
                     title: "Edit A Workplan Cycle",

@@ -97,6 +97,55 @@
         <br />
         <br />
 
+
+        <label>Add PRC Budget Limits, if any </label>
+     <br />
+        @(Html.Kendo().Grid<WP_PRCLimitViewModel>()
+                .Name("grid_wpprclimit")
+                .Columns(columns =>
+                {
+                    columns.Bound(c => c.Transaction_IdVM).Hidden();
+                    columns.Bound(c => c.WPCycle_idVM).Hidden();
+                    //columns.Bound(c => c.Employee_IdVM).Title("Employee");   
+                    columns.Bound(c => c.Category).ClientTemplate("#=Category.CategoryName#").Title("Directorate").Width(400);
+                    columns.Bound(c => c.MSLimitVM).Title("MS Limit").Width(100).HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { style = "text-align:right" }); 
+                    columns.Bound(c => c.DPLimitVM).Title("DP Limit").Width(100).HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { style = "text-align:right" });                                             
+
+                    columns.Command(command => { command.Edit().Text(" Edit").IconClass("k-icon k-i-track-changes"); });
+                    columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
+
+                })
+                .ToolBar(toolbar => toolbar.Create().Text(" Add a Limit").IconClass("k-icon k-i-plus-outline"))
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                .Resizable(r=>r.Columns(true))
+                .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .Model(model =>
+                    {
+                        model.Id(p => p.Transaction_IdVM);
+                        model.Field(p => p.Transaction_IdVM).Editable(false);
+                        model.Field(p => p.Category).DefaultValue(
+                            ViewData["defaultDirectorate"] as CategoryViewModel);
+                    })
+                    .Read(read => read.Action("WP_PRCLimit_Read", "Admin", new {wpcycleid=Model.Transaction_Id}))
+                    .Model(model => 
+                        {
+                            model.Id(p => p.Transaction_IdVM);
+                            //model.Field(field => field.LookUp_Status).Editable(false);
+                        })
+                    .Create(create => create.Action("WP_PRCLimit_Create", "Admin", new {wpcycleid=Model.Transaction_Id}))
+                    .Update(update => update.Action("WP_PRCLimit_Update", "Admin", new {wpcycleid=Model.Transaction_Id}))
+                    .Destroy(destroy => destroy.Action("WP_PRCLimit_Delete", "Admin"))
+                   // .PageSize(20)
+                    .Events(events => events.Error("error_handler")
+                                            .RequestEnd("onRequestEndPRCLimit"))
+                    
+                )
+        )
+
+        <br />
+        <br />
+
         <div id="targetDivStaffa" class="rssedStaffa">
         </div>
         <br />

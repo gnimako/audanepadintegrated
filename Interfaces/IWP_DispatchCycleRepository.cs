@@ -9,6 +9,8 @@ namespace AUDANEPAD_Integrated.Interfaces
     {
         WP_DispatchCycle GetRecord (string Id);
 
+        WP_DispatchCycle GetCurrentOpenedCycleRecord ();
+
         WP_DispatchCycle GetRecordByYearPStartPEnd (int year, LocalDate pstart, LocalDate pend);
 
         WP_DispatchCycle GetRecordByYearAndPeriod (int year, int period);

@@ -16,6 +16,7 @@ namespace AUDANEPAD_Integrated.Interfaces
         WP_AUDAPriority  GetRecordsByProjectYearPeriodPriorityMainRecId (int projectid, int year, int period, int priority, string mainrecid);
 
         IEnumerable<WP_AUDAPriority>  GetRecordsByProjectYearAndPeriod (int projectid, int year, int period);
+        IEnumerable<WP_AUDAPriority>  GetRecordsByYearAndPeriod (int year, int period);
         IEnumerable<WP_AUDAPriority>  GetRecordsByProjectYearPeriodAndMainRecId (int projectid, int year, int period, string mainrecid);
 
 		IEnumerable<WP_AUDAPriority> GetAllRecords();

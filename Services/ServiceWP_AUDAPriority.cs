@@ -55,6 +55,14 @@ namespace AUDANEPAD_Integrated.Services
 
             return records;
         }
+		public IEnumerable<WP_AUDAPriority>  GetRecordsByYearAndPeriod (int year, int period)
+        {
+            var records = context.WP_AUDAPriority
+                                .Where(s =>  s.FiscalYear_Id==year && s.Period_Id==period)
+                                .ToList();
+
+            return records;
+        }
 		public IEnumerable<WP_AUDAPriority>  GetRecordsByProjectYearPeriodAndMainRecId (int projectid, int year, int period, string mainrecid)
         {
             var records = context.WP_AUDAPriority

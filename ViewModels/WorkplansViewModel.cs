@@ -41,6 +41,7 @@ namespace AUDANEPAD_Integrated.ViewModels
         public bool WPSAPLinkView { get; set; }
         public string WPStatus_String { get; set; }
         public string WPSAPLinkView_String { get; set; }
+        public string WPCEOApproveRole_String { get; set; }
 
         public int ViewNumbering { get; set; }
         public string Outcome { get; set; }

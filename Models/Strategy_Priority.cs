@@ -16,6 +16,7 @@ namespace AUDANEPAD_Integrated.Models
         public string Record_Name { get; set; }
 
         public bool? Record_Status { get; set; }
+        public string ShortName { get; set; }
 
 
         public LocalDate TransactionDate { get; set; }

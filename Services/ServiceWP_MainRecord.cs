@@ -4,6 +4,7 @@ using AUDANEPAD_Integrated.Models;
 using AUDANEPAD_Integrated.Interfaces;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 
 
 
@@ -54,6 +55,21 @@ namespace AUDANEPAD_Integrated.Services
 						.ToList();
             return rec;
         }
+		public IEnumerable<WP_MainRecord>  GetRecordsByDivisionYearAndPeriod (int div, int year, int period)
+        {
+            var rec = context.WP_MainRecord
+						.Where(s => s.Division_Id==div && s.FiscalYear_Id == year && s.Period_Id == period)
+						.ToList();
+            return rec;
+        }
+
+		public IEnumerable<WP_MainRecord> GetRecordsByDivisionYearAndPeriodStartEnd (int div, int year, int period, LocalDate PeriodStartDate, LocalDate PeriodEndDate)
+        {
+            var rec = context.WP_MainRecord
+						.Where(s => s.Division_Id==div && s.FiscalYear_Id == year && s.Period_Id == period && s.PeriodStartDate==PeriodStartDate && s.PeriodEndDate==PeriodEndDate)
+						.ToList();
+            return rec;
+        }
 		public IEnumerable<WP_MainRecord>  GetRecordsByProjectYearAndPeriodRecs (int projectid, int year, int period)
         {
             var rec = context.WP_MainRecord
@@ -66,6 +82,14 @@ namespace AUDANEPAD_Integrated.Services
         {
             var rec = context.WP_MainRecord
 						.Where(s =>  s.Division_Id==div && s.WP_Status=="Drafting Mode")
+						.ToList();
+            return rec;
+        }
+
+		public IEnumerable<WP_MainRecord> GetRecordsByDivRecs (int div)
+        {
+            var rec = context.WP_MainRecord
+						.Where(s =>  s.Division_Id==div)
 						.ToList();
             return rec;
         }

@@ -270,6 +270,18 @@
                     <li class="nav-item"><a asp-controller="nepadstaff" asp-action="workplandraftlist"><i class="nav-icon i-Edit"></i><span class="item-name">Draft Workplans</span></a></li>
                     <li class="nav-item"><a href="#"><i class="nav-icon i-Yes"></i><span class="item-name">Approved Workplans</span></a></li>
                     <li class="nav-item"><a href="#"><i class="nav-icon i-Lock-2"></i><span class="item-name">Closed Workplans</span></a></li>
+
+                 @if(Model.CEO==true ||Model.PIPD==true )
+                 {
+                   
+                    <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-File-Clipboard-Text--Image"></i><span class="item-name" style="color: #003473;">Institutional-Level</span><i class="dd-arrow i-Arrow-Down"></i></a>
+                        <ul class="submenu">
+                            <li><a asp-controller="nepadstaff" asp-action="institutionalworkplandraftlist"><span style="color: #003473;">Draft Workplans</span></a></li>
+                            <li><a href="charts.apexBarCharts.html"><span style="color: #003473;">Approved Workplans</span></a></li>
+                            <li><a href="charts.apexBubbleCharts.html"><span style="color: #003473;">Closed Workplans</span></a></li>
+                        </ul>
+                    </li>
+                 }
                 </ul>
 
                 <ul class="childNav" data-parent="widgets">

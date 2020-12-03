@@ -41,6 +41,7 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/Microsoft.Extensions.DependencyModel.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/Microsoft.Extensions.PlatformAbstractions.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/Microsoft.VisualBasic.dll
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/Microsoft.Win32.SystemEvents.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/MimeKit.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/NETCore.MailKit.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/Newtonsoft.Json.dll
@@ -55,6 +56,7 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/System.Composition.Hosting.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/System.Composition.Runtime.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/System.Composition.TypedParts.dll
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/System.Drawing.Common.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/Kendo.Mvc.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/cs/Microsoft.CodeAnalysis.resources.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/de/Microsoft.CodeAnalysis.resources.dll
@@ -166,6 +168,9 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/runtimes/win7-arm/native/libuv.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/runtimes/win7-x64/native/libuv.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/runtimes/win7-x86/native/libuv.dll
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/runtimes/win/lib/netcoreapp3.0/Microsoft.Win32.SystemEvents.dll
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/runtimes/unix/lib/netcoreapp3.0/System.Drawing.Common.dll
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/runtimes/win/lib/netcoreapp3.0/System.Drawing.Common.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/AUDANEPAD_Integrated.csprojAssemblyReference.cache
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/AUDANEPAD_Integrated.MvcApplicationPartsAssemblyInfo.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/AUDANEPAD_Integrated.MvcApplicationPartsAssemblyInfo.cache
@@ -195,6 +200,7 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Admin/StaffDirectorsMapping.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Admin/StaffDivisionHeadMapping.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Admin/StaffDivisionMapping.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Admin/StaffRolesMapping.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Admin/_AddStrucDivision.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Admin/_EditStaffDirectorateMapping.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Admin/_EditStaffDivisionMapping.cshtml.g.cs
@@ -204,6 +210,10 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/DivisionKPIs.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/Index.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/Index_old.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/InstitutionalWorkplanDraft.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/InstitutionalWorkplanDraftList.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/InstitutionalWorkplanDraftPDF.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/InstitutionalWorkplanDraft_Old.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/ManageWorkplansDraft.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/MtpPriortyMapping.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/SystemMessage.cshtml.g.cs
@@ -227,6 +237,7 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_EditWorkplanCycle.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_ManageOutputBudgetLink.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/EditorTemplates/ClientCategory.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/EditorTemplates/ClientDirectorate.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/EditorTemplates/ClientExternalType.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/Error.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/_AdminLayout.cshtml.g.cs

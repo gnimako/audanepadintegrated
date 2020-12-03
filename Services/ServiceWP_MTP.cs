@@ -48,6 +48,14 @@ namespace AUDANEPAD_Integrated.Services
 
             return records;
         }
+		public IEnumerable<WP_MTP> GetRecordsByYearAndPeriod (int year, int period)
+        {
+            var records = context.WP_MTP
+                                .Where(s =>  s.FiscalYear_Id==year && s.Period_Id==period)
+                                .ToList();
+
+            return records;
+        }
 		public IEnumerable<WP_MTP>  GetRecordsByProjectYearPeriodMainRecId (int projectid, int year, int period, string mainrecid )
         {
             var records = context.WP_MTP

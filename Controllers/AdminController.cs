@@ -27,6 +27,11 @@ using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Properties;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+
+
 
 
 
@@ -143,7 +148,12 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly IWP_MobilityInternalTeamRepository _wpMobilityInternalTeamRepository;
         private readonly IWP_MobilityExternalTeamRepository _wpMobilityExternalTeamRepository;
         private readonly IWP_MobilityLimitRepository _wpMobilityLimitRepository;
-
+        private readonly IWP_BarCodeIdentsRepository _wpBarCodeIdentsRepository;
+        private readonly IWP_CommunicationRepository _wpCommunicationRepository;
+        private readonly IWP_PRCBudgetLimitsRepository _wpPRCBudgetLimitsRepository;
+        private readonly IWP_ProcurementRepository _wpProcurementRepository;
+        private readonly IWP_RiskProfileRepository _wpRiskProfileRepository;
+        private readonly IWP_RiskProfileCountriesRepository _wpRiskProfileCountriesRepository;
 
 
 
@@ -249,7 +259,13 @@ namespace AUDANEPAD_Integrated.Controllers
                                 IWP_MobilityRepository wpMobilityRepository,
                                 IWP_MobilityInternalTeamRepository wpMobilityInternalTeamRepository,
                                 IWP_MobilityExternalTeamRepository wpMobilityExternalTeamRepository,
-                                IWP_MobilityLimitRepository wpMobilityLimitRepository)
+                                IWP_MobilityLimitRepository wpMobilityLimitRepository,
+                                IWP_BarCodeIdentsRepository wpBarCodeIdentsRepository,
+                                IWP_CommunicationRepository wpCommunicationRepository,
+                                IWP_PRCBudgetLimitsRepository wpPRCBudgetLimitsRepository,
+                                IWP_ProcurementRepository wpProcurementRepository,
+                                IWP_RiskProfileRepository wpRiskProfileRepository,
+                                IWP_RiskProfileCountriesRepository wpRiskProfileCountriesRepository)
         {
             this._employeeRepository = employeeRepository;
             this.userManager = userManager;
@@ -352,7 +368,13 @@ namespace AUDANEPAD_Integrated.Controllers
             _wpMobilityInternalTeamRepository=wpMobilityInternalTeamRepository;
             _wpMobilityExternalTeamRepository=wpMobilityExternalTeamRepository;
             _wpMobilityLimitRepository=wpMobilityLimitRepository;
-      
+            _wpBarCodeIdentsRepository=wpBarCodeIdentsRepository;
+            _wpCommunicationRepository=wpCommunicationRepository;
+            _wpPRCBudgetLimitsRepository=wpPRCBudgetLimitsRepository;
+            _wpProcurementRepository=wpProcurementRepository;
+            _wpRiskProfileRepository=wpRiskProfileRepository;
+            _wpRiskProfileCountriesRepository=wpRiskProfileCountriesRepository;
+        
 
 
 
@@ -806,6 +828,63 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
         public async Task<ActionResult> StaffDirectorsMapping()
+        {
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+
+
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            // DateTime test = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day);
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                // DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank,
+                ExistingPhotoPath = employee.PhotoPath
+
+            };
+
+
+
+            return View(emp_view);
+
+        }
+
+
+        public async Task<ActionResult> StaffRolesMapping()
         {
 
             var user = await userManager.GetUserAsync(HttpContext.User);
@@ -2868,6 +2947,46 @@ namespace AUDANEPAD_Integrated.Controllers
             
             return Json(new [] { record }.ToDataSourceResult(request, ModelState));
         }
+        
+        [AcceptVerbs("Post")]
+		public ActionResult WP_PRCLimit_Create([DataSourceRequest] DataSourceRequest request, WP_PRCLimitViewModel record, string wpcycleid)
+        {
+            if (record != null && ModelState.IsValid)
+            { 
+                 if(wpcycleid!=null)
+                 {
+
+                     WP_PRCBudgetLimits rec=_wpPRCBudgetLimitsRepository.GetRecordByDirectorateAndCycle(record.Category.CategoryID, wpcycleid);
+
+                     if(rec==null)
+                     {
+                         WP_PRCBudgetLimits rec_to_add = new WP_PRCBudgetLimits
+                        {
+                            Transaction_Id=Guid.NewGuid().ToString(),
+                            WPCycle_id=wpcycleid,
+                            FiscalYear_Id=_wpDispatchCycleRepository.GetRecord(wpcycleid).FiscalYear_Id,
+                            Period_Id=_wpDispatchCycleRepository.GetRecord(wpcycleid).Period_Id,
+                            Directorate_Id=record.Category.CategoryID,
+                            MS_Limit=record.MSLimitVM,
+                            DP_Limit=record.DPLimitVM,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+
+                        if(_wpDispatchCycleRepository.GetRecord(wpcycleid).Period_Id==8)
+                        {
+                            rec_to_add.PeriodStartDate=_wpDispatchCycleRepository.GetRecord(wpcycleid).PeriodStartDate;
+                            rec_to_add.PeriodEndDate=_wpDispatchCycleRepository.GetRecord(wpcycleid).PeriodEndDate;
+                        }
+
+                        _wpPRCBudgetLimitsRepository.Add(rec_to_add);
+                     }
+                 }
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
         [AcceptVerbs("Post")]
 		public ActionResult WP_MobilityExternalParticipants_Create([DataSourceRequest] DataSourceRequest request, WP_OutputMobilityExternalPartVM record, string wpmobilityid)
         {
@@ -3324,6 +3443,29 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
         [AcceptVerbs("Post")]
+		public ActionResult WP_PRCLimit_Update([DataSourceRequest] DataSourceRequest request, WP_PRCLimitViewModel record, string wpcycleid)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                
+                WP_PRCBudgetLimits wp_rec_fetch=_wpPRCBudgetLimitsRepository.GetRecord(record.Transaction_IdVM);
+                if (wp_rec_fetch != null)
+                {
+
+                    wp_rec_fetch.MS_Limit =record.MSLimitVM;
+                    wp_rec_fetch.DP_Limit =record.DPLimitVM;
+                    wp_rec_fetch.TransactionDate=new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+
+                    _wpPRCBudgetLimitsRepository.Update(wp_rec_fetch);
+                    
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+        [AcceptVerbs("Post")]
 		public ActionResult WP_MobilityExternalParticipant_Update([DataSourceRequest] DataSourceRequest request, WP_OutputMobilityExternalPartVM record, string wpmobilityid)
         {
             if (record != null && ModelState.IsValid)
@@ -3638,6 +3780,25 @@ namespace AUDANEPAD_Integrated.Controllers
                 if (rec != null)
                 {
                     _wpMobilityLimitRepository.Delete(rec.Transaction_Id);
+
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+        [AcceptVerbs("Post")]
+		public ActionResult WP_PRCLimit_Delete([DataSourceRequest] DataSourceRequest request, WP_PRCLimitViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+
+                WP_PRCBudgetLimits rec=_wpPRCBudgetLimitsRepository.GetRecord(record.Transaction_IdVM);
+                
+                if (rec != null)
+                {
+                    _wpPRCBudgetLimitsRepository.Delete(rec.Transaction_Id);
 
                 }      
                            
@@ -4131,6 +4292,58 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(collection_recs.ToDataSourceResult(request));
         }
 
+        public ActionResult WP_PRCLimit_Read([DataSourceRequest]DataSourceRequest request, string wpcycleid)
+        {
+
+
+            List<WP_PRCLimitViewModel> collection_recs = new List<WP_PRCLimitViewModel>();
+
+           // WP_MainRecord wp_mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+       
+            var DB_Recs =  _wpPRCBudgetLimitsRepository.GetRecordsByWPCycle(wpcycleid).ToList();
+
+          //  var emp_recs =  _employeeRepository.GetAllEmployee().ToList();
+
+           
+
+
+
+            int _count =  DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+                    var directorate =_strucDirectorateRepository.GetRecord(rec.Directorate_Id);
+   
+                    WP_PRCLimitViewModel srec = new WP_PRCLimitViewModel
+                    {
+                        Transaction_IdVM = rec.Transaction_Id,
+                        WPCycle_idVM=rec.WPCycle_id,
+                        FiscalYear_IdVM=rec.FiscalYear_Id,
+                        Period_IdVM=rec.Period_Id,
+                        Directorate_IdVM=rec.Directorate_Id,
+                        MSLimitVM=rec.MS_Limit,
+                        DPLimitVM=rec.DP_Limit,
+                        Category = new CategoryViewModel()
+                        {
+                            CategoryID = directorate.Record_Id,
+                            CategoryName = directorate.Record_Name
+                        },
+
+
+                    };
+
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
         public ActionResult WP_MobilityExternal_Read([DataSourceRequest]DataSourceRequest request, string wpmobilityid)
         {
 
@@ -4411,6 +4624,1134 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
             return Json(new[] { model }.ToDataSourceResult(request, ModelState));
+        }
+
+        [HttpPost]
+        public ActionResult _GetCompletionLevelOfWPS_Draft(string cycleid)
+        {
+            List<WP_InstitutionalGraphsVM> collection_recs = new List<WP_InstitutionalGraphsVM>();
+
+            WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
+
+            var DB_Records = _transStrucDirectorateRepository.GetAllRecords().ToList();
+
+            int _countrecs =  DB_Records.Count();
+            if(_countrecs>0)
+            {
+                foreach (var rec_set in DB_Records)
+                {
+                    //**********Compute Level Divisions Submissions***********// 
+
+                    Struc_Directorate dir=_strucDirectorateRepository.GetRecord(rec_set.Record_Id);
+
+                    var DB_RecordsDivs=_transStrucDivisionRepository.GetAllRecordsByDirectorate(rec_set.Transaction_Id).ToList();
+                    double _totaldivisions =  Convert.ToDouble(DB_RecordsDivs.Count());
+                    int _numofdivisions_thathave_submitted=0;
+               
+                    //Check if the division have any submission GetRecordsByDivRecs
+                    foreach (var rec_div in DB_RecordsDivs)
+                    {
+                        var DivMainRecs=_wpMainRecordRepository.GetRecordsByDivRecs(rec_div.Division_Id).ToList();
+
+                        //Fetch the Division Records that correspond the cycle 
+                        if(currentcyclerec.Period_Id==8)
+                        {
+                            DivMainRecs=_wpMainRecordRepository.GetRecordsByDivisionYearAndPeriodStartEnd(rec_div.Division_Id, currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id, currentcyclerec.PeriodStartDate, currentcyclerec.PeriodEndDate).ToList();
+                        }
+                        else
+                        {
+                            DivMainRecs=_wpMainRecordRepository.GetRecordsByDivisionYearAndPeriod(rec_div.Division_Id, currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id).ToList();
+                        }
+
+
+                        if(DivMainRecs.Count()>0)
+                        {
+                            _numofdivisions_thathave_submitted=_numofdivisions_thathave_submitted+1;
+                        }
+                    }
+
+                    double _numofdivssubmitted=Convert.ToDouble(_numofdivisions_thathave_submitted);
+
+                    double divsubmissionlevel=(_numofdivssubmitted/_totaldivisions)*100;
+
+                    if(Double.IsNaN(divsubmissionlevel))
+                        divsubmissionlevel=0;
+
+
+
+
+                    //**********Compute Completeness Level of Submissions***********// 
+
+                   // Compute the Denominator
+                    int _totalprojectsubmitted=0;
+                    foreach (var rec_div in DB_RecordsDivs)
+                    {
+                        var DivMainRecs=_wpMainRecordRepository.GetRecordsByDivRecs(rec_div.Division_Id).ToList();
+                        //Fetch the Division Records that correspond the cycle 
+                        if(currentcyclerec.Period_Id==8)
+                        {
+                            DivMainRecs=_wpMainRecordRepository.GetRecordsByDivisionYearAndPeriodStartEnd(rec_div.Division_Id, currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id, currentcyclerec.PeriodStartDate, currentcyclerec.PeriodEndDate).ToList();
+                        }
+                        else
+                        {
+                            DivMainRecs=_wpMainRecordRepository.GetRecordsByDivisionYearAndPeriod(rec_div.Division_Id, currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id).ToList();
+                        }
+                        _totalprojectsubmitted=_totalprojectsubmitted+DivMainRecs.Count();
+                    }
+                    int score_denominator=_totalprojectsubmitted*100;
+
+                    //Compute the Numerator
+                       int score_numerator_score=0;
+                    foreach (var rec_div in DB_RecordsDivs)
+                    {
+
+                        int outcomes=0;
+                        int outputs=0;
+                        int activities=0;
+                        int comms=0;
+                        int risk=0;
+
+                        var DB_DivMainRecs=_wpMainRecordRepository.GetRecordsByDivRecs(rec_div.Division_Id).ToList();
+                        //Fetch the Division Records that correspond the cycle 
+                        if(currentcyclerec.Period_Id==8)
+                        {
+                            DB_DivMainRecs=_wpMainRecordRepository.GetRecordsByDivisionYearAndPeriodStartEnd(rec_div.Division_Id, currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id, currentcyclerec.PeriodStartDate, currentcyclerec.PeriodEndDate).ToList();
+                        }
+                        else
+                        {
+                            DB_DivMainRecs=_wpMainRecordRepository.GetRecordsByDivisionYearAndPeriod(rec_div.Division_Id, currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id).ToList();
+                        }
+                        foreach (var rec_proj_main in DB_DivMainRecs)
+                        {
+                            var DB_OutcomeRecs=_wpOutcomesRepository.GetRecordsByMainRecordId(rec_proj_main.Transaction_Id).ToList();
+                            if(DB_OutcomeRecs.Count()>0)
+                                outcomes=20;
+
+                            var DB_OutputsRecs=_wpOutputsRepository.GetRecordsByMainRecordId(rec_proj_main.Transaction_Id).ToList();
+                            if(DB_OutputsRecs.Count()>0)
+                                outputs=30;
+                            
+                            var DB_ActivitiesRecs=_wpOutputActivitiesRepository.GetRecordsByMainRecordId(rec_proj_main.Transaction_Id).ToList();
+                            if(DB_ActivitiesRecs.Count()>0)
+                                activities=30;
+
+                            var DB_CommsRecs=_wpCommunicationRepository.GetRecordsByMainRecordId(rec_proj_main.Transaction_Id).ToList();
+                            if(DB_CommsRecs.Count()>0)
+                                comms=10;
+
+                            var DB_RiskRecs=_wpRiskProfileRepository.GetRecordsByMainRecordId(rec_proj_main.Transaction_Id).ToList();
+                            if(DB_RiskRecs.Count()>0)
+                                risk=10;
+
+                            score_numerator_score=score_numerator_score+(outcomes+outputs+activities+comms+risk);
+                        }
+
+                    }
+
+                    double completionlevel=(Convert.ToDouble(score_numerator_score)/Convert.ToDouble(score_denominator))*100;
+
+                    if(Double.IsNaN(completionlevel))
+                        completionlevel=0;
+
+                    WP_InstitutionalGraphsVM srec1 = new WP_InstitutionalGraphsVM
+                    {   
+                        DName=_strucDirectorateRepository.GetRecord(rec_set.Record_Id).AcronymName,
+                        DivisionSubmissions=divsubmissionlevel,
+                        CompletenessOfSubmissions=completionlevel
+                    };
+
+
+                    collection_recs.Add(srec1);
+
+
+
+                   
+
+
+
+                }
+            }
+
+
+
+
+            return Json(collection_recs);
+        }
+
+        [HttpPost]
+        public ActionResult _GetDirectorateMTPContributions_Draft(string cycleid)
+        {
+            List<WP_InstitutionalGraphsVM> collection_recs = new List<WP_InstitutionalGraphsVM>();
+
+            WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
+
+            var DB_Records = _transStrucDirectorateRepository.GetAllRecords().ToList();
+
+            int _countrecs =  DB_Records.Count();
+
+            //MTP Return Values Variables
+            double economic_rtn=0;
+            double invest_rtn=0;
+            double advancing_rtn=0;
+            double service_rtn=0;
+            double institutional_rtn=0;
+
+            if(_countrecs>0)
+            {
+                foreach (var rec_set in DB_Records)
+                {
+                    //**********Divisions Submissions***********// 
+
+                    Struc_Directorate dir=_strucDirectorateRepository.GetRecord(rec_set.Record_Id);
+
+                    var DB_RecordsDivs=_transStrucDivisionRepository.GetAllRecordsByDirectorate(rec_set.Transaction_Id).ToList();
+                    
+                    double _total_for_mtps =  0;
+
+                    double _economic_cnt=0;
+                    double _invest_cnt=0;
+                    double _advancing_cnt=0;
+                    double _service_cnt=0;
+                    double _institutional_cnt=0;
+                 
+               
+                    //Check if the division have any submission GetRecordsByDivRecs
+                    foreach (var rec_div in DB_RecordsDivs)
+                    {
+                        var DivMainRecs=_wpMainRecordRepository.GetRecordsByDivRecs(rec_div.Division_Id).ToList();
+
+                        //Fetch the Division Records that correspond the cycle 
+                        if(currentcyclerec.Period_Id==8)
+                        {
+                            DivMainRecs=_wpMainRecordRepository.GetRecordsByDivisionYearAndPeriodStartEnd(rec_div.Division_Id, currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id, currentcyclerec.PeriodStartDate, currentcyclerec.PeriodEndDate).ToList();
+                        }
+                        else
+                        {
+                            DivMainRecs=_wpMainRecordRepository.GetRecordsByDivisionYearAndPeriod(rec_div.Division_Id, currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id).ToList();
+                        }
+
+                       // _total_for_mtps=Convert.ToDouble(DivMainRecs.Count());
+
+                        foreach (var projwpmainrec in DivMainRecs)
+                        {
+                            //GetRecordsByMainRecordId
+                            var MappedProjMTPs=_wpMTPRepository.GetRecordsByMainRecordId(projwpmainrec.Transaction_Id);
+                            _total_for_mtps=_total_for_mtps + Convert.ToDouble(MappedProjMTPs.Count());
+
+                            foreach (var mtprec in MappedProjMTPs)
+                            {
+                                if(mtprec.MTP_Id==1)
+                                    _economic_cnt=_economic_cnt+1;
+                                else if(mtprec.MTP_Id==2)
+                                    _invest_cnt=_invest_cnt+1;
+                                else if(mtprec.MTP_Id==3)
+                                    _advancing_cnt=_advancing_cnt+1;
+                                else if(mtprec.MTP_Id==4)
+                                    _service_cnt=_service_cnt+1;
+                                else if(mtprec.MTP_Id==5)
+                                    _institutional_cnt=_institutional_cnt+1;
+
+
+                            }
+
+
+                        }
+                
+                    }
+                    //Math.Round((mtp_total/totalcontributions)*100, 1)
+
+                    if(_total_for_mtps>0)
+                        economic_rtn=Math.Round((_economic_cnt/_total_for_mtps)*100, 0);
+                    else
+                        economic_rtn=0;
+
+                    if(_total_for_mtps>0)
+                        invest_rtn=Math.Round((_invest_cnt/_total_for_mtps)*100, 0);
+                    else
+                        invest_rtn=0;
+
+                    if(_total_for_mtps>0)
+                        advancing_rtn=Math.Round((_advancing_cnt/_total_for_mtps)*100, 0);
+                    else
+                        advancing_rtn=0;
+
+                    if(_total_for_mtps>0)
+                        service_rtn=Math.Round((_service_cnt/_total_for_mtps)*100, 0);
+                    else
+                        service_rtn=0;
+
+                    if(_total_for_mtps>0)
+                        institutional_rtn=Math.Round((_institutional_cnt/_total_for_mtps)*100, 0);
+                    else
+                        institutional_rtn=0;
+
+
+
+
+
+
+                    
+
+                    WP_InstitutionalGraphsVM srec1 = new WP_InstitutionalGraphsVM
+                    {   
+                        DName=_strucDirectorateRepository.GetRecord(rec_set.Record_Id).AcronymName,
+                        Economic=economic_rtn,
+                        Invest=invest_rtn,
+                        Advancing=advancing_rtn,
+                        Service=service_rtn,
+                        Institutional=institutional_rtn
+
+                      //  CompletenessOfSubmissions=completionlevel
+                    };
+
+
+                    collection_recs.Add(srec1);
+
+
+
+                   
+
+
+
+                }
+            }
+
+
+
+
+            return Json(collection_recs);
+        }
+
+
+        [HttpPost]
+        public ActionResult _GetDirectorateStraContributions_Draft(string cycleid)
+        {
+            List<WP_InstitutionalGraphsVM> collection_recs = new List<WP_InstitutionalGraphsVM>();
+
+            WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
+
+            var DB_Records = _transStrucDirectorateRepository.GetAllRecords().ToList();
+
+            int _countrecs =  DB_Records.Count();
+
+            //Stra Return Values Variables
+            double economicint_rtn=0;
+            double humancap_rtn=0;
+            double foodsys_rtn=0;
+            double systener_rtn=0;
+            double climateres_rtn=0;
+            double sti_rtn=0;
+            double instenh_rtn=0;
+
+            if(_countrecs>0)
+            {
+                foreach (var rec_set in DB_Records)
+                {
+                    //**********Divisions Submissions***********// 
+
+                    Struc_Directorate dir=_strucDirectorateRepository.GetRecord(rec_set.Record_Id);
+
+                    var DB_RecordsDivs=_transStrucDivisionRepository.GetAllRecordsByDirectorate(rec_set.Transaction_Id).ToList();
+                    
+                    double _total_for_stra =  0;
+
+                    double _economicint_cnt=0;
+                    double _humancap_cnt=0;
+                    double _foodsys_cnt=0;
+                    double _systener_cnt=0;
+                    double _climateres_cnt=0;
+                    double _sti_cnt=0;
+                    double _instenh_cnt=0;
+                 
+               
+                    //Check if the division have any submission GetRecordsByDivRecs
+                    foreach (var rec_div in DB_RecordsDivs)
+                    {
+                        var DivMainRecs=_wpMainRecordRepository.GetRecordsByDivRecs(rec_div.Division_Id).ToList();
+
+                        //Fetch the Division Records that correspond the cycle 
+                        if(currentcyclerec.Period_Id==8)
+                        {
+                            DivMainRecs=_wpMainRecordRepository.GetRecordsByDivisionYearAndPeriodStartEnd(rec_div.Division_Id, currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id, currentcyclerec.PeriodStartDate, currentcyclerec.PeriodEndDate).ToList();
+                        }
+                        else
+                        {
+                            DivMainRecs=_wpMainRecordRepository.GetRecordsByDivisionYearAndPeriod(rec_div.Division_Id, currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id).ToList();
+                        }
+
+                       // _total_for_mtps=Convert.ToDouble(DivMainRecs.Count());
+
+                        foreach (var projwpmainrec in DivMainRecs)
+                        {
+                            //GetRecordsByMainRecordId
+                            var MappedProjStras=_wpAUDAPriorityRepository.GetRecordsByMainRecordId(projwpmainrec.Transaction_Id);
+                            _total_for_stra=_total_for_stra + Convert.ToDouble(MappedProjStras.Count());
+
+                            foreach (var strarec in MappedProjStras)
+                            {
+                                if(strarec.Priority_Id==1)
+                                    _economicint_cnt=_economicint_cnt+1;
+                                else if(strarec.Priority_Id==2)
+                                    _humancap_cnt=_humancap_cnt+1;
+                                else if(strarec.Priority_Id==3)
+                                    _foodsys_cnt=_foodsys_cnt+1;
+                                else if(strarec.Priority_Id==4)
+                                    _systener_cnt=_systener_cnt+1;
+                                else if(strarec.Priority_Id==5)
+                                    _climateres_cnt=_climateres_cnt+1;
+                                else if(strarec.Priority_Id==6)
+                                    _sti_cnt=_sti_cnt+1;
+                                else if(strarec.Priority_Id==7)
+                                    _instenh_cnt=_instenh_cnt+1;
+
+
+                            }
+
+
+                        }
+                
+                    }
+                    //Math.Round((mtp_total/totalcontributions)*100, 1)
+
+                    if(_total_for_stra>0)
+                        economicint_rtn=Math.Round((_economicint_cnt/_total_for_stra)*100, 0);
+                    else
+                        economicint_rtn=0;
+
+                    if(_total_for_stra>0)
+                        humancap_rtn=Math.Round((_humancap_cnt/_total_for_stra)*100, 0);
+                    else
+                        humancap_rtn=0;
+
+                    if(_total_for_stra>0)
+                        foodsys_rtn=Math.Round((_foodsys_cnt/_total_for_stra)*100, 0);
+                    else
+                        foodsys_rtn=0;
+
+                    if(_total_for_stra>0)
+                        systener_rtn=Math.Round((_systener_cnt/_total_for_stra)*100, 0);
+                    else
+                        systener_rtn=0;
+
+                    if(_total_for_stra>0)
+                        climateres_rtn=Math.Round((_climateres_cnt/_total_for_stra)*100, 0);
+                    else
+                        climateres_rtn=0;
+
+                    if(_total_for_stra>0)
+                        sti_rtn=Math.Round((_sti_cnt/_total_for_stra)*100, 0);
+                    else
+                        sti_rtn=0;
+
+                    if(_total_for_stra>0)
+                        instenh_rtn=Math.Round((_instenh_cnt/_total_for_stra)*100, 0);
+                    else
+                        instenh_rtn=0;
+
+
+
+
+
+
+                    
+
+                    WP_InstitutionalGraphsVM srec1 = new WP_InstitutionalGraphsVM
+                    {   
+                        DName=_strucDirectorateRepository.GetRecord(rec_set.Record_Id).AcronymName,
+                        EconomicInt=economicint_rtn,
+                        HumanCap=humancap_rtn,
+                        FoodSys=foodsys_rtn,
+                        SystEnergy=systener_rtn,
+                        ClimateRes=climateres_rtn,
+                        STI=sti_rtn,
+                        StraInstitutional=instenh_rtn
+
+                      //  CompletenessOfSubmissions=completionlevel
+                    };
+
+
+                    collection_recs.Add(srec1);
+
+
+
+                   
+
+
+
+                }
+            }
+
+
+
+
+            return Json(collection_recs);
+        }
+
+
+
+        [HttpPost]
+        public ActionResult _GetDirectorateImplemenationType_Draft(string cycleid)
+        {
+            List<WP_InstitutionalGraphsVM> collection_recs = new List<WP_InstitutionalGraphsVM>();
+
+            WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
+
+            var DB_Records = _transStrucDirectorateRepository.GetAllRecords().ToList();
+
+            int _countrecs =  DB_Records.Count();
+
+            //Stra Return Values Variables
+            double subdelegation_rtn=0;
+            double direct_rtn=0;
+            double joint_rtn=0;
+
+
+            if(_countrecs>0)
+            {
+                foreach (var rec_set in DB_Records)
+                {
+                    //**********Divisions Submissions***********// 
+
+                    Struc_Directorate dir=_strucDirectorateRepository.GetRecord(rec_set.Record_Id);
+
+                    var DB_RecordsDivs=_transStrucDivisionRepository.GetAllRecordsByDirectorate(rec_set.Transaction_Id).ToList();
+                    
+                    double _total_for_imp =  0;
+
+                    double _subdelegation_cnt=0;
+                    double _direct_cnt=0;
+                    double _joint_cnt=0;
+
+                 
+               
+                    //Check if the division have any submission GetRecordsByDivRecs
+                    foreach (var rec_div in DB_RecordsDivs)
+                    {
+                        var DivMainRecs=_wpMainRecordRepository.GetRecordsByDivRecs(rec_div.Division_Id).ToList();
+
+                        //Fetch the Division Records that correspond the cycle 
+                        if(currentcyclerec.Period_Id==8)
+                        {
+                            DivMainRecs=_wpMainRecordRepository.GetRecordsByDivisionYearAndPeriodStartEnd(rec_div.Division_Id, currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id, currentcyclerec.PeriodStartDate, currentcyclerec.PeriodEndDate).ToList();
+                        }
+                        else
+                        {
+                            DivMainRecs=_wpMainRecordRepository.GetRecordsByDivisionYearAndPeriod(rec_div.Division_Id, currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id).ToList();
+                        }
+
+                       // _total_for_mtps=Convert.ToDouble(DivMainRecs.Count());
+
+                        foreach (var projwpmainrec in DivMainRecs)
+                        {
+                            //GetRecordsByMainRecordId
+                            var MappedProjActivities=_wpOutputActivitiesRepository.GetRecordsByMainRecordId(projwpmainrec.Transaction_Id);
+                            _total_for_imp=_total_for_imp + Convert.ToDouble(MappedProjActivities.Count());
+
+                            foreach (var actrec in MappedProjActivities)
+                            {
+                                if(actrec.ImplementationType_Id==1)
+                                    _subdelegation_cnt=_subdelegation_cnt+1;
+                                else if(actrec.ImplementationType_Id==2)
+                                    _direct_cnt=_direct_cnt+1;
+                                else if(actrec.ImplementationType_Id==3)
+                                    _joint_cnt=_joint_cnt+1;
+          
+
+
+                            }
+
+
+                        }
+                
+                    }
+                    //Math.Round((mtp_total/totalcontributions)*100, 1)
+
+                    if(_total_for_imp>0)
+                        subdelegation_rtn=Math.Round((_subdelegation_cnt/_total_for_imp)*100, 0);
+                    else
+                        subdelegation_rtn=0;
+
+                    if(_total_for_imp>0)
+                        direct_rtn=Math.Round((_direct_cnt/_total_for_imp)*100, 0);
+                    else
+                        direct_rtn=0;
+
+                    if(_total_for_imp>0)
+                        joint_rtn=Math.Round((_joint_cnt/_total_for_imp)*100, 0);
+                    else
+                        joint_rtn=0;
+
+                    
+
+
+
+
+
+
+                    
+
+                    WP_InstitutionalGraphsVM srec1 = new WP_InstitutionalGraphsVM
+                    {   
+                        DName=_strucDirectorateRepository.GetRecord(rec_set.Record_Id).AcronymName,
+                        SubDelegation=subdelegation_rtn,
+                        DirectExe=direct_rtn,
+                        JointExe=joint_rtn
+
+                      //  CompletenessOfSubmissions=completionlevel
+                    };
+
+
+                    collection_recs.Add(srec1);
+
+
+
+                   
+
+
+
+                }
+            }
+
+
+
+
+            return Json(collection_recs);
+        }
+
+
+        [HttpPost]
+        public ActionResult _GetDirectorateNewProjects_Draft(string cycleid)
+        {
+            List<WP_InstitutionalGraphsVM> collection_recs = new List<WP_InstitutionalGraphsVM>();
+
+            WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
+
+            var DB_Records = _transStrucDirectorateRepository.GetAllRecords().ToList();
+
+            int _countrecs =  DB_Records.Count();
+
+            //Stra Return Values Variables
+            double existingproj_rtn=0;
+            double newproj_rtn=0;
+        
+
+
+            if(_countrecs>0)
+            {
+                foreach (var rec_set in DB_Records)
+                {
+                    //**********Divisions Submissions***********// 
+
+                    Struc_Directorate dir=_strucDirectorateRepository.GetRecord(rec_set.Record_Id);
+
+                    var DB_RecordsDivs=_transStrucDivisionRepository.GetAllRecordsByDirectorate(rec_set.Transaction_Id).ToList();
+                    
+                    double _total_for_newproj =  0;
+
+                    double _existingproj_cnt=0;
+                    double _newproj_cnt=0;
+ 
+
+                 
+               
+                    //Check if the division have any submission GetRecordsByDivRecs
+                    foreach (var rec_div in DB_RecordsDivs)
+                    {
+                        var DivMainRecs=_wpMainRecordRepository.GetRecordsByDivRecs(rec_div.Division_Id).ToList();
+
+                        //Fetch the Division Records that correspond the cycle 
+                        if(currentcyclerec.Period_Id==8)
+                        {
+                            DivMainRecs=_wpMainRecordRepository.GetRecordsByDivisionYearAndPeriodStartEnd(rec_div.Division_Id, currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id, currentcyclerec.PeriodStartDate, currentcyclerec.PeriodEndDate).ToList();
+                        }
+                        else
+                        {
+                            DivMainRecs=_wpMainRecordRepository.GetRecordsByDivisionYearAndPeriod(rec_div.Division_Id, currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id).ToList();
+                        }
+
+                       // _total_for_mtps=Convert.ToDouble(DivMainRecs.Count());
+                       _total_for_newproj=_total_for_newproj+Convert.ToDouble(DivMainRecs.Count());
+
+                        foreach (var projwpmainrec in DivMainRecs)
+                        {
+                            LkUp_Project actualproject=_lkupProjectRepository.GetRecord(projwpmainrec.Project_Id);
+                            
+                            if(actualproject.Record_Status==true)
+                                _existingproj_cnt=_existingproj_cnt+1;
+                            else 
+                                _newproj_cnt=_newproj_cnt+1;
+     
+                        }
+                
+                    }
+                    //Math.Round((mtp_total/totalcontributions)*100, 1)
+                    //Currently not using this...
+
+                    if(_total_for_newproj>0)
+                        existingproj_rtn=Math.Round((_existingproj_cnt/_total_for_newproj)*100, 0);
+                    else
+                        existingproj_rtn=0;
+
+                    if(_total_for_newproj>0)
+                        newproj_rtn=Math.Round((_newproj_cnt/_total_for_newproj)*100, 0);
+                    else
+                        newproj_rtn=0;
+
+                    //Currently using this...
+
+                    existingproj_rtn=_existingproj_cnt;
+                    newproj_rtn=_newproj_cnt;
+
+                    
+
+
+
+
+
+
+                    
+
+                    WP_InstitutionalGraphsVM srec1 = new WP_InstitutionalGraphsVM
+                    {   
+                        DName=_strucDirectorateRepository.GetRecord(rec_set.Record_Id).AcronymName,
+                        ExistingProjs=existingproj_rtn,
+                        NewProjs=newproj_rtn
+
+                      //  CompletenessOfSubmissions=completionlevel
+                    };
+                    collection_recs.Add(srec1);
+
+                }
+            }
+
+
+
+
+            return Json(collection_recs);
+        }
+
+
+        [HttpPost]
+        public ActionResult _GetInstitutionalMTPContributions_Draft(string cycleid)
+        {
+            List<WP_InstitutionalGraphsVM> collection_recs = new List<WP_InstitutionalGraphsVM>();
+
+            WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
+
+
+            double totalcontributions=0;
+
+            var DB_RecsTrans =  _transStrategyMTPRepository.GetAllRecords().ToList();
+
+            //Get Total Contributions
+            foreach (var rec_set in DB_RecsTrans)
+            {
+                var DB_WPMTPRecs=_wpMTPRepository.GetAllRecords().ToList();
+                               //Fetch the Correct Recs
+                if(currentcyclerec.Period_Id==8)
+                {
+                    DB_WPMTPRecs=_wpMTPRepository.GetRecordsByYearAndPeriod(currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id).ToList();
+                    foreach (var wprec_set in DB_WPMTPRecs)
+                    {
+                        WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(wprec_set.WPMainRecord_id);
+                        if((mainrec.PeriodStartDate==currentcyclerec.PeriodStartDate) && (mainrec.PeriodEndDate==currentcyclerec.PeriodEndDate))
+                        {
+                            totalcontributions=totalcontributions+1;
+                        }
+                    }
+                }
+                else
+                {
+                    DB_WPMTPRecs=_wpMTPRepository.GetRecordsByYearAndPeriod(currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id).ToList();
+
+                    totalcontributions=Convert.ToDouble(DB_WPMTPRecs.Count());
+                }
+
+            }
+
+            foreach (var rec_set in DB_RecsTrans)
+            {
+                //WP_MTP
+                var DB_WPMTPRecs=_wpMTPRepository.GetAllRecords().ToList();
+                double mtp_total=0;
+                double mtp_contribution=0;
+
+                //Fetch the Correct Recs
+                if(currentcyclerec.Period_Id==8)
+                {
+                    DB_WPMTPRecs=_wpMTPRepository.GetRecordsByYearAndPeriod(currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id).ToList();
+                    foreach (var wprec_set in DB_WPMTPRecs)
+                    {
+                        WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(wprec_set.WPMainRecord_id);
+                        if((wprec_set.MTP_Id==rec_set.Record_Id) && (mainrec.PeriodStartDate==currentcyclerec.PeriodStartDate) && (mainrec.PeriodEndDate==currentcyclerec.PeriodEndDate))
+                        {
+                            mtp_total=mtp_total+1;
+                            
+                        }
+                    }
+                    mtp_contribution=Math.Round((mtp_total/totalcontributions)*100, 1);
+
+                    WP_InstitutionalGraphsVM srec1 = new WP_InstitutionalGraphsVM
+                    {   
+                        DName=_strategyMTPRepository.GetRecord(rec_set.Record_Id).Record_Name,
+                        DNameOther=_strategyMTPRepository.GetRecord(rec_set.Record_Id).Record_Name,
+                        DValue=mtp_contribution
+                    };
+
+
+                    collection_recs.Add(srec1);
+
+                }
+                else
+                {
+                    DB_WPMTPRecs=_wpMTPRepository.GetRecordsByYearAndPeriod(currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id).ToList();
+                    foreach (var wprec_set in DB_WPMTPRecs)
+                    {
+                        WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(wprec_set.WPMainRecord_id);
+                        if(wprec_set.MTP_Id==rec_set.Record_Id)
+                        {
+                            mtp_total=mtp_total+1;
+                        }
+                    }
+                    mtp_contribution=Math.Round((mtp_total/totalcontributions)*100, 1);
+
+                    WP_InstitutionalGraphsVM srec1 = new WP_InstitutionalGraphsVM
+                    {   
+                        DName=_strategyMTPRepository.GetRecord(rec_set.Record_Id).ShortName,
+                        DNameOther=_strategyMTPRepository.GetRecord(rec_set.Record_Id).Record_Name,
+                        DValue=mtp_contribution
+                    };
+
+
+                    collection_recs.Add(srec1);
+
+
+
+
+                }
+
+
+            }
+        
+            
+
+
+
+
+            return Json(collection_recs);
+        }
+
+        [HttpPost]
+        public ActionResult _GetInstitutionalStraContributions_Draft(string cycleid)
+        {
+            List<WP_InstitutionalGraphsVM> collection_recs = new List<WP_InstitutionalGraphsVM>();
+
+            WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
+
+
+            double totalcontributions=0;
+
+            var DB_RecsTrans =  _transStrategyPriorityRepository.GetAllRecords().ToList();
+
+            //Get Total Contributions
+            foreach (var rec_set in DB_RecsTrans)
+            {
+                var DB_WPAUDAPriorityRecs=_wpAUDAPriorityRepository.GetAllRecords().ToList();
+                               //Fetch the Correct Recs
+                if(currentcyclerec.Period_Id==8)
+                {
+                    DB_WPAUDAPriorityRecs=_wpAUDAPriorityRepository.GetRecordsByYearAndPeriod(currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id).ToList();
+                    foreach (var wprec_set in DB_WPAUDAPriorityRecs)
+                    {
+                        WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(wprec_set.WPMainRecord_id);
+                        if((mainrec.PeriodStartDate==currentcyclerec.PeriodStartDate) && (mainrec.PeriodEndDate==currentcyclerec.PeriodEndDate))
+                        {
+                            totalcontributions=totalcontributions+1;
+                        }
+                    }
+                }
+                else
+                {
+                    DB_WPAUDAPriorityRecs=_wpAUDAPriorityRepository.GetRecordsByYearAndPeriod(currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id).ToList();
+
+                    totalcontributions=Convert.ToDouble(DB_WPAUDAPriorityRecs.Count());
+                }
+
+            }
+
+            foreach (var rec_set in DB_RecsTrans)
+            {
+                //WP_MTP
+                var DB_WPAUDAPriorityRecs=_wpAUDAPriorityRepository.GetAllRecords().ToList();
+                double stra_total=0;
+                double stra_contribution=0;
+
+                //Fetch the Correct Recs
+                if(currentcyclerec.Period_Id==8)
+                {
+                    DB_WPAUDAPriorityRecs=_wpAUDAPriorityRepository.GetRecordsByYearAndPeriod(currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id).ToList();
+                    foreach (var wprec_set in DB_WPAUDAPriorityRecs)
+                    {
+                        WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(wprec_set.WPMainRecord_id);
+                        if((wprec_set.Priority_Id==rec_set.Record_Id) && (mainrec.PeriodStartDate==currentcyclerec.PeriodStartDate) && (mainrec.PeriodEndDate==currentcyclerec.PeriodEndDate))
+                        {
+                            stra_total=stra_total+1;
+                            
+                        }
+                    }
+                    stra_contribution=Math.Round((stra_total/totalcontributions)*100, 1);
+
+                    WP_InstitutionalGraphsVM srec1 = new WP_InstitutionalGraphsVM
+                    {   
+                        DName=_strategyPriorityRepository.GetRecord(rec_set.Record_Id).Record_Name,
+                        DNameOther=_strategyPriorityRepository.GetRecord(rec_set.Record_Id).Record_Name,
+                        DValue=stra_contribution
+                    };
+
+
+                    collection_recs.Add(srec1);
+
+                }
+                else
+                {
+                    DB_WPAUDAPriorityRecs=_wpAUDAPriorityRepository.GetRecordsByYearAndPeriod(currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id).ToList();
+                    foreach (var wprec_set in DB_WPAUDAPriorityRecs)
+                    {
+                        WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(wprec_set.WPMainRecord_id);
+                        if(wprec_set.Priority_Id==rec_set.Record_Id)
+                        {
+                            stra_total=stra_total+1;
+                        }
+                    }
+                    stra_contribution=Math.Round((stra_total/totalcontributions)*100, 1);
+
+                    WP_InstitutionalGraphsVM srec1 = new WP_InstitutionalGraphsVM
+                    {   
+                        DName=_strategyPriorityRepository.GetRecord(rec_set.Record_Id).ShortName,
+                        DNameOther=_strategyPriorityRepository.GetRecord(rec_set.Record_Id).Record_Name,
+                        DValue=stra_contribution
+                    };
+
+
+                    collection_recs.Add(srec1);
+
+
+
+
+                }
+
+
+            }
+        
+            
+
+
+
+
+            return Json(collection_recs);
+        }
+
+
+        public ActionResult _GetPRCBudgetThresholds_Draft(string cycleid)
+        {
+            List<WP_InstitutionalGraphsVM> collection_recs = new List<WP_InstitutionalGraphsVM>();
+
+             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
+
+            var DB_Records = _transStrucDirectorateRepository.GetAllRecords().ToList();
+
+            int _countrecs =  DB_Records.Count();
+            if(_countrecs>0)
+            {
+                foreach (var rec_set in DB_Records)
+                {
+                    //**********Compute Total MS and DP Budgets of Directorates***********// 
+
+                    Struc_Directorate dir=_strucDirectorateRepository.GetRecord(rec_set.Record_Id);
+
+                    var DB_RecordsDivs=_transStrucDivisionRepository.GetAllRecordsByDirectorate(rec_set.Transaction_Id).ToList();
+
+                    double directorate_dp_budget=0;
+                    double directorate_ms_budget=0;
+                    double directorate_total_budget=0;
+  
+                    //Check if the division have any submission GetRecordsByDivRecs
+                    foreach (var rec_div in DB_RecordsDivs)
+                    {
+                        var DivMainRecs=_wpMainRecordRepository.GetRecordsByDivRecs(rec_div.Division_Id).ToList();
+                                                //Fetch the Division Records that correspond the cycle 
+                        if(currentcyclerec.Period_Id==8)
+                        {
+                            DivMainRecs=_wpMainRecordRepository.GetRecordsByDivisionYearAndPeriodStartEnd(rec_div.Division_Id, currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id, currentcyclerec.PeriodStartDate, currentcyclerec.PeriodEndDate).ToList();
+                        }
+                        else
+                        {
+                            DivMainRecs=_wpMainRecordRepository.GetRecordsByDivisionYearAndPeriod(rec_div.Division_Id, currentcyclerec.FiscalYear_Id,currentcyclerec.Period_Id).ToList();
+                        }
+
+                        foreach (var rec_proj_main in DivMainRecs)
+                        {
+                            var DB_ActivitiesRecs=_wpOutputActivitiesRepository.GetRecordsByMainRecordId(rec_proj_main.Transaction_Id).ToList();
+                            foreach (var rec_proj_act in DB_ActivitiesRecs)
+                            {
+                                directorate_total_budget=directorate_total_budget+rec_proj_act.ActivityCost;
+                               
+                                if(rec_proj_act.PartnerFunding==true)
+                                {
+                                    directorate_dp_budget=directorate_dp_budget+rec_proj_act.ActivityCost;
+                                }
+
+                            }
+                        }
+
+                    }
+
+                    directorate_ms_budget=directorate_total_budget-directorate_dp_budget;
+
+                    double directorate_dp_budgetV=directorate_dp_budget/1000000;
+                    double directorate_ms_budgetV=directorate_ms_budget/1000000;
+
+                    if(Double.IsNaN(directorate_dp_budgetV))
+                        directorate_dp_budgetV=0;
+
+                    if(Double.IsNaN(directorate_ms_budgetV))
+                        directorate_ms_budgetV=0;
+
+
+
+
+                    //**********Retrieve and Compute PRC Thresholds***********// 
+
+                   // Retrieve PRC Thresholds  
+          
+
+                    WP_PRCBudgetLimits prccyclelimit=_wpPRCBudgetLimitsRepository.GetRecordByDirectorateAndCycle(rec_set.Record_Id,currentcyclerec.Transaction_Id);
+
+                   
+                    double directorate_dp_prc=0;//change this
+                    double directorate_ms_prc=0;//change this
+
+                    if(prccyclelimit!=null)
+                    {
+                        directorate_dp_prc=prccyclelimit.DP_Limit;
+                        directorate_ms_prc=prccyclelimit.MS_Limit;
+                    }
+
+                    double directorate_dp_prcV=directorate_dp_prc/1000000;
+                    double directorate_ms_prcV=directorate_ms_prc/1000000;
+
+                    if(Double.IsNaN(directorate_dp_prcV))
+                        directorate_dp_prcV=0;
+
+                    if(Double.IsNaN(directorate_ms_prcV))
+                        directorate_ms_prcV=0;
+
+                    WP_InstitutionalGraphsVM srec1 = new WP_InstitutionalGraphsVM
+                    {   
+                        DName=_strucDirectorateRepository.GetRecord(rec_set.Record_Id).AcronymName,
+                        DirectorateMSBudget=directorate_ms_budgetV,
+                        DirectorateDPBudget=directorate_dp_budgetV,
+                        PRCMSThreshold=directorate_ms_prcV,
+                        PRCDPThreshold=directorate_dp_prcV
+                    };
+
+
+                    collection_recs.Add(srec1);
+
+
+
+                   
+
+
+
+                }
+            }
+
+
+
+
+            return Json(collection_recs);
+        }
+
+
+        [HttpPost]
+        public void Export_PRCBugetSave(string contentType, string base64, string fileName, string cycleid)
+        {
+            var fileContents = Convert.FromBase64String(base64);
+
+            string Path =  @"wwwroot/appdirectory/pdfreports/institutional/"+cycleid+"PRC.png";
+           
+
+            System.IO.File.WriteAllBytes(Path, fileContents);
+        
+
+           //return File(fileContents, contentType, fileName);
+        }
+
+
+         [HttpPost]
+        public ActionResult ExportSave_InstitutionalCharts(string contentType, string base64_complete, string base64_prc, string base64_mtpcontr, string base64_mtpcontrdir, string base64_stracontr, string base64_stracontrdir,  string base64_impdistr, string base64_newproj, string cycleid)
+        {
+
+
+            try
+            {
+                var fileContents_complete = Convert.FromBase64String(base64_complete);
+                var fileContents_prc = Convert.FromBase64String(base64_prc);
+
+                var fileContents_mtpcontr = Convert.FromBase64String(base64_mtpcontr);
+                var fileContents_mtpcontrdir = Convert.FromBase64String(base64_mtpcontrdir);
+
+                var fileContents_stracontr = Convert.FromBase64String(base64_stracontr);
+                var fileContents_stracontrdir = Convert.FromBase64String(base64_stracontrdir);
+
+                var fileContents_impdistr = Convert.FromBase64String(base64_impdistr);
+                var fileContents_newproj = Convert.FromBase64String(base64_newproj);
+                
+
+                string Path_Complete =  @"wwwroot/appdirectory/pdfreports/institutional/"+cycleid+"Complete.png";
+                string Path_PRC =  @"wwwroot/appdirectory/pdfreports/institutional/"+cycleid+"PRC.png";
+
+                string Path_MTPContr =  @"wwwroot/appdirectory/pdfreports/institutional/"+cycleid+"MTPContr.png";
+                string Path_MTPContrDir =  @"wwwroot/appdirectory/pdfreports/institutional/"+cycleid+"MTPContrDir.png";
+
+                string Path_StraContr =  @"wwwroot/appdirectory/pdfreports/institutional/"+cycleid+"StraContr.png";
+                string Path_StraContrDir =  @"wwwroot/appdirectory/pdfreports/institutional/"+cycleid+"StraContrDir.png";
+
+                string Path_ImpDistr =  @"wwwroot/appdirectory/pdfreports/institutional/"+cycleid+"ImpDistr.png";
+                string Path_NewProj =  @"wwwroot/appdirectory/pdfreports/institutional/"+cycleid+"NewProj.png";
+           
+                // string Path_Complete2 =  @"wwwroot/appdirectory/pdfreports/institutional/"+cycleid+"Complete2.png";
+                // System.Drawing.Image image;
+                // using (MemoryStream ms = new MemoryStream(fileContents_complete))
+                // {
+                //     image = System.Drawing.Image.FromStream(ms, true);
+                // }
+                // Bitmap bitmap = new Bitmap(image, new Size(320, 960));
+                // bitmap.SetResolution(200, 400);
+                // bitmap.Save(Path_Complete2, System.Drawing.Imaging.ImageFormat.Png);
+
+    
+
+                System.IO.File.WriteAllBytes(Path_Complete, fileContents_complete);
+                System.IO.File.WriteAllBytes(Path_PRC, fileContents_prc);
+
+                System.IO.File.WriteAllBytes(Path_MTPContr, fileContents_mtpcontr);
+                System.IO.File.WriteAllBytes(Path_MTPContrDir, fileContents_mtpcontrdir);
+
+                System.IO.File.WriteAllBytes(Path_StraContr, fileContents_stracontr);
+                System.IO.File.WriteAllBytes(Path_StraContrDir, fileContents_stracontrdir);
+
+                System.IO.File.WriteAllBytes(Path_ImpDistr, fileContents_impdistr);
+                System.IO.File.WriteAllBytes(Path_NewProj, fileContents_newproj);
+
+                return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+
         }
 
         
@@ -5987,6 +7328,59 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(collection_recs.ToDataSourceResult(request));
         }
 
+        public async Task<ActionResult>  CurrentInstitutionalWorkplan_Read([DataSourceRequest]DataSourceRequest request)
+        {
+
+
+            List<WorkplansViewModel> collection_recs = new List<WorkplansViewModel>();
+
+
+
+                var DB_Recs = _wpDispatchCycleRepository.GetAllCurrentAndInactiveWPDispatch();
+                var user = await userManager.GetUserAsync(HttpContext.User);
+                string approvestring="";
+
+                if (await userManager.IsInRoleAsync(user, "CEO"))
+                {
+                    approvestring="Approve";
+
+                }
+                else
+                {
+                    approvestring="Cannot Approve";
+                }
+
+                int _count = DB_Recs.Count();
+                if (_count > 0)
+                {
+                    foreach (var rec in DB_Recs)
+                    {
+
+
+                        WorkplansViewModel srec = new WorkplansViewModel
+                        {
+                            Transaction_Id=rec.Transaction_Id,
+                            Employee_Id = rec.Employee_Id,
+                            FisYear=_lkupFiscalYearRepository.GetRecord(rec.FiscalYear_Id).Record_Name,
+                            FisPeriod=_lkupPeriodRepository.GetRecord(rec.Period_Id).Record_Name,
+                            PeriodStart=new DateTime(rec.PeriodStartDate.Year,rec.PeriodStartDate.Month, rec.PeriodStartDate.Day),
+                            PeriodEnd=new DateTime(rec.PeriodEndDate.Year,rec.PeriodEndDate.Month, rec.PeriodEndDate.Day),
+                            WPStatus_String = rec.Dispatch_Status.HasValue? rec.Dispatch_Status.Value? "Current": "Closed": "Inactive",
+                            WPSAPLinkView_String= rec.LinkToSAPExecution.HasValue? rec.LinkToSAPExecution.Value? "Linked": "Not Linked": "Not Linked",
+                            WPCEOApproveRole_String=approvestring,
+                            TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+
+                        };
+
+                        collection_recs.Add(srec);
+                    }
+                }
+            
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
         public ActionResult WorkplanClosedCycles_Read([DataSourceRequest]DataSourceRequest request)
         {
 
@@ -6067,6 +7461,59 @@ namespace AUDANEPAD_Integrated.Controllers
                             profilepicpath = profilepicpath,
                             Directorate_Id=rec.Directorate_Id,
                             Mapping_Status_String = rec.Status.HasValue? rec.Status.Value? "Substantive": "Not Assigned": "Inactive",
+                            TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+
+                        };
+
+                        collection_recs.Add(srec);
+                    }
+                }
+            }
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+        public async Task<ActionResult> StaffRoleMapping_Read([DataSourceRequest]DataSourceRequest request, string recid)
+        {
+
+
+            List<EmployeeMappingViewModel> collection_recs = new List<EmployeeMappingViewModel>();
+
+            if (recid != null)
+            {
+
+                var usersOfRole = await userManager.GetUsersInRoleAsync(recid);
+
+                int _count = usersOfRole.Count();
+                if (_count > 0)
+                {
+                    foreach (var rec in usersOfRole)
+                    {
+                        Employee employee = _employeeRepository.GetEmployee(rec.Employee_Id);
+
+                        string profilepicpath = "";
+                        if (employee.PhotoPath == null)
+                        {
+                            if (employee.Gender == 1)
+                                profilepicpath = "appdirectory/profilepics/male_null_profile.jpg";
+                            else if (employee.Gender == 2)
+                                profilepicpath = "appdirectory/profilepics/female_null_profile.jpg";
+                            else
+                                profilepicpath = "appdirectory/profilepics/male_null_profile.jpg";
+                        }
+                        else
+                        {
+                            profilepicpath = "appdirectory/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+                        }
+
+                        EmployeeMappingViewModel srec = new EmployeeMappingViewModel
+                        {
+                            EmployeePK = employee.Id,
+                            EmployeeName = employee.First_Name + " " + employee.Last_Name,
+                            Staff_Number = rec.Staff_Number,
+                            profilepicpath = profilepicpath,
                             TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
 
                         };
@@ -6745,7 +8192,7 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddStrategicIndicator(WP_OutputIndicatorsVM model)
+        public ActionResult AddStrategicIndicator(WP_OutcomeOutputIndicatorsVM model)
         {
             
             WP_OutputIndicators rec = _wpOutputIndicatorsRepository.GetRecordByProjectYearAndPeriodOutputIdIndicatorId(model.Project_IdOIVM, model.FiscalYear_IdOIVM, model.Period_IdOIVM, model.Transaction_IdOIVM, model.OutputIndicator_IdOIVM);
@@ -6804,7 +8251,7 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddDirectorateIndicator(WP_OutputIndicatorsVM model)
+        public ActionResult AddDirectorateIndicator(WP_OutcomeOutputIndicatorsVM model)
         {
             
             WP_OutputIndicators rec = _wpOutputIndicatorsRepository.GetRecordByProjectYearAndPeriodOutputIdIndicatorId_Dir(model.Project_IdOIVM, model.FiscalYear_IdOIVM, model.Period_IdOIVM, model.Transaction_IdOIVM, model.IndicatorIDOIVM_Dir);
@@ -7700,7 +9147,7 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddStrategicIndicator_ProjectBased(WP_OutputIndicatorsVM model)
+        public ActionResult AddStrategicIndicator_ProjectBased(WP_OutcomeOutputIndicatorsVM model)
         {
             
             try
@@ -7750,7 +9197,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
         [HttpPost]
-        public ActionResult AddStrategicOutcomeIndicator_ProjectBased(WP_OutputIndicatorsVM model)
+        public ActionResult AddStrategicOutcomeIndicator_ProjectBased(WP_OutcomeOutputIndicatorsVM model)
         {
             
             try
@@ -9866,19 +11313,27 @@ namespace AUDANEPAD_Integrated.Controllers
 
                     _strucDirectorRepository.Add(rec_to_add);
 
+                    var _user = await userManager.FindByIdAsync("");
                     Employee _emp = _employeeRepository.GetEmployee(model.Employee_Id);
 
-                    var _user = await userManager.FindByIdAsync(_emp.IdentityUserId);
-
-                    var isInRole = await userManager.IsInRoleAsync(_user, "Director");
-
-                    if (!isInRole)
+                    if(_emp.IdentityUserId!="")
                     {
-                        _result = await userManager.AddToRoleAsync(_user, "Director");
-                    }
-                            
+                        _user = await userManager.FindByIdAsync(_emp.IdentityUserId);
 
-                    return Json(new { rtnmsg = "success" });
+                        var isInRole = await userManager.IsInRoleAsync(_user, "Director");
+
+                        if (!isInRole)
+                        {
+                            _result = await userManager.AddToRoleAsync(_user, "Director");
+                        }
+
+                        return Json(new { rtnmsg = "success" });
+                    }
+                    else
+                    {
+                        return Json(new { rtnmsg = "nologin" });
+                    }
+         
                 }
                 catch (Exception)
                 {
@@ -9890,6 +11345,54 @@ namespace AUDANEPAD_Integrated.Controllers
                 return Json(new { rtnmsg = "otherprimaryalreadyexist" });
 
             }
+
+
+
+
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult> AddStaffRoleMapping(string roleid, string rolename, string empid)
+        {
+     
+            IdentityResult _result;
+    
+            try
+            {
+  
+                Employee _emp = _employeeRepository.GetEmployee(Int32.Parse(empid));
+                var _user = await userManager.FindByIdAsync("");
+
+                if(_emp.IdentityUserId!="")
+                {
+                    _user = await userManager.FindByIdAsync(_emp.IdentityUserId);
+                    var isInRole = await userManager.IsInRoleAsync(_user, rolename);
+
+                    if (!isInRole)
+                    {
+                        _result = await userManager.AddToRoleAsync(_user, rolename);
+                    }
+                     return Json(new { rtnmsg = "success" });
+                }
+                else
+                {
+                    return Json(new { rtnmsg = "nologin" });
+                }
+
+
+
+
+                        
+
+               
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+            
+          
 
 
 
@@ -10571,6 +12074,40 @@ namespace AUDANEPAD_Integrated.Controllers
                     collection_recs.Add(srec);
                 }
             }
+
+            return Json(collection_recs.ToList());
+
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetAllNonStructureRoles()
+        {
+            var userRoles = roleManager.Roles;
+
+            int _count =  userRoles.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+            if (_count > 0)
+            {
+                foreach (var rec in userRoles)
+                {
+                    if(rec.Name=="Admin"||rec.Name=="CEO"||rec.Name=="PIPD"||rec.Name=="Procurement" ||rec.Name=="Travel" )
+                    {
+                        DropDownListViewModel srec = new DropDownListViewModel
+                        {
+                                DropDown_StringId = rec.Id,
+                                DropDown_Name = rec.Name
+                        };
+                        // EmployeeDropDownViewModel me = DB_Employees[_count];
+                        collection_recs.Add(srec);
+                    }
+   
+
+                }
+            }
+
 
             return Json(collection_recs.ToList());
 

@@ -12,6 +12,7 @@ namespace AUDANEPAD_Integrated.Interfaces
 		IEnumerable<WP_MTP> GetAllRecords();
 
         IEnumerable<WP_MTP>  GetRecordsByProjectYearAndPeriod (int projectid, int year, int period);
+        IEnumerable<WP_MTP>  GetRecordsByYearAndPeriod ( int year, int period);
         IEnumerable<WP_MTP>  GetRecordsByProjectYearPeriodMainRecId (int projectid, int year, int period, string mainrecid );
 
         WP_MTP  GetRecordsByProjectYearPeriodAndMTP (int projectid, int year, int period, int mtp);

@@ -355,6 +355,11 @@
                             $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Already Exist: Staff already has a primary directorate.</b> </span>').appendTo('.rssedResponse');
                             //$('#targetDivStaffa').empty();
                     }
+                    else if (response == "nologin") {
+                            $('#targetResponse').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>No Login Details: Please add staff member to a directorate and division/departments.</b> </span>').appendTo('.rssedResponse');
+                            //$('#targetDivStaffa').empty();
+                    }
                     else {
                             $('#targetResponse').empty();
                             $('<span class="alert alert-danger" style="display: block;font-size: 100%"><b>Unknown Error: Please try Again</b> </span>').appendTo('.rssedResponse');

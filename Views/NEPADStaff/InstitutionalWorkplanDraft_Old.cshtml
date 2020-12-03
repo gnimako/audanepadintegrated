@@ -1,0 +1,218 @@
+@model EmployeeViewModel
+@{
+    ViewBag.Title = "AUDA-NEPAD Integrated Planning System";
+    Layout = "_NEPADStaffLayout2";
+
+}
+
+
+
+<h1 style="font-family: Faktslab;">Institutional-Level Workplan (Draft)</h1>
+<div class="separator-breadcrumb border-top"></div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="card-title mb-3"> Completion Level (%) of Workplans By Directorate</div>
+                                    <input hidden asp-for="DispatchCycle_Id" class="k-textbox" style="width:100%" value="@Model.DispatchCycle_Id">
+                                
+                                 @(Html.Kendo().Chart<WP_InstitutionalGraphsVM>()
+                                    .Name("chartcompleteness")
+                                  //  .Title("Site Visitors Stats \n /thousands/")
+                                     .Legend(legend => legend
+                                        .Position(ChartLegendPosition.Top)
+                                    )
+                                    .ChartArea(chartArea => chartArea
+                                        .Background("transparent")
+                                    )
+                                    .DataSource(ds => ds.Read(read => read.Action("_GetCompletionLevelOfWPS_Draft", "Admin", new {cycleid=Model.DispatchCycle_Id})))
+                                        .Series(series => {
+                                            series.Bar(model => model.DivisionSubmissions).Name("Division Submissions").CategoryField("DName").Color("#003473");
+                                            series.Bar(model => model.CompletenessOfSubmissions).Name("Completeness of Submissions").CategoryField("DName");
+                                        })
+                                        .CategoryAxis(axis => axis
+                                            .MajorGridLines(lines => lines.Visible(false))
+                                        )
+                                        .ValueAxis(axis => axis.Numeric()
+                                            .Labels(labels => labels.Format("{0:N0}"))
+                                            .MajorUnit(10)
+                                            .Max(100.0)
+                                            .Line(line => line.Visible(true))
+                                           // .Title("Percentage(%)")
+                                        )
+                                        .Tooltip(tooltip => tooltip
+                                            .Visible(true)
+                                            .Format("{0:N0}")
+                                            .Template("#= series.name #: #= value #%")
+                                        )
+                                )
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="card-title mb-3">Approved PRC Budget Thresholds</div>
+                                 @(Html.Kendo().Chart<WP_InstitutionalGraphsVM>()
+                                .Name("chart")
+                                //.Title("World population by age group and sex")
+                                .Legend(legend => legend
+                                     .Position(ChartLegendPosition.Top)
+                                )
+                                .DataSource(ds => ds.Read(read => read.Action("_GetPRCBudgetThresholds_Draft", "Admin", new {cycleid=Model.DispatchCycle_Id})))
+                                .Series(series =>
+                                {
+                                    series
+                                        .Column(model => model.DirectorateMSBudget)
+                                        .Name("MS-Budget").Stack("AUDA");
+
+                                    series
+                                        .Column(model => model.DirectorateDPBudget)
+                                        .Name("DP-Budget").Stack("AUDA");
+
+                                    series
+                                        .Column(model => model.PRCMSThreshold)
+                                        .Name("MS-Threshold").Stack("PRC");
+
+                                    series
+                                        .Column(model => model.PRCDPThreshold)
+                                        .Name("DP-Threshold").Stack("PRC");
+
+                                  
+                                })
+    
+                                 .SeriesColors(
+                                    "#494d01", "#9fa700",
+                                    "#8f4921", "#ef955f"
+                                )
+                                .CategoryAxis(axis => axis
+                                  //  .Categories("OCEO", "PIPD", "PDCD", "KMPE", "DOO", "TCPF") #9fa700 #003473
+                                    .Categories(model => model.DName)
+                                    .MajorGridLines(lines => lines.Visible(false))
+                                )
+                                .ValueAxis(axis => axis
+                                    .Numeric()
+                                    .Labels(labels =>
+                                        labels.Template("#= kendo.format('{0:N0}', value) # m$")
+                                    )
+                                    .Line(line => line.Visible(true))
+                                )
+                                .Tooltip(tooltip => tooltip
+                                    .Visible(true)
+                                    .Template("#= series.stack.group #, #= series.name #")
+                                )
+                            )
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+<div id="getstaffwindow">
+</div>
+<div id="windowstaff"></div>
+<div id="staffposwindow"></div>
+
+
+<div id="windowstaff2"></div>
+<div id="staffposwindow2"></div>
+
+<div id="windowstaffpos">
+</div>
+
+<div id="example">
+    <div id="dialog">
+    </div>
+    <div id="undo">
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function onDropDownChange(d)  
+    {  
+        var dirid = $("#Directorate_Ident").val();  
+        var divid = $("#Division_Id").val();  
+        var progid = $("#Programme_Id").val();  
+        var projid = $("#Project_Id").val();  
+        var yearid = $("#FYear").val();  
+        var periodid = $("#FPeriod").val();  
+        var periodtxt = $("#FPeriod").text();  
+        var empid = $("#Employee_Id").val();  
+        var userident = $("#IdentityUserId").val();
+
+        var dialog = $('#dialog');
+        var undo = $("#undo");
+
+        function onClose() {
+            undo.fadeIn();
+        }
+
+        if(periodid === "" && typeof periodid === "string")
+        {
+
+        }
+        else{
+
+           /* window.location.href = "/NEPADStaff/ManageWorkplansDraft?divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + yearid+"&periodid=" + periodid +"&periodtxt=" + d.sender.text();*/
+            
+             $.ajax({
+                type: "POST",
+                url: '/Admin/CheckMainWPRecordStatus',     //your action
+                //data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, selectedrows: JSON.parse( JSON.stringify(models))},
+                data:{"projid": projid, "fyear": yearid, "fperiod": periodid, "empid": empid, "dirid": dirid, "divid": divid, "progid": progid, "periodtxt": periodtxt},
+                dataType: 'json',
+                success: function (result) {
+                    var response = result.rtnmsg;
+
+                    if (response == "recordfound") {
+                        //Dialogue Message
+                            dialog.kendoDialog({
+                                width: "300px",
+                                title: "Record Exist",
+                                closable: false,
+                                modal: true,
+                                content: "<p>Workplan already exist. Please check 'Draft' or 'Approved' Workplans <p>",
+                                actions: [
+                                    { text: 'OK' }
+                                ],
+                                close: onClose
+                            });
+
+                            dialog.data("kendoDialog").open();
+                            undo.fadeOut();
+                    }
+                    else if(response == "norecord")
+                    {
+                        window.location.href = "/NEPADStaff/ManageWorkplansDraft?divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + yearid+"&periodid=" + periodid +"&periodtxt=" + d.sender.text();
+
+                    }
+
+                },
+                error: function (data) {
+                            
+                }
+            })
+            
+
+
+
+
+
+            
+        }
+  
+
+
+
+   }
+
+
+</script>

@@ -120,6 +120,13 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<WP_MobilityExternalTeam> WP_MobilityExternalTeam { get; set; }
         public DbSet<WP_MobilityLimit> WP_MobilityLimit { get; set; }
 
+        public DbSet<WP_BarCodeIdents> WP_BarCodeIdents { get; set; }
+        public DbSet<WP_Communication> WP_Communication { get; set; }
+        public DbSet<WP_PRCBudgetLimits> WP_PRCBudgetLimits { get; set; }
+        public DbSet<WP_Procurement> WP_Procurement { get; set; }
+        public DbSet<WP_RiskProfile> WP_RiskProfile { get; set; }
+        public DbSet<WP_RiskProfileCountries> WP_RiskProfileCountries { get; set; }
+
 
         
 
@@ -619,6 +626,70 @@ namespace AUDANEPAD_Integrated.Models
             modelBuilder.Entity<WP_MobilityLimit>()
             .Property(e => e.PeriodEndDate)
             .HasConversion(localDateConverter);
+
+
+            modelBuilder.Entity<WP_BarCodeIdents>()
+            .Property(e => e.PeriodStartDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_BarCodeIdents>()
+            .Property(e => e.PeriodEndDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_BarCodeIdents>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+
+            modelBuilder.Entity<WP_Communication>()
+            .Property(e => e.WPCommsStartDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_Communication>()
+            .Property(e => e.WPCommsEndDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_Communication>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_PRCBudgetLimits>()
+            .Property(e => e.PeriodStartDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_PRCBudgetLimits>()
+            .Property(e => e.PeriodEndDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_PRCBudgetLimits>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+
+            modelBuilder.Entity<WP_Procurement>()
+            .Property(e => e.WPProcurementStartDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_Procurement>()
+            .Property(e => e.WPProcurementEndDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_Procurement>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+
+
+            modelBuilder.Entity<WP_RiskProfile>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_RiskProfileCountries>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+
+            
         }
         
     }

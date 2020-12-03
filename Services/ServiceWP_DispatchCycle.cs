@@ -97,6 +97,14 @@ namespace AUDANEPAD_Integrated.Services
             return rec;
         }
 
+		public WP_DispatchCycle GetCurrentOpenedCycleRecord ()
+        {
+            var rec = context.WP_DispatchCycle
+						.Where(s => s.Dispatch_Status.Value == true)
+						.FirstOrDefault();
+            return rec;
+        }
+
 		public WP_DispatchCycle GetRecordByYearPStartPEnd (int year, LocalDate pstart, LocalDate pend)
         {
             var rec = context.WP_DispatchCycle
