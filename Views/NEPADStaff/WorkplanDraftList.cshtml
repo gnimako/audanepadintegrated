@@ -42,6 +42,7 @@
                 
 
                                                             columns.Command(command => command.Custom(" Manage Workplan").IconClass("k-icon k-i-track-changes").Click("manageworkplan")).Width(200);
+                                                             columns.Command(command => command.Custom(" Delete Workplan").IconClass("k-icon k-i-delete").Click("manageworkplan")).Width(200);
                                                             //columns.Command(command => { command.Destroy().Text(" Deactivate").IconClass("k-icon k-i-lock"); });
                                                         })
                                                         .HtmlAttributes(new { style = "height: 600px;" })
