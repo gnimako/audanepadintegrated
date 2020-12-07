@@ -5768,9 +5768,9 @@ namespace AUDANEPAD_Integrated.Controllers
                                                 .SetFont(ft_regular)
                                                 .SetFixedLeading(14f)
                                             //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tableheaderblackproj)
+                                                .SetBackgroundColor(cl_tablecontent_2)
                                                 .SetFontSize(10))
-                                    .SetBackgroundColor(cl_tableheaderblackproj);
+                                    .SetBackgroundColor(cl_tablecontent_2);
 
                                 tabledirdetails.AddCell(cellheader03);
 
