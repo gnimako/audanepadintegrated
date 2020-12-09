@@ -13,6 +13,7 @@ namespace AUDANEPAD_Integrated.ViewModels
     {
         public string Output_Id { get; set; }
         public string Activity_Id { get; set; }
+        public string Mobility_Id { get; set; }
         public int TaskID { get; set; }
         public int? ParentID { get; set; }
 

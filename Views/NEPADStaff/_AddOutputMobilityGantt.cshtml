@@ -15,7 +15,27 @@
     <input hidden asp-for="WPMainRecord_idOMVMMain" class="k-textbox" style="width:100%" value="@Model.WPMainRecord_idOMVMMain">
     
     <div class="form-body" style="padding: 1.25rem;">
-           
+            <h6 style="color:#807878"> Select Output </h6>
+            @(Html.Kendo().DropDownListFor(model => model.WPOutput_IdOMVMMain)
+                // .Name("Department_Id")
+                .HtmlAttributes(new { style = "width:100%", id = "WPOutput_IdOMVMMain" })
+                .OptionLabel("Select...")
+                .DataTextField("DropDown_Name")
+                .DataValueField("DropDown_StringId")
+                .DataSource(source =>
+                {
+                    source.Read(read =>
+                    {
+                            read.Action("GetAllOutputsForMainRecord", "Admin", new {mainrecid=Model.WPMainRecord_idOMVMMain});
+                        
+                    })
+                    .ServerFiltering(true);
+                })
+            
+                //.SelectedIndex(Model.Department_Id)
+            )
+            <br />
+            <br />
             <h6 style="color:#807878">Brief Mobility/Mission Description</h6>
             @Html.TextAreaFor(model => model.WPMobility_DescriptionOMVMMain, new { @class = "k-textbox", style = "width: 100%;", value="", rows="3"})
             <br />
@@ -45,7 +65,7 @@
                 <br />
                 <br />
 
-            <div><h6 style="color:#807878">City</h6></div>
+            <div id="mobilitycost"><h6 style="color:#807878">City</h6></div>
                 @Html.TextBoxFor(model => model.Mobility_CityOMVMMain, new { @class = "k-textbox",  style = "width: 100%;", value=""})
                 <br />
                 <br />
@@ -138,6 +158,7 @@ $("#btnSubmita_act").click(function (e) {
     var mobilitycost = $("#MobilityCostOMVMMain").val();  
     var startDate= $("#MobilityStartDateOMVMMain").data("kendoDatePicker");
     var endDate= $("#MobilityEndDateOMVMMain").data("kendoDatePicker");
+    var outputident = $("#WPOutput_IdOMVMMain").val();  
 
 
     
@@ -145,7 +166,13 @@ $("#btnSubmita_act").click(function (e) {
 
 
 
-    if(mobilitydesc === "" && typeof mobilitydesc === "string")
+    
+    if(outputident === "" && typeof outputident === "string")
+    {
+        $('#targetDivStaffa_act').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select output. </span>').appendTo('.rssedStaffa_act');
+    }
+    else if(mobilitydesc === "" && typeof mobilitydesc === "string")
     {
         $('#targetDivStaffa_act').empty();
         $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Entry : Please describe the mobility. </span>').appendTo('.rssedStaffa_act');
@@ -180,7 +207,7 @@ $("#btnSubmita_act").click(function (e) {
         //Work on this...
         $.ajax({
                 type: "POST",
-                url: '/Admin/AddOutputMobilityNew',     //your action
+                url: '/Admin/AddOutputMobilityGanttNew',     //your action
                 data: $('#addform').serialize(),   //your form name.it takes all the values of model
                 dataType: 'json',
                 success: function (result) {
@@ -192,16 +219,10 @@ $("#btnSubmita_act").click(function (e) {
                                 $('#targetDivStaffa_act').empty();
                                 $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Mission Saved Successfully. </span>').appendTo('.rssedStaffa_act');
 
-
-                                var childGrid = $('#gridmobilitiessub_'+gridid).data("kendoGrid");
-
-                                childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutputsSubMobilities_Read?output_transid=" + gridid;
-                                childGrid.dataSource.read();
-                                //childGrid.refresh();
-
-                                var grid_outputmobilities = $("#grid_outputmobilities").data("kendoGrid"); 
-                                grid_outputmobilities.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_Mobilities_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&periodtxt=" + periodtxt;
-                                grid_outputmobilities.dataSource.read();
+                                //Refresh Gantt Chart
+                                var gantt = $("#gantt").data("kendoGantt");
+                                gantt.dataSource.read();
+                                gantt.refresh();
 
 
                     }

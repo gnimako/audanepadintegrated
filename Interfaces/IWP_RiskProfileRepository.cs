@@ -13,6 +13,7 @@ namespace AUDANEPAD_Integrated.Interfaces
 
 		IEnumerable<WP_RiskProfile> GetAllRecords();
         IEnumerable<WP_RiskProfile> GetRecordsByOutputId (string outputid);
+        IEnumerable<WP_RiskProfile> GetRecordsByMainRecordOutputId (string wpmainrecid, string outputid);
 		WP_RiskProfile Add(WP_RiskProfile rec);
 		WP_RiskProfile Update(WP_RiskProfile recChanges);
 		WP_RiskProfile Delete(string id);

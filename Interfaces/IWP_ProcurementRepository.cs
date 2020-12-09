@@ -13,6 +13,7 @@ namespace AUDANEPAD_Integrated.Interfaces
 		IEnumerable<WP_Procurement> GetAllRecords();
         IEnumerable<WP_Procurement> GetRecordsByOutputId (string outputid);
         IEnumerable<WP_Procurement> GetRecordsByMainRecordId (string recid);
+        IEnumerable<WP_Procurement> GetRecordsByMainRecordOutputId (string wpmainrecid, string outputid);
 		WP_Procurement Add(WP_Procurement rec);
 		WP_Procurement Update(WP_Procurement recChanges);
 		WP_Procurement Delete(string id);

@@ -8,7 +8,7 @@
 
 
 
-<h1 style="font-family: Faktslab;">Workplan: Activity Plan &nbsp;  <a asp-controller="nepadstaff" asp-action="workplanactivityreportpdf" asp-route-id="@Model.WPMainRecordId" title="Download Activity Plan"><i class="k-icon k-i-download"></i></a></h1>
+<h1 style="font-family: Faktslab;">Workplan: Mobility Plan &nbsp;  <a asp-controller="nepadstaff" asp-action="workplanmobilityreportpdf" asp-route-id="@Model.WPMainRecordId" title="Download Mobility Plan"><i class="k-icon k-i-download"></i></a></h1>
 
 
 <div class="separator-breadcrumb border-top"></div>
@@ -20,7 +20,7 @@
                                 <form id="addformmain2">
                                      <input hidden asp-for="WPMainRecordId" class="k-textbox" style="width:100%" value="@Model.WPMainRecordId">
 
-                                    <iframe runat="server" id="iframepdf" height="700" width=100% frameBorder="0" src="@Url.Action("GenerateDrateActivityReportPDF","NEPADStaff", new {id=Model.WPMainRecordId})"> </iframe>
+                                    <iframe runat="server" id="iframepdf" height="700" width=100% frameBorder="0" src="@Url.Action("GenerateDrateMobilityReportPDF","NEPADStaff", new {id=Model.WPMainRecordId})"> </iframe>
 
                                 </form>
                             </div>

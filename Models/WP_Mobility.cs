@@ -20,6 +20,7 @@ namespace AUDANEPAD_Integrated.Models
 
         public string WPMobility_Description { get; set; }
         public int Country_Id  { get; set; }
+        public string WPMobility_City  { get; set; }
         public LocalDate MobilityStartDate { get; set; }
         public LocalDate MobilityEndDate { get; set; }
         public double  MobilityCost { get; set; }

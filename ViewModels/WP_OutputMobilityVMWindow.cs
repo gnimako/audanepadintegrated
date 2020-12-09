@@ -25,6 +25,7 @@ namespace AUDANEPAD_Integrated.ViewModels
         public string WPMobility_DescriptionOMVMMain { get; set; }
         public int Country_IdOMVMMain   { get; set; }
         public string Country_NameOMVMMain  { get; set; }
+        public string Mobility_CityOMVMMain  { get; set; }
         public DateTime MobilityStartDateOMVMMain { get; set; }
         public DateTime MobilityEndDateOMVMMain  { get; set; }
         public string WPMobilityPeriodOMVMMain  { get; set; }

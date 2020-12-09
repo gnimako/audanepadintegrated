@@ -8,7 +8,7 @@
 
 
 
-<h1 style="font-family: Faktslab;">Workplan: Activity Plan &nbsp;  <a asp-controller="nepadstaff" asp-action="workplanactivityreportpdf" asp-route-id="@Model.WPMainRecordId" title="Download Activity Plan"><i class="k-icon k-i-download"></i></a></h1>
+<h1 style="font-family: Faktslab;">Workplan: Mobility Gantt Chart</h1>
 
 
 <div class="separator-breadcrumb border-top"></div>
@@ -19,8 +19,67 @@
                             <div class="card-body">
                                 <form id="addformmain2">
                                      <input hidden asp-for="WPMainRecordId" class="k-textbox" style="width:100%" value="@Model.WPMainRecordId">
+                          
 
-                                    <iframe runat="server" id="iframepdf" height="700" width=100% frameBorder="0" src="@Url.Action("GenerateDrateActivityReportPDF","NEPADStaff", new {id=Model.WPMainRecordId})"> </iframe>
+
+                                @(Html.Kendo().Gantt<TaskViewModel, DependencyViewModel>()
+                                    .Name("gantt")
+                                    .Columns(columns =>
+                                    {
+                                       // columns.Bound(c => c.TaskID).Title("ID").Width(50);
+                                        columns.Bound(c => c.Title).Title("Outputs and Mobility").Editable(false);
+                                        columns.Bound(c => c.Start).Width(100).Editable(true);
+                                        columns.Bound(c => c.End).Width(100).Editable(true);
+
+                                        
+                                    })
+                                    .Views(views =>
+                                    {
+                                        
+                                        views.DayView();
+                                        views.WeekView();
+                                        views.MonthView();
+                                        views.YearView(m => m.Selected(true));
+                                    })
+                                    .Toolbar(tb =>
+                                    {
+                                        //tb.Append();
+                                        tb.Custom().TemplateId("customaddbutton");
+                                        tb.Pdf();
+                                    })
+                                    .Pdf(pdf => pdf
+                                        .FileName("Gantt_Export.pdf")
+                                        .ProxyURL(Url.Action("Pdf_Export_Save", "Admin"))
+                                    )
+                                    .Editable(e=>
+                                    {
+                                      e.TemplateId("edit-template");
+                                      e.Reorder(false);
+                                      
+                                       
+                                   })
+                                    .Height(700)
+                                    .ShowWorkHours(false)
+                                    .ShowWorkDays(false)
+                                    .Snap(false)
+                                    
+                                    
+                                    .DataSource(d => d
+                                        .Model(m =>
+                                        {
+                                            m.Id(f => f.TaskID);
+                                            m.ParentId(f => f.ParentID);
+                                            m.Field(f => f.Expanded).DefaultValue(true);
+                                        })
+                                        .Read("WP_GanttMobility_Read", "Admin", new {recid=Model.WPMainRecordId})
+                                        .Destroy("WP_GanttMobility_Delete", "Admin")
+                                        .Update(update => update.Action("WP_GanttMobility_Update", "Admin").Data("onUpdateCreate"))
+                                        //.Create(create => create.Action("CreateTask", "Gantt").Data("onUpdateCreate"))
+                                        
+                                    )
+  
+                                )
+
 
                                 </form>
                             </div>
@@ -50,7 +109,7 @@
     </div>
 </div>
 <script id="customaddbutton" type="text/x-kendo-template">
-<a class="k-button" href="" onclick="return toolbar_click()">Add Activity</a>
+<a class="k-button" href="" onclick="return toolbar_click()">Add Mobility</a>
 </script>
 
 <script>
@@ -96,11 +155,11 @@ function toolbar_click() {
             modal: true,
             animation: false,
             resizable: true,
-            content: "/NEPADStaff/AddOutputActivityGantt?transid=" + transid,
+            content: "/NEPADStaff/AddOutputMobilityGantt?transid=" + transid,
             width: 600,
-            height: 600,
+            height: 650,
 
-            title: "Add an Output Activity",
+            title: "Add an Output Mobility",
             // close: onClose,
             deactivate: function () {
                 this.destroy();
@@ -111,6 +170,22 @@ function toolbar_click() {
     }
 
     return false;
+}
+
+function onChangePartnerFunding(e) {
+
+
+    if(e.checked==true){
+        //document.getElementById("PartnerFundingDescrOAVMMain").disabled = false;
+
+         $("#PartnerFundingDescrOAVMMain").removeAttr('readonly');
+    }
+    else{
+       // document.getElementById("PartnerFundingDescrOAVMMain").disabled = true;
+        document.getElementById("PartnerFundingDescrOAVMMain").value = "";
+        $("#PartnerFundingDescrOAVMMain").attr('readonly', true);
+    }
+    
 }
 </script>
 
@@ -124,7 +199,7 @@ function toolbar_click() {
 
          # } else { #
         <div class="k-edit-label">
-            <label for="title">Activity: </label>
+            <label for="title">Mobility: </label>
         </div>
 
           # }#
@@ -146,16 +221,7 @@ function toolbar_click() {
         <div data-container-for="end" class="k-edit-field">
             <input data-role="datetimepicker" name="end" />
         </div>
-   # if (!summary) { #
 
-        <div class="k-edit-label">
-            <label for="percentComplete">Complete: </label>
-        </div>
-        <div data-container-for="percentComplete" class="k-edit-field">
-            <input type="text" id="percentComplete" name="percentComplete" title="Complete" required="required" autocomplete="off" min="0" max="1" step="0.01" data-type="number" data-bind="value:percentComplete" data-role="numerictextbox" role="spinbutton" aria-valuemin="0" aria-valuemax="1" class="k-input" style="display: none;" aria-disabled="false">
-        </div>
-
-      # } #
 
 
 

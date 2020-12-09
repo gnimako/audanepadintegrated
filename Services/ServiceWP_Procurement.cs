@@ -58,6 +58,16 @@ namespace AUDANEPAD_Integrated.Services
             return records;
         }
 
+
+		public IEnumerable<WP_Procurement> GetRecordsByMainRecordOutputId (string wpmainrecid, string outputid)
+        {
+            var records = context.WP_Procurement
+                                .Where(s => s.WPMainRecord_id==wpmainrecid && s.WPOutput_Id==outputid)
+                                .ToList();
+
+            return records;
+        }
+
 		public WP_Procurement GetRecord(string Id)
 		{
 		    return context.WP_Procurement.Find(Id);

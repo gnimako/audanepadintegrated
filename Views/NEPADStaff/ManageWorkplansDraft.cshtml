@@ -459,7 +459,7 @@
 
                                         </div>
                                         <div id="defaultStep3">
-                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">7</span> What are the activities for delivering the outputs? <a href="javascript:void(0)" onclick="GenerateActivityGanntt()" title="View Gantt Chart"><i class="k-icon k-i-saturation"></i></a> &nbsp; &nbsp; <a href="javascript:void(0)" onclick="GenerateActivityPDFClick()" title="View Activity Plan"><i class="k-icon k-i-file-pdf"></i></a></h6> 
+                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">7</span> What are the activities for delivering the outputs? <a href="javascript:void(0)" onclick="GenerateActivityGanntt()" title="View Activity Gantt Chart"><i class="k-icon k-i-saturation"></i></a> &nbsp; &nbsp; <a href="javascript:void(0)" onclick="GenerateActivityPDFClick()" title="View Activity Plan"><i class="k-icon k-i-file-pdf"></i></a></h6> 
                                                     <div style="padding-left: 2em;">
                                                              @(Html.Kendo().Grid<WorkplansViewModel>()
                                                                             .Name("grid_outputactivities")
@@ -508,10 +508,10 @@
                                                             
                                                             <br \>
                                                             <br \>
-                                                             <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">8</span>  What are the mobilities or missions required to deliver the outputs? <a href="javascript:void(0)" onclick="GenerateActivityPDFClick()" title="View Mobility Plan"><i class="k-icon k-i-file-pdf"></i></a></h6> 
+                                                             <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">8</span>  What are the mobilities or missions required to deliver the outputs?  <a href="javascript:void(0)" onclick="GenerateMobilityGanntt()" title="View Mobility Gantt Chart"><i class="k-icon k-i-saturation"></i></a> &nbsp; &nbsp;<a href="javascript:void(0)" onclick="GenerateMobilityPDFClick()" title="View Mobility Plan"><i class="k-icon k-i-file-pdf"></i></a></h6> 
                                                              
                                                                 <div style="padding-left: 2em;">
-                                                              @(Html.Kendo().Grid<WorkplansViewModel>()
+                                                                 @(Html.Kendo().Grid<WorkplansViewModel>()
                                                                             .Name("grid_outputmobilities")
                                                                             .Columns(columns =>
                                                                             {
@@ -560,9 +560,55 @@
                                                             <br \>
                                         </div>
                                         <div id="defaultStep4">
-                                            <h4 class="pb-2">Procurement Plan</h4>
-                                            <div>This functionality has not yet been activated </div>
+                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">9</span>  What are the procurements required to deliver the outputs?  <a href="javascript:void(0)" onclick="GenerateMobilityGanntt()" title="View Mobility Gantt Chart"><i class="k-icon k-i-saturation"></i></a> &nbsp; &nbsp;<a href="javascript:void(0)" onclick="GenerateMobilityPDFClick()" title="View Mobility Plan"><i class="k-icon k-i-file-pdf"></i></a></h6> 
+                                              <div style="padding-left: 2em;">
+                                                @(Html.Kendo().Grid<WorkplansViewModel>()
+                                                        .Name("grid_outputprocurement")
+                                                        .Columns(columns =>
+                                                        {
+                                                            columns.Bound(c => c.Transaction_Id).Hidden();
+                                                            columns.Bound(c => c.WPMainRecord_Ident).Hidden();
+                                                            columns.Bound(c => c.ProjectId).Hidden();
+                                                            columns.Bound(c => c.FYearIdent).Hidden();
+                                                            columns.Bound(c => c.FPeriodIdent).Hidden();
+                                                            columns.Bound(c => c.ViewNumbering).Title("No").Width(20).Hidden(); 
+                                                            columns.Bound(c => c.Output).Title("Output").HeaderHtmlAttributes(new { @class = "hidden" });
+                                                            //  columns.Bound(c => c.Output_BudgetAmount).Title("Budget Amount").Format("{0:n2}").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { @class = "hidden" });
+                                                            //.HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                                    
 
+                                                        
+                                                            columns.Command(command => command.Custom(" Add Procurement").IconClass("k-icon k-i-group-collection").Click("addoutputprocurement").HtmlAttributes(new { style = "border-radius: 12px;" })).Width(200).HeaderHtmlAttributes(new { @class = "hidden" });
+                                                            //columns.Command(command => command.Custom(" Add Indicator").IconClass("k-icon k-i-column-stacked"));
+                                                            //.HeaderHtmlAttributes(new { @class = "hidden" });
+                                                            
+
+                                                        })
+                                                        
+                                                        
+                                                        .Resizable(r=>r.Columns(true))
+                                                        .ClientDetailTemplateId("templateoutputprocurement")
+                                                        .DataSource(dataSource => dataSource
+                                                            .Ajax()
+                                                            .Read(read => read.Action("WP_Outputs_for_Procurement_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod, periodtxt=Model.FisPeriod}))
+                                                            .Model(model => 
+                                                                {
+                                                                    model.Id(p => p.Transaction_Id);
+                                                                    //model.Field(field => field.LookUp_Status).Editable(false);
+                                                                })
+                                                    
+                                                            // .PageSize(20)
+                                                            .Events(events => events.Error("error_handler"))
+                                                                                
+                                                            
+                                                        )
+                                                        // .Events(events => events.DataBound("dataBoundOutputActMain"))
+                                                        .Events(events => events.DetailExpand("GridExpandedProc").DataBound("ExpandStashedSiteProc").DetailCollapse("GridCollapsedProc"))
+                                        )
+                                        </div>
+                                                            
+                                                            <br \>
+                                                            <br \>
                                         </div>
                                         <div id="defaultStep5">
                                             <h4 class="pb-2">Communication Plan</h4>
@@ -752,6 +798,38 @@
      
             )
             .Events(events => events.DataBound("dataBoundOutputMobChild"))
+            .ToClientTemplate()
+    )
+</script>
+<script id="templateoutputprocurement" type="text/kendo-tmpl">
+    @(Html.Kendo().Grid<WP_OutputProcurmentVM>()
+            .Name("gridprocurementsub_#=Transaction_Id#")
+            .Columns(columns =>
+            {
+                columns.Bound(o => o.Transaction_IdOPVM).Hidden();
+                columns.Bound(o => o.ShowGridButtons).Hidden();
+                columns.Bound(o => o.WPProcurement_DescriptionOPVM).Title("Procurement Description");
+                columns.Bound(o => o.WPProcurementType_NameOPVM).Title("Type").Width(200);
+                columns.Bound(o => o.WPProcurementPeriodOPVM).Title("Procurement Period").Width(200);
+                columns.Bound(o => o.WPProcurementLeadTime_NameOPVM).Title("Lead Time").Width(100);
+                columns.Bound(o => o.ProcurementCostOPVM).Title("Budget").Format("{0:n0}").HtmlAttributes(new { style = "text-align:right" });
+
+
+                columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("editoutputmobility").Visible("showactbuttons")).HtmlAttributes(new { style = "text-align:center" }).Width(80);
+                columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("deleteoutputmobility").Visible("showactbuttons")).HtmlAttributes(new { style = "text-align:center" }).Width(100);
+               
+                columns.Bound(o => o.Output_ChildGridIdOPVM).Hidden();
+
+            })
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(10)
+                .Read(read => read.Action("WP_OutputsSubProcurement_Read", "Admin", new { output_transid = "#=Transaction_Id#" }))
+              // .Events(events => events.Error("error_handler")
+                                         //  .RequestEnd("onRequestEndOutputActivity"))
+     
+            )
+            .Events(events => events.DataBound("dataBoundOutputProcChild"))
             .ToClientTemplate()
     )
 </script>
@@ -964,13 +1042,81 @@
         }
 
     }
+
+    function ExpandStashedSiteProc(e) {
+
+        var grid = e.sender;
+   
+        grid.tbody.find("tr.k-master-row").click(function(e){                           
+            var target = $(e.target);  
+
+            var row = $(this).closest("tr");
+
+            if((target.hasClass("k-i-expand"))||(target.hasClass("k-i-collapse"))){
+                return;
+            }         
+                
+            var row = target.closest("tr.k-master-row");
+            var icon = row.find(".k-i-expand");
+            grid.expandRow(row);
+        });
+
+        //Expand opened rows
+        var grid2 = $("#grid_outputprocurement").data("kendoGrid"); 
+        var data = grid2.dataSource.data();
+        var len = data.length;
+
+
+       // var isFiltered = localStorage.getItem("ExpandedRowId");
+       // alert(isFiltered);
+        for (var i = 0; i < len; i++) {
+            var row2 = data[i];
+            if (row2.Transaction_Id == localStorage.getItem("ExpandedProcRowId"))  {
+                grid2.expandRow("tr[data-uid='" + row2.uid + "']"); // expands the row with the specific uid
+            }
+        }
+
+        var rows = e.sender.tbody.children();
+        for (var j = 0; j < rows.length; j++) {
+            var row = $(rows[j]);
+            var dataItem = e.sender.dataItem(row);
+            
+           /* var cellIndex_5=5;
+            var cellIndex_6=6;
+            var cellIndex_7=7;*/
+            var cellIndex_8=8;
+
+          /*  var cell_5 = row.find("td:eq(" + cellIndex_5 + ")");
+            var cell_6 = row.find("td:eq(" + cellIndex_6 + ")");
+            var cell_7 = row.find("td:eq(" + cellIndex_7 + ")");*/
+            var cell_8 = row.find("td:eq(" + cellIndex_8 + ")");
+
+
+           /* cell_5.addClass("outputactmaingridcss");
+            cell_6.addClass("outputactmaingridcss");
+            cell_7.addClass("outputactmaingridcss");
+            cell_8.addClass("outputactmaingridcss");
+            cell_8.addClass("budgettotal");*/
+
+        }
+
+    }
     function GridExpandedMob(e) {
         //$.post("@Url.Action("SetExpandedRow", "Admin")", { rowident: e.sender.dataItem(e.masterRow).Transaction_Id });
         localStorage.setItem("ExpandedMobRowId", e.sender.dataItem(e.masterRow).Transaction_Id);
     }
+
+    function GridExpandedProc(e) {
+        //$.post("@Url.Action("SetExpandedRow", "Admin")", { rowident: e.sender.dataItem(e.masterRow).Transaction_Id });
+        localStorage.setItem("ExpandedProcRowId", e.sender.dataItem(e.masterRow).Transaction_Id);
+    }
     function GridCollapsedMob(e) {
         //$.post("@Url.Action("SetExpandedRow", "Admin")", { rowident: e.sender.dataItem(e.masterRow).Transaction_Id });
         localStorage.setItem("ExpandedMobRowId", "");
+    }
+    function GridCollapsedProc(e) {
+        //$.post("@Url.Action("SetExpandedRow", "Admin")", { rowident: e.sender.dataItem(e.masterRow).Transaction_Id });
+        localStorage.setItem("ExpandedProcRowId", "");
     }
  
 
@@ -1100,6 +1246,81 @@
                 cell_7.addClass("outputactsubgridcss_2");
                 cell_8.addClass("outputactsubgridcss_2");
                 cell_9.addClass("outputactsubgridcss_2");
+
+            }
+            row_alt=ToggleBoolean(row_alt);
+        
+
+       }
+
+
+    }
+
+    function dataBoundOutputProcChild (e) {
+        // iterate the table rows and apply custom row and cell styling
+        var rows = e.sender.tbody.children();
+        for (var j = 0; j < rows.length; j++) 
+        {
+            var row = $(rows[j]);
+            var dataItem = e.sender.dataItem(row);
+
+            var showbut = dataItem.get("ShowGridButtons");
+
+            if (showbut=="NO") {
+                row.addClass("boldclass");
+            }
+
+        }
+
+        var rows = e.sender.tbody.children();
+        var row_alt = true;
+        for (var j = 0; j < rows.length; j++) 
+        {
+            var row = $(rows[j]);
+            var dataItem = e.sender.dataItem(row);
+           
+
+        
+            var cellIndex_2=2;
+            var cellIndex_3=3;
+            var cellIndex_4=4;
+            var cellIndex_5=5;
+            var cellIndex_6=6;
+            var cellIndex_7=7;
+            var cellIndex_8=8;
+    
+
+            var cell_2 = row.find("td:eq(" + cellIndex_2 + ")");
+            var cell_3 = row.find("td:eq(" + cellIndex_3 + ")");
+            var cell_4 = row.find("td:eq(" + cellIndex_4 + ")");
+            var cell_5 = row.find("td:eq(" + cellIndex_5 + ")");
+            var cell_6 = row.find("td:eq(" + cellIndex_6 + ")");
+            var cell_7 = row.find("td:eq(" + cellIndex_7 + ")");
+            var cell_8 = row.find("td:eq(" + cellIndex_8 + ")");
+        
+
+            
+            if(row_alt==false)
+            {
+                cell_2.addClass("outputactsubgridcss");
+                cell_3.addClass("outputactsubgridcss");
+                cell_4.addClass("outputactsubgridcss");
+                cell_5.addClass("outputactsubgridcss");
+                cell_6.addClass("outputactsubgridcss");
+                cell_7.addClass("outputactsubgridcss");
+                cell_8.addClass("outputactsubgridcss");
+          
+            }
+            else
+            {
+                cell_2.addClass("outputactsubgridcss_2");
+                cell_3.addClass("outputactsubgridcss_2");
+                cell_4.addClass("outputactsubgridcss_2");
+                cell_5.addClass("outputactsubgridcss_2");
+                cell_6.addClass("outputactsubgridcss_2");
+                cell_7.addClass("outputactsubgridcss_2");
+                cell_8.addClass("outputactsubgridcss_2");
+           
 
             }
             row_alt=ToggleBoolean(row_alt);
@@ -1601,6 +1822,43 @@ function addoutputmobility(e) {
             height: 500,
 
             title: "Add Mobility/Mission",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+         
+
+}
+
+function addoutputprocurement(e) {
+
+    e.preventDefault();
+
+
+
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+    var transid = dataItem.Transaction_Id;
+   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
+    
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/NEPADStaff/AddOutputProcurement?transid=" + transid,
+            width: 600,
+            height: 500,
+
+            title: "Add Procurement",
             // close: onClose,
             deactivate: function () {
                 this.destroy();
@@ -3169,7 +3427,7 @@ function GenerateActivityGanntt() {
 
                         if (response == "recordfound") {
                             //window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
-                            var url="/NEPADStaff/WorkplanGanttChart?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+                            var url="/NEPADStaff/WorkplanActivityGanttChart?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
                             redirect_blank(url);
                         }
                         else if(response == "norecord")
@@ -3202,7 +3460,160 @@ function GenerateActivityGanntt() {
     else
     {
         // window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
-        var url="/NEPADStaff/WorkplanGanttChart?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+        var url="/NEPADStaff/WorkplanActivityGanttChart?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+        redirect_blank(url);
+    }
+
+
+ 
+}
+
+
+
+function GenerateMobilityGanntt() {
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+    var periodtxt = $("#FisPeriod").val();  
+    var empid = $("#Employee_Id").val(); 
+    var dirid = $("#Directorate_Id").val(); 
+    var divid = $("#Division_Id").val(); 
+    var progid = $("#Programme_Id").val();  
+    var mainrecid = $("#WPMainRecordId").val();
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+
+
+
+    if(mainrecid === "" && typeof mainrecid === "string")
+    {
+        $.ajax({
+                    type: "POST",
+                    url: '/Admin/CheckMainWPRecordStatus',     //your action
+                    //data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, selectedrows: JSON.parse( JSON.stringify(models))},
+                    data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "empid": empid, "dirid": dirid, "divid": divid, "progid": progid, "periodtxt": periodtxt},
+                    dataType: 'json',
+                    success: function (result) {
+                        var response = result.rtnmsg;
+
+                        if (response == "recordfound") {
+                            //window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+                            var url="/NEPADStaff/WorkplanMobilityGanttChart?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+                            redirect_blank(url);
+                        }
+                        else if(response == "norecord")
+                        {
+
+                            dialog.kendoDialog({
+                                width: "300px",
+                                title: "No Outcome or MTP",
+                                closable: false,
+                                modal: true,
+                                content: "<p>Please define at least one outcome or link an MTP Priority to the workplan<p>",
+                                actions: [
+                                    { text: 'Ok' }
+                                ],
+                                close: onClose
+                            });
+
+                            dialog.data("kendoDialog").open();
+                            undo.fadeOut();
+                        }
+
+                    },
+                    error: function (data) {
+                                
+                    }
+                })
+
+
+    }
+    else
+    {
+        // window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+        var url="/NEPADStaff/WorkplanMobilityGanttChart?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+        redirect_blank(url);
+    }
+
+
+ 
+}
+
+
+function GenerateMobilityPDFClick() {
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+    var periodtxt = $("#FisPeriod").val();  
+    var empid = $("#Employee_Id").val(); 
+    var dirid = $("#Directorate_Id").val(); 
+    var divid = $("#Division_Id").val(); 
+    var progid = $("#Programme_Id").val();  
+    var mainrecid = $("#WPMainRecordId").val();
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+
+
+
+    if(mainrecid === "" && typeof mainrecid === "string")
+    {
+        $.ajax({
+                    type: "POST",
+                    url: '/Admin/CheckMainWPRecordStatus',     //your action
+                    //data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, selectedrows: JSON.parse( JSON.stringify(models))},
+                    data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "empid": empid, "dirid": dirid, "divid": divid, "progid": progid, "periodtxt": periodtxt},
+                    dataType: 'json',
+                    success: function (result) {
+                        var response = result.rtnmsg;
+
+                        if (response == "recordfound") {
+                            //window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+                            var url="/NEPADStaff/WorkplanDraftMobilityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+                            redirect_blank(url);
+                        }
+                        else if(response == "norecord")
+                        {
+
+                            dialog.kendoDialog({
+                                width: "300px",
+                                title: "No Outcome or MTP",
+                                closable: false,
+                                modal: true,
+                                content: "<p>Please define at least one outcome or link an MTP Priority to the workplan<p>",
+                                actions: [
+                                    { text: 'Ok' }
+                                ],
+                                close: onClose
+                            });
+
+                            dialog.data("kendoDialog").open();
+                            undo.fadeOut();
+                        }
+
+                    },
+                    error: function (data) {
+                                
+                    }
+                })
+
+
+    }
+    else
+    {
+        // window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+        var url="/NEPADStaff/WorkplanDraftMobilityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
         redirect_blank(url);
     }
 
@@ -3253,6 +3664,7 @@ function redirect_blank(url) {
                         var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
                         var grid_outputsactivities = $("#grid_outputactivities").data("kendoGrid"); 
                         var grid_outputmobilities = $("#grid_outputmobilities").data("kendoGrid"); 
+                        var grid_outputprocurement = $("#grid_outputprocurement").data("kendoGrid"); 
 
                         var grid_outputsbudget = $("#grid_outputsbudget").data("kendoGrid"); 
 
@@ -3273,6 +3685,9 @@ function redirect_blank(url) {
 
                             grid_outputmobilities.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_Mobilities_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&periodtxt=" + periodtxt;
                             grid_outputmobilities.dataSource.read();
+
+                            grid_outputprocurement.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_Procurement_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&periodtxt=" + periodtxt;
+                            grid_outputprocurement.dataSource.read();
 
 
 
@@ -4045,7 +4460,94 @@ function onRequestEndOutputActivity(e){
 
  
 
-/* End  AUDA-NEPAD Outputs Activities  Grid CSS*/
+/* End  AUDA-NEPAD Outputs Mobilities  Grid CSS*/
+
+
+/* Begin  AUDA-NEPAD Outputs Procurement Grid CSS*/
+
+#grid_outputprocurement tr.k-alt {
+    background-color: #fff ;
+    }
+
+    #grid_outputprocurement td {
+    border-style: solid;
+    /*border-width: 0px 0px 1px 0px;*/
+    border-width: 0px ;
+    padding: .4em .6em;
+    overflow: hidden;
+    line-height: 1.6em;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    }
+
+     #grid_outputprocurement tr.k-alt.k-state-selected {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+
+    #grid_outputprocurement tr.k-state-selected  {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+    #grid_outputprocurement tr:hover {
+        background-color:  transparent;
+        
+    }
+    #grid_outputprocurement tr.k-state-selected:hover {
+        background-color: transparent;
+    }
+    #grid_outputprocurement tr.k-alt:hover {
+        background-color:  transparent;
+        
+    }
+    #grid_outputprocurement tr.k-alt.k-state-selected:hover {
+        background-color: transparent;
+    }
+    
+    #grid_outputprocurement>.k-grid-header tr, .hidden{
+        height: 0;
+        border-bottom-width: 0;
+        visibility: hidden;
+        overflow: hidden;
+        display: none;
+    }
+    .k-hierarchy-cell.k-header
+    {
+        height: 0;
+        border-bottom-width: 0;
+        visibility: hidden;
+        overflow: hidden;
+        display: none;
+
+
+    }
+    #grid_outputprocurement {
+        border-color: #ffffff;
+    }
+
+
+    /****Sub Grids******/
+
+
+    div[name^='gridprocurementsub_'] td {
+        border-style: solid;
+    /* border-width: 1px 0px 0px 1px;*/
+        border-top-width: 1px ;
+        padding: .4em .6em;
+        overflow: hidden;
+        line-height: 1.6em;
+        vertical-align: middle;
+        text-overflow: ellipsis;
+    }
+
+
+ 
+
+/* End  AUDA-NEPAD Outputs Procurement  Grid CSS*/
 
 
 

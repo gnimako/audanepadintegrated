@@ -218,10 +218,12 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/MtpPriortyMapping.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/SystemMessage.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/Workplan.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/WorkplanActivityGanttChart.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/WorkplanCycle.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/WorkplanDraftActivityPDF.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/WorkplanDraftList.cshtml.g.cs
-/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/WorkplanGanttChart.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/WorkplanDraftMobilityPDF.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/WorkplanMobilityGanttChart.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/Workplan_old.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_AddDivisionKPI.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_AddOutcomeIndicator.cshtml.g.cs
@@ -229,6 +231,8 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_AddOutputActivityGantt.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_AddOutputIndicator.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_AddOutputMobility.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_AddOutputMobilityGantt.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_AddOutputProcurement.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_AddSAPLinkage.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_AddWorkplanCycle.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_EditDivisionKPI.cshtml.g.cs
@@ -248,6 +252,7 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/_LoginsLayout.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/_NEPADStaffLayout.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/_NEPADStaffLayout2.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/_NEPADStaffLayout2_Old.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/_NEPADStaffLayout_old.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/_NEPADStaffLayout_Test.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/_StaffLoginLayout.cshtml.g.cs

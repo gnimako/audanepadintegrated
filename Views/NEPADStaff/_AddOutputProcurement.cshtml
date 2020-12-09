@@ -2,30 +2,30 @@
 
 
 
-@model WP_OutputMobilityVMWindow
+@model WP_OutputProcurementVMWindow
 
 <form id="addform">
 
-    <input hidden asp-for="Employee_IdOMVMMain" class="k-textbox" style="width:100%" value="@Model.Employee_IdOMVMMain">
-    <input hidden asp-for="Transaction_IdOMVMMain" class="k-textbox" style="width:100%" value="@Model.Transaction_IdOMVMMain">
-    <input hidden asp-for="FiscalYear_IdOMVMMain" class="k-textbox" style="width:100%" value="@Model.FiscalYear_IdOMVMMain">
-    <input hidden asp-for="Period_IdOMVMMain" class="k-textbox" style="width:100%" value="@Model.Period_IdOMVMMain">
-    <input hidden asp-for="FisPeriodOMVMMain" class="k-textbox" style="width:100%" value="@Model.FisPeriodOMVMMain">
-    <input hidden asp-for="Project_IdOMVMMain" class="k-textbox" style="width:100%" value="@Model.Project_IdOMVMMain">
-    <input hidden asp-for="WPMainRecord_idOMVMMain" class="k-textbox" style="width:100%" value="@Model.WPMainRecord_idOMVMMain">
+    <input hidden asp-for="Employee_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.Employee_IdOPVMMain">
+    <input hidden asp-for="Transaction_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.Transaction_IdOPVMMain">
+    <input hidden asp-for="FiscalYear_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.FiscalYear_IdOPVMMain">
+    <input hidden asp-for="Period_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.Period_IdOPVMMain">
+    <input hidden asp-for="FisPeriodOPVMMain" class="k-textbox" style="width:100%" value="@Model.FisPeriodOPVMMain">
+    <input hidden asp-for="Project_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.Project_IdOPVMMain">
+    <input hidden asp-for="WPMainRecord_idOPVMMain" class="k-textbox" style="width:100%" value="@Model.WPMainRecord_idOPVMMain">
     
     <div class="form-body" style="padding: 1.25rem;">
            
-            <h6 style="color:#807878">Brief Mobility/Mission Description</h6>
-            @Html.TextAreaFor(model => model.WPMobility_DescriptionOMVMMain, new { @class = "k-textbox", style = "width: 100%;", value="", rows="3"})
+            <h6 style="color:#807878">Brief Procurement Description</h6>
+            @Html.TextAreaFor(model => model.WPProcurement_DescriptionOPVMMain, new { @class = "k-textbox", style = "width: 100%;", value="", rows="3"})
             <br />
             <br />
 
-       
-                <h6 style="color:#807878">Country</h6>
-                @(Html.Kendo().DropDownListFor(model => model.Country_IdOMVMMain)
+           <div class="div1">
+                <h6 style="color:#807878">Type of Procurement</h6>
+                @(Html.Kendo().DropDownListFor(model => model.WPProcurementType_IdOPVMMain)
                     // .Name("Department_Id")
-                    .HtmlAttributes(new { style = "width:100%", id = "Country_IdOMVMMain" })
+                    .HtmlAttributes(new { style = "width:90%", id = "WPProcurementType_IdOPVMMain" })
                     .OptionLabel("Select...")
                     .DataTextField("DropDown_Name")
                     .DataValueField("DropDown_IntId")
@@ -33,7 +33,7 @@
                     {
                         source.Read(read =>
                         {
-                                read.Action("GetAllTransCountries", "Admin");
+                                read.Action("GetAllTransProcurementTypes", "Admin");
                             
                         })
                         .ServerFiltering(true);
@@ -44,37 +44,62 @@
                 )
                 <br />
                 <br />
+            </div>
+            <div class="div2">
+                <h6 style="color:#807878">Lead Time</h6>
+                @(Html.Kendo().DropDownListFor(model => model.WPProcurementLeadTime_IdOPVMMain)
+                    // .Name("Department_Id")
+                    .HtmlAttributes(new { style = "width:100%", id = "WPProcurementLeadTime_IdOPVMMain" })
+                    .OptionLabel("Select...")
+                    .DataTextField("DropDown_Name")
+                    .DataValueField("DropDown_IntId")
+                    .DataSource(source =>
+                    {
+                        source.Read(read =>
+                        {
+                                read.Action("GetAllTransProcurementLTimes", "Admin");
+                            
+                        })
+                        .ServerFiltering(true);
+                    })
+                    
+                
+                    //.SelectedIndex(Model.Department_Id)
+                )
+                <br />
+                <br />
+            </div>
 
-            <div><h6 style="color:#807878">City</h6></div>
-                @Html.TextBoxFor(model => model.Mobility_CityOMVMMain, new { @class = "k-textbox",  style = "width: 100%;", value=""})
-                <br />
-                <br />
+            <div><h6 style="color:#807878">Additional Notes</h6></div>
+            @Html.TextAreaFor(model => model.WPProcurement_AdditionalNotesOPVMMain, new { @class = "k-textbox", style = "width: 100%;", value="", rows="3"})
+            <br />
+            <br />
 
             <div class="div1">
-                <h6 style="color:#807878">Actual Mission Start Date</h6>
-                @(Html.Kendo().DatePickerFor(model => model.MobilityStartDateOMVMMain)
-                .Value(Model.PeriodStartDateOMVMMain)
+                <h6 style="color:#807878">Actual Start Date</h6>
+                @(Html.Kendo().DatePickerFor(model => model.ProcurementStartDateOPVMMain)
+                .Value(Model.PeriodStartDateOPVMMain)
                 //.HtmlAttributes(new { style = "width: 100%", title = "datepicker" })
                 )
                 <br />
                 <br />
             </div>
             <div class="div2">
-                <h6 style="color:#807878">Actual Mission End Date</h6>
-                @(Html.Kendo().DatePickerFor(model => model.MobilityEndDateOMVMMain)
-                .Value(Model.PeriodEndDateOMVMMain)
+                <h6 style="color:#807878">Actual End Date</h6>
+                @(Html.Kendo().DatePickerFor(model => model.ProcurementEndDateOPVMMain)
+                .Value(Model.PeriodEndDateOPVMMain)
                 //.HtmlAttributes(new { style = "width: 100%", title = "datepicker" })
                 )
                 <br />
                 <br />
             </div>
            
-                <div id="mobilitycost"><h6 style="color:#807878"><span id="costinfo">Mission Cost (in USD)</span></h6></div>
-                @Html.TextBoxFor(model => model.MobilityCostOMVMMain, new { @class = "k-textbox",  style = "width: 100%;", value=""})
+                <div id="procurementcost"><h6 style="color:#807878"><span id="costinfo">Procurement Cost (in USD)</span></h6></div>
+                @Html.TextBoxFor(model => model.ProcurementCostOPVMMain, new { @class = "k-textbox",  style = "width: 100%;", value=""})
                 @(Html.Kendo().Tooltip()
-                    .For("#mobilitycost")
+                    .For("#procurementcost")
                     .Filter("span")
-                    .Content("Please provide the total cost associated with this mission, excluding all procurement cost. ")
+                    .Content("Please provide the actual total procurement cost, excluding others such as air ticket etc. ")
                     .Position(TooltipPosition.Top)
                     .Width(350)
                 )
@@ -125,19 +150,20 @@
 
 $("#btnSubmita_act").click(function (e) {
 
-    var gridid = $("#Transaction_IdOMVMMain").val(); 
+    var gridid = $("#Transaction_IdOPVMMain").val(); 
 
-    var projid = $("#Project_IdOMVMMain").val();  
-    var fyear = $("#FiscalYear_IdOMVMMain").val();  
-    var fperiod = $("#Period_IdOMVMMain").val();  
-    var periodtxt = $("#FisPeriodOMVMMain").val();  
+    var projid = $("#Project_IdOPVMMain").val();  
+    var fyear = $("#FiscalYear_IdOPVMMain").val();  
+    var fperiod = $("#Period_IdOPVMMain").val();  
+    var periodtxt = $("#FisPeriodOPVMMain").val();  
 
-    var mobilitydesc = $("#WPMobility_DescriptionOMVMMain").val();  
-    var mobilitycountry = $("#Country_IdOMVMMain").val();  //Mobility_City
-    var mobilitycity = $("#Mobility_CityOMVMMain").val();
-    var mobilitycost = $("#MobilityCostOMVMMain").val();  
-    var startDate= $("#MobilityStartDateOMVMMain").data("kendoDatePicker");
-    var endDate= $("#MobilityEndDateOMVMMain").data("kendoDatePicker");
+    var procurementdesc = $("#WPProcurement_DescriptionOPVMMain").val();  
+    var procurement_typeid = $("#WPProcurementType_IdOPVMMain").val();  //Mobility_City
+    var procurement_leadtime = $("#WPProcurementLeadTime_IdOPVMMain").val();
+    var procurement_additionalnotes = $("#WPProcurement_AdditionalNotesOPVMMain").val();  
+    var startDate= $("#ProcurementStartDateOPVMMain").data("kendoDatePicker");
+    var endDate= $("#ProcurementEndDateOPVMMain").data("kendoDatePicker");
+    var procurement_cost = $("#ProcurementCostOPVMMain").val();  
 
 
     
@@ -145,30 +171,30 @@ $("#btnSubmita_act").click(function (e) {
 
 
 
-    if(mobilitydesc === "" && typeof mobilitydesc === "string")
+    if(procurementdesc === "" && typeof procurementdesc === "string")
     {
         $('#targetDivStaffa_act').empty();
-        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Entry : Please describe the mobility. </span>').appendTo('.rssedStaffa_act');
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Entry : Please describe the procurement. </span>').appendTo('.rssedStaffa_act');
     }
-    else if(mobilitycountry === "" && typeof mobilitycountry === "string")
+    else if(procurement_typeid === "" && typeof procurement_typeid === "string")
     {
         $('#targetDivStaffa_act').empty();
-        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select country. </span>').appendTo('.rssedStaffa_act');
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select the type of procurement. </span>').appendTo('.rssedStaffa_act');
     }
-    else if(mobilitycity === "" && typeof mobilitycity === "string")
+    else if(procurement_leadtime === "" && typeof procurement_leadtime === "string")
     {
         $('#targetDivStaffa_act').empty();
-        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Entry : Please enter city. </span>').appendTo('.rssedStaffa_act');
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select the lead time. </span>').appendTo('.rssedStaffa_act');
     }
-    else if(mobilitycost === "" && typeof mobilitycost === "string")
+    else if(procurement_cost === "" && typeof procurement_cost === "string")
     {
         $('#targetDivStaffa_act').empty();
-        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Entry : Please provide mobility/mission cost. </span>').appendTo('.rssedStaffa_act');
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Entry : Please provide procurement cost. </span>').appendTo('.rssedStaffa_act');
     }
-    else if(isNaN(mobilitycost))
+    else if(isNaN(procurement_cost))
     {
         $('#targetDivStaffa_act').empty();
-        $('<span class="alert alert-warning" style="display: block;font-size: 100%">Mission cost should be a number. </span>').appendTo('.rssedStaffa_act');
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">Procurement cost should be a number. </span>').appendTo('.rssedStaffa_act');
     }
     else if(startDate.value()>endDate.value())
     {
@@ -190,18 +216,18 @@ $("#btnSubmita_act").click(function (e) {
 
                     if (response == "success") {
                                 $('#targetDivStaffa_act').empty();
-                                $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Mission Saved Successfully. </span>').appendTo('.rssedStaffa_act');
+                                $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Procurement Saved Successfully. </span>').appendTo('.rssedStaffa_act');
 
 
-                                var childGrid = $('#gridmobilitiessub_'+gridid).data("kendoGrid");
+                                var childGrid = $('#gridprocurementsub_'+gridid).data("kendoGrid");
 
-                                childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutputsSubMobilities_Read?output_transid=" + gridid;
+                                childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutputsSubProcurement_Read?output_transid=" + gridid;
                                 childGrid.dataSource.read();
                                 //childGrid.refresh();
 
-                                var grid_outputmobilities = $("#grid_outputmobilities").data("kendoGrid"); 
-                                grid_outputmobilities.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_Mobilities_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&periodtxt=" + periodtxt;
-                                grid_outputmobilities.dataSource.read();
+                                var grid_outputproc = $("#grid_outputprocurement").data("kendoGrid"); 
+                                grid_outputproc.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_Procurement_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&periodtxt=" + periodtxt;
+                                grid_outputproc.dataSource.read();
 
 
                     }
@@ -212,17 +238,17 @@ $("#btnSubmita_act").click(function (e) {
                     }
                     else if (response == "pkerror") {
                             $('#targetDivStaffa_act').empty();
-                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unable to Save. Mission Already Exist. </span>').appendTo('.rssedStaffa_act');
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unable to Save. Procurement Already Exist. </span>').appendTo('.rssedStaffa_act');
                             //$('#targetDivStaffa').empty();
                     }
                     else if (response == "createerror") {
                             $('#targetDivStaffa_act').empty();
-                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to save mission</span>').appendTo('.rssedStaffa_act');
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to save procurement</span>').appendTo('.rssedStaffa_act');
                             //$('#targetDivStaffa').empty();
                     }
                     else if (response == "doesnotexist") {
                             $('#targetDivStaffa_act').empty();
-                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">No Record: Mission does not exist</span>').appendTo('.rssedStaffa_act');
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">No Record: Procurement does not exist</span>').appendTo('.rssedStaffa_act');
                             //$('#targetDivStaffa').empty();
                     }
                     else {

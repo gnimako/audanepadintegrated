@@ -65,7 +65,7 @@ namespace AUDANEPAD_Integrated
                 options.LoginPath = new PathString("/Account/Login"); 
                 options.LogoutPath = new PathString("/Account/Logout");
                 options.SlidingExpiration = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(10);  
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);  
                 
 
             });

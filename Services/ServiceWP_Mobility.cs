@@ -57,6 +57,15 @@ namespace AUDANEPAD_Integrated.Services
             return records;
         }
 
+		public IEnumerable<WP_Mobility> GetRecordsByMainRecordOutputId (string wpmainrecid, string outputid)
+        {
+            var records = context.WP_Mobility
+                                .Where(s => s.WPMainRecord_id==wpmainrecid && s.WPOutput_Id==outputid)
+                                .ToList();
+
+            return records;
+        }
+
 		public WP_Mobility GetRecord(string Id)
 		{
 		    return context.WP_Mobility.Find(Id);

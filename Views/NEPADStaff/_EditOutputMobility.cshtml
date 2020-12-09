@@ -45,6 +45,11 @@
                 )
                 <br />
                 <br />
+
+            <div id="mobilitycost"><h6 style="color:#807878">City</h6></div>
+                @Html.TextBoxFor(model => model.Mobility_CityOMVMMain, new { @class = "k-textbox",  style = "width: 100%;", value=""})
+                <br />
+                <br />
         
 
             <div class="div1">
@@ -206,6 +211,7 @@ $("#btnSubmita_act").click(function (e) {
 
     var mobilitydesc = $("#WPMobility_DescriptionOMVMMain").val();  
     var mobilitycountry = $("#Country_IdOMVMMain").val();  
+    var mobilitycity = $("#Mobility_CityOMVMMain").val();
     var mobilitycost = $("#MobilityCostOMVMMain").val();  
     var startDate= $("#MobilityStartDateOMVMMain").data("kendoDatePicker");
     var endDate= $("#MobilityEndDateOMVMMain").data("kendoDatePicker");
@@ -225,6 +231,11 @@ $("#btnSubmita_act").click(function (e) {
     {
         $('#targetDivStaffa_act').empty();
         $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select country. </span>').appendTo('.rssedStaffa_act');
+    }
+    else if(mobilitycity === "" && typeof mobilitycity === "string")
+    {
+        $('#targetDivStaffa_act').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Entry : Please enter city. </span>').appendTo('.rssedStaffa_act');
     }
     else if(mobilitycost === "" && typeof mobilitycost === "string")
     {
