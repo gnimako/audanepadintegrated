@@ -8217,6 +8217,32 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
         [HttpPost]
+        public ActionResult WP_OutputsSubProcurement_Delete(string subrecid)
+        {
+            // var user = await userManager.GetUserAsync(HttpContext.User);
+            try
+            {
+
+                //Now Delete Mobility record
+                WP_Procurement rec_set=_wpProcurementRepository.GetRecord(subrecid);
+                
+                if (rec_set != null)
+                {
+                    _wpProcurementRepository.Delete(rec_set.Transaction_Id);
+
+                } 
+
+
+
+                 return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+        }
+
+        [HttpPost]
         public ActionResult WP_SAPWBSLink_Delete(string transid)
         {
             // var user = await userManager.GetUserAsync(HttpContext.User);
@@ -9080,6 +9106,107 @@ namespace AUDANEPAD_Integrated.Controllers
 
         }
 
+
+
+        [HttpPost]
+        public ActionResult AddOutputProcurementNew(WP_OutputProcurementVMWindow model)
+        {
+            double totalremainingbudget=0;
+
+            try
+            {
+                                  
+                WP_Outputs recoutputrecord=_wpOutputsRepository.GetRecord(model.Transaction_IdOPVMMain );
+
+                //Get the total budget for the output
+                var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.Transaction_IdOPVMMain);
+                double total_outputbudget=0;
+                foreach (var record in DB_Recs_Activities)
+                {
+                    total_outputbudget=total_outputbudget+record.ActivityCost;
+                }
+
+                //Get all mission, procurement, communication and risk costs already captured against this output 
+                double total_missionbudget=0;
+                double total_procurementbudget=0;
+                double total_commsbudget=0;
+                double total_riskbudget=0;
+                
+
+                var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.Transaction_IdOPVMMain).ToList();
+                foreach (var record in DB_Recs_Missions)
+                {
+                    total_missionbudget=total_missionbudget+record.MobilityCost;
+                }
+
+                //foreach loop for procurment
+                var DB_Recs_Procurement =  _wpProcurementRepository.GetRecordsByOutputId(model.Transaction_IdOPVMMain).ToList();
+                foreach (var record in DB_Recs_Procurement)
+                {
+                    total_procurementbudget=total_procurementbudget+record.WPProcurementCost;
+                }
+                //foreach loop for comms
+                var DB_Recs_Comms =  _wpCommunicationRepository.GetRecordsByOutputId(model.Transaction_IdOPVMMain).ToList();
+                foreach (var record in DB_Recs_Comms)
+                {
+                    total_commsbudget=total_commsbudget+record.WPCommsCost;
+                }
+
+                //foreach loop for risk
+                var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.Transaction_IdOPVMMain).ToList();
+                foreach (var record in DB_Recs_Risk)
+                {
+                    total_riskbudget=total_riskbudget+record.WPRiskCost;
+                }
+
+                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
+    
+
+                if(totalremainingbudget>=model.ProcurementCostOPVMMain)
+                {
+                    WP_Procurement rec_to_add_2 = new WP_Procurement
+                    {
+                        Transaction_Id=Guid.NewGuid().ToString(),
+                        WPMainRecord_id=model.WPMainRecord_idOPVMMain,
+                        Project_Id=model.Project_IdOPVMMain,
+                        FiscalYear_Id=model.FiscalYear_IdOPVMMain,
+                        Period_Id=model.Period_IdOPVMMain,
+                        WPOutput_Id=model.Transaction_IdOPVMMain,
+                        WPProcurement_Description=model.WPProcurement_DescriptionOPVMMain,
+                        WPProcurementType_Id=model.WPProcurementType_IdOPVMMain,
+                        WPProcurementLeadTime_Id=model.WPProcurementLeadTime_IdOPVMMain,
+                        WPProcurement_AdditionalNotes=model.WPProcurement_AdditionalNotesOPVMMain,
+                        WPProcurementStartDate=new LocalDate(model.ProcurementStartDateOPVMMain.Year, model.ProcurementStartDateOPVMMain.Month,model.ProcurementStartDateOPVMMain.Day),
+                        WPProcurementEndDate=new LocalDate(model.ProcurementEndDateOPVMMain.Year, model.ProcurementEndDateOPVMMain.Month,model.ProcurementEndDateOPVMMain.Day),
+                        WPProcurementCost=model.ProcurementCostOPVMMain,
+                        TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                    };
+
+                    _wpProcurementRepository.Add(rec_to_add_2);
+
+                }
+                else
+                {
+                    return Json(new { rtnmsg = "insufficientfunds", remainfunds= totalremainingbudget.ToString()});
+
+                }
+                return Json(new { rtnmsg = "success", remainfunds= totalremainingbudget.ToString() });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error", remainfunds= totalremainingbudget.ToString() });
+            }
+             
+
+
+
+
+        }
+
+
+
+
+
         [HttpPost]
         public ActionResult AddOutputMobilityGanttNew(WP_OutputMobilityVMWindow model)
         {
@@ -9498,10 +9625,25 @@ namespace AUDANEPAD_Integrated.Controllers
                     }
 
                     //foreach loop for procurment
-
+                    var DB_Recs_Procurement =  _wpProcurementRepository.GetRecordsByOutputId(model.WPOutput_IdOMVMMain).ToList();
+                    foreach (var record in DB_Recs_Procurement)
+                    {
+                        total_procurementbudget=total_procurementbudget+record.WPProcurementCost;
+                    }
                     //foreach loop for comms
+                    var DB_Recs_Comms =  _wpCommunicationRepository.GetRecordsByOutputId(model.WPOutput_IdOMVMMain).ToList();
+                    foreach (var record in DB_Recs_Comms)
+                    {
+                        total_commsbudget=total_commsbudget+record.WPCommsCost;
+                    }
 
                     //foreach loop for risk
+                    var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOMVMMain).ToList();
+                    foreach (var record in DB_Recs_Risk)
+                    {
+                        total_riskbudget=total_riskbudget+record.WPRiskCost;
+                    }
+
 
                     totalremainingbudget=(total_outputbudget+rec_mobility.MobilityCost)-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
 
@@ -9544,6 +9686,114 @@ namespace AUDANEPAD_Integrated.Controllers
             }
 
         }
+
+
+
+
+        [HttpPost]
+        public ActionResult EditOutputProcurement(WP_OutputProcurementVMWindow model)
+        {
+            double totalremainingbudget=0;
+            try
+            {
+                                  
+
+                //Check SAP Link Details and Update Total Budget
+                
+                WP_Procurement rec_set=_wpProcurementRepository.GetRecord(model.Transaction_IdOPVMMain);
+            //    WP_OutputBudget recbudget=_wpOutputBudgetRepository.GetRecordsByProjectYearPeriodAndOutputId(model.Project_IdOAVMMain, model.FiscalYear_IdOAVMMain, model.Period_IdOAVMMain, model.WPOutput_IdOAVMMain);
+                WP_Outputs recoutputrecord=_wpOutputsRepository.GetRecord(model.WPOutput_IdOPVMMain);
+
+                if(rec_set!=null)
+                {
+ 
+
+                    //Get the total budget for the output
+                    var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain);
+                    double total_outputbudget=0;
+                    foreach (var record in DB_Recs_Activities)
+                    {
+                        total_outputbudget=total_outputbudget+record.ActivityCost;
+                    }
+
+                    //Get all mission, procurement, communication and risk costs already captured against this output 
+                    double total_missionbudget=0;
+                    double total_procurementbudget=0;
+                    double total_commsbudget=0;
+                    double total_riskbudget=0;
+                    
+
+                    var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain);
+                    foreach (var record in DB_Recs_Missions)
+                    {
+                        total_missionbudget=total_missionbudget+record.MobilityCost;
+                    }
+
+                    //foreach loop for procurment
+                    var DB_Recs_Procurement =  _wpProcurementRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain).ToList();
+                    foreach (var record in DB_Recs_Procurement)
+                    {
+                        total_procurementbudget=total_procurementbudget+record.WPProcurementCost;
+                    }
+                    //foreach loop for comms
+                    var DB_Recs_Comms =  _wpCommunicationRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain).ToList();
+                    foreach (var record in DB_Recs_Comms)
+                    {
+                        total_commsbudget=total_commsbudget+record.WPCommsCost;
+                    }
+
+                    //foreach loop for risk
+                    var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain).ToList();
+                    foreach (var record in DB_Recs_Risk)
+                    {
+                        total_riskbudget=total_riskbudget+record.WPRiskCost;
+                    }
+
+
+                    totalremainingbudget=(total_outputbudget+rec_set.WPProcurementCost)-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
+
+                
+
+                    if(totalremainingbudget>=model.ProcurementCostOPVMMain)
+                    {
+
+                        rec_set.WPMainRecord_id=model.WPMainRecord_idOPVMMain;
+                        rec_set.Project_Id=model.Project_IdOPVMMain;
+                        rec_set.FiscalYear_Id=model.FiscalYear_IdOPVMMain;
+                        rec_set.Period_Id=model.Period_IdOPVMMain;
+                        rec_set.WPOutput_Id=model.WPOutput_IdOPVMMain;
+                        rec_set.WPProcurement_Description=model.WPProcurement_DescriptionOPVMMain;
+                        rec_set.WPProcurementType_Id=model.WPProcurementType_IdOPVMMain;
+                        rec_set.WPProcurementLeadTime_Id=model.WPProcurementLeadTime_IdOPVMMain;
+                        rec_set.WPProcurement_AdditionalNotes=model.WPProcurement_AdditionalNotesOPVMMain;
+                        rec_set.WPProcurementStartDate=new LocalDate(model.ProcurementStartDateOPVMMain.Year, model.ProcurementStartDateOPVMMain.Month,model.ProcurementStartDateOPVMMain.Day);
+                        rec_set.WPProcurementEndDate=new LocalDate(model.ProcurementEndDateOPVMMain.Year, model.ProcurementEndDateOPVMMain.Month,model.ProcurementEndDateOPVMMain.Day);
+                        rec_set.WPProcurementCost=model.ProcurementCostOPVMMain;
+                        rec_set.TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                    
+                        _wpProcurementRepository.Update(rec_set);
+
+                    }
+                    else
+                    {
+                        return Json(new { rtnmsg = "insufficientfunds", remainfunds= totalremainingbudget.ToString()});
+
+                    }
+
+                    
+
+                }
+              
+                return Json(new { rtnmsg = "success", remainfunds= totalremainingbudget.ToString() });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error", remainfunds= totalremainingbudget.ToString() });
+            }
+
+        }
+
+
 
         [HttpPost]
         public ActionResult AddStrategicIndicator_ProjectBased(WP_OutcomeOutputIndicatorsVM model)

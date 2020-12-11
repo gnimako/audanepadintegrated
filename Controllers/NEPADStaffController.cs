@@ -4649,7 +4649,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
                 float indentmargin=document.GetLeftMargin()+0;
-                Table tabledirectoratebudget = new Table(UnitValue.CreatePercentArray(new float[]{16, 16, 16, 16, 16, 20}), false)
+                Table tabledirectoratebudget = new Table(UnitValue.CreatePercentArray(new float[]{16, 16, 18, 16, 16, 18}), false)
                                         .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
                                         .SetMarginLeft(0)
                                         .SetHorizontalAlignment(HorizontalAlignment.LEFT);
@@ -4688,7 +4688,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                     Cell cellheader02b = new Cell(1, 1)
                         .SetTextAlignment(TextAlignment.RIGHT)
-                        .Add(new Paragraph("PRC MS (US$)")
+                        .Add(new Paragraph("PRC MS Threshold (US$)")
                                         .SetFont(ft_bold)
                                         .SetFixedLeading(14f)
                                         .SetFontColor(cl_white)
@@ -4711,7 +4711,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                     Cell cellheader04 = new Cell(1, 1)
                         .SetTextAlignment(TextAlignment.RIGHT)
-                        .Add(new Paragraph("PRC DP (US$)")
+                        .Add(new Paragraph("PRC DP Threshold (US$)")
                                         .SetFont(ft_bold)
                                         .SetFixedLeading(14f)
                                         .SetFontColor(cl_white)
@@ -5417,9 +5417,6 @@ namespace AUDANEPAD_Integrated.Controllers
                 if(_countrecs>=1)
                 {
                     
-
-
-
                     //Row Header
                     Cell cellheader01 = new Cell(1, 1)
                     .SetTextAlignment(TextAlignment.LEFT)
@@ -5446,7 +5443,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                     Cell cellheader02b = new Cell(1, 1)
                         .SetTextAlignment(TextAlignment.LEFT)
-                        .Add(new Paragraph("Will Be Implemented in MS...")
+                        .Add(new Paragraph("Will Be Implemented in the following Member States")
                                         .SetFont(ft_bold)
                                         .SetFixedLeading(14f)
                                         .SetFontColor(cl_white)
@@ -5458,7 +5455,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                     Cell cellheader03 = new Cell(1, 1)
                         .SetTextAlignment(TextAlignment.LEFT)
-                        .Add(new Paragraph("Will Be Implemented in RECs...")
+                        .Add(new Paragraph("Will Be Implemented in the following RECs")
                                         .SetFont(ft_bold)
                                         .SetFixedLeading(14f)
                                         .SetFontColor(cl_white)
@@ -5941,7 +5938,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                    .SetBackgroundColor(cl_tableheader);
                                 tabledirdetails.AddCell(cellheader12b);
 
-
+                            double totalbudget_for_project=0;
                             if(DB_OutputsRecs.Count()>0)
                             {
                                 foreach (var rec_output in DB_OutputsRecs)
@@ -5956,6 +5953,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                     {
                                         totalbudget_for_output=totalbudget_for_output+act.ActivityCost;
                                     }
+                                    totalbudget_for_project=totalbudget_for_project+totalbudget_for_output;
 
 
 
@@ -5990,6 +5988,8 @@ namespace AUDANEPAD_Integrated.Controllers
                                         .SetBorderTop(Border.NO_BORDER)
                                         .SetBorderBottom(Border.NO_BORDER);
                                         tabledirdetails.AddCell(cell12rowb);
+
+
                                     }
                                     else
                                     {
@@ -6024,6 +6024,80 @@ namespace AUDANEPAD_Integrated.Controllers
                                     }
 
                                     row_alt=ToggleBoolean(row_alt);
+
+                                    if(inneriter==DB_OutputsRecs.Count())
+                                    {
+                                        if(row_alt==false)
+                                        {
+                                            Cell cell12rowa = new Cell(1, 4)
+                                            .SetTextAlignment(TextAlignment.LEFT)
+                                            .Add(new Paragraph("TOTAL FOR PROJECT")
+                                                            .SetFont(ft_regular)
+                                                            .SetFixedLeading(14f)
+                                                            //.SetFontColor(cl_white)
+                                                            .SetFontColor(cl_grayDark)
+                                                            .SetBackgroundColor(cl_tablecontent_1)
+                                                            .SetFontSize(10))
+                                            .SetBackgroundColor(cl_tablecontent_1)
+                                           // .SetBorderTop(Border.NO_BORDER)
+                                            .SetBorderBottom(Border.NO_BORDER);
+                                            tabledirdetails.AddCell(cell12rowa);
+
+                                            
+                                            Cell cell12rowb = new Cell(1, 1)
+                                            .SetTextAlignment(TextAlignment.RIGHT)
+                                            .Add(new Paragraph(string.Format("{0:N0}", totalbudget_for_project))
+                                                            .SetFont(ft_regular)
+                                                            .SetFixedLeading(14f)
+                                                            //.SetFontColor(cl_white)
+                                                            .SetFontColor(cl_grayDark)
+                                                            .SetBackgroundColor(cl_tablecontent_1)
+                                                            .SetFontSize(10))
+                                            .SetBackgroundColor(cl_tablecontent_1)
+                                           // .SetBorderTop(Border.NO_BORDER)
+                                            .SetBorderBottom(Border.NO_BORDER);
+                                            tabledirdetails.AddCell(cell12rowb);
+
+
+                                        }
+                                        else
+                                        {
+                                            Cell cell12rowa = new Cell(1, 4)
+                                            .SetTextAlignment(TextAlignment.LEFT)
+                                            .Add(new Paragraph("TOTAL FOR PROJECT")
+                                                            .SetFont(ft_regular)
+                                                            .SetFixedLeading(14f)
+                                                            //.SetFontColor(cl_white)
+                                                            .SetFontColor(cl_grayDark)
+                                                            .SetBackgroundColor(cl_tablecontent_2)
+                                                            .SetFontSize(10))
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                          //  .SetBorderTop(Border.NO_BORDER)
+                                            .SetBorderBottom(Border.NO_BORDER);
+                                            tabledirdetails.AddCell(cell12rowa);
+
+                                            Cell cell12rowb = new Cell(1, 1)
+                                            .SetTextAlignment(TextAlignment.RIGHT)
+                                            .Add(new Paragraph(string.Format("{0:N0}", totalbudget_for_project))
+                                                            .SetFont(ft_regular)
+                                                            .SetFixedLeading(14f)
+                                                            //.SetFontColor(cl_white)
+                                                            .SetFontColor(cl_grayDark)
+                                                            .SetBackgroundColor(cl_tablecontent_2)
+                                                            .SetFontSize(10))
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                           // .SetBorderTop(Border.NO_BORDER)
+                                            .SetBorderBottom(Border.NO_BORDER);
+                                            tabledirdetails.AddCell(cell12rowb);
+
+                                        }
+
+
+                                    }
+
+
+
+                                    
 
 
                                 }
@@ -6216,7 +6290,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
                                         cell4.SetTextAlignment(TextAlignment.RIGHT)
-                                            .Add(new Paragraph(string.Format("{0:N2}", activity.ActivityCost))
+                                            .Add(new Paragraph(string.Format("{0:N0}", activity.ActivityCost))
                                                         // .SetFont(ft_montserrat_reg)
                                                             .SetFixedLeading(14f)
                                                             .SetFontColor(cl_grayDark)
@@ -6290,7 +6364,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
                                         cell4.SetTextAlignment(TextAlignment.RIGHT)
-                                            .Add(new Paragraph(string.Format("{0:N2}", activity.ActivityCost))
+                                            .Add(new Paragraph(string.Format("{0:N0}", activity.ActivityCost))
                                                         // .SetFont(ft_montserrat_reg)
                                                             .SetFixedLeading(14f)
                                                             .SetFontColor(cl_grayDark)
@@ -6308,6 +6382,76 @@ namespace AUDANEPAD_Integrated.Controllers
                                     }
 
                                     row_alt=ToggleBoolean(row_alt);
+
+                                    if(inneriter==DB_Activities.Count())
+                                    {
+                                        if(row_alt==false)
+                                        {
+                                            Cell cell12rowa = new Cell(1, 4)
+                                            .SetTextAlignment(TextAlignment.LEFT)
+                                            .Add(new Paragraph("TOTAL FOR PROJECT")
+                                                            .SetFont(ft_regular)
+                                                            .SetFixedLeading(14f)
+                                                            //.SetFontColor(cl_white)
+                                                            .SetFontColor(cl_grayDark)
+                                                            .SetBackgroundColor(cl_tablecontent_1)
+                                                            .SetFontSize(10))
+                                            .SetBackgroundColor(cl_tablecontent_1)
+                                           //.SetBorderTop(Border.NO_BORDER)
+                                            .SetBorderBottom(Border.NO_BORDER);
+                                            tabledirdetails.AddCell(cell12rowa);
+
+                                            
+                                            Cell cell12rowb = new Cell(1, 1)
+                                            .SetTextAlignment(TextAlignment.RIGHT)
+                                            .Add(new Paragraph(string.Format("{0:N0}", totalbudget_for_project))
+                                                            .SetFont(ft_regular)
+                                                            .SetFixedLeading(14f)
+                                                            //.SetFontColor(cl_white)
+                                                            .SetFontColor(cl_grayDark)
+                                                            .SetBackgroundColor(cl_tablecontent_1)
+                                                            .SetFontSize(10))
+                                            .SetBackgroundColor(cl_tablecontent_1)
+                                           // .SetBorderTop(Border.NO_BORDER)
+                                            .SetBorderBottom(Border.NO_BORDER);
+                                            tabledirdetails.AddCell(cell12rowb);
+
+
+                                        }
+                                        else
+                                        {
+                                            Cell cell12rowa = new Cell(1, 4)
+                                            .SetTextAlignment(TextAlignment.LEFT)
+                                            .Add(new Paragraph("TOTAL FOR PROJECT")
+                                                            .SetFont(ft_regular)
+                                                            .SetFixedLeading(14f)
+                                                            //.SetFontColor(cl_white)
+                                                            .SetFontColor(cl_grayDark)
+                                                            .SetBackgroundColor(cl_tablecontent_2)
+                                                            .SetFontSize(10))
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                          //  .SetBorderTop(Border.NO_BORDER)
+                                            .SetBorderBottom(Border.NO_BORDER);
+                                            tabledirdetails.AddCell(cell12rowa);
+
+                                            Cell cell12rowb = new Cell(1, 1)
+                                            .SetTextAlignment(TextAlignment.RIGHT)
+                                            .Add(new Paragraph(string.Format("{0:N0}", totalbudget_for_project))
+                                                            .SetFont(ft_regular)
+                                                            .SetFixedLeading(14f)
+                                                            //.SetFontColor(cl_white)
+                                                            .SetFontColor(cl_grayDark)
+                                                            .SetBackgroundColor(cl_tablecontent_2)
+                                                            .SetFontSize(10))
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                            //.SetBorderTop(Border.NO_BORDER)
+                                            .SetBorderBottom(Border.NO_BORDER);
+                                            tabledirdetails.AddCell(cell12rowb);
+
+                                        }
+
+
+                                    }
                                     
 
                                     
@@ -6402,8 +6546,8 @@ namespace AUDANEPAD_Integrated.Controllers
                                 tabledirdetails.AddCell(cellheader14d);
 
                                 Cell cellheader14e = new Cell(1, 1)
-                                    .SetTextAlignment(TextAlignment.LEFT)
-                                    .Add(new Paragraph("External Participants")
+                                    .SetTextAlignment(TextAlignment.RIGHT)
+                                    .Add(new Paragraph("Amount (USD)")
                                                     .SetFont(ft_bold)
                                                     .SetFixedLeading(14f)
                                                     .SetFontColor(cl_grayDark)
@@ -16003,6 +16147,54 @@ namespace AUDANEPAD_Integrated.Controllers
             PopulateExternalType();
 
             return PartialView("_EditOutputMobility", model);
+        }
+
+        public async Task<ActionResult> EditOutputProcurement(string transid)
+        {
+           // WP_Outputs rec = _wpOutputsRepository.GetRecord(transid);
+
+            WP_Procurement rec=_wpProcurementRepository.GetRecord(transid);
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            WP_MainRecord mainrecord=_wpMainRecordRepository.GetRecord(rec.WPMainRecord_id);
+            string periodinmain="";
+            if(mainrecord.Period_Id==8)
+            {
+                DateTime pstart=new DateTime(mainrecord.PeriodStartDate.Year, mainrecord.PeriodStartDate.Month, mainrecord.PeriodStartDate.Day);
+                DateTime pend=new DateTime(mainrecord.PeriodEndDate.Year, mainrecord.PeriodEndDate.Month, mainrecord.PeriodEndDate.Day);
+                periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+            }
+            else
+            {
+                periodinmain=_lkupPeriodRepository.GetRecord(mainrecord.Period_Id).Record_Name;
+
+            }  
+
+            
+            WP_OutputProcurementVMWindow model = new WP_OutputProcurementVMWindow
+            {
+                Transaction_IdOPVMMain=rec.Transaction_Id,
+                WPMainRecord_idOPVMMain=rec.WPMainRecord_id,
+                WPOutput_IdOPVMMain=rec.WPOutput_Id,
+                Employee_IdOPVMMain = user.Employee_Id,
+                FiscalYear_IdOPVMMain=rec.FiscalYear_Id,
+                Period_IdOPVMMain =rec.Period_Id,
+                Project_IdOPVMMain=rec.Project_Id,
+                WPProcurement_DescriptionOPVMMain=rec.WPProcurement_Description,
+                WPProcurementType_IdOPVMMain=rec.WPProcurementType_Id,
+                WPProcurementLeadTime_IdOPVMMain=rec.WPProcurementLeadTime_Id,
+                WPProcurement_AdditionalNotesOPVMMain=rec.WPProcurement_AdditionalNotes,
+                ProcurementCostOPVMMain=rec.WPProcurementCost,
+                ProcurementStartDateOPVMMain=new DateTime(rec.WPProcurementStartDate.Year, rec.WPProcurementStartDate.Month, rec.WPProcurementStartDate.Day),
+                ProcurementEndDateOPVMMain=new DateTime(rec.WPProcurementEndDate.Year, rec.WPProcurementEndDate.Month, rec.WPProcurementEndDate.Day)
+                
+
+            };
+
+            
+
+            return PartialView("_EditOutputProcurement", model);
         }
 
         private void PopulateExternalType()

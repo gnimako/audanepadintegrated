@@ -238,6 +238,7 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_EditDivisionKPI.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_EditOutputActivity.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_EditOutputMobility.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_EditOutputProcurement.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_EditWorkplanCycle.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_ManageOutputBudgetLink.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/EditorTemplates/ClientCategory.cshtml.g.cs

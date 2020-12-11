@@ -13,6 +13,7 @@
     <input hidden asp-for="FisPeriodOPVMMain" class="k-textbox" style="width:100%" value="@Model.FisPeriodOPVMMain">
     <input hidden asp-for="Project_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.Project_IdOPVMMain">
     <input hidden asp-for="WPMainRecord_idOPVMMain" class="k-textbox" style="width:100%" value="@Model.WPMainRecord_idOPVMMain">
+    <input hidden asp-for="WPOutput_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.WPOutput_IdOPVMMain">
     
     <div class="form-body" style="padding: 1.25rem;">
            
@@ -78,7 +79,7 @@
             <div class="div1">
                 <h6 style="color:#807878">Actual Start Date</h6>
                 @(Html.Kendo().DatePickerFor(model => model.ProcurementStartDateOPVMMain)
-                .Value(Model.PeriodStartDateOPVMMain)
+                .Value(Model.ProcurementStartDateOPVMMain)
                 //.HtmlAttributes(new { style = "width: 100%", title = "datepicker" })
                 )
                 <br />
@@ -87,7 +88,7 @@
             <div class="div2">
                 <h6 style="color:#807878">Actual End Date</h6>
                 @(Html.Kendo().DatePickerFor(model => model.ProcurementEndDateOPVMMain)
-                .Value(Model.PeriodEndDateOPVMMain)
+                .Value(Model.ProcurementEndDateOPVMMain)
                 //.HtmlAttributes(new { style = "width: 100%", title = "datepicker" })
                 )
                 <br />
@@ -150,7 +151,7 @@
 
 $("#btnSubmita_act").click(function (e) {
 
-    var gridid = $("#Transaction_IdOPVMMain").val(); 
+    var gridid = $("#WPOutput_IdOPVMMain").val(); 
 
     var projid = $("#Project_IdOPVMMain").val();  
     var fyear = $("#FiscalYear_IdOPVMMain").val();  
@@ -206,7 +207,7 @@ $("#btnSubmita_act").click(function (e) {
         //Work on this...
         $.ajax({
                 type: "POST",
-                url: '/Admin/AddOutputProcurementNew',     //your action
+                url: '/Admin/EditOutputProcurement',     //your action
                 data: $('#addform').serialize(),   //your form name.it takes all the values of model
                 dataType: 'json',
                 success: function (result) {

@@ -815,8 +815,8 @@
                 columns.Bound(o => o.ProcurementCostOPVM).Title("Budget").Format("{0:n0}").HtmlAttributes(new { style = "text-align:right" });
 
 
-                columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("editoutputmobility").Visible("showactbuttons")).HtmlAttributes(new { style = "text-align:center" }).Width(80);
-                columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("deleteoutputmobility").Visible("showactbuttons")).HtmlAttributes(new { style = "text-align:center" }).Width(100);
+                columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("editoutputprocurment").Visible("showactbuttons")).HtmlAttributes(new { style = "text-align:center" }).Width(80);
+                columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("deleteoutputprocurement").Visible("showactbuttons")).HtmlAttributes(new { style = "text-align:center" }).Width(100);
                
                 columns.Bound(o => o.Output_ChildGridIdOPVM).Hidden();
 
@@ -1907,6 +1907,43 @@ function editoutputmobility(e) {
 
 }
 
+
+function editoutputprocurment(e) {
+
+    e.preventDefault();
+
+
+
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+    var transid = dataItem.Transaction_IdOPVM;
+   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
+    
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/NEPADStaff/EditOutputProcurement?transid=" + transid,
+            width: 600,
+            height: 500,
+
+            title: "Edit Procurement",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+         
+
+}
 function addoutputbudget(e) {
 
     e.preventDefault();
@@ -2210,6 +2247,80 @@ function deleteoutputmobility(e) {
                             var grid_outputmobilities = $("#grid_outputmobilities").data("kendoGrid"); 
                             grid_outputmobilities.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_Mobilities_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod+ "&periodtxt=" + periodtxt;
                             grid_outputmobilities.dataSource.read();
+                            //grid_outputsactivities.refresh();
+
+
+                        },
+                        error: function (data) {
+
+                        }
+                    })
+                    return true;
+                },
+                primary: true
+
+            },
+            { text: 'Cancel' }
+        ],
+        close: onClose
+    });
+
+    dialog.data("kendoDialog").open();
+    undo.fadeOut();
+
+}
+
+
+function deleteoutputprocurement(e) {
+    e.preventDefault();
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    //var subindicatorid = dataItem.Transaction_IndicatorId;
+    var subrecid = dataItem.Transaction_IdOPVM;
+    var childgridident = dataItem.Output_ChildGridIdOPVM;
+
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+    var periodtxt = $("#FisPeriod").val();  
+
+
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+    dialog.kendoDialog({
+        width: "450px",
+        title: "Confirmation",
+        closable: false,
+        modal: true,
+        content: "<p>Please confirm the DELETE action.<p>",
+        actions: [
+            {
+                text: 'Confirm',
+                action: function (e) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/Admin/WP_OutputsSubProcurement_Delete',     //your action
+                        data: { "subrecid": subrecid},
+                        dataType: 'json',
+                        success: function (result) {
+
+                          //  var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+
+                            var childGrid = $('#gridprocurementsub_'+childgridident).data("kendoGrid");
+
+                            childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutputsSubProcurement_Read?output_transid=" + childgridident;
+                            childGrid.dataSource.read();
+                            childGrid.refresh();
+
+
+                            var grid_outputmain = $("#grid_outputprocurement").data("kendoGrid"); 
+                            grid_outputmain.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_Procurement_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod+ "&periodtxt=" + periodtxt;
+                            grid_outputmain.dataSource.read();
                             //grid_outputsactivities.refresh();
 
 
