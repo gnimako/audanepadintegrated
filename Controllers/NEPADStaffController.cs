@@ -1295,6 +1295,117 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
 
+        public async Task<ActionResult> WorkplanDraftProcurementPDF(string mainrecid, string divid, string progid, string projid, string yearid, string periodid, string periodtxt)
+        {
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+
+            WP_MainRecord wp_mainrec_check=null;
+
+            if(mainrecid==null)
+            {
+                if(Int32.Parse(periodid)==8)
+                {
+                    var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+
+                    int _countrecs =  DB_Records8.Count();
+                    if(_countrecs>0)
+                    {
+                        foreach (var rec in DB_Records8)
+                        {
+                            DateTime pstart=new DateTime(rec.PeriodStartDate.Year, rec.PeriodStartDate.Month, rec.PeriodStartDate.Day);
+                            DateTime pend=new DateTime(rec.PeriodEndDate.Year, rec.PeriodEndDate.Month, rec.PeriodEndDate.Day);
+                            string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                            if(periodinmain==periodtxt)
+                            wp_mainrec_check=rec;
+                        }
+                    }
+
+                }
+                else
+                {
+                    wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+                }
+
+            }
+            else
+            {
+                wp_mainrec_check=_wpMainRecordRepository.GetRecord(mainrecid);
+
+            }
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            // DateTime test = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day);
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                // DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank,
+                ExistingPhotoPath = employee.PhotoPath,
+                CurrentYear=DateTime.Now.Year.ToString(),
+                WPMainRecordId=wp_mainrec_check.Transaction_Id,
+                DirectorateName=_strucDirectorateRepository.GetRecord(_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(employee.Id).Directorate_Id).Record_Name
+
+            };
+
+            Struc_DivStaffMapping chkrec=_strucDivStaffMappingRepository.GetRecordByEmployeeAndPrimaryDivision(employee.Id);
+
+            if (chkrec==null)
+            {
+                return RedirectToAction("systemmessage", "nepadstaff");
+            }
+
+            if (await userManager.IsInRoleAsync(user, "PIPD"))
+                emp_view.PIPD=true;
+            else if (await userManager.IsInRoleAsync(user, "Procurement"))
+                emp_view.Procurement=true;
+            else if (await userManager.IsInRoleAsync(user, "Travel"))
+                emp_view.Travel=true;
+            else if (await userManager.IsInRoleAsync(user, "Division Head"))
+                emp_view.Division_Head=true;
+            else if (await userManager.IsInRoleAsync(user, "Director"))
+                emp_view.Director=true;
+            else if (await userManager.IsInRoleAsync(user, "CEO"))
+                emp_view.CEO=true;
+
+            return View(emp_view);
+
+        }
+
+
         public async Task<ActionResult> InstitutionalWorkplanDraftPDF(string cycleid)
         {
 
@@ -1401,6 +1512,22 @@ namespace AUDANEPAD_Integrated.Controllers
             return File(byte1, contentType, _lkupProjectRepository.GetRecord(mainrec.Project_Id).Record_Name + "_" 
                                             + _lkupFiscalYearRepository.GetRecord(mainrec.FiscalYear_Id).Record_Name +"_"+ 
                                             _lkupPeriodRepository.GetRecord(mainrec.Period_Id).Record_Name+"_MobPlan.pdf");
+
+        }
+
+        public FileResult WorkplanProcurementReportPDF(string id)
+        {
+
+            string contentType = "application/pdf";
+            WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(id);
+
+            MemoryStream workStream=GetMemoryStreamProcurementPlan(mainrec);
+
+            byte[] byte1 = workStream.ToArray();
+
+            return File(byte1, contentType, _lkupProjectRepository.GetRecord(mainrec.Project_Id).Record_Name + "_" 
+                                            + _lkupFiscalYearRepository.GetRecord(mainrec.FiscalYear_Id).Record_Name +"_"+ 
+                                            _lkupPeriodRepository.GetRecord(mainrec.Period_Id).Record_Name+"_ProcurementPlan.pdf");
 
         }
         public string RandomDigits(int length)
@@ -1510,7 +1637,7 @@ namespace AUDANEPAD_Integrated.Controllers
                // document.Add(txt);
 
            
-                Paragraph sub_header = new Paragraph("Activity Plan")
+                Paragraph sub_header = new Paragraph("Activity Plan (Draft)")
                     .SetFixedLeading(14f)
                     .SetTextAlignment(TextAlignment.CENTER)
                     .SetFont(ft_montserrat_thick)
@@ -2732,7 +2859,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                         .SetMarginLeft(40)
                                         .SetHorizontalAlignment(HorizontalAlignment.LEFT);
 
-                    var DB_Activities=_wpOutputActivitiesRepository.GetRecordsByOutputId(recordset.Transaction_Id);
+                    var DB_Activities=_wpOutputActivitiesRepository.GetRecordsByOutputId(recordset.Transaction_Id).OrderBy(d => d.ActivityStartDate.Year).ThenBy(d => d.ActivityStartDate.Month).ThenBy(d => d.ActivityStartDate.Day);
 
                     if(DB_Activities.Count()>=1)
                     {
@@ -3235,6 +3362,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 Color cl_gray=new DeviceRgb(132, 134, 135);
                 Color cl_grayD=new DeviceRgb(98, 99, 99);
                 Color cl_grayDark=new DeviceRgb(51, 52, 54);
+                Color cl_redfont=new DeviceRgb(163, 16, 8);
                 Color cl_red=new DeviceRgb(120, 60, 62);
                 Color cl_tableheaderupper=new DeviceRgb(199, 198, 197);
                 Color cl_tableheader=new DeviceRgb(219, 217, 215);
@@ -3242,6 +3370,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 Color cl_tablecontent_1=new DeviceRgb(232, 233, 235);
                 Color cl_tablecontent_2=new DeviceRgb(252, 252, 252);
                 Color cl_tablecontent_22=new DeviceRgb(246, 246, 246);
+                Color cl_tablecontent_green=new DeviceRgb(228, 240, 231);
+                Color cl_tablecontent_red=new DeviceRgb(250, 230, 227);
 
                
 
@@ -3290,7 +3420,7 @@ namespace AUDANEPAD_Integrated.Controllers
                // document.Add(txt);
 
            
-                Paragraph sub_header = new Paragraph("Mobility Plan")
+                Paragraph sub_header = new Paragraph("Mobility Plan (Draft)")
                     .SetFixedLeading(14f)
                     .SetTextAlignment(TextAlignment.CENTER)
                     .SetFont(ft_montserrat_thick)
@@ -3344,7 +3474,7 @@ namespace AUDANEPAD_Integrated.Controllers
             }
 
 
-           var DB_Mobilities=_wpMobilityRepository.GetRecordsByMainRecordId(mainrec.Transaction_Id);
+           var DB_Mobilities=_wpMobilityRepository.GetRecordsByMainRecordId(mainrec.Transaction_Id).OrderBy(d => d.MobilityStartDate.Year).ThenBy(d => d.MobilityStartDate.Month).ThenBy(d => d.MobilityStartDate.Day);
             var DB_BudgetsMS =  _wpOutputActivitiesRepository.GetRecordsByMainRecordIdMS(mainrec.Transaction_Id).ToList();
             double totalbudget=0;
 
@@ -3546,7 +3676,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 //Row 8
                 Cell cell81 = new Cell(1, 1)
                   .SetTextAlignment(TextAlignment.LEFT)
-                  .Add(new Paragraph("Total Mobility Budget ")
+                  .Add(new Paragraph("Total Mobility Cost ")
                                // .SetFont(ft_montserrat_reg)
                                 .SetFixedLeading(9f)
                                 .SetFontSize(11))
@@ -3558,7 +3688,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                Cell cell82 = new Cell(1, 1)
                   .SetTextAlignment(TextAlignment.LEFT)
-                  .Add(new Paragraph(string.Format("{0:N2}", totalbudget)+" USD")
+                  .Add(new Paragraph(string.Format("{0:N0}", totalbudget)+" USD")
                                 .SetFont(ft_montserrat_reg)
                                 .SetFixedLeading(9f)
                                 .SetFontColor(cl_grayDark)
@@ -3629,7 +3759,7 @@ namespace AUDANEPAD_Integrated.Controllers
                document.Add(table);
 
 
-               Paragraph printing_info = new Paragraph("Please, Print on A3 for Better Resolution")
+               Paragraph printing_info = new Paragraph("Please, Print on A3 Landscape for Better Resolution")
 						.SetTextAlignment(TextAlignment.CENTER)
 						.SetFont(ft_montserrat_reg_it)
 						.SetFontColor(cl_grayDark)
@@ -3652,7 +3782,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
                 //Group by Outputs
-                Paragraph grpbyoutputs = new Paragraph("Workplan Mobility Plan")
+                Paragraph grpbyoutputs = new Paragraph("Workplan: Mobility Plan")
                 .SetTextAlignment(TextAlignment.LEFT)
                 .SetFont(ft)
                 .SetFontColor(cl)
@@ -3676,7 +3806,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 float indentmargin=document.GetLeftMargin()+77;
                 float tablewidth=PageSize.A4.GetWidth()-indentmargin;
                 //Table tableactivity = new Table(UnitValue.CreatePercentArray(new float[]{40, 20, 20, 20}), false)
-                Table tablemobility = new Table(UnitValue.CreatePercentArray(new float[]{20, 8, 8, 14, 15, 15, 10, 8}), false)
+                Table tablemobility = new Table(UnitValue.CreatePercentArray(new float[]{2, 18, 8, 8, 14, 15, 15, 10, 8}), false)
                                     .SetWidth(PageSize.A3.GetHeight()-indentmargin)
                                     .SetMarginLeft(40)
                                     .SetHorizontalAlignment(HorizontalAlignment.LEFT);
@@ -3687,6 +3817,18 @@ namespace AUDANEPAD_Integrated.Controllers
                 {
                     
                     //Row Header
+                Cell cellheader01a = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("No")
+                                    .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                    .SetFontColor(cl_grayDark)
+                                    .SetBackgroundColor(cl_tableheader)
+                                    .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+
+                    tablemobility.AddCell(cellheader01a);
+
                     Cell cellheader01 = new Cell(1, 1)
                     .SetTextAlignment(TextAlignment.LEFT)
                     .Add(new Paragraph("Mobility Description")
@@ -3793,6 +3935,8 @@ namespace AUDANEPAD_Integrated.Controllers
                     {
                         inneriter=inneriter+1;
 
+                        Cell cell1a = new Cell(1, 1);
+
                         Cell cell1 = new Cell(1, 1);
                         Cell cell2 = new Cell(1, 1);
                         Cell cell3 = new Cell(1, 1);
@@ -3826,6 +3970,17 @@ namespace AUDANEPAD_Integrated.Controllers
                         if(row_alt==false)
                         {
                             //Row Rows
+                        cell1a.SetTextAlignment(TextAlignment.CENTER)
+                            .Add(new Paragraph(inneriter.ToString())
+                                            //.SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_1)
+                                            .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
                             cell1.SetTextAlignment(TextAlignment.JUSTIFIED)
                             .Add(new Paragraph(mobility.WPMobility_Description)
                                             //.SetFont(ft_montserrat_reg)
@@ -3912,7 +4067,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
                             cell8.SetTextAlignment(TextAlignment.RIGHT)
-                                .Add(new Paragraph(string.Format("{0:N2}", mobility.MobilityCost))
+                                .Add(new Paragraph(string.Format("{0:N0}", mobility.MobilityCost))
                                                 // .SetFont(ft_montserrat_reg)
                                                 .SetFixedLeading(14f)
                                                 .SetFontColor(cl_grayDark)
@@ -3927,6 +4082,16 @@ namespace AUDANEPAD_Integrated.Controllers
                         else
                         {
                             //Row Rows
+                            cell1a.SetTextAlignment(TextAlignment.CENTER)
+                                .Add(new Paragraph(inneriter.ToString())
+                                                //.SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_2)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
 
                              cell1.SetTextAlignment(TextAlignment.JUSTIFIED)
                             .Add(new Paragraph(mobility.WPMobility_Description)
@@ -4015,7 +4180,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
                             cell8.SetTextAlignment(TextAlignment.RIGHT)
-                                .Add(new Paragraph(string.Format("{0:N2}", mobility.MobilityCost))
+                                .Add(new Paragraph(string.Format("{0:N0}", mobility.MobilityCost))
                                                 // .SetFont(ft_montserrat_reg)
                                                 .SetFixedLeading(14f)
                                                 .SetFontColor(cl_grayDark)
@@ -4029,9 +4194,10 @@ namespace AUDANEPAD_Integrated.Controllers
                         }
 
                         row_alt=ToggleBoolean(row_alt);
-
+                        /*
                         if(inneriter==mobilitycount)
                         {
+                            cell1a.SetBorderBottom(new SolidBorder(1f));
                             cell1.SetBorderBottom(new SolidBorder(1f));
                             cell2.SetBorderBottom(new SolidBorder(1f));
                             cell3.SetBorderBottom(new SolidBorder(1f));
@@ -4042,8 +4208,8 @@ namespace AUDANEPAD_Integrated.Controllers
                             cell8.SetBorderBottom(new SolidBorder(1f));
        
 
-                        }
-
+                        }*/
+                        tablemobility.AddCell(cell1a);
                         tablemobility.AddCell(cell1);
                         tablemobility.AddCell(cell2);
                         tablemobility.AddCell(cell3);   
@@ -4052,6 +4218,1378 @@ namespace AUDANEPAD_Integrated.Controllers
                         tablemobility.AddCell(cell6);
                         tablemobility.AddCell(cell7);
                         tablemobility.AddCell(cell8);
+
+                        if(inneriter==mobilitycount)
+                        {
+                            Cell celltotala = new Cell(1, 8)
+                            .SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph("TOTAL  ")
+                                            //.SetFont(ft_bold)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                            .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderLeft(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+                            tablemobility.AddCell(celltotala);
+
+                        
+
+                
+
+                            Cell celltotalb = new Cell(1, 1)
+                                .SetTextAlignment(TextAlignment.RIGHT)
+                                .Add(new Paragraph(string.Format("{0:N0}", totalbudget))
+                                                //.SetFont(ft_bold)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2);
+                            tablemobility.AddCell(celltotalb);
+
+                        }
+                        
+
+                    }
+
+                 
+
+                    inneriter=0;
+                    row_alt=true;
+                    document.Add(tablemobility);
+
+                    
+                }
+
+                document.Add(txt);
+                document.Add(txt);
+
+                //Group by Outputs
+                Paragraph noofdays = new Paragraph("Workplan: Mobility Days")
+                .SetTextAlignment(TextAlignment.LEFT)
+                .SetFont(ft)
+                .SetFontColor(cl)
+                .SetFixedLeading(11f)
+                .SetFontSize(15);
+                document.Add(noofdays);
+
+                document.Add(txt);
+                document.Add(txt);
+
+              
+                
+                //Table tableactivity = new Table(UnitValue.CreatePercentArray(new float[]{40, 20, 20, 20}), false)
+                Table tabledays = new Table(UnitValue.CreatePercentArray(new float[]{2, 28, 35, 35}), false)
+                                    .SetWidth(PageSize.A3.GetHeight()-indentmargin)
+                                    .SetMarginLeft(40)
+                                    .SetHorizontalAlignment(HorizontalAlignment.LEFT);
+
+                var DB_InternalTeam=_wpMobilityInternalTeamRepository.GetRecordsByMainRecordId(mainrec.Transaction_Id).GroupBy(x => x.Employee_Id).Select(x => x.First()).ToList();;
+
+                if(DB_InternalTeam.Count()>=1)
+                {
+
+                    //Row Header
+                Cell cellheader01 = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("No")
+                                    .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                    .SetFontColor(cl_grayDark)
+                                    .SetBackgroundColor(cl_tableheader)
+                                    .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+
+                    tabledays.AddCell(cellheader01);
+
+                    Cell cellheader02 = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.LEFT)
+                    .Add(new Paragraph("AUDA-NEPAD Staff")
+                                    .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                    .SetFontColor(cl_grayDark)
+                                    .SetBackgroundColor(cl_tableheader)
+                                    .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+
+                    tabledays.AddCell(cellheader02);
+
+                    Cell cellheader03 = new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.CENTER)
+                        .Add(new Paragraph("Number of Mobility Days for this Project")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                    tabledays.AddCell(cellheader03);
+
+                    Cell cellheader04 = new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.CENTER)
+                        .Add(new Paragraph("Number of Mobility Days for the Entire Period")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                    tabledays.AddCell(cellheader04);
+
+                    row_alt=true;
+                    inneriter=0;
+
+                    int _internalteamcount=DB_InternalTeam.Count();
+
+                    foreach (var internalteam in DB_InternalTeam)
+                    {
+                        inneriter=inneriter+1;
+
+                        Cell cell1 = new Cell(1, 1);
+                        Cell cell2 = new Cell(1, 1);
+                        Cell cell3 = new Cell(1, 1);
+                        Cell cell4 = new Cell(1, 1);
+
+                        Employee emp=_employeeRepository.GetEmployee(internalteam.Employee_Id);
+
+                        //Bengin****Number of Days for this Project********Begin//
+                        double noofdays_for_project=0;
+                        var DB_DaysForProjects=_wpMobilityInternalTeamRepository.GetRecordsByMainRecordIdAndEmployee(mainrec.Transaction_Id, internalteam.Employee_Id).ToList();
+
+                        foreach (var proj_days_rec in DB_DaysForProjects)
+                        {
+                            WP_Mobility mobrec=_wpMobilityRepository.GetRecord(proj_days_rec.WPMobility_id);
+                            DateTime mstart=new DateTime(mobrec.MobilityStartDate.Year, mobrec.MobilityStartDate.Month, mobrec.MobilityStartDate.Day);
+                            DateTime mend=new DateTime(mobrec.MobilityEndDate.Year, mobrec.MobilityEndDate.Month, mobrec.MobilityEndDate.Day);
+
+                            noofdays_for_project=noofdays_for_project+(mstart.Date.Subtract(mend.Date).Duration().Days + 1);
+                        }
+
+                        //End****Number of Days for this Project********End//
+
+
+
+
+                        //Bengin****Number of Days for the Entire Period********Begin//
+                        double noofdays_for_period=0;
+                        double maxdaysallowed_for_period=0;
+
+                        int max_month_days=0;
+                        int num_of_months=0;
+                        int totalnum_of_days_accumulated=0;
+                        int totalnum_of_days_allowed=0;
+                       // int totalnum_of_days_buffer=0;
+                        //int num_of_days=0;
+
+                        WP_MobilityLimit wpmobilitylimit=null;
+
+                        if(mainrec.Period_Id==8)
+                        {
+                            wpmobilitylimit=_wpMobilityLimitRepository.GetRecordByEmployeeYearPeriodStartEnd(internalteam.Employee_Id, mainrec.FiscalYear_Id, mainrec.Period_Id, mainrec.PeriodStartDate, mainrec.PeriodEndDate);
+
+                            List<MonthAndYear> nummonthobj=GetMonthsInPeriodRange(new DateTime(mainrec.PeriodStartDate.Year,mainrec.PeriodStartDate.Month,mainrec.PeriodStartDate.Day), new DateTime(mainrec.PeriodEndDate.Year,mainrec.PeriodEndDate.Month,mainrec.PeriodEndDate.Day));
+                            num_of_months=nummonthobj.Count();
+
+
+                            var DB_Records8 =  _wpMobilityInternalTeamRepository.GetRecordsByEmployeeYearPeriodStartEnd(internalteam.Employee_Id, mainrec.FiscalYear_Id, mainrec.Period_Id, mainrec.PeriodStartDate, mainrec.PeriodEndDate);
+                            foreach (var recordset in DB_Records8)
+                            {
+                                WP_Mobility mobrec=_wpMobilityRepository.GetRecord(recordset.WPMobility_id);
+                                DateTime mstart=new DateTime(mobrec.MobilityStartDate.Year, mobrec.MobilityStartDate.Month, mobrec.MobilityStartDate.Day);
+                                DateTime mend=new DateTime(mobrec.MobilityEndDate.Year, mobrec.MobilityEndDate.Month, mobrec.MobilityEndDate.Day);
+
+                                totalnum_of_days_accumulated=totalnum_of_days_accumulated+(mstart.Date.Subtract(mend.Date).Duration().Days + 1);
+
+                            }
+                            noofdays_for_period=(double)totalnum_of_days_accumulated;
+
+
+                        }
+                        else
+                        {
+                            wpmobilitylimit=_wpMobilityLimitRepository.GetRecordByEmployeeYearPeriod(internalteam.Employee_Id, mainrec.FiscalYear_Id, mainrec.Period_Id);
+                            if(mainrec.Period_Id==1 || mainrec.Period_Id==2 || mainrec.Period_Id==3 || mainrec.Period_Id==4)
+                                num_of_months=3;
+                            else if(mainrec.Period_Id==5 || mainrec.Period_Id==6)
+                                num_of_months=6;
+                            else 
+                                num_of_months=12;
+
+                            var DB_Records =  _wpMobilityInternalTeamRepository.GetRecordsByEmployeeYearPeriod(internalteam.Employee_Id, mainrec.FiscalYear_Id, mainrec.Period_Id);
+                            foreach (var recordset in DB_Records)
+                            {
+                                WP_Mobility mobrec=_wpMobilityRepository.GetRecord(recordset.WPMobility_id);
+                                DateTime mstart=new DateTime(mobrec.MobilityStartDate.Year, mobrec.MobilityStartDate.Month, mobrec.MobilityStartDate.Day);
+                                DateTime mend=new DateTime(mobrec.MobilityEndDate.Year, mobrec.MobilityEndDate.Month, mobrec.MobilityEndDate.Day);
+
+                                totalnum_of_days_accumulated=totalnum_of_days_accumulated+(mstart.Date.Subtract(mend.Date).Duration().Days + 1);
+
+                            }
+                            noofdays_for_period=(double)totalnum_of_days_accumulated;
+
+                        }
+
+                        if(wpmobilitylimit!=null)
+                        {
+                            max_month_days=wpmobilitylimit.MonthlyLimit;
+                        }
+                        else
+                        {
+                            Trans_MobilityLimits translkupmoblimit=_transMobilityLimitsRepository.GetFirstOrDefaultRecordSet();
+                            max_month_days=_lkupMobilityLimitsRepository.GetRecord(translkupmoblimit.Record_Id).MonthlyLimit;
+                        }
+
+
+                        totalnum_of_days_allowed=max_month_days*num_of_months;
+                        maxdaysallowed_for_period=(double)totalnum_of_days_allowed;
+
+                        //End****Number of Days for the Entire Period********End//
+                        if(maxdaysallowed_for_period>=noofdays_for_period)
+                        {
+                            if(row_alt==false)
+                            {
+                                //Row Rows
+                                cell1.SetTextAlignment(TextAlignment.CENTER)
+                                    .Add(new Paragraph(inneriter.ToString())
+                                                    //.SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_1)
+                                                    .SetFontSize(10))
+                                        .SetBackgroundColor(cl_tablecontent_1)
+                                        .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+
+                                    cell2.SetTextAlignment(TextAlignment.JUSTIFIED)
+                                    .Add(new Paragraph(emp.First_Name+" "+emp.Last_Name)
+                                                    //.SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_1)
+                                                    .SetFontSize(10))
+                                        .SetBackgroundColor(cl_tablecontent_1)
+                                        .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+
+
+                                    
+                                        cell3.SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(string.Format("{0:N0}", noofdays_for_project))
+                                                        //.SetFont(ft_montserrat_reg)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_grayDark)
+                                                        .SetBackgroundColor(cl_tablecontent_1)
+                                                        .SetFontSize(9))
+                                        .SetBackgroundColor(cl_tablecontent_1)
+                                        .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+
+                                    cell4.SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(string.Format("{0:N0}", noofdays_for_period))
+                                                        //.SetFont(ft_montserrat_reg)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_grayDark)
+                                                        .SetBackgroundColor(cl_tablecontent_1)
+                                                        .SetFontSize(9))
+                                        .SetBackgroundColor(cl_tablecontent_1)
+                                        .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+
+
+
+
+                            }
+                            else
+                            {
+                                //Row Rows
+                                cell1.SetTextAlignment(TextAlignment.CENTER)
+                                    .Add(new Paragraph(inneriter.ToString())
+                                                    //.SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_2)
+                                                    .SetFontSize(10))
+                                        .SetBackgroundColor(cl_tablecontent_2)
+                                        .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+
+                                    cell2.SetTextAlignment(TextAlignment.JUSTIFIED)
+                                    .Add(new Paragraph(emp.First_Name+" "+emp.Last_Name)
+                                                    //.SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_2)
+                                                    .SetFontSize(10))
+                                        .SetBackgroundColor(cl_tablecontent_2)
+                                        .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+
+
+                                    
+                                        cell3.SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(string.Format("{0:N0}", noofdays_for_project))
+                                                        //.SetFont(ft_montserrat_reg)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_grayDark)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(9))
+                                        .SetBackgroundColor(cl_tablecontent_2)
+                                        .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+
+                                    cell4.SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(string.Format("{0:N0}", noofdays_for_period))
+                                                        //.SetFont(ft_montserrat_reg)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_grayDark)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(9))
+                                        .SetBackgroundColor(cl_tablecontent_2)
+                                        .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+                                
+
+                            }
+                        }
+                        else
+                        {
+                            if(row_alt==false)
+                            {
+                                //Row Rows
+                                cell1.SetTextAlignment(TextAlignment.CENTER)
+                                    .Add(new Paragraph(inneriter.ToString())
+                                                    //.SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_redfont)
+                                                    .SetBackgroundColor(cl_tablecontent_1)
+                                                    .SetFontSize(10))
+                                        .SetBackgroundColor(cl_tablecontent_1)
+                                        .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+
+                                    cell2.SetTextAlignment(TextAlignment.JUSTIFIED)
+                                    .Add(new Paragraph(emp.First_Name+" "+emp.Last_Name)
+                                                    //.SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_redfont)
+                                                    .SetBackgroundColor(cl_tablecontent_1)
+                                                    .SetFontSize(10))
+                                        .SetBackgroundColor(cl_tablecontent_1)
+                                        .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+
+
+                                    
+                                        cell3.SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(string.Format("{0:N0}", noofdays_for_project))
+                                                        //.SetFont(ft_montserrat_reg)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_redfont)
+                                                        .SetBackgroundColor(cl_tablecontent_1)
+                                                        .SetFontSize(9))
+                                        .SetBackgroundColor(cl_tablecontent_1)
+                                        .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+
+                                    cell4.SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(string.Format("{0:N0}", noofdays_for_period))
+                                                        //.SetFont(ft_montserrat_reg)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_redfont)
+                                                        .SetBackgroundColor(cl_tablecontent_1)
+                                                        .SetFontSize(9))
+                                        .SetBackgroundColor(cl_tablecontent_1)
+                                        .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+
+
+
+
+                            }
+                            else
+                            {
+                                //Row Rows
+                                cell1.SetTextAlignment(TextAlignment.CENTER)
+                                    .Add(new Paragraph(inneriter.ToString())
+                                                    //.SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_redfont)
+                                                    .SetBackgroundColor(cl_tablecontent_2)
+                                                    .SetFontSize(10))
+                                        .SetBackgroundColor(cl_tablecontent_2)
+                                        .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+
+                                    cell2.SetTextAlignment(TextAlignment.JUSTIFIED)
+                                    .Add(new Paragraph(emp.First_Name+" "+emp.Last_Name)
+                                                    //.SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_redfont)
+                                                    .SetBackgroundColor(cl_tablecontent_2)
+                                                    .SetFontSize(10))
+                                        .SetBackgroundColor(cl_tablecontent_2)
+                                        .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+
+
+                                    
+                                        cell3.SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(string.Format("{0:N0}", noofdays_for_project))
+                                                        //.SetFont(ft_montserrat_reg)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_redfont)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(9))
+                                        .SetBackgroundColor(cl_tablecontent_2)
+                                        .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+
+                                    cell4.SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(string.Format("{0:N0}", noofdays_for_period))
+                                                        //.SetFont(ft_montserrat_reg)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_redfont)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(9))
+                                        .SetBackgroundColor(cl_tablecontent_2)
+                                        .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+                                
+
+                            }
+
+                        }
+                        row_alt=ToggleBoolean(row_alt);
+
+                        if(inneriter==_internalteamcount)
+                        {
+                       
+                            cell1.SetBorderBottom(new SolidBorder(1f));
+                            cell2.SetBorderBottom(new SolidBorder(1f));
+                            cell3.SetBorderBottom(new SolidBorder(1f));
+                            cell4.SetBorderBottom(new SolidBorder(1f));
+
+                        }
+
+                        tabledays.AddCell(cell1);
+                        tabledays.AddCell(cell2);
+                        tabledays.AddCell(cell3);   
+                        tabledays.AddCell(cell4);
+            
+                    }
+                    inneriter=0;
+                    row_alt=true;
+                    document.Add(tabledays);
+
+                }
+
+
+
+
+                document.Add(txt);
+                document.Add(txt);
+                
+
+
+
+                    
+                    
+                    
+            
+
+                document.Add(txt_gap);
+                
+
+
+                
+
+
+
+
+
+
+
+
+
+            document.Close();
+            return workStream;
+
+        }
+
+
+
+        public MemoryStream GetMemoryStreamProcurementPlan(WP_MainRecord mainrec)
+        {
+             MemoryStream workStream = new MemoryStream();
+            
+            PdfWriter writer = new PdfWriter(workStream);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf, PageSize.A3.Rotate());
+            int n = pdf.GetNumberOfPages();
+
+            pdf.AddEventHandler(PdfDocumentEvent.END_PAGE, new NEPADStaffController.MyEventHandlerA3(this));
+
+            document.SetBottomMargin(70);
+
+            //PdfFontFactory.Register(@"wwwroot/reports/fonts/FaktSlabPro-Blond.ttf");Montserrat-ExtraBold Montserrat-Italic Montserrat-Light Montserrat-Bold Montserrat-Medium Montserrat-Italic
+                string fontpath = @"wwwroot/reports/fonts/FaktSlabPro-Blond.ttf";
+                string fontpath_montserrat_medium= @"wwwroot/reports/fonts/Montserrat-Medium.ttf";
+                string fontpath_montserrat_bold= @"wwwroot/reports/fonts/Montserrat-Bold.ttf";
+                string fontpath_montserrat_semibold= @"wwwroot/reports/fonts/Montserrat-SemiBold.ttf";
+                string fontpath_montserrat_thick= @"wwwroot/reports/fonts/Montserrat-ExtraBold.ttf";
+                string fontpath_montserrat_reg= @"wwwroot/reports/fonts/Montserrat-Regular.ttf";
+                string fontpath_montserrat_reg_italic= @"wwwroot/reports/fonts/Montserrat-Italic.ttf";
+                string fontpath_montserrat_light= @"wwwroot/reports/fonts/Montserrat-Light.ttf";
+                string fontpath_materialicons_fonts= @"wwwroot/reports/fonts/MaterialIcons-Regular.ttf";
+                string fontpath_helveticaneue= @"wwwroot/reports/fonts/HelveticaNeueLt.ttf";
+
+                PdfFont ft = PdfFontFactory.CreateFont(fontpath, PdfEncodings.WINANSI, true);
+                PdfFont ft_montserrat_medium = PdfFontFactory.CreateFont(fontpath_montserrat_medium, PdfEncodings.WINANSI, true);
+                PdfFont ft_montserrat_semibold = PdfFontFactory.CreateFont(fontpath_montserrat_semibold, PdfEncodings.WINANSI, true);
+                PdfFont ft_montserrat_bold = PdfFontFactory.CreateFont(fontpath_montserrat_bold, PdfEncodings.WINANSI, true);
+                PdfFont ft_montserrat_thick = PdfFontFactory.CreateFont(fontpath_montserrat_thick, PdfEncodings.WINANSI, true);
+                PdfFont ft_montserrat_reg = PdfFontFactory.CreateFont(fontpath_montserrat_reg, PdfEncodings.WINANSI, true);
+                PdfFont ft_montserrat_reg_it = PdfFontFactory.CreateFont(fontpath_montserrat_reg_italic, PdfEncodings.WINANSI, true);
+                PdfFont ft_montserrat_light= PdfFontFactory.CreateFont(fontpath_montserrat_light, PdfEncodings.WINANSI, true);
+                PdfFont ft_materialicons_fonts= PdfFontFactory.CreateFont(fontpath_materialicons_fonts, "Identity-H", true);
+                PdfFont ft_helveticaneue= PdfFontFactory.CreateFont(fontpath_helveticaneue, PdfEncodings.WINANSI, true);
+                PdfFont ft_regular = PdfFontFactory.CreateFont(iText.IO.Font.Constants.StandardFonts.HELVETICA);
+                PdfFont ft_bold = PdfFontFactory.CreateFont(iText.IO.Font.Constants.StandardFonts.HELVETICA_BOLD);
+
+                Color cl=new DeviceRgb(18, 50, 89);
+                Color cl_lightblue=new DeviceRgb(45, 80, 122);
+                Color cl_green=new DeviceRgb(5, 71, 27);
+                Color cl_gray=new DeviceRgb(132, 134, 135);
+                Color cl_grayD=new DeviceRgb(98, 99, 99);
+                Color cl_grayDark=new DeviceRgb(51, 52, 54);
+                Color cl_red=new DeviceRgb(120, 60, 62);
+                Color cl_tableheaderupper=new DeviceRgb(199, 198, 197);
+                Color cl_tableheader=new DeviceRgb(219, 217, 215);
+                Color cl_tablecontent1=new DeviceRgb(250, 245, 240);
+                Color cl_tablecontent_1=new DeviceRgb(232, 233, 235);
+                Color cl_tablecontent_2=new DeviceRgb(252, 252, 252);
+                Color cl_tablecontent_22=new DeviceRgb(246, 246, 246);
+
+               
+
+                         // Add Logo
+                Image img = new Image(ImageDataFactory
+                    .Create(@"wwwroot/frontpage/images/logo-dark_for_reports.png"))
+                    //.SetTextAlignment(TextAlignment.CENTER)
+                    .SetHorizontalAlignment(HorizontalAlignment.CENTER)
+                    .SetHeight(55)
+                    .SetWidth(230);
+                document.Add(img);
+
+                Paragraph txt_gap=new Paragraph(new Text("\n"));
+                Paragraph txt=new Paragraph(new Text(" "))
+                                .SetFixedLeading(1f);
+
+                document.Add(txt);
+
+               
+
+               
+                
+                SolidLine line = new SolidLine(0.5f);
+                line.SetColor(cl_gray);
+                LineSeparator ls = new LineSeparator(line);
+
+
+                DottedLine dottedline = new DottedLine(0.5f);
+                dottedline.SetColor(cl_gray);
+                LineSeparator ls_dotted = new LineSeparator(dottedline);
+
+                DashedLine dashedline = new DashedLine(0.5f);
+                dashedline.SetColor(cl_gray);
+                LineSeparator ls_dashed= new LineSeparator(dashedline);
+
+
+                Paragraph header = new Paragraph("Integrated Planning and Reporting System"+ Convert.ToChar(174))
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetFont(ft)
+                    .SetFontColor(cl)
+                    .SetFontSize(16);
+                    
+                document.Add(header);
+
+
+               // document.Add(txt);
+
+           
+                Paragraph sub_header = new Paragraph("Procurement Plan (Draft)")
+                    .SetFixedLeading(14f)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetFont(ft_montserrat_thick)
+                    
+                    .SetFontColor(cl_gray)
+                    .SetFontSize(14);
+                document.Add(sub_header);
+                document.Add(txt);
+
+
+
+
+            string barcodestring="";
+            if(mainrec.BarCode_Id!=null)
+            {
+                barcodestring=mainrec.BarCode_Id;
+            }
+            else
+            {
+                barcodestring=RandomDigits(12);
+                mainrec.BarCode_Id=barcodestring;
+                _wpMainRecordRepository.Update(mainrec);
+
+            }
+            
+            //Bar Code
+            var bar = new BarcodeInter25(pdf);
+            bar.SetCode(barcodestring);
+           //bar.SetCode("000600123456");
+   //Computing Total Budget for Project
+
+
+
+            //Here's how to add barcode to PDF with IText7
+            var barcodeImg = new Image(bar.CreateFormXObject(pdf))
+                                .SetHorizontalAlignment(HorizontalAlignment.CENTER);
+            document.Add(barcodeImg);   
+            //document.Add(txt);
+
+            //Get Period Name
+            string periodname="";
+            if(mainrec.Period_Id==8)
+            {
+                DateTime pstart=new DateTime(mainrec.PeriodStartDate.Year, mainrec.PeriodStartDate.Month, mainrec.PeriodStartDate.Day);
+                DateTime pend=new DateTime(mainrec.PeriodEndDate.Year, mainrec.PeriodEndDate.Month, mainrec.PeriodEndDate.Day);
+                periodname=pstart.Date.ToString("MMM d, yyyy") + " - "+ pend.Date.ToString("MMM d, yyyy"); 
+            }
+            else
+            {
+                periodname=_lkupPeriodRepository.GetRecord(mainrec.Period_Id).Record_Name;
+            }
+
+
+           var DB_Records=_wpProcurementRepository.GetRecordsByMainRecordId(mainrec.Transaction_Id).OrderBy(d => d.WPProcurementStartDate.Year).ThenBy(d => d.WPProcurementStartDate.Month).ThenBy(d => d.WPProcurementStartDate.Day);
+            var DB_BudgetsMS =  _wpOutputActivitiesRepository.GetRecordsByMainRecordIdMS(mainrec.Transaction_Id).ToList();
+            double totalbudget=0;
+
+
+            foreach (var budget_record in DB_Records)
+            {
+                totalbudget=totalbudget+budget_record.WPProcurementCost;
+            }
+
+  
+
+            //document.Add(txt);
+                float subtractmargins=document.GetLeftMargin()+document.GetRightMargin();
+                //Table table = new Table(2, false)
+                Table table = new Table(UnitValue.CreatePercentArray(new float[]{12, 88}), false)
+                .SetWidth(PageSize.A3.GetHeight()-subtractmargins)
+                .SetHorizontalAlignment(HorizontalAlignment.LEFT);
+
+                //Row 1
+                Cell cell11 = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.LEFT)
+                    .Add(new Paragraph("Directorate ")
+                                   // .SetFont(ft_montserrat_reg)
+                                    .SetFixedLeading(9f)
+                                    .SetFontSize(11))
+                    .SetBackgroundColor(cl_tableheader)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+               
+                  
+               Cell cell12 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph(_strucDirectorateRepository.GetRecord(mainrec.Directorate_Id).Record_Name)
+                                .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontColor(cl_grayDark)
+                                .SetFontSize(10))
+                .SetBackgroundColor(cl_tablecontent_22)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+                //Row 2
+                Cell cell21 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph("Division ")
+                              //  .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontSize(11))
+                .SetBackgroundColor(cl_tableheader)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+               Cell cell22 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph(_strucDivisionRepository.GetRecord(mainrec.Division_Id).Record_Name)
+                                .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontColor(cl_grayDark)
+                                .SetFontSize(10))
+                .SetBackgroundColor(cl_tablecontent_22)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+             
+
+                //Row 4
+                Cell cell41 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph("Project ")
+                                //.SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontSize(11))
+                .SetBackgroundColor(cl_tableheader)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+               Cell cell42 = new Cell(1, 1);
+                if(_lkupProjectRepository.GetRecord(mainrec.Project_Id).Record_Status==true)
+                {
+                    cell42.SetTextAlignment(TextAlignment.LEFT)
+                    .Add(new Paragraph(_lkupProjectRepository.GetRecord(mainrec.Project_Id).Record_Name)
+                                    .SetFont(ft_montserrat_reg)
+                                    .SetFixedLeading(9f)
+                                    .SetFontColor(cl_grayDark)
+                                    .SetFontSize(10))
+                    .SetBackgroundColor(cl_tablecontent_22)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                }
+                else
+                {
+                    cell42.SetTextAlignment(TextAlignment.LEFT)
+                    .Add(new Paragraph(_lkupProjectRepository.GetRecord(mainrec.Project_Id).Record_Name+"   <-- New Project (Inception)")
+                                    .SetFont(ft_montserrat_reg)
+                                    .SetFixedLeading(9f)
+                                    .SetFontColor(cl_grayDark)
+                                    .SetFontSize(10))
+                    .SetBackgroundColor(cl_tablecontent_22)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+
+                }
+
+                //Row 5
+                Cell cell51 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph("Year ")
+                               // .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontSize(11))
+                .SetBackgroundColor(cl_tableheader)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+               Cell cell52 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph(_lkupFiscalYearRepository.GetRecord(mainrec.FiscalYear_Id).Record_Name)
+                                .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontColor(cl_grayDark)
+                                .SetFontSize(10))
+                .SetBackgroundColor(cl_tablecontent_22)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+
+                //Row 6
+                Cell cell61 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph("Period ")
+                               // .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontSize(11))
+                .SetBackgroundColor(cl_tableheader)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+               Cell cell62 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph(periodname)
+                                .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontColor(cl_grayDark)
+                                .SetFontSize(10))
+                .SetBackgroundColor(cl_tablecontent_22)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+                //Row 7
+                Cell cell71 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph("Date ")
+                                //.SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontSize(11))
+                .SetBackgroundColor(cl_tableheader)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+               Cell cell72 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph(DateTime.Now.Date.ToString("dd/MM/yyyy"))
+                                .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontColor(cl_grayDark)
+                                .SetFontSize(10))
+                .SetBackgroundColor(cl_tablecontent_22)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+                
+
+
+
+                //Row 8
+                Cell cell81 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph("Total Procurement Cost")
+                               // .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontSize(11))
+                .SetBackgroundColor(cl_tableheader)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+               Cell cell82 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph(string.Format("{0:N0}", totalbudget)+" USD")
+                                .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontColor(cl_grayDark)
+                                .SetFontSize(10))
+                .SetBackgroundColor(cl_tablecontent_22)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+
+
+
+
+                //Row last
+                Cell celllast1 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph("Status ")
+                               // .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(12f)
+                                .SetFontSize(11))
+                .SetBackgroundColor(cl_tableheader)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER);
+
+               Cell celllast2 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph(mainrec.WP_ApprovalStatus)
+                                .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(12f)
+                                .SetFontColor(cl_grayDark)
+                                //.SetFontColor(cl_red)
+                                .SetFontSize(10))
+                .SetBackgroundColor(cl_tablecontent_22)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER);
+
+
+               table.AddCell(cell11);
+               table.AddCell(cell12);
+
+               table.AddCell(cell21);
+               table.AddCell(cell22);
+
+               table.AddCell(cell41);
+               table.AddCell(cell42);
+
+                table.AddCell(cell51);
+               table.AddCell(cell52);
+
+                table.AddCell(cell61);
+               table.AddCell(cell62);
+
+                table.AddCell(cell71);
+               table.AddCell(cell72);
+
+
+                table.AddCell(cell81);
+               table.AddCell(cell82);
+
+
+               table.AddCell(celllast1);
+               table.AddCell(celllast2);
+
+
+               document.Add(table);
+
+
+               Paragraph printing_info = new Paragraph("Please, Print on A3 Landscape for Better Resolution")
+						.SetTextAlignment(TextAlignment.CENTER)
+						.SetFont(ft_montserrat_reg_it)
+						.SetFontColor(cl_grayDark)
+						.SetFontSize(8);
+                document.Add(printing_info);
+
+
+
+               //Shared Variables
+               // int outeriter=0;
+                int inneriter=0;
+                bool row_alt=true;
+
+                document.Add(txt_gap);
+
+               
+
+
+
+
+
+                //Group by Outputs
+                Paragraph grpbyoutputs = new Paragraph("Workplan: Procurement Plan")
+                .SetTextAlignment(TextAlignment.LEFT)
+                .SetFont(ft)
+                .SetFontColor(cl)
+                .SetFixedLeading(11f)
+                .SetFontSize(15);
+                document.Add(grpbyoutputs);
+
+                document.Add(txt);
+                document.Add(txt);
+
+
+                //outeriter=0;
+
+        
+                
+
+
+
+
+
+                float indentmargin=document.GetLeftMargin()+77;
+                float tablewidth=PageSize.A4.GetWidth()-indentmargin;
+                //Table tableactivity = new Table(UnitValue.CreatePercentArray(new float[]{40, 20, 20, 20}), false)
+                Table tableobj = new Table(UnitValue.CreatePercentArray(new float[]{2, 28, 15, 15, 15, 15, 10}), false)
+                                    .SetWidth(PageSize.A3.GetHeight()-indentmargin)
+                                    .SetMarginLeft(40)
+                                    .SetHorizontalAlignment(HorizontalAlignment.LEFT);
+
+                
+
+                if(DB_Records.Count()>=1)
+                {
+                    
+                    //Row Header
+                    Cell cellheader01a = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("No")
+                                    .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                    .SetFontColor(cl_grayDark)
+                                    .SetBackgroundColor(cl_tableheader)
+                                    .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+
+                    tableobj.AddCell(cellheader01a);
+
+                    Cell cellheader01 = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.LEFT)
+                    .Add(new Paragraph("Procurement Description")
+                                    .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                    .SetFontColor(cl_grayDark)
+                                    .SetBackgroundColor(cl_tableheader)
+                                    .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+
+                    tableobj.AddCell(cellheader01);
+
+                    Cell cellheader02 = new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.LEFT)
+                        .Add(new Paragraph("Type")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                    tableobj.AddCell(cellheader02);
+
+
+                    Cell cellheader03 = new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.LEFT)
+                        .Add(new Paragraph("Procurement Period")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                    tableobj.AddCell(cellheader03);
+
+
+                    Cell cellheader04 = new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.LEFT)
+                        .Add(new Paragraph("Lead Time")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                    tableobj.AddCell(cellheader04);
+
+
+                    Cell cellheader05= new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.LEFT)
+                        .Add(new Paragraph("SAP WBS")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                    tableobj.AddCell(cellheader05);
+
+        
+
+                    Cell cellheader06 = new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.RIGHT)
+                        .Add(new Paragraph("Amount (USD)")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                    tableobj.AddCell(cellheader06);
+
+
+
+
+
+
+                    int _recscount=DB_Records.Count();
+
+
+                    row_alt=true;
+
+                    foreach (var rec_set in DB_Records)
+                    {
+                        inneriter=inneriter+1;
+                        Cell cell1a = new Cell(1, 1);
+                        Cell cell1 = new Cell(1, 1);
+                        Cell cell2 = new Cell(1, 1);
+                        Cell cell3 = new Cell(1, 1);
+                        Cell cell4 = new Cell(1, 1);
+                        Cell cell5 = new Cell(1, 1);
+                        Cell cell6 = new Cell(1, 1);
+             
+
+                        DateTime start= new  DateTime(rec_set.WPProcurementStartDate.Year, rec_set.WPProcurementStartDate.Month, rec_set.WPProcurementStartDate.Day);
+                        DateTime end= new  DateTime(rec_set.WPProcurementEndDate.Year, rec_set.WPProcurementEndDate.Month, rec_set.WPProcurementEndDate.Day);
+                        string period=start.Date.ToString("MMM d, yyyy")+" - "+end.Date.ToString("MMM d, yyyy");
+
+                  
+
+                        WP_Outputs output = _wpOutputsRepository.GetRecord(rec_set.WPOutput_Id);
+                        string sapwbs="";
+
+                        if(output.WPSAPLink_Id!=null)
+                        {
+                           sapwbs =  _wpSAPLinkRepository.GetRecord(output.WPSAPLink_Id).SAP_WBS;
+                        }
+                        else
+                        {
+                            sapwbs="WBS Not Assigned";
+                        }
+
+                  
+
+                        if(row_alt==false)
+                        {
+                            //Row Rows
+                            cell1a.SetTextAlignment(TextAlignment.CENTER)
+                            .Add(new Paragraph(inneriter.ToString())
+                                            //.SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_1)
+                                            .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+                            cell1.SetTextAlignment(TextAlignment.JUSTIFIED)
+                            .Add(new Paragraph(rec_set.WPProcurement_Description)
+                                            //.SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_1)
+                                            .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+                            
+                                cell2.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(_lkupProcurementTypeRepository.GetRecord(rec_set.WPProcurementType_Id).Record_Name)
+                                                //.SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetFontSize(9))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+                   
+
+
+
+                            cell3.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(period)
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+                            cell4.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(_lkupProcurementLTimeRepository.GetRecord(rec_set.WPProcurementLeadTime_Id).Record_Name)
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+                                                        
+
+
+                            cell5.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(sapwbs)
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+           
+
+
+                            cell6.SetTextAlignment(TextAlignment.RIGHT)
+                                .Add(new Paragraph(string.Format("{0:N0}", rec_set.WPProcurementCost))
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+                        }
+                        else
+                        {
+                            //Row Rows
+                            cell1a.SetTextAlignment(TextAlignment.CENTER)
+                            .Add(new Paragraph(inneriter.ToString())
+                                            //.SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                            .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+                            cell1.SetTextAlignment(TextAlignment.JUSTIFIED)
+                            .Add(new Paragraph(rec_set.WPProcurement_Description)
+                                            //.SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                            .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+                            
+                                cell2.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(_lkupProcurementTypeRepository.GetRecord(rec_set.WPProcurementType_Id).Record_Name)
+                                                //.SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(9))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+                   
+
+
+
+                            cell3.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(period)
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+                            cell4.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(_lkupProcurementLTimeRepository.GetRecord(rec_set.WPProcurementLeadTime_Id).Record_Name)
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+                                                        
+
+
+                            cell5.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(sapwbs)
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+           
+
+
+                            cell6.SetTextAlignment(TextAlignment.RIGHT)
+                                .Add(new Paragraph(string.Format("{0:N0}", rec_set.WPProcurementCost))
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+                            
+
+                        }
+
+                        row_alt=ToggleBoolean(row_alt);
+/*
+                        if(inneriter==_recscount)
+                        {
+                            cell1a.SetBorderBottom(new SolidBorder(1f));
+                            cell1.SetBorderBottom(new SolidBorder(1f));
+                            cell2.SetBorderBottom(new SolidBorder(1f));
+                            cell3.SetBorderBottom(new SolidBorder(1f));
+                            cell4.SetBorderBottom(new SolidBorder(1f));
+                            cell5.SetBorderBottom(new SolidBorder(1f));
+                            cell6.SetBorderBottom(new SolidBorder(1f));
+                     
+       
+
+                        }*/
+                        tableobj.AddCell(cell1a);
+                        tableobj.AddCell(cell1);
+                        tableobj.AddCell(cell2);
+                        tableobj.AddCell(cell3);   
+                        tableobj.AddCell(cell4);
+                        tableobj.AddCell(cell5);
+                        tableobj.AddCell(cell6);
+
+                        if(inneriter==_recscount)
+                        {
+                            Cell celltotala = new Cell(1, 6)
+                            .SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph("TOTAL  ")
+                                            //.SetFont(ft_bold)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                            .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderLeft(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+                            tableobj.AddCell(celltotala);
+
+                        
+
+                
+
+                            Cell celltotalb = new Cell(1, 1)
+                                .SetTextAlignment(TextAlignment.RIGHT)
+                                .Add(new Paragraph(string.Format("{0:N0}", totalbudget))
+                                                //.SetFont(ft_bold)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2);
+                            tableobj.AddCell(celltotalb);
+
+                        }
+          
 
 
                         
@@ -4062,7 +5600,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                     inneriter=0;
                     row_alt=true;
-                    document.Add(tablemobility);
+                    document.Add(tableobj);
 
                     
                 }
@@ -4396,7 +5934,7 @@ namespace AUDANEPAD_Integrated.Controllers
             //document.Add(txt);
                 float subtractmargins=document.GetLeftMargin()+document.GetRightMargin();
                 //Table table = new Table(2, false)
-                Table table = new Table(UnitValue.CreatePercentArray(new float[]{12, 88}), false)
+                Table table = new Table(UnitValue.CreatePercentArray(new float[]{18, 82}), false)
                 .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
                 .SetHorizontalAlignment(HorizontalAlignment.LEFT);
 
@@ -4484,7 +6022,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 //Row 8a
                 Cell cell81a = new Cell(1, 1)
                   .SetTextAlignment(TextAlignment.LEFT)
-                  .Add(new Paragraph("MS Budget ")
+                  .Add(new Paragraph("MS Estimated Budget ")
                                // .SetFont(ft_montserrat_reg)
                                 .SetFixedLeading(9f)
                                 .SetFontSize(11))
@@ -4511,7 +6049,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 //Row 8b
                 Cell cell81b = new Cell(1, 1)
                   .SetTextAlignment(TextAlignment.LEFT)
-                  .Add(new Paragraph("DP Budget ")
+                  .Add(new Paragraph("DP Estimated Budget ")
                                // .SetFont(ft_montserrat_reg)
                                 .SetFixedLeading(9f)
                                 .SetFontSize(11))
@@ -4539,7 +6077,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 //Row 8
                 Cell cell81 = new Cell(1, 1)
                   .SetTextAlignment(TextAlignment.LEFT)
-                  .Add(new Paragraph("Total Budget ")
+                  .Add(new Paragraph("Total Estimated Budget ")
                                // .SetFont(ft_montserrat_reg)
                                 .SetFixedLeading(9f)
                                 .SetFontSize(11))
@@ -4636,7 +6174,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 document.Add(txt_gap);
 
-                Paragraph Summary_header = new Paragraph("Summary")
+                Paragraph Summary_header = new Paragraph("SUMMARY")
                     .SetTextAlignment(TextAlignment.CENTER)
                     .SetUnderline()
                     .SetFont(ft)
@@ -4649,7 +6187,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
                 float indentmargin=document.GetLeftMargin()+0;
-                Table tabledirectoratebudget = new Table(UnitValue.CreatePercentArray(new float[]{16, 16, 18, 16, 16, 18}), false)
+                Table tabledirectoratebudget = new Table(UnitValue.CreatePercentArray(new float[]{14, 16, 18, 16, 18, 18}), false)
                                         .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
                                         .SetMarginLeft(0)
                                         .SetHorizontalAlignment(HorizontalAlignment.LEFT);
@@ -5097,318 +6635,10 @@ namespace AUDANEPAD_Integrated.Controllers
                     document.Add(tabledirectoratebudget);
 
                 }
-
                 document.Add(txt_gap);
-
-                Table table1stgraph = new Table(UnitValue.CreatePercentArray(new float[]{50, 50}), false)
-                            .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
-                            .SetMarginLeft(0)
-                            .SetHorizontalAlignment(HorizontalAlignment.LEFT);
-
-
-
-                Image img11 = new Image(ImageDataFactory
-                        .Create(@"wwwroot/appdirectory/pdfreports/institutional/"+cyclerec.Transaction_Id+"Complete.png"))
-                        //.SetTextAlignment(TextAlignment.CENTER)
-                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
-                       // .SetBorder(new SolidBorder(1f))
-                        .SetAutoScale(true);
-                        //.SetHeight(270)
-                    // .SetWidth(370);
-                Image img12 = new Image(ImageDataFactory
-                .Create(@"wwwroot/appdirectory/pdfreports/institutional/"+cyclerec.Transaction_Id+"PRC.png"))
-                        //.SetTextAlignment(TextAlignment.CENTER)
-                        
-                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
-                     //   .SetBorder(new SolidBorder(1f))
-                        .SetAutoScale(true);
-            
-                //Add title
-                Cell celltitle11 = new Cell(1, 1)
-                    .SetTextAlignment(TextAlignment.CENTER)
-                    .Add(new Paragraph("Completion Level of Workplans By Directorate")
-                                    // .SetFont(ft_bold)
-                                    .SetFixedLeading(14f)
-                                // .SetFontColor(cl_white)
-                                    .SetFontSize(10))
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
-                table1stgraph.AddCell(celltitle11);
-
-
-                Cell celltitle12 = new Cell(1, 1)
-                    .SetTextAlignment(TextAlignment.CENTER)
-                    .Add(new Paragraph("Approved PRC Budget")
-                                    // .SetFont(ft_bold)
-                                    .SetFixedLeading(14f)
-                                // .SetFontColor(cl_white)
-                                    .SetFontSize(10))
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
-                table1stgraph.AddCell(celltitle12);
-
-
-
-                    
-                        Cell cellgraph101 = new Cell(1, 1)
-                        .Add(img11)
-                        .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
-                        table1stgraph.AddCell(cellgraph101);
-
-                Cell cellgraph102 = new Cell(1, 1)
-                    .Add(img12)
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
-                table1stgraph.AddCell(cellgraph102);
-
-                document.Add(table1stgraph);
-
-
-                document.Add(txt_gap);
-                document.Add(txt_gap);
-
-
-                Table table2ndgraph = new Table(UnitValue.CreatePercentArray(new float[]{50, 50}), false)
-                    .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
-                    .SetMarginLeft(0)
-                    .SetHorizontalAlignment(HorizontalAlignment.LEFT);
-
-
-
-                Image img21 = new Image(ImageDataFactory
-                        .Create(@"wwwroot/appdirectory/pdfreports/institutional/"+cyclerec.Transaction_Id+"MTPContr.png"))
-                        //.SetTextAlignment(TextAlignment.CENTER)
-                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
-                     //   .SetBorder(new SolidBorder(1f))
-                        .SetAutoScale(true);
-                        //.SetHeight(270)
-                    // .SetWidth(370);
-                Image img22 = new Image(ImageDataFactory
-                .Create(@"wwwroot/appdirectory/pdfreports/institutional/"+cyclerec.Transaction_Id+"MTPContrDir.png"))
-                        //.SetTextAlignment(TextAlignment.CENTER)
-                        
-                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
-                    
-                       // .SetBorder(new SolidBorder(1f))
-                        .SetAutoScale(true);
-            
-                //Add title
-                Cell celltitle21 = new Cell(1, 1)
-                    .SetTextAlignment(TextAlignment.CENTER)
-                    .Add(new Paragraph("Distribution of Contributions to MTP Priorities")
-                                    // .SetFont(ft_bold)
-                                    .SetFixedLeading(14f)
-                                // .SetFontColor(cl_white)
-                                    .SetFontSize(10))
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
-                table2ndgraph.AddCell(celltitle21);
-
-
-                Cell celltitle22 = new Cell(1, 1)
-                    .SetTextAlignment(TextAlignment.CENTER)
-                    .Add(new Paragraph("Contributions to MTP Priorities by Directorates")
-                                    // .SetFont(ft_bold)
-                                    .SetFixedLeading(14f)
-                                // .SetFontColor(cl_white)
-                                    .SetFontSize(10))
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
-                table2ndgraph.AddCell(celltitle22);
-
-
-
-                    
-                Cell cellgraph201 = new Cell(1, 1)
-                    .Add(img21)
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
-                table2ndgraph.AddCell(cellgraph201);
-
-                Cell cellgraph202 = new Cell(1, 1)
-                    .Add(img22)
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
-                table2ndgraph.AddCell(cellgraph202);
-
-                document.Add(table2ndgraph);
-
-
-                document.Add(txt_gap);
-
-                Table table3rdgraph = new Table(UnitValue.CreatePercentArray(new float[]{50, 50}), false)
-                    .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
-                    .SetMarginLeft(0)
-                    .SetHorizontalAlignment(HorizontalAlignment.LEFT);
-
-
-
-                Image img31 = new Image(ImageDataFactory
-                        .Create(@"wwwroot/appdirectory/pdfreports/institutional/"+cyclerec.Transaction_Id+"StraContr.png"))
-                        //.SetTextAlignment(TextAlignment.CENTER)
-                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
-                     //   .SetBorder(new SolidBorder(1f))
-                        .SetAutoScale(true);
-                        //.SetHeight(270)
-                    // .SetWidth(370);
-                Image img32 = new Image(ImageDataFactory
-                .Create(@"wwwroot/appdirectory/pdfreports/institutional/"+cyclerec.Transaction_Id+"StraContrDir.png"))
-                        //.SetTextAlignment(TextAlignment.CENTER)
-                        
-                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
-                    
-                       // .SetBorder(new SolidBorder(1f))
-                        .SetAutoScale(true);
-            
-                //Add title
-                Cell celltitle31 = new Cell(1, 1)
-                    .SetTextAlignment(TextAlignment.CENTER)
-                    .Add(new Paragraph("Distribution of Contributions to Strategic Priorities")
-                                    // .SetFont(ft_bold)
-                                    .SetFixedLeading(14f)
-                                // .SetFontColor(cl_white)
-                                    .SetFontSize(10))
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
-                table3rdgraph.AddCell(celltitle31);
-
-
-                Cell celltitle32 = new Cell(1, 1)
-                    .SetTextAlignment(TextAlignment.CENTER)
-                    .Add(new Paragraph("Contributions to Strategic Priorities by Directorates")
-                                    // .SetFont(ft_bold)
-                                    .SetFixedLeading(14f)
-                                // .SetFontColor(cl_white)
-                                    .SetFontSize(10))
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
-                table3rdgraph.AddCell(celltitle32);
-
-
-
-                    
-                Cell cellgraph301 = new Cell(1, 1)
-                    .Add(img31)
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
-                table3rdgraph.AddCell(cellgraph301);
-
-                Cell cellgraph302 = new Cell(1, 1)
-                    .Add(img32)
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
-                table3rdgraph.AddCell(cellgraph302);
-
-                document.Add(table3rdgraph);
-
-
-                document.Add(txt_gap);
-                document.Add(txt_gap);
-
-
-                 Table table4thgraph = new Table(UnitValue.CreatePercentArray(new float[]{50, 50}), false)
-                    .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
-                    .SetMarginLeft(0)
-                    .SetHorizontalAlignment(HorizontalAlignment.LEFT);
-
-
-
-                Image img41 = new Image(ImageDataFactory
-                        .Create(@"wwwroot/appdirectory/pdfreports/institutional/"+cyclerec.Transaction_Id+"ImpDistr.png"))
-                        //.SetTextAlignment(TextAlignment.CENTER)
-                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
-                     //   .SetBorder(new SolidBorder(1f))
-                        .SetAutoScale(true);
-                        //.SetHeight(270)
-                    // .SetWidth(370);
-                Image img42 = new Image(ImageDataFactory
-                .Create(@"wwwroot/appdirectory/pdfreports/institutional/"+cyclerec.Transaction_Id+"NewProj.png"))
-                        //.SetTextAlignment(TextAlignment.CENTER)
-                        
-                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
-                    
-                       // .SetBorder(new SolidBorder(1f))
-                        .SetAutoScale(true);
-            
-                //Add title
-                Cell celltitle41 = new Cell(1, 1)
-                    .SetTextAlignment(TextAlignment.CENTER)
-                    .Add(new Paragraph("Distribution of Implementation Type")
-                                    // .SetFont(ft_bold)
-                                    .SetFixedLeading(14f)
-                                // .SetFontColor(cl_white)
-                                    .SetFontSize(10))
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
-                table4thgraph.AddCell(celltitle41);
-
-
-                Cell celltitle42 = new Cell(1, 1)
-                    .SetTextAlignment(TextAlignment.CENTER)
-                    .Add(new Paragraph("Existing and New Projects for "+ _lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name+" ("+periodname+")")
-                                    // .SetFont(ft_bold)
-                                    .SetFixedLeading(14f)
-                                // .SetFontColor(cl_white)
-                                    .SetFontSize(10))
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
-                table4thgraph.AddCell(celltitle42);
-
-
-
-                    
-                Cell cellgraph401 = new Cell(1, 1)
-                    .Add(img41)
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
-                table4thgraph.AddCell(cellgraph401);
-
-                Cell cellgraph402 = new Cell(1, 1)
-                    .Add(img42)
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
-                table4thgraph.AddCell(cellgraph402);
-
-                document.Add(table4thgraph);
-
-                document.Add(txt_gap);
-                document.Add(txt_gap);
-
+     
     
-                Table tabledirectoratecountriesrecs = new Table(UnitValue.CreatePercentArray(new float[]{10, 12, 40, 38}), false)
+                Table tabledirectoratecountriesrecs = new Table(UnitValue.CreatePercentArray(new float[]{14, 16, 34, 36}), false)
                                         .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
                                         .SetMarginLeft(0)
                                         .SetHorizontalAlignment(HorizontalAlignment.LEFT);
@@ -5721,11 +6951,325 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 }
 
+
+
+
+                document.Add(txt_gap);
+                document.Add(txt_gap);
+                
+
+                Table table1stgraph = new Table(UnitValue.CreatePercentArray(new float[]{50, 50}), false)
+                            .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
+                            .SetMarginLeft(0)
+                            .SetHorizontalAlignment(HorizontalAlignment.LEFT);
+
+
+
+                Image img11 = new Image(ImageDataFactory
+                        .Create(@"wwwroot/appdirectory/pdfreports/institutional/"+cyclerec.Transaction_Id+"Complete.png"))
+                        //.SetTextAlignment(TextAlignment.CENTER)
+                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
+                       // .SetBorder(new SolidBorder(1f))
+                        .SetAutoScale(true);
+                        //.SetHeight(270)
+                    // .SetWidth(370);
+                Image img12 = new Image(ImageDataFactory
+                .Create(@"wwwroot/appdirectory/pdfreports/institutional/"+cyclerec.Transaction_Id+"PRC.png"))
+                        //.SetTextAlignment(TextAlignment.CENTER)
+                        
+                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
+                     //   .SetBorder(new SolidBorder(1f))
+                        .SetAutoScale(true);
+            
+                //Add title
+                Cell celltitle11 = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Completion Level of Workplans By Directorate")
+                                    // .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                // .SetFontColor(cl_white)
+                                    .SetFontSize(10))
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table1stgraph.AddCell(celltitle11);
+
+
+                Cell celltitle12 = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Approved PRC Budget")
+                                    // .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                // .SetFontColor(cl_white)
+                                    .SetFontSize(10))
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table1stgraph.AddCell(celltitle12);
+
+
+
+                    
+                        Cell cellgraph101 = new Cell(1, 1)
+                        .Add(img11)
+                        .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                        table1stgraph.AddCell(cellgraph101);
+
+                Cell cellgraph102 = new Cell(1, 1)
+                    .Add(img12)
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table1stgraph.AddCell(cellgraph102);
+
+                document.Add(table1stgraph);
+
+
+                document.Add(txt_gap);
+                document.Add(txt_gap);
+                
+
+
+                Table table2ndgraph = new Table(UnitValue.CreatePercentArray(new float[]{50, 50}), false)
+                    .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
+                    .SetMarginLeft(0)
+                    .SetHorizontalAlignment(HorizontalAlignment.LEFT);
+
+
+
+                Image img21 = new Image(ImageDataFactory
+                        .Create(@"wwwroot/appdirectory/pdfreports/institutional/"+cyclerec.Transaction_Id+"MTPContr.png"))
+                        //.SetTextAlignment(TextAlignment.CENTER)
+                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
+                     //   .SetBorder(new SolidBorder(1f))
+                        .SetAutoScale(true);
+                        //.SetHeight(270)
+                    // .SetWidth(370);
+                Image img22 = new Image(ImageDataFactory
+                .Create(@"wwwroot/appdirectory/pdfreports/institutional/"+cyclerec.Transaction_Id+"MTPContrDir.png"))
+                        //.SetTextAlignment(TextAlignment.CENTER)
+                        
+                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
+                    
+                       // .SetBorder(new SolidBorder(1f))
+                        .SetAutoScale(true);
+            
+                //Add title
+                Cell celltitle21 = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Distribution of Contributions to MTP Priorities")
+                                    // .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                // .SetFontColor(cl_white)
+                                    .SetFontSize(10))
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table2ndgraph.AddCell(celltitle21);
+
+
+                Cell celltitle22 = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Contributions to MTP Priorities by Directorates")
+                                    // .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                // .SetFontColor(cl_white)
+                                    .SetFontSize(10))
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table2ndgraph.AddCell(celltitle22);
+
+
+
+                    
+                Cell cellgraph201 = new Cell(1, 1)
+                    .Add(img21)
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table2ndgraph.AddCell(cellgraph201);
+
+                Cell cellgraph202 = new Cell(1, 1)
+                    .Add(img22)
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table2ndgraph.AddCell(cellgraph202);
+
+                document.Add(table2ndgraph);
+
+
+                document.Add(txt_gap);
+
+                Table table3rdgraph = new Table(UnitValue.CreatePercentArray(new float[]{50, 50}), false)
+                    .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
+                    .SetMarginLeft(0)
+                    .SetHorizontalAlignment(HorizontalAlignment.LEFT);
+
+
+
+                Image img31 = new Image(ImageDataFactory
+                        .Create(@"wwwroot/appdirectory/pdfreports/institutional/"+cyclerec.Transaction_Id+"StraContr.png"))
+                        //.SetTextAlignment(TextAlignment.CENTER)
+                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
+                     //   .SetBorder(new SolidBorder(1f))
+                        .SetAutoScale(true);
+                        //.SetHeight(270)
+                    // .SetWidth(370);
+                Image img32 = new Image(ImageDataFactory
+                .Create(@"wwwroot/appdirectory/pdfreports/institutional/"+cyclerec.Transaction_Id+"StraContrDir.png"))
+                        //.SetTextAlignment(TextAlignment.CENTER)
+                        
+                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
+                    
+                       // .SetBorder(new SolidBorder(1f))
+                        .SetAutoScale(true);
+            
+                //Add title
+                Cell celltitle31 = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Distribution of Contributions to Strategic Priorities")
+                                    // .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                // .SetFontColor(cl_white)
+                                    .SetFontSize(10))
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table3rdgraph.AddCell(celltitle31);
+
+
+                Cell celltitle32 = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Contributions to Strategic Priorities by Directorates")
+                                    // .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                // .SetFontColor(cl_white)
+                                    .SetFontSize(10))
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table3rdgraph.AddCell(celltitle32);
+
+
+
+                    
+                Cell cellgraph301 = new Cell(1, 1)
+                    .Add(img31)
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table3rdgraph.AddCell(cellgraph301);
+
+                Cell cellgraph302 = new Cell(1, 1)
+                    .Add(img32)
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table3rdgraph.AddCell(cellgraph302);
+
+                document.Add(table3rdgraph);
+
+
+                document.Add(txt_gap);
+                document.Add(txt_gap);
+
+
+                 Table table4thgraph = new Table(UnitValue.CreatePercentArray(new float[]{50, 50}), false)
+                    .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
+                    .SetMarginLeft(0)
+                    .SetHorizontalAlignment(HorizontalAlignment.LEFT);
+
+
+
+                Image img41 = new Image(ImageDataFactory
+                        .Create(@"wwwroot/appdirectory/pdfreports/institutional/"+cyclerec.Transaction_Id+"ImpDistr.png"))
+                        //.SetTextAlignment(TextAlignment.CENTER)
+                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
+                     //   .SetBorder(new SolidBorder(1f))
+                        .SetAutoScale(true);
+                        //.SetHeight(270)
+                    // .SetWidth(370);
+                Image img42 = new Image(ImageDataFactory
+                .Create(@"wwwroot/appdirectory/pdfreports/institutional/"+cyclerec.Transaction_Id+"NewProj.png"))
+                        //.SetTextAlignment(TextAlignment.CENTER)
+                        
+                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
+                    
+                       // .SetBorder(new SolidBorder(1f))
+                        .SetAutoScale(true);
+            
+                //Add title
+                Cell celltitle41 = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Distribution of Implementation Type")
+                                    // .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                // .SetFontColor(cl_white)
+                                    .SetFontSize(10))
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table4thgraph.AddCell(celltitle41);
+
+
+                Cell celltitle42 = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Existing and New Projects for "+ _lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name+" ("+periodname+")")
+                                    // .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                // .SetFontColor(cl_white)
+                                    .SetFontSize(10))
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table4thgraph.AddCell(celltitle42);
+
+
+
+                    
+                Cell cellgraph401 = new Cell(1, 1)
+                    .Add(img41)
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table4thgraph.AddCell(cellgraph401);
+
+                Cell cellgraph402 = new Cell(1, 1)
+                    .Add(img42)
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table4thgraph.AddCell(cellgraph402);
+
+                document.Add(table4thgraph);
+
+                
+
           //  document.AddNewPage();
             document.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
 
 
-            Paragraph Details_header = new Paragraph("Details")
+            Paragraph Details_header = new Paragraph("DETAILS")
                     .SetTextAlignment(TextAlignment.CENTER)
                     .SetUnderline()
                     .SetFont(ft)
@@ -5760,6 +7304,300 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 //Division Names
                 var DB_RecordsDivs=_transStrucDivisionRepository.GetAllRecordsByDirectorate(rec_set.Transaction_Id).OrderByDescending(x => x.Division_Id).ToList();
+
+                //Provide Divisions within Directorate High-Level Budgets
+                inneriter=0;
+                row_alt=true;
+
+                Cell cellheaderdir1 = new Cell(1, 2)
+                        .SetTextAlignment(TextAlignment.LEFT)
+                        .Add(new Paragraph("Divisions or Departments")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                            .SetBackgroundColor(cl_tableheader);
+                    tabledirdetails.AddCell(cellheaderdir1);
+
+                    Cell cellheaderdir2 = new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph("MS Budget (US$)")
+                                            .SetFont(ft_bold)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tableheader)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tableheader);
+                    tabledirdetails.AddCell(cellheaderdir2);
+
+    
+                    Cell cellheaderdir3 = new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph("DP Budget (US$)")
+                                            .SetFont(ft_bold)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tableheader)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tableheader);
+                    tabledirdetails.AddCell(cellheaderdir3);
+
+    
+
+                    Cell cellheaderdir4 = new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph("Total Budget (US$)")
+                                            .SetFont(ft_bold)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tableheader)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tableheader);
+                    tabledirdetails.AddCell(cellheaderdir4);
+
+                double div_totalms_budget=0;
+                double div_totaldp_budget=0;
+                double div_totaltotal_budget=0;
+
+                foreach (var rec_div in DB_RecordsDivs)
+                {
+                    Struc_Division division=_strucDivisionRepository.GetRecord(rec_div.Division_Id);
+
+                    inneriter=inneriter+1;
+
+                    Cell cell1 = new Cell(1, 2);
+                    Cell cell2 = new Cell(1, 1);
+                    Cell cell3 = new Cell(1, 1);
+                    Cell cell4 = new Cell(1, 1);
+
+                    Cell cell1t = new Cell(1, 2);
+                    Cell cell2t = new Cell(1, 1);
+                    Cell cell3t = new Cell(1, 1);
+                    Cell cell4t = new Cell(1, 1);
+
+                    //Compute MS, DP and Total Budget for Division
+                    double div_ms_budget=0;
+                    double div_dp_budget=0;
+                    double div_total_budget=0;
+
+                    
+
+
+
+
+                    var DivMainRecs=_wpMainRecordRepository.GetRecordsByDivRecs(rec_div.Division_Id).ToList();
+                    foreach (var rec_proj in DivMainRecs)
+                    {
+             
+                        var DB_ActivitiesRecs=_wpOutputActivitiesRepository.GetRecordsByMainRecordId(rec_proj.Transaction_Id).ToList();
+
+                        foreach (var act in DB_ActivitiesRecs)
+                        {
+                            if(act.PartnerFunding==true)
+                            {
+                                div_dp_budget = div_dp_budget + act.ActivityCost;
+                            }
+                            else
+                            {
+                                div_ms_budget = div_ms_budget + act.ActivityCost;
+
+                            }
+                            div_total_budget = div_total_budget + act.ActivityCost;
+                        }
+                                
+                            
+                    }
+                    
+                    div_totalms_budget = div_totalms_budget + div_ms_budget;
+                    div_totaldp_budget = div_totaldp_budget + div_dp_budget;
+                    div_totaltotal_budget = div_totaltotal_budget + div_total_budget;
+
+
+                    if(row_alt==false)
+                    {
+                        //Row Rows
+                        cell1.SetTextAlignment(TextAlignment.JUSTIFIED)
+                        .Add(new Paragraph(division.Record_Name)
+                                        //.SetFont(ft_montserrat_reg)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tablecontent_1)
+                                        .SetFontSize(10))
+                            .SetBackgroundColor(cl_tablecontent_1)
+                            .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(Border.NO_BORDER);
+                        tabledirdetails.AddCell(cell1);
+
+
+
+                        cell2.SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph(string.Format("{0:N0}", div_ms_budget))
+                                        // .SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_1)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tablecontent_1)
+                            .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(Border.NO_BORDER);
+                        tabledirdetails.AddCell(cell2);
+
+
+                        cell3.SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph(string.Format("{0:N0}", div_dp_budget))
+                                        // .SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_1)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tablecontent_1)
+                            .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(Border.NO_BORDER);
+                        tabledirdetails.AddCell(cell3);
+
+
+
+                        cell4.SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph(string.Format("{0:N0}", div_total_budget))
+                                        // .SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_1)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tablecontent_1)
+                            .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(Border.NO_BORDER);
+                        tabledirdetails.AddCell(cell4);
+
+                    }
+                    else
+                    {
+                        //Row Rows
+                        cell1.SetTextAlignment(TextAlignment.JUSTIFIED)
+                        .Add(new Paragraph(division.Record_Name)
+                                        //.SetFont(ft_montserrat_reg)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tablecontent_2)
+                                        .SetFontSize(10))
+                            .SetBackgroundColor(cl_tablecontent_2)
+                            .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(Border.NO_BORDER);
+                        tabledirdetails.AddCell(cell1);
+
+
+
+                        cell2.SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph(string.Format("{0:N0}", div_ms_budget))
+                                        // .SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tablecontent_2)
+                            .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(Border.NO_BORDER);
+                        tabledirdetails.AddCell(cell2);
+
+
+                        cell3.SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph(string.Format("{0:N0}", div_dp_budget))
+                                        // .SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tablecontent_2)
+                            .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(Border.NO_BORDER);
+                        tabledirdetails.AddCell(cell3);
+
+
+
+                        cell4.SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph(string.Format("{0:N0}", div_total_budget))
+                                        // .SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tablecontent_2)
+                            .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(Border.NO_BORDER);
+                        tabledirdetails.AddCell(cell4);
+
+                    }
+                    row_alt=ToggleBoolean(row_alt);
+
+                    if(inneriter==DB_RecordsDivs.Count())
+                    {
+
+                        //Row Rows
+                        cell1t.SetTextAlignment(TextAlignment.JUSTIFIED)
+                        .Add(new Paragraph("TOTAL")
+                                        //.SetFont(ft_montserrat_reg)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tablecontent_2)
+                                        .SetFontSize(10))
+                            .SetBackgroundColor(cl_tablecontent_2)
+                          //  .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(Border.NO_BORDER);
+                        tabledirdetails.AddCell(cell1t);
+
+
+
+                        cell2t.SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph(string.Format("{0:N0}", div_totalms_budget))
+                                        // .SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tablecontent_2)
+                           // .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(Border.NO_BORDER);
+                        tabledirdetails.AddCell(cell2t);
+
+
+                        cell3t.SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph(string.Format("{0:N0}", div_totaldp_budget))
+                                        // .SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tablecontent_2)
+                          //  .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(Border.NO_BORDER);
+                        tabledirdetails.AddCell(cell3t);
+
+
+
+                        cell4t.SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph(string.Format("{0:N0}", div_totaltotal_budget))
+                                        // .SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tablecontent_2)
+                          //  .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(Border.NO_BORDER);
+                        tabledirdetails.AddCell(cell4t);
+                                    
+                    }
+                                 
+
+                    
+
+                }
+
+
+
+                inneriter=0;
+                row_alt=true;
                 foreach (var rec_div in DB_RecordsDivs)
                 {
                     Struc_Division division=_strucDivisionRepository.GetRecord(rec_div.Division_Id);
@@ -5781,6 +7619,291 @@ namespace AUDANEPAD_Integrated.Controllers
                     int firstdecimalpoint=0;
                     if(DivMainRecs.Count()>0)
                     {
+                        //High Level Buget Details for Division
+                        inneriter=0;
+                        row_alt=true;
+
+                        Cell cellheaderdiv1 = new Cell(1, 2)
+                        .SetTextAlignment(TextAlignment.LEFT)
+                        .Add(new Paragraph("Projects")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                            .SetBackgroundColor(cl_tableheader);
+                        tabledirdetails.AddCell(cellheaderdiv1);
+
+                        Cell cellheaderdiv2 = new Cell(1, 1)
+                                .SetTextAlignment(TextAlignment.RIGHT)
+                                .Add(new Paragraph("MS Budget (US$)")
+                                                .SetFont(ft_bold)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tableheader)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tableheader);
+                        tabledirdetails.AddCell(cellheaderdiv2);
+
+        
+                        Cell cellheaderdiv3 = new Cell(1, 1)
+                                .SetTextAlignment(TextAlignment.RIGHT)
+                                .Add(new Paragraph("DP Budget (US$)")
+                                                .SetFont(ft_bold)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tableheader)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tableheader);
+                        tabledirdetails.AddCell(cellheaderdiv3);
+
+        
+
+                        Cell cellheaderdiv4 = new Cell(1, 1)
+                                .SetTextAlignment(TextAlignment.RIGHT)
+                                .Add(new Paragraph("Total Budget (US$)")
+                                                .SetFont(ft_bold)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tableheader)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tableheader);
+                        tabledirdetails.AddCell(cellheaderdiv4);
+
+                        double proj_totalms_budget=0;
+                        double proj_totaldp_budget=0;
+                        double proj_totaltotal_budget=0;
+
+                        foreach (var rec_proj in DivMainRecs)
+                        {
+                            LkUp_Project project= _lkupProjectRepository.GetRecord(rec_proj.Project_Id);
+
+                            inneriter=inneriter+1;
+
+                            Cell cell1 = new Cell(1, 2);
+                            Cell cell2 = new Cell(1, 1);
+                            Cell cell3 = new Cell(1, 1);
+                            Cell cell4 = new Cell(1, 1);
+
+                            Cell cell1t = new Cell(1, 2);
+                            Cell cell2t = new Cell(1, 1);
+                            Cell cell3t = new Cell(1, 1);
+                            Cell cell4t = new Cell(1, 1);
+
+                            //Compute MS, DP and Total Budget for Project
+                            double proj_ms_budget=0;
+                            double proj_dp_budget=0;
+                            double proj_total_budget=0;
+
+                            var DB_ActivitiesRecs=_wpOutputActivitiesRepository.GetRecordsByMainRecordId(rec_proj.Transaction_Id).ToList();
+
+                            foreach (var act in DB_ActivitiesRecs)
+                            {
+                                if(act.PartnerFunding==true)
+                                {
+                                    proj_dp_budget = proj_dp_budget + act.ActivityCost;
+                                }
+                                else
+                                {
+                                    proj_ms_budget = proj_ms_budget + act.ActivityCost;
+
+                                }
+                                proj_total_budget = proj_total_budget + act.ActivityCost;
+                            }
+                            proj_totalms_budget = proj_totalms_budget + proj_ms_budget;
+                            proj_totaldp_budget = proj_totaldp_budget + proj_dp_budget;
+                            proj_totaltotal_budget = proj_totaltotal_budget + proj_total_budget;
+
+
+                            if(row_alt==false)
+                            {
+                                //Row Rows
+                                cell1.SetTextAlignment(TextAlignment.JUSTIFIED)
+                                .Add(new Paragraph(project.Record_Name)
+                                                //.SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_1)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+                                tabledirdetails.AddCell(cell1);
+
+
+
+                                cell2.SetTextAlignment(TextAlignment.RIGHT)
+                                    .Add(new Paragraph(string.Format("{0:N0}", proj_ms_budget))
+                                                // .SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_1)
+                                                    .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_1)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+                                tabledirdetails.AddCell(cell2);
+
+
+                                cell3.SetTextAlignment(TextAlignment.RIGHT)
+                                    .Add(new Paragraph(string.Format("{0:N0}", proj_dp_budget))
+                                                // .SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_1)
+                                                    .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_1)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+                                tabledirdetails.AddCell(cell3);
+
+
+
+                                cell4.SetTextAlignment(TextAlignment.RIGHT)
+                                    .Add(new Paragraph(string.Format("{0:N0}", proj_total_budget))
+                                                // .SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_1)
+                                                    .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_1)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+                                tabledirdetails.AddCell(cell4);
+
+                            }
+                            else
+                            {
+                                //Row Rows
+                                cell1.SetTextAlignment(TextAlignment.JUSTIFIED)
+                                .Add(new Paragraph(project.Record_Name)
+                                                //.SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_2)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+                                tabledirdetails.AddCell(cell1);
+
+
+
+                                cell2.SetTextAlignment(TextAlignment.RIGHT)
+                                    .Add(new Paragraph(string.Format("{0:N0}", proj_ms_budget))
+                                                // .SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_2)
+                                                    .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_2)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+                                tabledirdetails.AddCell(cell2);
+
+
+                                cell3.SetTextAlignment(TextAlignment.RIGHT)
+                                    .Add(new Paragraph(string.Format("{0:N0}", proj_dp_budget))
+                                                // .SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_2)
+                                                    .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_2)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+                                tabledirdetails.AddCell(cell3);
+
+
+
+                                cell4.SetTextAlignment(TextAlignment.RIGHT)
+                                    .Add(new Paragraph(string.Format("{0:N0}", proj_total_budget))
+                                                // .SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_2)
+                                                    .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_2)
+                                    .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+                                tabledirdetails.AddCell(cell4);
+
+                            }
+                            row_alt=ToggleBoolean(row_alt);
+
+                            if(inneriter==DivMainRecs.Count())
+                            {
+
+                                //Row Rows
+                                cell1t.SetTextAlignment(TextAlignment.JUSTIFIED)
+                                .Add(new Paragraph("TOTAL")
+                                                //.SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_2)
+                                //  .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+                                tabledirdetails.AddCell(cell1t);
+
+
+
+                                cell2t.SetTextAlignment(TextAlignment.RIGHT)
+                                    .Add(new Paragraph(string.Format("{0:N0}", proj_totalms_budget))
+                                                // .SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_2)
+                                                    .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_2)
+                                // .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+                                tabledirdetails.AddCell(cell2t);
+
+
+                                cell3t.SetTextAlignment(TextAlignment.RIGHT)
+                                    .Add(new Paragraph(string.Format("{0:N0}", proj_totaldp_budget))
+                                                // .SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_2)
+                                                    .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_2)
+                                //  .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+                                tabledirdetails.AddCell(cell3t);
+
+
+
+                                cell4t.SetTextAlignment(TextAlignment.RIGHT)
+                                    .Add(new Paragraph(string.Format("{0:N0}", proj_totaltotal_budget))
+                                                // .SetFont(ft_montserrat_reg)
+                                                    .SetFixedLeading(14f)
+                                                    .SetFontColor(cl_grayDark)
+                                                    .SetBackgroundColor(cl_tablecontent_2)
+                                                    .SetFontSize(10))
+                                    .SetBackgroundColor(cl_tablecontent_2)
+                                //  .SetBorderTop(Border.NO_BORDER)
+                                    .SetBorderBottom(Border.NO_BORDER);
+                                tabledirdetails.AddCell(cell4t);
+                                            
+                            }
+
+
+                            
+
+                        }
+
+
+
+
+
+
+
+
+
+
                         foreach (var rec_proj in DivMainRecs)
                         {
                             innter_proj_count=innter_proj_count+1;
@@ -6027,70 +8150,36 @@ namespace AUDANEPAD_Integrated.Controllers
 
                                     if(inneriter==DB_OutputsRecs.Count())
                                     {
-                                        if(row_alt==false)
-                                        {
-                                            Cell cell12rowa = new Cell(1, 4)
-                                            .SetTextAlignment(TextAlignment.LEFT)
-                                            .Add(new Paragraph("TOTAL FOR PROJECT")
-                                                            .SetFont(ft_regular)
-                                                            .SetFixedLeading(14f)
-                                                            //.SetFontColor(cl_white)
-                                                            .SetFontColor(cl_grayDark)
-                                                            .SetBackgroundColor(cl_tablecontent_1)
-                                                            .SetFontSize(10))
-                                            .SetBackgroundColor(cl_tablecontent_1)
-                                           // .SetBorderTop(Border.NO_BORDER)
-                                            .SetBorderBottom(Border.NO_BORDER);
-                                            tabledirdetails.AddCell(cell12rowa);
+                                    
+                                        Cell cell12rowa = new Cell(1, 4)
+                                        .SetTextAlignment(TextAlignment.LEFT)
+                                        .Add(new Paragraph("TOTAL FOR THIS PROJECT")
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        //.SetFontColor(cl_white)
+                                                        .SetFontColor(cl_grayDark)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(10))
+                                        .SetBackgroundColor(cl_tablecontent_2)
+                                        //  .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+                                        tabledirdetails.AddCell(cell12rowa);
 
-                                            
-                                            Cell cell12rowb = new Cell(1, 1)
-                                            .SetTextAlignment(TextAlignment.RIGHT)
-                                            .Add(new Paragraph(string.Format("{0:N0}", totalbudget_for_project))
-                                                            .SetFont(ft_regular)
-                                                            .SetFixedLeading(14f)
-                                                            //.SetFontColor(cl_white)
-                                                            .SetFontColor(cl_grayDark)
-                                                            .SetBackgroundColor(cl_tablecontent_1)
-                                                            .SetFontSize(10))
-                                            .SetBackgroundColor(cl_tablecontent_1)
-                                           // .SetBorderTop(Border.NO_BORDER)
-                                            .SetBorderBottom(Border.NO_BORDER);
-                                            tabledirdetails.AddCell(cell12rowb);
+                                        Cell cell12rowb = new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.RIGHT)
+                                        .Add(new Paragraph(string.Format("{0:N0}", totalbudget_for_project))
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        //.SetFontColor(cl_white)
+                                                        .SetFontColor(cl_grayDark)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(10))
+                                        .SetBackgroundColor(cl_tablecontent_2)
+                                        // .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+                                        tabledirdetails.AddCell(cell12rowb);
 
-
-                                        }
-                                        else
-                                        {
-                                            Cell cell12rowa = new Cell(1, 4)
-                                            .SetTextAlignment(TextAlignment.LEFT)
-                                            .Add(new Paragraph("TOTAL FOR PROJECT")
-                                                            .SetFont(ft_regular)
-                                                            .SetFixedLeading(14f)
-                                                            //.SetFontColor(cl_white)
-                                                            .SetFontColor(cl_grayDark)
-                                                            .SetBackgroundColor(cl_tablecontent_2)
-                                                            .SetFontSize(10))
-                                            .SetBackgroundColor(cl_tablecontent_2)
-                                          //  .SetBorderTop(Border.NO_BORDER)
-                                            .SetBorderBottom(Border.NO_BORDER);
-                                            tabledirdetails.AddCell(cell12rowa);
-
-                                            Cell cell12rowb = new Cell(1, 1)
-                                            .SetTextAlignment(TextAlignment.RIGHT)
-                                            .Add(new Paragraph(string.Format("{0:N0}", totalbudget_for_project))
-                                                            .SetFont(ft_regular)
-                                                            .SetFixedLeading(14f)
-                                                            //.SetFontColor(cl_white)
-                                                            .SetFontColor(cl_grayDark)
-                                                            .SetBackgroundColor(cl_tablecontent_2)
-                                                            .SetFontSize(10))
-                                            .SetBackgroundColor(cl_tablecontent_2)
-                                           // .SetBorderTop(Border.NO_BORDER)
-                                            .SetBorderBottom(Border.NO_BORDER);
-                                            tabledirdetails.AddCell(cell12rowb);
-
-                                        }
+                                        
 
 
                                     }
@@ -6121,7 +8210,7 @@ namespace AUDANEPAD_Integrated.Controllers
                             inneriter=0;
                             row_alt=true;
                             //Activities
-                            var DB_Activities=_wpOutputActivitiesRepository.GetRecordsByMainRecordId(rec_proj.Transaction_Id).ToList();
+                            var DB_Activities=_wpOutputActivitiesRepository.GetRecordsByMainRecordId(rec_proj.Transaction_Id).OrderBy(d => d.ActivityStartDate.Year).ThenBy(d => d.ActivityStartDate.Month).ThenBy(d => d.ActivityStartDate.Day).ToList();
 
 
                             firstdecimalpoint=firstdecimalpoint+1;
@@ -6184,7 +8273,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                                 Cell cellheader13d = new Cell(1, 1)
                                     .SetTextAlignment(TextAlignment.RIGHT)
-                                    .Add(new Paragraph("Amount (USD)")
+                                    .Add(new Paragraph("Amount (US$)")
                                                     .SetFont(ft_bold)
                                                     .SetFixedLeading(14f)
                                                     .SetFontColor(cl_grayDark)
@@ -6385,70 +8474,36 @@ namespace AUDANEPAD_Integrated.Controllers
 
                                     if(inneriter==DB_Activities.Count())
                                     {
-                                        if(row_alt==false)
-                                        {
-                                            Cell cell12rowa = new Cell(1, 4)
-                                            .SetTextAlignment(TextAlignment.LEFT)
-                                            .Add(new Paragraph("TOTAL FOR PROJECT")
-                                                            .SetFont(ft_regular)
-                                                            .SetFixedLeading(14f)
-                                                            //.SetFontColor(cl_white)
-                                                            .SetFontColor(cl_grayDark)
-                                                            .SetBackgroundColor(cl_tablecontent_1)
-                                                            .SetFontSize(10))
-                                            .SetBackgroundColor(cl_tablecontent_1)
-                                           //.SetBorderTop(Border.NO_BORDER)
-                                            .SetBorderBottom(Border.NO_BORDER);
-                                            tabledirdetails.AddCell(cell12rowa);
+                                        
+                                        Cell cell12rowa = new Cell(1, 4)
+                                        .SetTextAlignment(TextAlignment.LEFT)
+                                        .Add(new Paragraph("TOTAL FOR THIS PROJECT")
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        //.SetFontColor(cl_white)
+                                                        .SetFontColor(cl_grayDark)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(10))
+                                        .SetBackgroundColor(cl_tablecontent_2)
+                                        //  .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+                                        tabledirdetails.AddCell(cell12rowa);
 
-                                            
-                                            Cell cell12rowb = new Cell(1, 1)
-                                            .SetTextAlignment(TextAlignment.RIGHT)
-                                            .Add(new Paragraph(string.Format("{0:N0}", totalbudget_for_project))
-                                                            .SetFont(ft_regular)
-                                                            .SetFixedLeading(14f)
-                                                            //.SetFontColor(cl_white)
-                                                            .SetFontColor(cl_grayDark)
-                                                            .SetBackgroundColor(cl_tablecontent_1)
-                                                            .SetFontSize(10))
-                                            .SetBackgroundColor(cl_tablecontent_1)
-                                           // .SetBorderTop(Border.NO_BORDER)
-                                            .SetBorderBottom(Border.NO_BORDER);
-                                            tabledirdetails.AddCell(cell12rowb);
+                                        Cell cell12rowb = new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.RIGHT)
+                                        .Add(new Paragraph(string.Format("{0:N0}", totalbudget_for_project))
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        //.SetFontColor(cl_white)
+                                                        .SetFontColor(cl_grayDark)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(10))
+                                        .SetBackgroundColor(cl_tablecontent_2)
+                                        //.SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(Border.NO_BORDER);
+                                        tabledirdetails.AddCell(cell12rowb);
 
-
-                                        }
-                                        else
-                                        {
-                                            Cell cell12rowa = new Cell(1, 4)
-                                            .SetTextAlignment(TextAlignment.LEFT)
-                                            .Add(new Paragraph("TOTAL FOR PROJECT")
-                                                            .SetFont(ft_regular)
-                                                            .SetFixedLeading(14f)
-                                                            //.SetFontColor(cl_white)
-                                                            .SetFontColor(cl_grayDark)
-                                                            .SetBackgroundColor(cl_tablecontent_2)
-                                                            .SetFontSize(10))
-                                            .SetBackgroundColor(cl_tablecontent_2)
-                                          //  .SetBorderTop(Border.NO_BORDER)
-                                            .SetBorderBottom(Border.NO_BORDER);
-                                            tabledirdetails.AddCell(cell12rowa);
-
-                                            Cell cell12rowb = new Cell(1, 1)
-                                            .SetTextAlignment(TextAlignment.RIGHT)
-                                            .Add(new Paragraph(string.Format("{0:N0}", totalbudget_for_project))
-                                                            .SetFont(ft_regular)
-                                                            .SetFixedLeading(14f)
-                                                            //.SetFontColor(cl_white)
-                                                            .SetFontColor(cl_grayDark)
-                                                            .SetBackgroundColor(cl_tablecontent_2)
-                                                            .SetFontSize(10))
-                                            .SetBackgroundColor(cl_tablecontent_2)
-                                            //.SetBorderTop(Border.NO_BORDER)
-                                            .SetBorderBottom(Border.NO_BORDER);
-                                            tabledirdetails.AddCell(cell12rowb);
-
-                                        }
+                                        
 
 
                                     }
@@ -6547,7 +8602,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                                 Cell cellheader14e = new Cell(1, 1)
                                     .SetTextAlignment(TextAlignment.RIGHT)
-                                    .Add(new Paragraph("Amount (USD)")
+                                    .Add(new Paragraph("Amount (US$)")
                                                     .SetFont(ft_bold)
                                                     .SetFixedLeading(14f)
                                                     .SetFontColor(cl_grayDark)
@@ -6663,7 +8718,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                                 Cell cellheader15e = new Cell(1, 1)
                                     .SetTextAlignment(TextAlignment.RIGHT)
-                                    .Add(new Paragraph("Amount (USD)")
+                                    .Add(new Paragraph("Amount (US$)")
                                                     .SetFont(ft_bold)
                                                     .SetFixedLeading(14f)
                                                     .SetFontColor(cl_grayDark)
@@ -6782,7 +8837,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                                 Cell cellheader16e = new Cell(1, 1)
                                     .SetTextAlignment(TextAlignment.RIGHT)
-                                    .Add(new Paragraph("Amount (USD)")
+                                    .Add(new Paragraph("Amount (US$)")
                                                     .SetFont(ft_bold)
                                                     .SetFixedLeading(14f)
                                                     .SetFontColor(cl_grayDark)
@@ -6899,7 +8954,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                                 Cell cellheader17e = new Cell(1, 1)
                                     .SetTextAlignment(TextAlignment.RIGHT)
-                                    .Add(new Paragraph("Risk Cost (USD)")
+                                    .Add(new Paragraph("Risk Cost (US$)")
                                                     .SetFont(ft_bold)
                                                     .SetFixedLeading(14f)
                                                     .SetFontColor(cl_grayDark)
@@ -14817,6 +16872,21 @@ namespace AUDANEPAD_Integrated.Controllers
             WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(id);
 
             MemoryStream workStream=GetMemoryStreamMobilityPlan(mainrec);
+        
+
+            byte[] byte1 = workStream.ToArray();
+
+
+            return new FileContentResult(byte1, contentType);
+        }
+
+        public ActionResult GenerateDrateProcurementReportPDF(string id)
+        {
+
+            string contentType = "application/pdf";
+            WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(id);
+
+            MemoryStream workStream=GetMemoryStreamProcurementPlan(mainrec);
         
 
             byte[] byte1 = workStream.ToArray();

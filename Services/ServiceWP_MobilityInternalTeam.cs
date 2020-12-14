@@ -49,7 +49,23 @@ namespace AUDANEPAD_Integrated.Services
 
             return records;
         }
+		public IEnumerable<WP_MobilityInternalTeam> GetRecordsByMainRecordIdAndEmployee (string recid, int empid)
+        {
+            var records = context.WP_MobilityInternalTeam
+                                .Where(s => s.WPMainRecord_id==recid && s.Employee_Id==empid)
+                                .ToList();
 
+            return records;
+        }
+
+		public IEnumerable<WP_MobilityInternalTeam> GetRecordsByMainRecordId (string recid)
+        {
+            var records = context.WP_MobilityInternalTeam
+                                .Where(s => s.WPMainRecord_id==recid)
+                                .ToList();
+
+            return records;
+        }
 		public IEnumerable<WP_MobilityInternalTeam>   GetRecordsByEmployeeYearPeriod (int empid, int yearid, int periodid)
         {
             var records = context.WP_MobilityInternalTeam

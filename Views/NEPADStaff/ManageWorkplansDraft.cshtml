@@ -152,6 +152,54 @@
                                                     </div>
                                                             <br \>
                                                             <br \>
+                                                              <div style="padding-left: 3em;">
+                                                                     <h6 class="pb-2" style="color: #022754;">OUTCOME INDICATORS</h6>
+                                                              
+                                                              
+                                                                    @(Html.Kendo().Grid<WorkplansViewModel>()
+                                                                                    .Name("grid_outcomeindicators")
+                                                                                    .Columns(columns =>
+                                                                                    {
+                                                                                        columns.Bound(c => c.Transaction_Id).Hidden();
+                                                                                        columns.Bound(c => c.WPMainRecord_Ident).Hidden();
+                                                                                        columns.Bound(c => c.ProjectId).Hidden();
+                                                                                        columns.Bound(c => c.FYearIdent).Hidden();
+                                                                                        columns.Bound(c => c.FPeriodIdent).Hidden();
+                                                                                        columns.Bound(c => c.ViewNumbering).Title("No").Width(20).Hidden(); 
+                                                                                        columns.Bound(c => c.Outcome).Title("Define Indicators for each Outcome").HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                        //.HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                                                                
+
+                                                                                    
+                                                                                    columns.Command(command => command.Custom(" Add Indicator").IconClass("k-icon k-i-column-stacked").Click("addoutcomeindicator").HtmlAttributes(new { style = "border-radius: 12px;" })).Width(200).Title("ClickButton").HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                        //columns.Command(command => command.Custom(" Add Indicator").IconClass("k-icon k-i-column-stacked"));
+                                                                                        //.HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                        
+
+                                                                                    })
+                                                                                    
+                                                                                    
+                                                                                    .Resizable(r=>r.Columns(true))
+                                                                                    .ClientDetailTemplateId("templateoutcomeindicators")
+                                                                                    .DataSource(dataSource => dataSource
+                                                                                        .Ajax()
+                                                                                        .Read(read => read.Action("WP_Outcomes_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod, periodtxt=Model.FisPeriod}))
+                                                                                        .Model(model => 
+                                                                                            {
+                                                                                                model.Id(p => p.Transaction_Id);
+                                                                                                //model.Field(field => field.LookUp_Status).Editable(false);
+                                                                                            })
+                                                                            
+                                                                                    // .PageSize(20)
+                                                                                        .Events(events => events.Error("error_handler"))
+                                                                                                            
+                                                                                        
+                                                                                    )
+                                                                                    .Events(events => events.DataBound("dataBoundOutcomeIndicators"))
+                                                                    )
+                                                                    </div>
+                                                                     <br \>
+                                                                    <br \>
 
                                                 <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">2</span> What AUC MTP Priorities are closely linked to the outcome(s)?</h6>
                                                                 
@@ -352,61 +400,10 @@
                                                             </div>  
                                                             <br \>
                                                             <br \>
-
-                                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">6</span> What are the indicators for measuring progress towards the outcomes and outputs?</h6>
-                                                                <div style="padding-left: 1em;">
-                                                                     <h6 class="pb-2" style="color: #022754;"><b>OUTCOME INDICATORS</b></h6>
-                                                                </div>
-                                                                <div style="padding-left: 2em;">
-                                                                    @(Html.Kendo().Grid<WorkplansViewModel>()
-                                                                                    .Name("grid_outcomeindicators")
-                                                                                    .Columns(columns =>
-                                                                                    {
-                                                                                        columns.Bound(c => c.Transaction_Id).Hidden();
-                                                                                        columns.Bound(c => c.WPMainRecord_Ident).Hidden();
-                                                                                        columns.Bound(c => c.ProjectId).Hidden();
-                                                                                        columns.Bound(c => c.FYearIdent).Hidden();
-                                                                                        columns.Bound(c => c.FPeriodIdent).Hidden();
-                                                                                        columns.Bound(c => c.ViewNumbering).Title("No").Width(20).Hidden(); 
-                                                                                        columns.Bound(c => c.Outcome).Title("Define Indicators for each Outcome").HeaderHtmlAttributes(new { @class = "hidden" });
-                                                                                        //.HeaderHtmlAttributes(new { @class = "hidden" });
-                                                                                                                                
-
-                                                                                    
-                                                                                    columns.Command(command => command.Custom(" Add Indicator").IconClass("k-icon k-i-column-stacked").Click("addoutcomeindicator").HtmlAttributes(new { style = "border-radius: 12px;" })).Width(200).Title("ClickButton").HeaderHtmlAttributes(new { @class = "hidden" });
-                                                                                        //columns.Command(command => command.Custom(" Add Indicator").IconClass("k-icon k-i-column-stacked"));
-                                                                                        //.HeaderHtmlAttributes(new { @class = "hidden" });
-                                                                                        
-
-                                                                                    })
-                                                                                    
-                                                                                    
-                                                                                    .Resizable(r=>r.Columns(true))
-                                                                                    .ClientDetailTemplateId("templateoutcomeindicators")
-                                                                                    .DataSource(dataSource => dataSource
-                                                                                        .Ajax()
-                                                                                        .Read(read => read.Action("WP_Outcomes_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod, periodtxt=Model.FisPeriod}))
-                                                                                        .Model(model => 
-                                                                                            {
-                                                                                                model.Id(p => p.Transaction_Id);
-                                                                                                //model.Field(field => field.LookUp_Status).Editable(false);
-                                                                                            })
-                                                                            
-                                                                                    // .PageSize(20)
-                                                                                        .Events(events => events.Error("error_handler"))
-                                                                                                            
-                                                                                        
-                                                                                    )
-                                                                                    .Events(events => events.DataBound("dataBoundOutcomeIndicators"))
-                                                                    )
-                                                                    </div>
-                                                                <br \>
-                                                                  <br \>
-                                                                    <br \>
-                                                                <div style="padding-left: 1em;">
-                                                                     <h6 class="pb-2" style="color: #022754;"><b>OUTPUT INDICATORS</b></h6>
-                                                                </div>
-                                                               <div style="padding-left: 2em;">
+                                                                 <div style="padding-left: 3em;">
+                                                                     <h6 class="pb-2" style="color: #022754;">OUTPUT INDICATORS</h6>
+                                                             
+                                                            
                                                              @(Html.Kendo().Grid<WorkplansViewModel>()
                                                                             .Name("grid_outputindicators")
                                                                             .Columns(columns =>
@@ -459,7 +456,7 @@
 
                                         </div>
                                         <div id="defaultStep3">
-                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">7</span> What are the activities for delivering the outputs? <a href="javascript:void(0)" onclick="GenerateActivityGanntt()" title="View Activity Gantt Chart"><i class="k-icon k-i-saturation"></i></a> &nbsp; &nbsp; <a href="javascript:void(0)" onclick="GenerateActivityPDFClick()" title="View Activity Plan"><i class="k-icon k-i-file-pdf"></i></a></h6> 
+                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">6</span> What are the activities for delivering the outputs? <a href="javascript:void(0)" onclick="GenerateActivityGanntt()" title="View Activity Gantt Chart"><i class="k-icon k-i-saturation"></i></a> &nbsp; &nbsp; <a href="javascript:void(0)" onclick="GenerateActivityPDFClick()" title="View Activity Plan"><i class="k-icon k-i-file-pdf"></i></a></h6> 
                                                     <div style="padding-left: 2em;">
                                                              @(Html.Kendo().Grid<WorkplansViewModel>()
                                                                             .Name("grid_outputactivities")
@@ -508,7 +505,7 @@
                                                             
                                                             <br \>
                                                             <br \>
-                                                             <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">8</span>  What are the mobilities or missions required to deliver the outputs?  <a href="javascript:void(0)" onclick="GenerateMobilityGanntt()" title="View Mobility Gantt Chart"><i class="k-icon k-i-saturation"></i></a> &nbsp; &nbsp;<a href="javascript:void(0)" onclick="GenerateMobilityPDFClick()" title="View Mobility Plan"><i class="k-icon k-i-file-pdf"></i></a></h6> 
+                                                             <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">7</span>  What are the mobilities or missions required to deliver the outputs?  <a href="javascript:void(0)" onclick="GenerateMobilityGanntt()" title="View Mobility Gantt Chart"><i class="k-icon k-i-saturation"></i></a> &nbsp; &nbsp;<a href="javascript:void(0)" onclick="GenerateMobilityPDFClick()" title="View Mobility Plan"><i class="k-icon k-i-file-pdf"></i></a></h6> 
                                                              
                                                                 <div style="padding-left: 2em;">
                                                                  @(Html.Kendo().Grid<WorkplansViewModel>()
@@ -560,7 +557,7 @@
                                                             <br \>
                                         </div>
                                         <div id="defaultStep4">
-                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">9</span>  What are the procurements required to deliver the outputs?  <a href="javascript:void(0)" onclick="GenerateMobilityGanntt()" title="View Mobility Gantt Chart"><i class="k-icon k-i-saturation"></i></a> &nbsp; &nbsp;<a href="javascript:void(0)" onclick="GenerateMobilityPDFClick()" title="View Mobility Plan"><i class="k-icon k-i-file-pdf"></i></a></h6> 
+                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">8</span>  What are the procurements required to deliver the outputs?  <a href="javascript:void(0)" onclick="GenerateMobilityGanntt()" title="View Mobility Gantt Chart"><i class="k-icon k-i-saturation"></i></a> &nbsp; &nbsp;<a href="javascript:void(0)" onclick="GenerateProcurementPDFClick()" title="View Procurement Plan"><i class="k-icon k-i-file-pdf"></i></a></h6> 
                                               <div style="padding-left: 2em;">
                                                 @(Html.Kendo().Grid<WorkplansViewModel>()
                                                         .Name("grid_outputprocurement")
@@ -3725,6 +3722,81 @@ function GenerateMobilityPDFClick() {
     {
         // window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
         var url="/NEPADStaff/WorkplanDraftMobilityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+        redirect_blank(url);
+    }
+
+
+ 
+}
+
+function GenerateProcurementPDFClick() {
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+    var periodtxt = $("#FisPeriod").val();  
+    var empid = $("#Employee_Id").val(); 
+    var dirid = $("#Directorate_Id").val(); 
+    var divid = $("#Division_Id").val(); 
+    var progid = $("#Programme_Id").val();  
+    var mainrecid = $("#WPMainRecordId").val();
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+
+
+
+    if(mainrecid === "" && typeof mainrecid === "string")
+    {
+        $.ajax({
+                    type: "POST",
+                    url: '/Admin/CheckMainWPRecordStatus',     //your action
+                    //data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, selectedrows: JSON.parse( JSON.stringify(models))},
+                    data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "empid": empid, "dirid": dirid, "divid": divid, "progid": progid, "periodtxt": periodtxt},
+                    dataType: 'json',
+                    success: function (result) {
+                        var response = result.rtnmsg;
+
+                        if (response == "recordfound") {
+                            //window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+                            var url="/NEPADStaff/WorkplanDraftProcurementPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+                            redirect_blank(url);
+                        }
+                        else if(response == "norecord")
+                        {
+
+                            dialog.kendoDialog({
+                                width: "300px",
+                                title: "No Outcome or MTP",
+                                closable: false,
+                                modal: true,
+                                content: "<p>Please define at least one outcome or link an MTP Priority to the workplan<p>",
+                                actions: [
+                                    { text: 'Ok' }
+                                ],
+                                close: onClose
+                            });
+
+                            dialog.data("kendoDialog").open();
+                            undo.fadeOut();
+                        }
+
+                    },
+                    error: function (data) {
+                                
+                    }
+                })
+
+
+    }
+    else
+    {
+        // window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+        var url="/NEPADStaff/WorkplanDraftProcurementPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
         redirect_blank(url);
     }
 

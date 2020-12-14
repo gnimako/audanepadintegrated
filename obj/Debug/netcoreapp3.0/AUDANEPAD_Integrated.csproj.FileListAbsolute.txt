@@ -223,6 +223,7 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/WorkplanDraftActivityPDF.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/WorkplanDraftList.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/WorkplanDraftMobilityPDF.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/WorkplanDraftProcurementPDF.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/WorkplanMobilityGanttChart.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/Workplan_old.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_AddDivisionKPI.cshtml.g.cs

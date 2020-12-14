@@ -10,6 +10,9 @@ namespace AUDANEPAD_Integrated.Interfaces
         WP_MobilityInternalTeam GetRecord (string Id);
 
 		IEnumerable<WP_MobilityInternalTeam> GetAllRecords();
+        IEnumerable<WP_MobilityInternalTeam> GetRecordsByMainRecordId (string recid);
+
+        IEnumerable<WP_MobilityInternalTeam> GetRecordsByMainRecordIdAndEmployee (string recid, int empid);
 
         IEnumerable<WP_MobilityInternalTeam> GetRecordsByMobilityId (string id);
 
