@@ -7031,9 +7031,10 @@ namespace AUDANEPAD_Integrated.Controllers
                 document.Add(table1stgraph);
 
 
-                document.Add(txt_gap);
-                document.Add(txt_gap);
-                document.Add(txt_gap);
+               // document.Add(txt_gap);
+               // document.Add(txt_gap);
+                 document.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+               
                 
 
 
