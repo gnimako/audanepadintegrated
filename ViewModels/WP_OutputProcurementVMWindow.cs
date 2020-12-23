@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
 
+
 namespace AUDANEPAD_Integrated.ViewModels
 {
     public class WP_OutputProcurementVMWindow
@@ -30,6 +31,9 @@ namespace AUDANEPAD_Integrated.ViewModels
         public string WPProcurementLeadTime_NameOPVMMain  { get; set; }
         public DateTime ProcurementStartDateOPVMMain { get; set; }
         public DateTime ProcurementEndDateOPVMMain { get; set; }
+
+        public DateTime WPTORSubmissionDateOPVMMain { get; set; }
+        public DateTime WPContractStartDateOPVMMain { get; set; }
         public string WPProcurementPeriodOPVMMain  { get; set; }
          public string WPProcurement_AdditionalNotesOPVMMain  { get; set; }
         public double  ProcurementCostOPVMMain { get; set; }

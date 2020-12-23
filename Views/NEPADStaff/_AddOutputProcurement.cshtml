@@ -46,34 +46,16 @@
                 <br />
             </div>
             <div class="div2">
-                <h6 style="color:#807878">Lead Time</h6>
-                @(Html.Kendo().DropDownListFor(model => model.WPProcurementLeadTime_IdOPVMMain)
-                    // .Name("Department_Id")
-                    .HtmlAttributes(new { style = "width:100%", id = "WPProcurementLeadTime_IdOPVMMain" })
-                    .OptionLabel("Select...")
-                    .DataTextField("DropDown_Name")
-                    .DataValueField("DropDown_IntId")
-                    .DataSource(source =>
-                    {
-                        source.Read(read =>
-                        {
-                                read.Action("GetAllTransProcurementLTimes", "Admin");
-                            
-                        })
-                        .ServerFiltering(true);
-                    })
-                    
-                
-                    //.SelectedIndex(Model.Department_Id)
+                <h6 style="color:#807878">TOR/Docs Submission Date</h6>
+                @(Html.Kendo().DatePickerFor(model => model.WPTORSubmissionDateOPVMMain)
+                .Value(Model.PeriodStartDateOPVMMain)
+                //.HtmlAttributes(new { style = "width: 100%", title = "datepicker" })
                 )
                 <br />
                 <br />
             </div>
 
-            <div><h6 style="color:#807878">Additional Notes</h6></div>
-            @Html.TextAreaFor(model => model.WPProcurement_AdditionalNotesOPVMMain, new { @class = "k-textbox", style = "width: 100%;", value="", rows="3"})
-            <br />
-            <br />
+
 
             <div class="div1">
                 <h6 style="color:#807878">Actual Start Date</h6>
@@ -93,9 +75,9 @@
                 <br />
                 <br />
             </div>
-           
+            <div class="div1">
                 <div id="procurementcost"><h6 style="color:#807878"><span id="costinfo">Procurement Cost (in USD)</span></h6></div>
-                @Html.TextBoxFor(model => model.ProcurementCostOPVMMain, new { @class = "k-textbox",  style = "width: 100%;", value=""})
+                @Html.TextBoxFor(model => model.ProcurementCostOPVMMain, new { @class = "k-textbox",  style = "width: 90%;", value=""})
                 @(Html.Kendo().Tooltip()
                     .For("#procurementcost")
                     .Filter("span")
@@ -103,6 +85,21 @@
                     .Position(TooltipPosition.Top)
                     .Width(350)
                 )
+                <br />
+                <br />
+            </div>
+            <div class="div2">
+                <h6 style="color:#807878">Contract Start Date</h6>
+                @(Html.Kendo().DatePickerFor(model => model.WPContractStartDateOPVMMain)
+                .Value(Model.PeriodStartDateOPVMMain)
+                //.HtmlAttributes(new { style = "width: 100%", title = "datepicker" })
+                )
+                <br />
+                <br />
+            </div>
+
+                <div><h6 style="color:#807878">Additional Notes</h6></div>
+                @Html.TextAreaFor(model => model.WPProcurement_AdditionalNotesOPVMMain, new { @class = "k-textbox", style = "width: 100%;", value="", rows="3"})
                 <br />
                 <br />
 
@@ -159,7 +156,7 @@ $("#btnSubmita_act").click(function (e) {
 
     var procurementdesc = $("#WPProcurement_DescriptionOPVMMain").val();  
     var procurement_typeid = $("#WPProcurementType_IdOPVMMain").val();  //Mobility_City
-    var procurement_leadtime = $("#WPProcurementLeadTime_IdOPVMMain").val();
+   // var procurement_leadtime = $("#WPProcurementLeadTime_IdOPVMMain").val();
     var procurement_additionalnotes = $("#WPProcurement_AdditionalNotesOPVMMain").val();  
     var startDate= $("#ProcurementStartDateOPVMMain").data("kendoDatePicker");
     var endDate= $("#ProcurementEndDateOPVMMain").data("kendoDatePicker");
@@ -180,11 +177,6 @@ $("#btnSubmita_act").click(function (e) {
     {
         $('#targetDivStaffa_act').empty();
         $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select the type of procurement. </span>').appendTo('.rssedStaffa_act');
-    }
-    else if(procurement_leadtime === "" && typeof procurement_leadtime === "string")
-    {
-        $('#targetDivStaffa_act').empty();
-        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select the lead time. </span>').appendTo('.rssedStaffa_act');
     }
     else if(procurement_cost === "" && typeof procurement_cost === "string")
     {

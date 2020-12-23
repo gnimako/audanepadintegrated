@@ -1073,6 +1073,233 @@ namespace AUDANEPAD_Integrated.Controllers
 
         }
 
+
+
+
+        public async Task<ActionResult> WorkplanProcurementGanttChart(string mainrecid, string divid, string progid, string projid, string yearid, string periodid, string periodtxt)
+        {
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+            WP_MainRecord wp_mainrec_check=null;
+
+            if(mainrecid==null)
+            {
+                if(Int32.Parse(periodid)==8)
+                {
+                    var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+
+                    int _countrecs =  DB_Records8.Count();
+                    if(_countrecs>0)
+                    {
+                        foreach (var rec in DB_Records8)
+                        {
+                            DateTime pstart=new DateTime(rec.PeriodStartDate.Year, rec.PeriodStartDate.Month, rec.PeriodStartDate.Day);
+                            DateTime pend=new DateTime(rec.PeriodEndDate.Year, rec.PeriodEndDate.Month, rec.PeriodEndDate.Day);
+                            string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                            if(periodinmain==periodtxt)
+                            wp_mainrec_check=rec;
+                        }
+                    }
+
+                }
+                else
+                {
+                    wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+                }
+
+            }
+            else
+            {
+                wp_mainrec_check=_wpMainRecordRepository.GetRecord(mainrecid);
+
+            }
+
+
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            // DateTime test = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day);
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                // DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank,
+                ExistingPhotoPath = employee.PhotoPath,
+                CurrentYear=DateTime.Now.Year.ToString(),
+                WPMainRecordId=wp_mainrec_check.Transaction_Id,
+                DirectorateName=_strucDirectorateRepository.GetRecord(_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(employee.Id).Directorate_Id).Record_Name
+
+            };
+
+            Struc_DivStaffMapping chkrec=_strucDivStaffMappingRepository.GetRecordByEmployeeAndPrimaryDivision(employee.Id);
+
+            if (chkrec==null)
+            {
+                return RedirectToAction("systemmessage", "nepadstaff");
+            }
+
+            if (await userManager.IsInRoleAsync(user, "PIPD"))
+                emp_view.PIPD=true;
+            else if (await userManager.IsInRoleAsync(user, "Procurement"))
+                emp_view.Procurement=true;
+            else if (await userManager.IsInRoleAsync(user, "Travel"))
+                emp_view.Travel=true;
+            else if (await userManager.IsInRoleAsync(user, "Division Head"))
+                emp_view.Division_Head=true;
+            else if (await userManager.IsInRoleAsync(user, "Director"))
+                emp_view.Director=true;
+            else if (await userManager.IsInRoleAsync(user, "CEO"))
+                emp_view.CEO=true;
+
+            return View(emp_view);
+
+        }
+
+
+
+        public async Task<ActionResult> WorkplanCommunicationGanttChart(string mainrecid, string divid, string progid, string projid, string yearid, string periodid, string periodtxt)
+        {
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+            WP_MainRecord wp_mainrec_check=null;
+
+            if(mainrecid==null)
+            {
+                if(Int32.Parse(periodid)==8)
+                {
+                    var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+
+                    int _countrecs =  DB_Records8.Count();
+                    if(_countrecs>0)
+                    {
+                        foreach (var rec in DB_Records8)
+                        {
+                            DateTime pstart=new DateTime(rec.PeriodStartDate.Year, rec.PeriodStartDate.Month, rec.PeriodStartDate.Day);
+                            DateTime pend=new DateTime(rec.PeriodEndDate.Year, rec.PeriodEndDate.Month, rec.PeriodEndDate.Day);
+                            string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                            if(periodinmain==periodtxt)
+                            wp_mainrec_check=rec;
+                        }
+                    }
+
+                }
+                else
+                {
+                    wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+                }
+
+            }
+            else
+            {
+                wp_mainrec_check=_wpMainRecordRepository.GetRecord(mainrecid);
+
+            }
+
+
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            // DateTime test = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day);
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                // DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank,
+                ExistingPhotoPath = employee.PhotoPath,
+                CurrentYear=DateTime.Now.Year.ToString(),
+                WPMainRecordId=wp_mainrec_check.Transaction_Id,
+                DirectorateName=_strucDirectorateRepository.GetRecord(_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(employee.Id).Directorate_Id).Record_Name
+
+            };
+
+            Struc_DivStaffMapping chkrec=_strucDivStaffMappingRepository.GetRecordByEmployeeAndPrimaryDivision(employee.Id);
+
+            if (chkrec==null)
+            {
+                return RedirectToAction("systemmessage", "nepadstaff");
+            }
+
+            if (await userManager.IsInRoleAsync(user, "PIPD"))
+                emp_view.PIPD=true;
+            else if (await userManager.IsInRoleAsync(user, "Procurement"))
+                emp_view.Procurement=true;
+            else if (await userManager.IsInRoleAsync(user, "Travel"))
+                emp_view.Travel=true;
+            else if (await userManager.IsInRoleAsync(user, "Division Head"))
+                emp_view.Division_Head=true;
+            else if (await userManager.IsInRoleAsync(user, "Director"))
+                emp_view.Director=true;
+            else if (await userManager.IsInRoleAsync(user, "CEO"))
+                emp_view.CEO=true;
+
+            return View(emp_view);
+
+        }
+
         public async Task<ActionResult> WorkplanDraftActivityPDF(string mainrecid, string divid, string progid, string projid, string yearid, string periodid, string periodtxt)
         {
 
@@ -1406,6 +1633,118 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
 
+
+        public async Task<ActionResult> WorkplanDraftCommunicationPDF(string mainrecid, string divid, string progid, string projid, string yearid, string periodid, string periodtxt)
+        {
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+
+            WP_MainRecord wp_mainrec_check=null;
+
+            if(mainrecid==null)
+            {
+                if(Int32.Parse(periodid)==8)
+                {
+                    var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+
+                    int _countrecs =  DB_Records8.Count();
+                    if(_countrecs>0)
+                    {
+                        foreach (var rec in DB_Records8)
+                        {
+                            DateTime pstart=new DateTime(rec.PeriodStartDate.Year, rec.PeriodStartDate.Month, rec.PeriodStartDate.Day);
+                            DateTime pend=new DateTime(rec.PeriodEndDate.Year, rec.PeriodEndDate.Month, rec.PeriodEndDate.Day);
+                            string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                            if(periodinmain==periodtxt)
+                            wp_mainrec_check=rec;
+                        }
+                    }
+
+                }
+                else
+                {
+                    wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+                }
+
+            }
+            else
+            {
+                wp_mainrec_check=_wpMainRecordRepository.GetRecord(mainrecid);
+
+            }
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            // DateTime test = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day);
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                // DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank,
+                ExistingPhotoPath = employee.PhotoPath,
+                CurrentYear=DateTime.Now.Year.ToString(),
+                WPMainRecordId=wp_mainrec_check.Transaction_Id,
+                DirectorateName=_strucDirectorateRepository.GetRecord(_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(employee.Id).Directorate_Id).Record_Name
+
+            };
+
+            Struc_DivStaffMapping chkrec=_strucDivStaffMappingRepository.GetRecordByEmployeeAndPrimaryDivision(employee.Id);
+
+            if (chkrec==null)
+            {
+                return RedirectToAction("systemmessage", "nepadstaff");
+            }
+
+            if (await userManager.IsInRoleAsync(user, "PIPD"))
+                emp_view.PIPD=true;
+            else if (await userManager.IsInRoleAsync(user, "Procurement"))
+                emp_view.Procurement=true;
+            else if (await userManager.IsInRoleAsync(user, "Travel"))
+                emp_view.Travel=true;
+            else if (await userManager.IsInRoleAsync(user, "Division Head"))
+                emp_view.Division_Head=true;
+            else if (await userManager.IsInRoleAsync(user, "Director"))
+                emp_view.Director=true;
+            else if (await userManager.IsInRoleAsync(user, "CEO"))
+                emp_view.CEO=true;
+
+            return View(emp_view);
+
+        }
+
+
         public async Task<ActionResult> InstitutionalWorkplanDraftPDF(string cycleid)
         {
 
@@ -1555,6 +1894,22 @@ namespace AUDANEPAD_Integrated.Controllers
             return File(byte1, contentType, _lkupProjectRepository.GetRecord(mainrec.Project_Id).Record_Name + "_" 
                                             + _lkupFiscalYearRepository.GetRecord(mainrec.FiscalYear_Id).Record_Name +"_"+ 
                                             _lkupPeriodRepository.GetRecord(mainrec.Period_Id).Record_Name+"_ProcurementPlan.pdf");
+
+        }
+
+        public FileResult WorkplanCommunicationReportPDF(string id)
+        {
+
+            string contentType = "application/pdf";
+            WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(id);
+
+            MemoryStream workStream=GetMemoryStreamCommunicationPlan(mainrec);
+
+            byte[] byte1 = workStream.ToArray();
+
+            return File(byte1, contentType, _lkupProjectRepository.GetRecord(mainrec.Project_Id).Record_Name + "_" 
+                                            + _lkupFiscalYearRepository.GetRecord(mainrec.FiscalYear_Id).Record_Name +"_"+ 
+                                            _lkupPeriodRepository.GetRecord(mainrec.Period_Id).Record_Name+"_CommunicationPlan.pdf");
 
         }
         public string RandomDigits(int length)
@@ -5233,7 +5588,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 float indentmargin=document.GetLeftMargin()+77;
                 float tablewidth=PageSize.A4.GetWidth()-indentmargin;
                 //Table tableactivity = new Table(UnitValue.CreatePercentArray(new float[]{40, 20, 20, 20}), false)
-                Table tableobj = new Table(UnitValue.CreatePercentArray(new float[]{2, 28, 15, 15, 15, 15, 10}), false)
+                Table tableobj = new Table(UnitValue.CreatePercentArray(new float[]{2, 25, 12, 13, 13, 13, 12, 10}), false)
                                     .SetWidth(PageSize.A3.GetHeight()-indentmargin)
                                     .SetMarginLeft(40)
                                     .SetHorizontalAlignment(HorizontalAlignment.LEFT);
@@ -5291,10 +5646,21 @@ namespace AUDANEPAD_Integrated.Controllers
                         .SetBackgroundColor(cl_tableheader);
                     tableobj.AddCell(cellheader03);
 
+                    Cell cellheader04a= new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.LEFT)
+                        .Add(new Paragraph("TOR/Docs Submission Date")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                    tableobj.AddCell(cellheader04a);
+
 
                     Cell cellheader04 = new Cell(1, 1)
                         .SetTextAlignment(TextAlignment.LEFT)
-                        .Add(new Paragraph("Lead Time")
+                        .Add(new Paragraph("Service/Contract Start Date")
                                         .SetFont(ft_bold)
                                         .SetFixedLeading(14f)
                                         .SetFontColor(cl_grayDark)
@@ -5345,6 +5711,7 @@ namespace AUDANEPAD_Integrated.Controllers
                         Cell cell1 = new Cell(1, 1);
                         Cell cell2 = new Cell(1, 1);
                         Cell cell3 = new Cell(1, 1);
+                        Cell cell4a = new Cell(1, 1);
                         Cell cell4 = new Cell(1, 1);
                         Cell cell5 = new Cell(1, 1);
                         Cell cell6 = new Cell(1, 1);
@@ -5353,6 +5720,15 @@ namespace AUDANEPAD_Integrated.Controllers
                         DateTime start= new  DateTime(rec_set.WPProcurementStartDate.Year, rec_set.WPProcurementStartDate.Month, rec_set.WPProcurementStartDate.Day);
                         DateTime end= new  DateTime(rec_set.WPProcurementEndDate.Year, rec_set.WPProcurementEndDate.Month, rec_set.WPProcurementEndDate.Day);
                         string period=start.Date.ToString("MMM d, yyyy")+" - "+end.Date.ToString("MMM d, yyyy");
+
+                        DateTime contractstart= new  DateTime(rec_set.WPContractStartDate.Year, rec_set.WPContractStartDate.Month, rec_set.WPContractStartDate.Day);
+                        string contractstartdate=contractstart.Date.ToString("MMM d, yyyy");
+
+
+                        DateTime torsubstart= new  DateTime(rec_set.WPTORSubmissionDate.Year, rec_set.WPTORSubmissionDate.Month, rec_set.WPTORSubmissionDate.Day);
+                        string torsubstartdate=torsubstart.Date.ToString("MMM d, yyyy");
+
+
 
                   
 
@@ -5425,8 +5801,20 @@ namespace AUDANEPAD_Integrated.Controllers
                                 .SetBorderBottom(Border.NO_BORDER);
 
 
+                            cell4a.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(torsubstartdate)
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
                             cell4.SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupProcurementLTimeRepository.GetRecord(rec_set.WPProcurementLeadTime_Id).Record_Name)
+                                .Add(new Paragraph(contractstartdate)
                                                 // .SetFont(ft_montserrat_reg)
                                                 .SetFixedLeading(14f)
                                                 .SetFontColor(cl_grayDark)
@@ -5519,9 +5907,20 @@ namespace AUDANEPAD_Integrated.Controllers
                                 .SetBorderTop(Border.NO_BORDER)
                                 .SetBorderBottom(Border.NO_BORDER);
 
+                        cell4a.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(torsubstartdate)
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
 
                             cell4.SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupProcurementLTimeRepository.GetRecord(rec_set.WPProcurementLeadTime_Id).Record_Name)
+                                .Add(new Paragraph(contractstartdate)
                                                 // .SetFont(ft_montserrat_reg)
                                                 .SetFixedLeading(14f)
                                                 .SetFontColor(cl_grayDark)
@@ -5580,9 +5979,948 @@ namespace AUDANEPAD_Integrated.Controllers
                         tableobj.AddCell(cell1);
                         tableobj.AddCell(cell2);
                         tableobj.AddCell(cell3);   
+                        tableobj.AddCell(cell4a);
                         tableobj.AddCell(cell4);
                         tableobj.AddCell(cell5);
                         tableobj.AddCell(cell6);
+
+                        if(inneriter==_recscount)
+                        {
+                            Cell celltotala = new Cell(1, 7)
+                            .SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph("TOTAL  ")
+                                            //.SetFont(ft_bold)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                            .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderLeft(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+                            tableobj.AddCell(celltotala);
+
+                        
+
+                
+
+                            Cell celltotalb = new Cell(1, 1)
+                                .SetTextAlignment(TextAlignment.RIGHT)
+                                .Add(new Paragraph(string.Format("{0:N0}", totalbudget))
+                                                //.SetFont(ft_bold)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2);
+                            tableobj.AddCell(celltotalb);
+
+                        }
+          
+
+
+                        
+
+                    }
+
+                 
+
+                    inneriter=0;
+                    row_alt=true;
+                    document.Add(tableobj);
+
+                    
+                }
+
+
+
+                document.Add(txt);
+                document.Add(txt);
+                    
+                    
+                    
+            
+
+                document.Add(txt_gap);
+                
+
+
+                
+
+
+
+
+
+
+
+
+
+            document.Close();
+            return workStream;
+
+        }
+
+
+
+
+
+        public MemoryStream GetMemoryStreamCommunicationPlan(WP_MainRecord mainrec)
+        {
+             MemoryStream workStream = new MemoryStream();
+            
+            PdfWriter writer = new PdfWriter(workStream);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf, PageSize.A3.Rotate());
+            int n = pdf.GetNumberOfPages();
+
+            pdf.AddEventHandler(PdfDocumentEvent.END_PAGE, new NEPADStaffController.MyEventHandlerA3(this));
+
+            document.SetBottomMargin(70);
+
+            //PdfFontFactory.Register(@"wwwroot/reports/fonts/FaktSlabPro-Blond.ttf");Montserrat-ExtraBold Montserrat-Italic Montserrat-Light Montserrat-Bold Montserrat-Medium Montserrat-Italic
+                string fontpath = @"wwwroot/reports/fonts/FaktSlabPro-Blond.ttf";
+                string fontpath_montserrat_medium= @"wwwroot/reports/fonts/Montserrat-Medium.ttf";
+                string fontpath_montserrat_bold= @"wwwroot/reports/fonts/Montserrat-Bold.ttf";
+                string fontpath_montserrat_semibold= @"wwwroot/reports/fonts/Montserrat-SemiBold.ttf";
+                string fontpath_montserrat_thick= @"wwwroot/reports/fonts/Montserrat-ExtraBold.ttf";
+                string fontpath_montserrat_reg= @"wwwroot/reports/fonts/Montserrat-Regular.ttf";
+                string fontpath_montserrat_reg_italic= @"wwwroot/reports/fonts/Montserrat-Italic.ttf";
+                string fontpath_montserrat_light= @"wwwroot/reports/fonts/Montserrat-Light.ttf";
+                string fontpath_materialicons_fonts= @"wwwroot/reports/fonts/MaterialIcons-Regular.ttf";
+                string fontpath_helveticaneue= @"wwwroot/reports/fonts/HelveticaNeueLt.ttf";
+
+                PdfFont ft = PdfFontFactory.CreateFont(fontpath, PdfEncodings.WINANSI, true);
+                PdfFont ft_montserrat_medium = PdfFontFactory.CreateFont(fontpath_montserrat_medium, PdfEncodings.WINANSI, true);
+                PdfFont ft_montserrat_semibold = PdfFontFactory.CreateFont(fontpath_montserrat_semibold, PdfEncodings.WINANSI, true);
+                PdfFont ft_montserrat_bold = PdfFontFactory.CreateFont(fontpath_montserrat_bold, PdfEncodings.WINANSI, true);
+                PdfFont ft_montserrat_thick = PdfFontFactory.CreateFont(fontpath_montserrat_thick, PdfEncodings.WINANSI, true);
+                PdfFont ft_montserrat_reg = PdfFontFactory.CreateFont(fontpath_montserrat_reg, PdfEncodings.WINANSI, true);
+                PdfFont ft_montserrat_reg_it = PdfFontFactory.CreateFont(fontpath_montserrat_reg_italic, PdfEncodings.WINANSI, true);
+                PdfFont ft_montserrat_light= PdfFontFactory.CreateFont(fontpath_montserrat_light, PdfEncodings.WINANSI, true);
+                PdfFont ft_materialicons_fonts= PdfFontFactory.CreateFont(fontpath_materialicons_fonts, "Identity-H", true);
+                PdfFont ft_helveticaneue= PdfFontFactory.CreateFont(fontpath_helveticaneue, PdfEncodings.WINANSI, true);
+                PdfFont ft_regular = PdfFontFactory.CreateFont(iText.IO.Font.Constants.StandardFonts.HELVETICA);
+                PdfFont ft_bold = PdfFontFactory.CreateFont(iText.IO.Font.Constants.StandardFonts.HELVETICA_BOLD);
+
+                Color cl=new DeviceRgb(18, 50, 89);
+                Color cl_lightblue=new DeviceRgb(45, 80, 122);
+                Color cl_green=new DeviceRgb(5, 71, 27);
+                Color cl_gray=new DeviceRgb(132, 134, 135);
+                Color cl_grayD=new DeviceRgb(98, 99, 99);
+                Color cl_grayDark=new DeviceRgb(51, 52, 54);
+                Color cl_red=new DeviceRgb(120, 60, 62);
+                Color cl_tableheaderupper=new DeviceRgb(199, 198, 197);
+                Color cl_tableheader=new DeviceRgb(219, 217, 215);
+                Color cl_tablecontent1=new DeviceRgb(250, 245, 240);
+                Color cl_tablecontent_1=new DeviceRgb(232, 233, 235);
+                Color cl_tablecontent_2=new DeviceRgb(252, 252, 252);
+                Color cl_tablecontent_22=new DeviceRgb(246, 246, 246);
+
+               
+
+                         // Add Logo
+                Image img = new Image(ImageDataFactory
+                    .Create(@"wwwroot/frontpage/images/logo-dark_for_reports.png"))
+                    //.SetTextAlignment(TextAlignment.CENTER)
+                    .SetHorizontalAlignment(HorizontalAlignment.CENTER)
+                    .SetHeight(55)
+                    .SetWidth(230);
+                document.Add(img);
+
+                Paragraph txt_gap=new Paragraph(new Text("\n"));
+                Paragraph txt=new Paragraph(new Text(" "))
+                                .SetFixedLeading(1f);
+
+                document.Add(txt);
+
+               
+
+               
+                
+                SolidLine line = new SolidLine(0.5f);
+                line.SetColor(cl_gray);
+                LineSeparator ls = new LineSeparator(line);
+
+
+                DottedLine dottedline = new DottedLine(0.5f);
+                dottedline.SetColor(cl_gray);
+                LineSeparator ls_dotted = new LineSeparator(dottedline);
+
+                DashedLine dashedline = new DashedLine(0.5f);
+                dashedline.SetColor(cl_gray);
+                LineSeparator ls_dashed= new LineSeparator(dashedline);
+
+
+                Paragraph header = new Paragraph("Integrated Planning and Reporting System"+ Convert.ToChar(174))
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetFont(ft)
+                    .SetFontColor(cl)
+                    .SetFontSize(16);
+                    
+                document.Add(header);
+
+
+               // document.Add(txt);
+
+           
+                Paragraph sub_header = new Paragraph("Communication Plan (Draft)")
+                    .SetFixedLeading(14f)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetFont(ft_montserrat_thick)
+                    
+                    .SetFontColor(cl_gray)
+                    .SetFontSize(14);
+                document.Add(sub_header);
+                document.Add(txt);
+
+
+
+
+            string barcodestring="";
+            if(mainrec.BarCode_Id!=null)
+            {
+                barcodestring=mainrec.BarCode_Id;
+            }
+            else
+            {
+                barcodestring=RandomDigits(12);
+                mainrec.BarCode_Id=barcodestring;
+                _wpMainRecordRepository.Update(mainrec);
+
+            }
+            
+            //Bar Code
+            var bar = new BarcodeInter25(pdf);
+            bar.SetCode(barcodestring);
+           //bar.SetCode("000600123456");
+   //Computing Total Budget for Project
+
+
+
+            //Here's how to add barcode to PDF with IText7
+            var barcodeImg = new Image(bar.CreateFormXObject(pdf))
+                                .SetHorizontalAlignment(HorizontalAlignment.CENTER);
+            document.Add(barcodeImg);   
+            //document.Add(txt);
+
+            //Get Period Name
+            string periodname="";
+            if(mainrec.Period_Id==8)
+            {
+                DateTime pstart=new DateTime(mainrec.PeriodStartDate.Year, mainrec.PeriodStartDate.Month, mainrec.PeriodStartDate.Day);
+                DateTime pend=new DateTime(mainrec.PeriodEndDate.Year, mainrec.PeriodEndDate.Month, mainrec.PeriodEndDate.Day);
+                periodname=pstart.Date.ToString("MMM d, yyyy") + " - "+ pend.Date.ToString("MMM d, yyyy"); 
+            }
+            else
+            {
+                periodname=_lkupPeriodRepository.GetRecord(mainrec.Period_Id).Record_Name;
+            }
+
+
+           var DB_Records=_wpCommunicationRepository.GetRecordsByMainRecordId(mainrec.Transaction_Id).OrderBy(d => d.WPCommsStartDate.Year).ThenBy(d => d.WPCommsStartDate.Month).ThenBy(d => d.WPCommsStartDate.Day);
+           // var DB_BudgetsMS =  _wpOutputActivitiesRepository.GetRecordsByMainRecordIdMS(mainrec.Transaction_Id).ToList();
+            double totalbudget=0;
+
+
+            foreach (var budget_record in DB_Records)
+            {
+                totalbudget=totalbudget+budget_record.WPCommsCost;
+            }
+
+  
+
+            //document.Add(txt);
+                float subtractmargins=document.GetLeftMargin()+document.GetRightMargin();
+                //Table table = new Table(2, false)
+                Table table = new Table(UnitValue.CreatePercentArray(new float[]{12, 88}), false)
+                .SetWidth(PageSize.A3.GetHeight()-subtractmargins)
+                .SetHorizontalAlignment(HorizontalAlignment.LEFT);
+
+                //Row 1
+                Cell cell11 = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.LEFT)
+                    .Add(new Paragraph("Directorate ")
+                                   // .SetFont(ft_montserrat_reg)
+                                    .SetFixedLeading(9f)
+                                    .SetFontSize(11))
+                    .SetBackgroundColor(cl_tableheader)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+               
+                  
+               Cell cell12 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph(_strucDirectorateRepository.GetRecord(mainrec.Directorate_Id).Record_Name)
+                                .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontColor(cl_grayDark)
+                                .SetFontSize(10))
+                .SetBackgroundColor(cl_tablecontent_22)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+                //Row 2
+                Cell cell21 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph("Division ")
+                              //  .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontSize(11))
+                .SetBackgroundColor(cl_tableheader)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+               Cell cell22 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph(_strucDivisionRepository.GetRecord(mainrec.Division_Id).Record_Name)
+                                .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontColor(cl_grayDark)
+                                .SetFontSize(10))
+                .SetBackgroundColor(cl_tablecontent_22)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+             
+
+                //Row 4
+                Cell cell41 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph("Project ")
+                                //.SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontSize(11))
+                .SetBackgroundColor(cl_tableheader)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+               Cell cell42 = new Cell(1, 1);
+                if(_lkupProjectRepository.GetRecord(mainrec.Project_Id).Record_Status==true)
+                {
+                    cell42.SetTextAlignment(TextAlignment.LEFT)
+                    .Add(new Paragraph(_lkupProjectRepository.GetRecord(mainrec.Project_Id).Record_Name)
+                                    .SetFont(ft_montserrat_reg)
+                                    .SetFixedLeading(9f)
+                                    .SetFontColor(cl_grayDark)
+                                    .SetFontSize(10))
+                    .SetBackgroundColor(cl_tablecontent_22)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                }
+                else
+                {
+                    cell42.SetTextAlignment(TextAlignment.LEFT)
+                    .Add(new Paragraph(_lkupProjectRepository.GetRecord(mainrec.Project_Id).Record_Name+"   <-- New Project (Inception)")
+                                    .SetFont(ft_montserrat_reg)
+                                    .SetFixedLeading(9f)
+                                    .SetFontColor(cl_grayDark)
+                                    .SetFontSize(10))
+                    .SetBackgroundColor(cl_tablecontent_22)
+                    .SetBorderLeft(Border.NO_BORDER)
+                    .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderTop(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+
+                }
+
+                //Row 5
+                Cell cell51 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph("Year ")
+                               // .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontSize(11))
+                .SetBackgroundColor(cl_tableheader)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+               Cell cell52 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph(_lkupFiscalYearRepository.GetRecord(mainrec.FiscalYear_Id).Record_Name)
+                                .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontColor(cl_grayDark)
+                                .SetFontSize(10))
+                .SetBackgroundColor(cl_tablecontent_22)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+
+                //Row 6
+                Cell cell61 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph("Period ")
+                               // .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontSize(11))
+                .SetBackgroundColor(cl_tableheader)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+               Cell cell62 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph(periodname)
+                                .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontColor(cl_grayDark)
+                                .SetFontSize(10))
+                .SetBackgroundColor(cl_tablecontent_22)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+                //Row 7
+                Cell cell71 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph("Date ")
+                                //.SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontSize(11))
+                .SetBackgroundColor(cl_tableheader)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+               Cell cell72 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph(DateTime.Now.Date.ToString("dd/MM/yyyy"))
+                                .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontColor(cl_grayDark)
+                                .SetFontSize(10))
+                .SetBackgroundColor(cl_tablecontent_22)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+                
+
+
+
+                //Row 8
+                Cell cell81 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph("Total Communication Cost")
+                               // .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontSize(11))
+                .SetBackgroundColor(cl_tableheader)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+               Cell cell82 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph(string.Format("{0:N0}", totalbudget)+" USD")
+                                .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(9f)
+                                .SetFontColor(cl_grayDark)
+                                .SetFontSize(10))
+                .SetBackgroundColor(cl_tablecontent_22)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+
+
+
+
+
+                //Row last
+                Cell celllast1 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph("Status ")
+                               // .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(12f)
+                                .SetFontSize(11))
+                .SetBackgroundColor(cl_tableheader)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER);
+
+               Cell celllast2 = new Cell(1, 1)
+                  .SetTextAlignment(TextAlignment.LEFT)
+                  .Add(new Paragraph(mainrec.WP_ApprovalStatus)
+                                .SetFont(ft_montserrat_reg)
+                                .SetFixedLeading(12f)
+                                .SetFontColor(cl_grayDark)
+                                //.SetFontColor(cl_red)
+                                .SetFontSize(10))
+                .SetBackgroundColor(cl_tablecontent_22)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderTop(Border.NO_BORDER);
+
+
+               table.AddCell(cell11);
+               table.AddCell(cell12);
+
+               table.AddCell(cell21);
+               table.AddCell(cell22);
+
+               table.AddCell(cell41);
+               table.AddCell(cell42);
+
+                table.AddCell(cell51);
+               table.AddCell(cell52);
+
+                table.AddCell(cell61);
+               table.AddCell(cell62);
+
+                table.AddCell(cell71);
+               table.AddCell(cell72);
+
+
+                table.AddCell(cell81);
+               table.AddCell(cell82);
+
+
+               table.AddCell(celllast1);
+               table.AddCell(celllast2);
+
+
+               document.Add(table);
+
+
+               Paragraph printing_info = new Paragraph("Please, Print on A3 Landscape for Better Resolution")
+						.SetTextAlignment(TextAlignment.CENTER)
+						.SetFont(ft_montserrat_reg_it)
+						.SetFontColor(cl_grayDark)
+						.SetFontSize(8);
+                document.Add(printing_info);
+
+
+
+               //Shared Variables
+               // int outeriter=0;
+                int inneriter=0;
+                bool row_alt=true;
+
+                document.Add(txt_gap);
+
+               
+
+
+
+
+
+                //Group by Outputs
+                Paragraph grpbyoutputs = new Paragraph("Workplan: Communication Plan")
+                .SetTextAlignment(TextAlignment.LEFT)
+                .SetFont(ft)
+                .SetFontColor(cl)
+                .SetFixedLeading(11f)
+                .SetFontSize(15);
+                document.Add(grpbyoutputs);
+
+                document.Add(txt);
+                document.Add(txt);
+
+
+                //outeriter=0;
+
+        
+                
+
+
+
+
+
+                float indentmargin=document.GetLeftMargin()+77;
+                float tablewidth=PageSize.A4.GetWidth()-indentmargin;
+                //Table tableactivity = new Table(UnitValue.CreatePercentArray(new float[]{40, 20, 20, 20}), false)
+                Table tableobj = new Table(UnitValue.CreatePercentArray(new float[]{2, 28, 18, 15, 15, 12,  10}), false)
+                                    .SetWidth(PageSize.A3.GetHeight()-indentmargin)
+                                    .SetMarginLeft(40)
+                                    .SetHorizontalAlignment(HorizontalAlignment.LEFT);
+
+                
+
+                if(DB_Records.Count()>=1)
+                {
+                    
+                    //Row Header
+                    Cell cellheader01a = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("No")
+                                    .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                    .SetFontColor(cl_grayDark)
+                                    .SetBackgroundColor(cl_tableheader)
+                                    .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+
+                    tableobj.AddCell(cellheader01a);
+
+                    Cell cellheader01 = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.LEFT)
+                    .Add(new Paragraph("Communication Description")
+                                    .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                    .SetFontColor(cl_grayDark)
+                                    .SetBackgroundColor(cl_tableheader)
+                                    .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+
+                    tableobj.AddCell(cellheader01);
+
+                    Cell cellheader02 = new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.LEFT)
+                        .Add(new Paragraph("Communication Channel")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                    tableobj.AddCell(cellheader02);
+
+
+                    Cell cellheader03 = new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.LEFT)
+                        .Add(new Paragraph("Communication Period")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                    tableobj.AddCell(cellheader03);
+
+
+                    Cell cellheader04 = new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.LEFT)
+                        .Add(new Paragraph("Communication Period")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                    tableobj.AddCell(cellheader04);
+
+                    
+
+
+                    Cell cellheader05= new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.LEFT)
+                        .Add(new Paragraph("SAP WBS")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                    tableobj.AddCell(cellheader05);
+
+        
+
+                    Cell cellheader06 = new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.RIGHT)
+                        .Add(new Paragraph("Amount (USD)")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                    tableobj.AddCell(cellheader06);
+
+
+
+
+
+
+                    int _recscount=DB_Records.Count();
+
+
+                    row_alt=true;
+
+                    foreach (var rec_set in DB_Records)
+                    {
+                        inneriter=inneriter+1;
+                        Cell cell1 = new Cell(1, 1);
+                        Cell cell2 = new Cell(1, 1);
+                        Cell cell3 = new Cell(1, 1);
+                        Cell cell4 = new Cell(1, 1);
+                        Cell cell5 = new Cell(1, 1);
+                        Cell cell6 = new Cell(1, 1);
+                        Cell cell7 = new Cell(1, 1);
+             
+
+                        DateTime start= new  DateTime(rec_set.WPCommsStartDate.Year, rec_set.WPCommsStartDate.Month, rec_set.WPCommsStartDate.Day);
+                        DateTime end= new  DateTime(rec_set.WPCommsEndDate.Year, rec_set.WPCommsEndDate.Month, rec_set.WPCommsEndDate.Day);
+                        string period=start.Date.ToString("MMM d, yyyy")+" - "+end.Date.ToString("MMM d, yyyy");
+
+
+
+                  
+
+                        WP_Outputs output = _wpOutputsRepository.GetRecord(rec_set.WPOutput_Id);
+                        string sapwbs="";
+
+                        if(output.WPSAPLink_Id!=null)
+                        {
+                           sapwbs =  _wpSAPLinkRepository.GetRecord(output.WPSAPLink_Id).SAP_WBS;
+                        }
+                        else
+                        {
+                            sapwbs="WBS Not Assigned";
+                        }
+
+                        string additonalnotes="";
+                        if(rec_set.WPComms_AdditionalNotes!=null)
+                        {
+                            additonalnotes=rec_set.WPComms_AdditionalNotes;
+
+                        }
+                        else
+                        {
+                            additonalnotes="N/A";
+
+                        }
+
+
+                        if(row_alt==false)
+                        {
+                            //Row Rows
+                            cell1.SetTextAlignment(TextAlignment.CENTER)
+                            .Add(new Paragraph(inneriter.ToString())
+                                            //.SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_1)
+                                            .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+                            cell2.SetTextAlignment(TextAlignment.JUSTIFIED)
+                            .Add(new Paragraph(rec_set.WPComms_Description)
+                                            //.SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_1)
+                                            .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+                            
+                                cell3.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(_lkupCommsChannelRepository.GetCommsChannel(rec_set.WPCommsChannel_Id).CommsChannel_Name)
+                                                //.SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetFontSize(9))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+                   
+
+
+
+                            cell4.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(period)
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+                            cell5.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(additonalnotes)
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+      
+                                                        
+
+
+                            cell6.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(sapwbs)
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+           
+
+
+                            cell7.SetTextAlignment(TextAlignment.RIGHT)
+                                .Add(new Paragraph(string.Format("{0:N0}", rec_set.WPCommsCost))
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+                        }
+                        else
+                        {
+                            //Row Rows
+                            cell1.SetTextAlignment(TextAlignment.CENTER)
+                            .Add(new Paragraph(inneriter.ToString())
+                                            //.SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                            .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+                            cell2.SetTextAlignment(TextAlignment.JUSTIFIED)
+                            .Add(new Paragraph(rec_set.WPComms_Description)
+                                            //.SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                            .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+                            
+                                cell3.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(_lkupCommsChannelRepository.GetCommsChannel(rec_set.WPCommsChannel_Id).CommsChannel_Name)
+                                                //.SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(9))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+                   
+
+
+
+                            cell4.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(period)
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+                            cell5.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(additonalnotes)
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+      
+                                                        
+
+
+                            cell6.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(sapwbs)
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+           
+
+
+                            cell7.SetTextAlignment(TextAlignment.RIGHT)
+                                .Add(new Paragraph(string.Format("{0:N0}", rec_set.WPCommsCost))
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+                            
+
+                        }
+
+                        row_alt=ToggleBoolean(row_alt);
+/*
+                        if(inneriter==_recscount)
+                        {
+                            cell1a.SetBorderBottom(new SolidBorder(1f));
+                            cell1.SetBorderBottom(new SolidBorder(1f));
+                            cell2.SetBorderBottom(new SolidBorder(1f));
+                            cell3.SetBorderBottom(new SolidBorder(1f));
+                            cell4.SetBorderBottom(new SolidBorder(1f));
+                            cell5.SetBorderBottom(new SolidBorder(1f));
+                            cell6.SetBorderBottom(new SolidBorder(1f));
+                     
+       
+
+                        }*/
+                        tableobj.AddCell(cell1);
+                        tableobj.AddCell(cell2);
+                        tableobj.AddCell(cell3);
+                        tableobj.AddCell(cell4);   
+                        tableobj.AddCell(cell5);
+                        tableobj.AddCell(cell6);
+                        tableobj.AddCell(cell7);
+                    
 
                         if(inneriter==_recscount)
                         {
@@ -5659,7 +6997,6 @@ namespace AUDANEPAD_Integrated.Controllers
             return workStream;
 
         }
-
 
 
         public string WP_MobilityGetInternalParticipants(string id)
@@ -12807,7 +14144,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                                 Cell cellheader15d = new Cell(1, 1)
                                         .SetTextAlignment(TextAlignment.LEFT)
-                                        .Add(new Paragraph("Lead Time")
+                                        .Add(new Paragraph("Service Start Date")
                                                         .SetFont(ft_bold)
                                                         .SetFixedLeading(14f)
                                                         .SetFontColor(cl_grayDark)
@@ -12850,6 +14187,9 @@ namespace AUDANEPAD_Integrated.Controllers
                                                 DateTime start= new  DateTime(_innerrecord.WPProcurementStartDate.Year, _innerrecord.WPProcurementStartDate.Month, _innerrecord.WPProcurementStartDate.Day);
                                                 DateTime end= new  DateTime(_innerrecord.WPProcurementEndDate.Year, _innerrecord.WPProcurementEndDate.Month, _innerrecord.WPProcurementEndDate.Day);
                                                 string period=start.Date.ToString("MMM d, yyyy")+" - "+end.Date.ToString("MMM d, yyyy");
+
+                                                DateTime contractstart= new  DateTime(_innerrecord.WPContractStartDate.Year, _innerrecord.WPContractStartDate.Month, _innerrecord.WPContractStartDate.Day);
+                                                string contractstartdate=contractstart.Date.ToString("MMM d, yyyy");
 
                                             
 
@@ -12917,7 +14257,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                                     tabledivprojdetails.AddCell(cell3);
 
                                                 cell5.SetTextAlignment(TextAlignment.LEFT)
-                                                        .Add(new Paragraph(_lkupProcurementLTimeRepository.GetRecord(_innerrecord.WPProcurementLeadTime_Id).Record_Name)
+                                                        .Add(new Paragraph(contractstartdate)
                                                                     // .SetFont(ft_montserrat_reg)
                                                                         .SetFixedLeading(14f)
                                                                         .SetFontColor(cl_grayDark)
@@ -13007,7 +14347,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                                     tabledivprojdetails.AddCell(cell3);
 
                                                 cell5.SetTextAlignment(TextAlignment.LEFT)
-                                                        .Add(new Paragraph(_lkupProcurementLTimeRepository.GetRecord(_innerrecord.WPProcurementLeadTime_Id).Record_Name)
+                                                        .Add(new Paragraph(contractstartdate)
                                                                     // .SetFont(ft_montserrat_reg)
                                                                         .SetFixedLeading(14f)
                                                                         .SetFontColor(cl_grayDark)
@@ -13234,7 +14574,16 @@ namespace AUDANEPAD_Integrated.Controllers
                                         DateTime end= new  DateTime(_innerrecord.WPCommsEndDate.Year, _innerrecord.WPCommsEndDate.Month, _innerrecord.WPCommsEndDate.Day);
                                         string period=start.Date.ToString("MMM d, yyyy")+" - "+end.Date.ToString("MMM d, yyyy");
 
-                                    
+                                        string additionalnotes="";
+                                        if(_innerrecord.WPComms_AdditionalNotes!=null)
+                                        {
+                                            additionalnotes=_innerrecord.WPComms_AdditionalNotes;
+                                        }
+                                        else
+                                        {
+                                            additionalnotes="N/A";
+                                        }
+                        
 
                                         
                             
@@ -13300,7 +14649,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                             tabledivprojdetails.AddCell(cell3);
 
                                         cell5.SetTextAlignment(TextAlignment.LEFT)
-                                                .Add(new Paragraph(_innerrecord.WPComms_AdditionalNotes)
+                                                .Add(new Paragraph(additionalnotes)
                                                             // .SetFont(ft_montserrat_reg)
                                                                 .SetFixedLeading(14f)
                                                                 .SetFontColor(cl_grayDark)
@@ -13390,7 +14739,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                             tabledivprojdetails.AddCell(cell3);
 
                                         cell5.SetTextAlignment(TextAlignment.LEFT)
-                                                .Add(new Paragraph(_innerrecord.WPComms_AdditionalNotes)
+                                                .Add(new Paragraph(additionalnotes)
                                                             // .SetFont(ft_montserrat_reg)
                                                                 .SetFixedLeading(14f)
                                                                 .SetFontColor(cl_grayDark)
@@ -13400,6 +14749,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                                 .SetBorderTop(Border.NO_BORDER)
                                                 .SetBorderBottom(Border.NO_BORDER);
                                             tabledivprojdetails.AddCell(cell5);
+                                    
 
                                             
 
@@ -21871,6 +23221,21 @@ namespace AUDANEPAD_Integrated.Controllers
             return new FileContentResult(byte1, contentType);
         }
 
+
+        public ActionResult GenerateDrateCommunicationReportPDF(string id)
+        {
+
+            string contentType = "application/pdf";
+            WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(id);
+
+            MemoryStream workStream=GetMemoryStreamCommunicationPlan(mainrec);
+        
+
+            byte[] byte1 = workStream.ToArray();
+
+
+            return new FileContentResult(byte1, contentType);
+        }
         public ActionResult GenerateInstitutionalWorkplanDraftPDF(string cycleid)
         {
 
@@ -22902,6 +24267,89 @@ namespace AUDANEPAD_Integrated.Controllers
             return PartialView("_AddOutputProcurement", model);
         }
 
+
+        public async Task<ActionResult> AddOutputCommunication(string transid)
+        {
+            WP_Outputs rec = _wpOutputsRepository.GetRecord(transid);
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            
+            WP_MainRecord mainrecord=_wpMainRecordRepository.GetRecord(rec.WPMainRecord_id);
+            string periodinmain="";
+
+            DateTime pmonthstart=DateTime.Today;
+            DateTime pmonthend=DateTime.Today;
+
+            if(mainrecord.Period_Id==8)
+            {
+                DateTime pstart=new DateTime(mainrecord.PeriodStartDate.Year, mainrecord.PeriodStartDate.Month, mainrecord.PeriodStartDate.Day);
+                DateTime pend=new DateTime(mainrecord.PeriodEndDate.Year, mainrecord.PeriodEndDate.Month, mainrecord.PeriodEndDate.Day);
+                periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                pmonthstart=new DateTime(mainrecord.PeriodStartDate.Year , mainrecord.PeriodStartDate.Month, 1);
+                pmonthend=new DateTime(mainrecord.PeriodEndDate.Year, mainrecord.PeriodEndDate.Month, DateTime.DaysInMonth(mainrecord.PeriodEndDate.Year, mainrecord.PeriodEndDate.Month));
+
+            }
+            else
+            {
+                periodinmain=_lkupPeriodRepository.GetRecord(mainrecord.Period_Id).Record_Name;
+
+                switch(mainrecord.Period_Id)
+                {
+                    case 1 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),1, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 3, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 3));
+                        break;
+                    case 2 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),4, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 6, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 6));
+                        break;
+                    case 3 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),7, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 9, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 9));
+                        break;
+                    case 4 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),10, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12));
+                        break;
+                    case 5 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),1, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 6, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 6));
+                        break;
+                    case 6 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),7, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12));
+                        break;
+                    case 7 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),1, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12));
+                        break;
+
+
+                }
+
+            }   
+
+            
+            WP_OutputCommunicationVMWindow model = new WP_OutputCommunicationVMWindow
+            {
+                Transaction_IdOCVMMain=rec.Transaction_Id,
+                WPMainRecord_idOCVMMain=rec.WPMainRecord_id,
+                Employee_IdOCVMMain = user.Employee_Id,
+                FiscalYear_IdOCVMMain=rec.FiscalYear_Id,
+                Period_IdOCVMMain =rec.Period_Id,
+                Project_IdOCVMMain=rec.Project_Id,
+                FisYearOCVMMain=_lkupFiscalYearRepository.GetRecord(rec.FiscalYear_Id).Record_Name,
+                FisPeriodOCVMMain=periodinmain,
+                PeriodStartDateOCVMMain=pmonthstart,
+                PeriodEndDateOCVMMain=pmonthend
+
+            };
+
+
+
+            return PartialView("_AddOutputCommunication", model);
+        }
+
         public async Task<ActionResult> AddOutputActivityGantt(string transid)
         {
             WP_MainRecord rec = _wpMainRecordRepository.GetRecord(transid);
@@ -23066,6 +24514,176 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
             return PartialView("_AddOutputMobilityGantt", model);
+        }
+
+        public async Task<ActionResult> AddOutputProcurementGantt(string transid)
+        {
+            WP_MainRecord rec = _wpMainRecordRepository.GetRecord(transid);
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            WP_MainRecord mainrecord=_wpMainRecordRepository.GetRecord(rec.Transaction_Id);
+            string periodinmain="";
+
+            DateTime pmonthstart=DateTime.Today;
+            DateTime pmonthend=DateTime.Today;
+
+            if(mainrecord.Period_Id==8)
+            {
+                DateTime pstart=new DateTime(mainrecord.PeriodStartDate.Year, mainrecord.PeriodStartDate.Month, mainrecord.PeriodStartDate.Day);
+                DateTime pend=new DateTime(mainrecord.PeriodEndDate.Year, mainrecord.PeriodEndDate.Month, mainrecord.PeriodEndDate.Day);
+                periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                pmonthstart=new DateTime(mainrecord.PeriodStartDate.Year , mainrecord.PeriodStartDate.Month, 1);
+                pmonthend=new DateTime(mainrecord.PeriodEndDate.Year, mainrecord.PeriodEndDate.Month, DateTime.DaysInMonth(mainrecord.PeriodEndDate.Year, mainrecord.PeriodEndDate.Month));
+
+            }
+            else
+            {
+                periodinmain=_lkupPeriodRepository.GetRecord(mainrecord.Period_Id).Record_Name;
+
+                switch(mainrecord.Period_Id)
+                {
+                    case 1 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),1, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 3, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 3));
+                        break;
+                    case 2 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),4, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 6, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 6));
+                        break;
+                    case 3 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),7, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 9, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 9));
+                        break;
+                    case 4 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),10, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12));
+                        break;
+                    case 5 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),1, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 6, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 6));
+                        break;
+                    case 6 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),7, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12));
+                        break;
+                    case 7 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),1, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12));
+                        break;
+
+
+                }
+            }
+
+            
+      
+
+            WP_OutputProcurementVMWindow model = new WP_OutputProcurementVMWindow
+            {
+                Transaction_IdOPVMMain="",
+                WPMainRecord_idOPVMMain=rec.Transaction_Id,
+                Employee_IdOPVMMain = user.Employee_Id,
+                FiscalYear_IdOPVMMain=rec.FiscalYear_Id,
+                Period_IdOPVMMain =rec.Period_Id,
+                Project_IdOPVMMain=rec.Project_Id,
+                FisYearOPVMMain=_lkupFiscalYearRepository.GetRecord(rec.FiscalYear_Id).Record_Name,
+                FisPeriodOPVMMain=periodinmain,
+                PeriodStartDateOPVMMain=pmonthstart,
+                PeriodEndDateOPVMMain=pmonthend
+
+            };
+
+
+
+            return PartialView("_AddOutputProcurementGantt", model);
+        }
+
+
+
+        public async Task<ActionResult> AddOutputCommunicationGantt(string transid)
+        {
+            WP_MainRecord rec = _wpMainRecordRepository.GetRecord(transid);
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            WP_MainRecord mainrecord=_wpMainRecordRepository.GetRecord(rec.Transaction_Id);
+            string periodinmain="";
+
+            DateTime pmonthstart=DateTime.Today;
+            DateTime pmonthend=DateTime.Today;
+
+            if(mainrecord.Period_Id==8)
+            {
+                DateTime pstart=new DateTime(mainrecord.PeriodStartDate.Year, mainrecord.PeriodStartDate.Month, mainrecord.PeriodStartDate.Day);
+                DateTime pend=new DateTime(mainrecord.PeriodEndDate.Year, mainrecord.PeriodEndDate.Month, mainrecord.PeriodEndDate.Day);
+                periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                pmonthstart=new DateTime(mainrecord.PeriodStartDate.Year , mainrecord.PeriodStartDate.Month, 1);
+                pmonthend=new DateTime(mainrecord.PeriodEndDate.Year, mainrecord.PeriodEndDate.Month, DateTime.DaysInMonth(mainrecord.PeriodEndDate.Year, mainrecord.PeriodEndDate.Month));
+
+            }
+            else
+            {
+                periodinmain=_lkupPeriodRepository.GetRecord(mainrecord.Period_Id).Record_Name;
+
+                switch(mainrecord.Period_Id)
+                {
+                    case 1 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),1, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 3, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 3));
+                        break;
+                    case 2 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),4, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 6, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 6));
+                        break;
+                    case 3 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),7, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 9, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 9));
+                        break;
+                    case 4 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),10, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12));
+                        break;
+                    case 5 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),1, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 6, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 6));
+                        break;
+                    case 6 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),7, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12));
+                        break;
+                    case 7 :
+                        pmonthstart=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name),1, 1);
+                        pmonthend=new DateTime(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(mainrecord.FiscalYear_Id).Record_Name), 12));
+                        break;
+
+
+                }
+            }
+
+            
+      
+
+            WP_OutputCommunicationVMWindow model = new WP_OutputCommunicationVMWindow
+            {
+                Transaction_IdOCVMMain="",
+                WPMainRecord_idOCVMMain=rec.Transaction_Id,
+                Employee_IdOCVMMain = user.Employee_Id,
+                FiscalYear_IdOCVMMain=rec.FiscalYear_Id,
+                Period_IdOCVMMain =rec.Period_Id,
+                Project_IdOCVMMain=rec.Project_Id,
+                FisYearOCVMMain=_lkupFiscalYearRepository.GetRecord(rec.FiscalYear_Id).Record_Name,
+                FisPeriodOCVMMain=periodinmain,
+                PeriodStartDateOCVMMain=pmonthstart,
+                PeriodEndDateOCVMMain=pmonthend
+
+            };
+
+
+
+            return PartialView("_AddOutputCommunicationGantt", model);
         }
 
 
@@ -23233,7 +24851,9 @@ namespace AUDANEPAD_Integrated.Controllers
                 WPProcurement_AdditionalNotesOPVMMain=rec.WPProcurement_AdditionalNotes,
                 ProcurementCostOPVMMain=rec.WPProcurementCost,
                 ProcurementStartDateOPVMMain=new DateTime(rec.WPProcurementStartDate.Year, rec.WPProcurementStartDate.Month, rec.WPProcurementStartDate.Day),
-                ProcurementEndDateOPVMMain=new DateTime(rec.WPProcurementEndDate.Year, rec.WPProcurementEndDate.Month, rec.WPProcurementEndDate.Day)
+                ProcurementEndDateOPVMMain=new DateTime(rec.WPProcurementEndDate.Year, rec.WPProcurementEndDate.Month, rec.WPProcurementEndDate.Day),
+                WPTORSubmissionDateOPVMMain=new DateTime(rec.WPTORSubmissionDate.Year, rec.WPTORSubmissionDate.Month, rec.WPTORSubmissionDate.Day),
+                WPContractStartDateOPVMMain=new DateTime(rec.WPContractStartDate.Year, rec.WPContractStartDate.Month, rec.WPContractStartDate.Day)
                 
 
             };
@@ -23241,6 +24861,57 @@ namespace AUDANEPAD_Integrated.Controllers
             
 
             return PartialView("_EditOutputProcurement", model);
+        }
+
+        public async Task<ActionResult> EditOutputCommunication(string transid)
+        {
+           // WP_Outputs rec = _wpOutputsRepository.GetRecord(transid);
+
+            WP_Communication rec=_wpCommunicationRepository.GetRecord(transid);
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            WP_MainRecord mainrecord=_wpMainRecordRepository.GetRecord(rec.WPMainRecord_id);
+            string periodinmain="";
+            if(mainrecord.Period_Id==8)
+            {
+                DateTime pstart=new DateTime(mainrecord.PeriodStartDate.Year, mainrecord.PeriodStartDate.Month, mainrecord.PeriodStartDate.Day);
+                DateTime pend=new DateTime(mainrecord.PeriodEndDate.Year, mainrecord.PeriodEndDate.Month, mainrecord.PeriodEndDate.Day);
+                periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+            }
+            else
+            {
+                periodinmain=_lkupPeriodRepository.GetRecord(mainrecord.Period_Id).Record_Name;
+
+            }  
+
+            
+            WP_OutputCommunicationVMWindow model = new WP_OutputCommunicationVMWindow
+            {
+                Transaction_IdOCVMMain=rec.Transaction_Id,
+                WPMainRecord_idOCVMMain=rec.WPMainRecord_id,
+                WPOutput_IdOCVMMain=rec.WPOutput_Id,
+                Employee_IdOCVMMain = user.Employee_Id,
+                FiscalYear_IdOCVMMain=rec.FiscalYear_Id,
+                Period_IdOCVMMain =rec.Period_Id,
+                Project_IdOCVMMain=rec.Project_Id,
+                FisYearOCVMMain=_lkupFiscalYearRepository.GetRecord(rec.FiscalYear_Id).Record_Name,
+                FisPeriodOCVMMain=periodinmain,
+
+                WPComms_DescriptionOCVMMain=rec.WPComms_Description,
+                WPCommsChannel_IdOCVMMain=rec.WPCommsChannel_Id,
+                WPComms_AdditionalNotesOCVMMain=rec.WPComms_AdditionalNotes,
+                WPCommsCostOCVMMain=rec.WPCommsCost,
+                WPCommsStartDateOCVMMain=new DateTime(rec.WPCommsStartDate.Year, rec.WPCommsStartDate.Month, rec.WPCommsStartDate.Day),
+                WPCommsEndDateOCVMMain=new DateTime(rec.WPCommsEndDate.Year, rec.WPCommsEndDate.Month, rec.WPCommsEndDate.Day)
+
+                
+
+            };
+
+            
+
+            return PartialView("_EditOutputCommunication", model);
         }
 
         private void PopulateExternalType()

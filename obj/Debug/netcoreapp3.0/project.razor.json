@@ -75718,6 +75718,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_EditOutputCommunication.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\_EditOutputCommunication.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Home/Index.cshtml",
       "TargetPath": "Views\\Home\\Index.cshtml",
       "FileKind": "mvc"
@@ -75773,6 +75778,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_AddOutputCommunication.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\_AddOutputCommunication.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_EditDivisionKPI.cshtml",
       "TargetPath": "Views\\NEPADStaff\\_EditDivisionKPI.cshtml",
       "FileKind": "mvc"
@@ -75790,6 +75800,11 @@
     {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_AddOutputActivityGantt.cshtml",
       "TargetPath": "Views\\NEPADStaff\\_AddOutputActivityGantt.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/WorkplanDraftCommunicationPDF.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\WorkplanDraftCommunicationPDF.cshtml",
       "FileKind": "mvc"
     },
     {
@@ -75830,6 +75845,11 @@
     {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Shared/EditorTemplates/ClientExternalType.cshtml",
       "TargetPath": "Views\\Shared\\EditorTemplates\\ClientExternalType.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_AddOutputCommunicationGantt.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\_AddOutputCommunicationGantt.cshtml",
       "FileKind": "mvc"
     },
     {
@@ -75888,6 +75908,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/WorkplanCommunicationGanttChart.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\WorkplanCommunicationGanttChart.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Shared/EditorTemplates/ClientCategory.cshtml",
       "TargetPath": "Views\\Shared\\EditorTemplates\\ClientCategory.cshtml",
       "FileKind": "mvc"
@@ -75895,6 +75920,16 @@
     {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/WorkplanDraftList.cshtml",
       "TargetPath": "Views\\NEPADStaff\\WorkplanDraftList.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_AddOutputProcurementGantt.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\_AddOutputProcurementGantt.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/WorkplanProcurementGanttChart.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\WorkplanProcurementGanttChart.cshtml",
       "FileKind": "mvc"
     },
     {

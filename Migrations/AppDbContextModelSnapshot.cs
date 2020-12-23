@@ -2618,6 +2618,9 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<DateTime>("WPContractStartDate")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("WPMainRecord_id")
                         .HasColumnType("text");
 
@@ -2644,6 +2647,12 @@ namespace AUDANEPAD_Integrated.Migrations
 
                     b.Property<string>("WPProcurement_Description")
                         .HasColumnType("text");
+
+                    b.Property<string>("WPProcurement_SourceOfFundsDescr")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("WPTORSubmissionDate")
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Transaction_Id");
 

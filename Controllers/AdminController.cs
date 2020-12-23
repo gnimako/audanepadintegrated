@@ -4655,6 +4655,194 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
 
+
+        public ActionResult WP_GanttProcurement_Read([DataSourceRequest]DataSourceRequest request, string recid)
+        {
+
+
+            List<WorkplansViewModel> collection_recs = new List<WorkplansViewModel>();
+            List<TaskViewModel> collection_recs2 = new List<TaskViewModel>();
+
+           // WP_MainRecord wp_mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+
+            var DB_Recs =  _wpOutputsRepository.GetRecordsByMainRecordId(recid).ToList();
+
+            int _count =  DB_Recs.Count();
+           int _cnt = 0;
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+                    var DB_Records=_wpProcurementRepository.GetRecordsByMainRecordOutputId(recid, rec.Transaction_Id);
+                    DateTime? minDate = null, maxDate = null;
+                    double percentcomplete=0;
+                    int count=0;
+                    _cnt=_cnt+1;
+                    int _mob_id=0;
+
+                    int _recs_count=DB_Records.Count();
+
+                    if(_recs_count > 0)
+                    {
+                        foreach (var rec_set in DB_Records)
+                        {
+                            DateTime sDate= new DateTime(rec_set.WPProcurementStartDate.Year, rec_set.WPProcurementStartDate.Month, rec_set.WPProcurementStartDate.Day);
+                            DateTime eDate= new DateTime(rec_set.WPProcurementEndDate.Year, rec_set.WPProcurementEndDate.Month, rec_set.WPProcurementEndDate.Day);
+
+                            if ((minDate == null) || (sDate < minDate.Value))
+                                minDate = sDate;
+
+                            if ((maxDate == null) || (eDate > maxDate.Value))
+                                maxDate = eDate;
+
+                            percentcomplete=0;
+                            count=count+1;
+
+                            _mob_id=(_cnt*1000)+count;
+
+                            TaskViewModel srec_ = new TaskViewModel
+                            {
+                                Output_Id=rec.Transaction_Id,
+                                Procurement_Id=rec_set.Transaction_Id,
+                                TaskID=_mob_id,
+                                OrderId=_mob_id,
+                                ParentID=_cnt,
+                                Start=DateTime.SpecifyKind(new DateTime(rec_set.WPProcurementStartDate.Year, rec_set.WPProcurementStartDate.Month, rec_set.WPProcurementStartDate.Day), DateTimeKind.Utc),
+                                End=DateTime.SpecifyKind(new DateTime(rec_set.WPProcurementEndDate.Year, rec_set.WPProcurementEndDate.Month, rec_set.WPProcurementEndDate.Day), DateTimeKind.Utc),
+                                Title=rec_set.WPProcurement_Description,
+                                PercentComplete=0,
+                                Summary=false,
+                                Expanded=false
+                            };
+                            collection_recs2.Add(srec_);
+                            
+                        }
+                        percentcomplete=0;
+
+                        
+
+                        TaskViewModel srec_main = new TaskViewModel
+                        {
+                            Output_Id=rec.Transaction_Id,
+                            TaskID=_cnt,
+                            OrderId=_cnt,
+                            ParentID=null,
+                            Start=DateTime.SpecifyKind(minDate.Value, DateTimeKind.Utc),
+                            End=DateTime.SpecifyKind(maxDate.Value, DateTimeKind.Utc),
+                            Title=rec.Output,
+                            PercentComplete=(decimal)percentcomplete,
+                            Summary=true,
+                            Expanded=true
+                        };
+                        collection_recs2.Add(srec_main);
+                    }
+                }
+            }
+
+
+
+
+           return Json(collection_recs2.ToDataSourceResult(request));
+        }
+
+
+
+        public ActionResult WP_GanttCommunication_Read([DataSourceRequest]DataSourceRequest request, string recid)
+        {
+
+
+            List<WorkplansViewModel> collection_recs = new List<WorkplansViewModel>();
+            List<TaskViewModel> collection_recs2 = new List<TaskViewModel>();
+
+           // WP_MainRecord wp_mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+
+            var DB_Recs =  _wpOutputsRepository.GetRecordsByMainRecordId(recid).ToList();
+
+            int _count =  DB_Recs.Count();
+           int _cnt = 0;
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+                    var DB_Records=_wpCommunicationRepository.GetRecordsByMainRecordOutputId(recid, rec.Transaction_Id);
+                    DateTime? minDate = null, maxDate = null;
+                    double percentcomplete=0;
+                    int count=0;
+                    _cnt=_cnt+1;
+                    int _mob_id=0;
+
+                    int _recs_count=DB_Records.Count();
+
+                    if(_recs_count > 0)
+                    {
+                        foreach (var rec_set in DB_Records)
+                        {
+                            DateTime sDate= new DateTime(rec_set.WPCommsStartDate.Year, rec_set.WPCommsStartDate.Month, rec_set.WPCommsStartDate.Day);
+                            DateTime eDate= new DateTime(rec_set.WPCommsEndDate.Year, rec_set.WPCommsEndDate.Month, rec_set.WPCommsEndDate.Day);
+
+                            if ((minDate == null) || (sDate < minDate.Value))
+                                minDate = sDate;
+
+                            if ((maxDate == null) || (eDate > maxDate.Value))
+                                maxDate = eDate;
+
+                            percentcomplete=0;
+                            count=count+1;
+
+                            _mob_id=(_cnt*1000)+count;
+
+                            TaskViewModel srec_ = new TaskViewModel
+                            {
+                                Output_Id=rec.Transaction_Id,
+                                Communication_Id=rec_set.Transaction_Id,
+                                TaskID=_mob_id,
+                                OrderId=_mob_id,
+                                ParentID=_cnt,
+                                Start=DateTime.SpecifyKind(new DateTime(rec_set.WPCommsStartDate.Year, rec_set.WPCommsStartDate.Month, rec_set.WPCommsStartDate.Day), DateTimeKind.Utc),
+                                End=DateTime.SpecifyKind(new DateTime(rec_set.WPCommsEndDate.Year, rec_set.WPCommsEndDate.Month, rec_set.WPCommsEndDate.Day), DateTimeKind.Utc),
+                                Title=rec_set.WPComms_Description,
+                                PercentComplete=0,
+                                Summary=false,
+                                Expanded=false
+                            };
+                            collection_recs2.Add(srec_);
+                            
+                        }
+                        percentcomplete=0;
+
+                        
+
+                        TaskViewModel srec_main = new TaskViewModel
+                        {
+                            Output_Id=rec.Transaction_Id,
+                            TaskID=_cnt,
+                            OrderId=_cnt,
+                            ParentID=null,
+                            Start=DateTime.SpecifyKind(minDate.Value, DateTimeKind.Utc),
+                            End=DateTime.SpecifyKind(maxDate.Value, DateTimeKind.Utc),
+                            Title=rec.Output,
+                            PercentComplete=(decimal)percentcomplete,
+                            Summary=true,
+                            Expanded=true
+                        };
+                        collection_recs2.Add(srec_main);
+                    }
+                }
+            }
+
+
+
+
+           return Json(collection_recs2.ToDataSourceResult(request));
+        }
+
+
+
+
         [HttpPost]
         public ActionResult Pdf_Export_Save(string contentType, string base64, string fileName)
         {
@@ -4721,6 +4909,61 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(new[] { model }.ToDataSourceResult(request, ModelState));
         }
 
+        public virtual JsonResult WP_GanttProcurement_Update([DataSourceRequest] DataSourceRequest request, TaskViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                //taskService.Update(task, ModelState);
+                if(model.Summary==false)
+                {
+                    if(model.Procurement_Id!=null)
+                    {
+                        WP_Procurement rec=_wpProcurementRepository.GetRecord(model.Procurement_Id);
+
+                        if(rec!=null)
+                        {
+                            rec.WPProcurementStartDate=new LocalDate(model.Start.Year, model.Start.Month, model.Start.Day);
+                            rec.WPProcurementEndDate=new LocalDate(model.End.Year, model.End.Month, model.End.Day);
+                      
+                            _wpProcurementRepository.Update(rec);
+                        }
+                    }
+
+
+                }
+            }
+
+            return Json(new[] { model }.ToDataSourceResult(request, ModelState));
+        }
+
+
+        public virtual JsonResult WP_GanttCommunication_Update([DataSourceRequest] DataSourceRequest request, TaskViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                //taskService.Update(task, ModelState);
+                if(model.Summary==false)
+                {
+                    if(model.Communication_Id!=null)
+                    {
+                        WP_Communication rec=_wpCommunicationRepository.GetRecord(model.Communication_Id);
+
+                        if(rec!=null)
+                        {
+                            rec.WPCommsStartDate=new LocalDate(model.Start.Year, model.Start.Month, model.Start.Day);
+                            rec.WPCommsEndDate=new LocalDate(model.End.Year, model.End.Month, model.End.Day);
+                      
+                            _wpCommunicationRepository.Update(rec);
+                        }
+                    }
+
+
+                }
+            }
+
+            return Json(new[] { model }.ToDataSourceResult(request, ModelState));
+        }
+
 
 
 
@@ -4772,6 +5015,60 @@ namespace AUDANEPAD_Integrated.Controllers
 
             return Json(new[] { model }.ToDataSourceResult(request, ModelState));
         }
+
+
+
+
+        [HttpPost]
+        public virtual JsonResult WP_GanttProcurement_Delete([DataSourceRequest] DataSourceRequest request, TaskViewModel model)
+        {
+            // var user = await userManager.GetUserAsync(HttpContext.User);
+            if (ModelState.IsValid)
+            {
+                if(model.Procurement_Id!=null)
+                {
+                    WP_Procurement rec=_wpProcurementRepository.GetRecord(model.Procurement_Id);
+
+                    //Now Delete the record
+                    if (rec != null)
+                    {
+                        _wpProcurementRepository.Delete(rec.Transaction_Id);
+
+                    } 
+
+                }
+            }
+
+
+            return Json(new[] { model }.ToDataSourceResult(request, ModelState));
+        }
+
+
+        [HttpPost]
+        public virtual JsonResult WP_GanttCommunication_Delete ([DataSourceRequest] DataSourceRequest request, TaskViewModel model)
+        {
+            // var user = await userManager.GetUserAsync(HttpContext.User);
+            if (ModelState.IsValid)
+            {
+                if(model.Communication_Id!=null)
+                {
+                    WP_Communication rec=_wpCommunicationRepository.GetRecord(model.Communication_Id);
+
+                    //Now Delete the record
+                    if (rec != null)
+                    {
+                        _wpCommunicationRepository.Delete(rec.Transaction_Id);
+
+                    } 
+
+                }
+            }
+
+
+            return Json(new[] { model }.ToDataSourceResult(request, ModelState));
+        }
+
+
 
         [HttpPost]
         public ActionResult _GetCompletionLevelOfWPS_Draft(string cycleid)
@@ -6131,6 +6428,88 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(collection_recs.ToDataSourceResult(request));
         }
         
+
+
+
+        public ActionResult WP_Outputs_for_Communication_Read([DataSourceRequest]DataSourceRequest request, string projid, string fyear, string fperiod, string periodtxt)
+        {
+
+
+            List<WorkplansViewModel> collection_recs = new List<WorkplansViewModel>();
+            WP_MainRecord wp_mainrec_check=null;
+
+            if(Int32.Parse(fperiod)==8)
+            {
+                var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                int _countrecs =  DB_Records8.Count();
+                if(_countrecs>0)
+                {
+                    foreach (var rec_set in DB_Records8)
+                    {
+                        DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                        DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                        string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                        if(periodinmain==periodtxt)
+                            wp_mainrec_check=rec_set;
+                    }
+                }
+
+            }
+            else
+            {
+                wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+            }
+
+           var DB_Recs =  _wpOutputsRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod)).ToList();
+            //var DB_Recs =  _wpOutputBudgetRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod)).ToList();
+
+            if(wp_mainrec_check!=null)
+                DB_Recs=_wpOutputsRepository.GetRecordsByMainRecordId(wp_mainrec_check.Transaction_Id).ToList();
+            else
+                DB_Recs=_wpOutputsRepository.GetRecordsByMainRecordId("Null").ToList();
+
+            int _count =  DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+                    var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(rec.Transaction_Id);
+                    double total_budget=0;
+                    foreach (var record in DB_Recs_Activities)
+                    {
+                        total_budget=total_budget+record.ActivityCost;
+
+                    }
+
+                    WorkplansViewModel srec1 = new WorkplansViewModel
+                    {
+                        Transaction_Id = rec.Transaction_Id,
+                        WPMainRecord_Ident=rec.WPMainRecord_id,
+                        Output=rec.Output,
+                        Output_BudgetAmount= total_budget,
+                        TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                    };
+
+
+                    collection_recs.Add(srec1);
+                    
+
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+        
+
+
+        
+
         [HttpPost]
         public ActionResult SetExpandedRow(string rowident)
         {
@@ -6596,8 +6975,8 @@ namespace AUDANEPAD_Integrated.Controllers
                         WPProcurement_DescriptionOPVM=rec.WPProcurement_Description,
                         WPProcurementType_IdOPVM=rec.WPProcurementType_Id,
                         WPProcurementType_NameOPVM=_lkupProcurementTypeRepository.GetRecord(rec.WPProcurementType_Id).Record_Name,
-                        WPProcurementLeadTime_IdOPVM=rec.WPProcurementLeadTime_Id,
-                        WPProcurementLeadTime_NameOPVM=_lkupProcurementLTimeRepository.GetRecord(rec.WPProcurementLeadTime_Id).Record_Name,
+                       // WPProcurementLeadTime_IdOPVM=rec.WPProcurementLeadTime_Id,
+                       // WPProcurementLeadTime_NameOPVM=_lkupProcurementLTimeRepository.GetRecord(rec.WPProcurementLeadTime_Id).Record_Name,
                         WPProcurementPeriodOPVM=recstart.Date.ToString("MMM d, yyyy") + " - "+ recend.Date.ToString("MMM d, yyyy"),
                         ProcurementCostOPVM = rec.WPProcurementCost,
 
@@ -6629,6 +7008,61 @@ namespace AUDANEPAD_Integrated.Controllers
 
             return Json(collection_recs.ToDataSourceResult(request));
         }
+
+
+
+        public ActionResult WP_OutputsSubCommunication_Read([DataSourceRequest]DataSourceRequest request, string output_transid)
+        {
+
+
+            List<WP_OutputCommunicationVM> collection_recs = new List<WP_OutputCommunicationVM>();
+
+           // WP_MainRecord wp_mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+
+            var DB_Recs =  _wpCommunicationRepository.GetRecordsByOutputId(output_transid);
+
+            int _count =  DB_Recs.Count();
+        
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+                    DateTime recstart=new DateTime(rec.WPCommsStartDate.Year, rec.WPCommsStartDate.Month, rec.WPCommsStartDate.Day);
+                    DateTime recend=new DateTime(rec.WPCommsEndDate.Year, rec.WPCommsEndDate.Month, rec.WPCommsEndDate.Day);
+          
+   
+                    WP_OutputCommunicationVM srec = new WP_OutputCommunicationVM
+                    {
+                        Transaction_IdOCVM=rec.Transaction_Id,
+                        Output_ChildGridIdOCVM=rec.WPOutput_Id,
+                        WPComms_DescriptionOCVM=rec.WPComms_Description,
+                        WPCommsChannel_IdOCVM=rec.WPCommsChannel_Id,
+                        WPCommunicationChannelOCVM=_lkupCommsChannelRepository.GetCommsChannel(rec.WPCommsChannel_Id).CommsChannel_Name,
+                        WPCommunicationPeriodOCVM=recstart.Date.ToString("MMM d, yyyy") + " - "+ recend.Date.ToString("MMM d, yyyy"),
+                        WPCommsCostOCVM = rec.WPCommsCost,
+
+
+                        ShowGridButtons="YES",
+
+                        TransactionDateOCVM= new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                    };
+
+                 
+
+                    collection_recs.Add(srec);
+                }
+
+
+
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
 
         public string WP_MobilityGetInternalParticipants(string id)
         {
@@ -8243,6 +8677,32 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
         [HttpPost]
+        public ActionResult WP_OutputsSubCommunication_Delete(string subrecid)
+        {
+            // var user = await userManager.GetUserAsync(HttpContext.User);
+            try
+            {
+
+                //Now Delete Mobility record
+                WP_Communication rec_set=_wpCommunicationRepository.GetRecord(subrecid);
+                
+                if (rec_set != null)
+                {
+                    _wpCommunicationRepository.Delete(rec_set.Transaction_Id);
+
+                } 
+
+
+
+                 return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+        }
+
+        [HttpPost]
         public ActionResult WP_SAPWBSLink_Delete(string transid)
         {
             // var user = await userManager.GetUserAsync(HttpContext.User);
@@ -9116,7 +9576,7 @@ namespace AUDANEPAD_Integrated.Controllers
             try
             {
                                   
-                WP_Outputs recoutputrecord=_wpOutputsRepository.GetRecord(model.Transaction_IdOPVMMain );
+                WP_Outputs recoutputrecord=_wpOutputsRepository.GetRecord(model.Transaction_IdOPVMMain);
 
                 //Get the total budget for the output
                 var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.Transaction_IdOPVMMain);
@@ -9178,6 +9638,8 @@ namespace AUDANEPAD_Integrated.Controllers
                         WPProcurement_AdditionalNotes=model.WPProcurement_AdditionalNotesOPVMMain,
                         WPProcurementStartDate=new LocalDate(model.ProcurementStartDateOPVMMain.Year, model.ProcurementStartDateOPVMMain.Month,model.ProcurementStartDateOPVMMain.Day),
                         WPProcurementEndDate=new LocalDate(model.ProcurementEndDateOPVMMain.Year, model.ProcurementEndDateOPVMMain.Month,model.ProcurementEndDateOPVMMain.Day),
+                        WPTORSubmissionDate=new LocalDate(model.WPTORSubmissionDateOPVMMain.Year, model.WPTORSubmissionDateOPVMMain.Month,model.WPTORSubmissionDateOPVMMain.Day),
+                        WPContractStartDate=new LocalDate(model.WPContractStartDateOPVMMain.Year, model.WPContractStartDateOPVMMain.Month,model.WPContractStartDateOPVMMain.Day),
                         WPProcurementCost=model.ProcurementCostOPVMMain,
                         TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
                     };
@@ -9202,6 +9664,298 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
         }
+
+        [HttpPost]
+        public ActionResult AddOutputCommunicationNew(WP_OutputCommunicationVMWindow model)
+        {
+            double totalremainingbudget=0;
+
+            try
+            {
+                                  
+                WP_Outputs recoutputrecord=_wpOutputsRepository.GetRecord(model.Transaction_IdOCVMMain);
+
+                //Get the total budget for the output
+                var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.Transaction_IdOCVMMain);
+                double total_outputbudget=0;
+                foreach (var record in DB_Recs_Activities)
+                {
+                    total_outputbudget=total_outputbudget+record.ActivityCost;
+                }
+
+                //Get all mission, procurement, communication and risk costs already captured against this output 
+                double total_missionbudget=0;
+                double total_procurementbudget=0;
+                double total_commsbudget=0;
+                double total_riskbudget=0;
+                
+
+                var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.Transaction_IdOCVMMain).ToList();
+                foreach (var record in DB_Recs_Missions)
+                {
+                    total_missionbudget=total_missionbudget+record.MobilityCost;
+                }
+
+                //foreach loop for procurment
+                var DB_Recs_Procurement =  _wpProcurementRepository.GetRecordsByOutputId(model.Transaction_IdOCVMMain).ToList();
+                foreach (var record in DB_Recs_Procurement)
+                {
+                    total_procurementbudget=total_procurementbudget+record.WPProcurementCost;
+                }
+                //foreach loop for comms
+                var DB_Recs_Comms =  _wpCommunicationRepository.GetRecordsByOutputId(model.Transaction_IdOCVMMain).ToList();
+                foreach (var record in DB_Recs_Comms)
+                {
+                    total_commsbudget=total_commsbudget+record.WPCommsCost;
+                }
+
+                //foreach loop for risk
+                var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.Transaction_IdOCVMMain).ToList();
+                foreach (var record in DB_Recs_Risk)
+                {
+                    total_riskbudget=total_riskbudget+record.WPRiskCost;
+                }
+
+                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
+    
+
+                if(totalremainingbudget>=model.WPCommsCostOCVMMain)
+                {
+                    WP_Communication rec_to_add_2 = new WP_Communication
+                    {
+                        Transaction_Id=Guid.NewGuid().ToString(),
+                        WPMainRecord_id=model.WPMainRecord_idOCVMMain,
+                        Project_Id=model.Project_IdOCVMMain,
+                        FiscalYear_Id=model.FiscalYear_IdOCVMMain,
+                        Period_Id=model.Period_IdOCVMMain,
+                        WPOutput_Id=model.Transaction_IdOCVMMain,
+                        WPComms_Description=model.WPComms_DescriptionOCVMMain,
+                        WPCommsChannel_Id=model.WPCommsChannel_IdOCVMMain,
+                        WPComms_AdditionalNotes=model.WPComms_AdditionalNotesOCVMMain,
+                        WPCommsStartDate=new LocalDate(model.WPCommsStartDateOCVMMain.Year, model.WPCommsStartDateOCVMMain.Month,model.WPCommsStartDateOCVMMain.Day),
+                        WPCommsEndDate=new LocalDate(model.WPCommsEndDateOCVMMain.Year, model.WPCommsEndDateOCVMMain.Month,model.WPCommsEndDateOCVMMain.Day),
+                        WPCommsCost=model.WPCommsCostOCVMMain,
+                        TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                    };
+
+                    _wpCommunicationRepository.Add(rec_to_add_2);
+
+                }
+                else
+                {
+                    return Json(new { rtnmsg = "insufficientfunds", remainfunds= totalremainingbudget.ToString()});
+
+                }
+                return Json(new { rtnmsg = "success", remainfunds= totalremainingbudget.ToString() });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error", remainfunds= totalremainingbudget.ToString() });
+            }
+             
+
+
+
+
+        }
+
+
+
+
+        [HttpPost]
+        public ActionResult AddOutputProcurementGanttNew(WP_OutputProcurementVMWindow model)
+        {
+            double totalremainingbudget=0;
+
+            try
+            {
+                                  
+                WP_Outputs recoutputrecord=_wpOutputsRepository.GetRecord(model.WPOutput_IdOPVMMain);
+
+                //Get the total budget for the output
+                var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain);
+                double total_outputbudget=0;
+                foreach (var record in DB_Recs_Activities)
+                {
+                    total_outputbudget=total_outputbudget+record.ActivityCost;
+                }
+
+                //Get all mission, procurement, communication and risk costs already captured against this output 
+                double total_missionbudget=0;
+                double total_procurementbudget=0;
+                double total_commsbudget=0;
+                double total_riskbudget=0;
+                
+
+                var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain).ToList();
+                foreach (var record in DB_Recs_Missions)
+                {
+                    total_missionbudget=total_missionbudget+record.MobilityCost;
+                }
+
+                //foreach loop for procurment
+                var DB_Recs_Procurement =  _wpProcurementRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain).ToList();
+                foreach (var record in DB_Recs_Procurement)
+                {
+                    total_procurementbudget=total_procurementbudget+record.WPProcurementCost;
+                }
+                //foreach loop for comms
+                var DB_Recs_Comms =  _wpCommunicationRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain).ToList();
+                foreach (var record in DB_Recs_Comms)
+                {
+                    total_commsbudget=total_commsbudget+record.WPCommsCost;
+                }
+
+                //foreach loop for risk
+                var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain).ToList();
+                foreach (var record in DB_Recs_Risk)
+                {
+                    total_riskbudget=total_riskbudget+record.WPRiskCost;
+                }
+
+                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
+    
+
+                if(totalremainingbudget>=model.ProcurementCostOPVMMain)
+                {
+                    WP_Procurement rec_to_add_2 = new WP_Procurement
+                    {
+                        Transaction_Id=Guid.NewGuid().ToString(),
+                        WPMainRecord_id=model.WPMainRecord_idOPVMMain,
+                        Project_Id=model.Project_IdOPVMMain,
+                        FiscalYear_Id=model.FiscalYear_IdOPVMMain,
+                        Period_Id=model.Period_IdOPVMMain,
+                        WPOutput_Id=model.WPOutput_IdOPVMMain,
+                        WPProcurement_Description=model.WPProcurement_DescriptionOPVMMain,
+                        WPProcurementType_Id=model.WPProcurementType_IdOPVMMain,
+                        WPProcurementLeadTime_Id=model.WPProcurementLeadTime_IdOPVMMain,
+                        WPProcurement_AdditionalNotes=model.WPProcurement_AdditionalNotesOPVMMain,
+                        WPProcurementStartDate=new LocalDate(model.ProcurementStartDateOPVMMain.Year, model.ProcurementStartDateOPVMMain.Month,model.ProcurementStartDateOPVMMain.Day),
+                        WPProcurementEndDate=new LocalDate(model.ProcurementEndDateOPVMMain.Year, model.ProcurementEndDateOPVMMain.Month,model.ProcurementEndDateOPVMMain.Day),
+                        WPTORSubmissionDate=new LocalDate(model.WPTORSubmissionDateOPVMMain.Year, model.WPTORSubmissionDateOPVMMain.Month,model.WPTORSubmissionDateOPVMMain.Day),
+                        WPContractStartDate=new LocalDate(model.WPContractStartDateOPVMMain.Year, model.WPContractStartDateOPVMMain.Month,model.WPContractStartDateOPVMMain.Day),
+                        WPProcurementCost=model.ProcurementCostOPVMMain,
+                        TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                    };
+
+                    _wpProcurementRepository.Add(rec_to_add_2);
+
+                }
+                else
+                {
+                    return Json(new { rtnmsg = "insufficientfunds", remainfunds= totalremainingbudget.ToString()});
+
+                }
+                return Json(new { rtnmsg = "success", remainfunds= totalremainingbudget.ToString() });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error", remainfunds= totalremainingbudget.ToString() });
+            }
+             
+
+
+
+
+        }
+
+
+
+
+        [HttpPost]
+        public ActionResult AddOutputCommunicationGanttNew(WP_OutputCommunicationVMWindow model)
+        {
+            double totalremainingbudget=0;
+
+            try
+            {
+                                  
+                WP_Outputs recoutputrecord=_wpOutputsRepository.GetRecord(model.WPOutput_IdOCVMMain);
+
+                //Get the total budget for the output
+                var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.WPOutput_IdOCVMMain);
+                double total_outputbudget=0;
+                foreach (var record in DB_Recs_Activities)
+                {
+                    total_outputbudget=total_outputbudget+record.ActivityCost;
+                }
+
+                //Get all mission, procurement, communication and risk costs already captured against this output 
+                double total_missionbudget=0;
+                double total_procurementbudget=0;
+                double total_commsbudget=0;
+                double total_riskbudget=0;
+                
+
+                var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.WPOutput_IdOCVMMain).ToList();
+                foreach (var record in DB_Recs_Missions)
+                {
+                    total_missionbudget=total_missionbudget+record.MobilityCost;
+                }
+
+                //foreach loop for procurment
+                var DB_Recs_Procurement =  _wpProcurementRepository.GetRecordsByOutputId(model.WPOutput_IdOCVMMain).ToList();
+                foreach (var record in DB_Recs_Procurement)
+                {
+                    total_procurementbudget=total_procurementbudget+record.WPProcurementCost;
+                }
+                //foreach loop for comms
+                var DB_Recs_Comms =  _wpCommunicationRepository.GetRecordsByOutputId(model.WPOutput_IdOCVMMain).ToList();
+                foreach (var record in DB_Recs_Comms)
+                {
+                    total_commsbudget=total_commsbudget+record.WPCommsCost;
+                }
+
+                //foreach loop for risk
+                var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOCVMMain).ToList();
+                foreach (var record in DB_Recs_Risk)
+                {
+                    total_riskbudget=total_riskbudget+record.WPRiskCost;
+                }
+
+                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
+    
+
+                if(totalremainingbudget>=model.WPCommsCostOCVMMain)
+                {
+                    WP_Communication rec_to_add_2 = new WP_Communication
+                    {
+                        Transaction_Id=Guid.NewGuid().ToString(),
+                        WPMainRecord_id=model.WPMainRecord_idOCVMMain,
+                        Project_Id=model.Project_IdOCVMMain,
+                        FiscalYear_Id=model.FiscalYear_IdOCVMMain,
+                        Period_Id=model.Period_IdOCVMMain,
+                        WPOutput_Id=model.WPOutput_IdOCVMMain,
+                        WPComms_Description=model.WPComms_DescriptionOCVMMain,
+                        WPCommsChannel_Id=model.WPCommsChannel_IdOCVMMain,
+                        WPComms_AdditionalNotes=model.WPComms_AdditionalNotesOCVMMain,
+                        WPCommsStartDate=new LocalDate(model.WPCommsStartDateOCVMMain.Year, model.WPCommsStartDateOCVMMain.Month,model.WPCommsStartDateOCVMMain.Day),
+                        WPCommsEndDate=new LocalDate(model.WPCommsEndDateOCVMMain.Year, model.WPCommsEndDateOCVMMain.Month,model.WPCommsEndDateOCVMMain.Day),
+                        WPCommsCost=model.WPCommsCostOCVMMain,
+                        TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                    };
+
+                    _wpCommunicationRepository.Add(rec_to_add_2);
+
+                }
+                else
+                {
+                    return Json(new { rtnmsg = "insufficientfunds", remainfunds= totalremainingbudget.ToString()});
+
+                }
+                return Json(new { rtnmsg = "success", remainfunds= totalremainingbudget.ToString() });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error", remainfunds= totalremainingbudget.ToString() });
+            }
+             
+
+
+
+
+        }
+
 
 
 
@@ -9300,6 +10054,9 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
         }
+
+
+
 
         [HttpPost]
         public ActionResult AddOutputActivityGantt(WP_OutputActivitiesVM model)
@@ -9768,10 +10525,114 @@ namespace AUDANEPAD_Integrated.Controllers
                         rec_set.WPProcurement_AdditionalNotes=model.WPProcurement_AdditionalNotesOPVMMain;
                         rec_set.WPProcurementStartDate=new LocalDate(model.ProcurementStartDateOPVMMain.Year, model.ProcurementStartDateOPVMMain.Month,model.ProcurementStartDateOPVMMain.Day);
                         rec_set.WPProcurementEndDate=new LocalDate(model.ProcurementEndDateOPVMMain.Year, model.ProcurementEndDateOPVMMain.Month,model.ProcurementEndDateOPVMMain.Day);
+                        rec_set.WPTORSubmissionDate=new LocalDate(model.WPTORSubmissionDateOPVMMain.Year, model.WPTORSubmissionDateOPVMMain.Month,model.WPTORSubmissionDateOPVMMain.Day);
+                        rec_set.WPContractStartDate=new LocalDate(model.WPContractStartDateOPVMMain.Year, model.WPContractStartDateOPVMMain.Month,model.WPContractStartDateOPVMMain.Day);
                         rec_set.WPProcurementCost=model.ProcurementCostOPVMMain;
                         rec_set.TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
                     
                         _wpProcurementRepository.Update(rec_set);
+
+                    }
+                    else
+                    {
+                        return Json(new { rtnmsg = "insufficientfunds", remainfunds= totalremainingbudget.ToString()});
+
+                    }
+
+                    
+
+                }
+              
+                return Json(new { rtnmsg = "success", remainfunds= totalremainingbudget.ToString() });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error", remainfunds= totalremainingbudget.ToString() });
+            }
+
+        }
+
+        [HttpPost]
+        public ActionResult EditOutputCommunication(WP_OutputCommunicationVMWindow model)
+        {
+            double totalremainingbudget=0;
+            try
+            {
+                                  
+
+                //Check SAP Link Details and Update Total Budget
+                
+                WP_Communication rec_set=_wpCommunicationRepository.GetRecord(model.Transaction_IdOCVMMain);
+            //    WP_OutputBudget recbudget=_wpOutputBudgetRepository.GetRecordsByProjectYearPeriodAndOutputId(model.Project_IdOAVMMain, model.FiscalYear_IdOAVMMain, model.Period_IdOAVMMain, model.WPOutput_IdOAVMMain);
+                WP_Outputs recoutputrecord=_wpOutputsRepository.GetRecord(model.WPOutput_IdOCVMMain);
+
+                if(rec_set!=null)
+                {
+ 
+
+                    //Get the total budget for the output
+                    var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.WPOutput_IdOCVMMain);
+                    double total_outputbudget=0;
+                    foreach (var record in DB_Recs_Activities)
+                    {
+                        total_outputbudget=total_outputbudget+record.ActivityCost;
+                    }
+
+                    //Get all mission, procurement, communication and risk costs already captured against this output 
+                    double total_missionbudget=0;
+                    double total_procurementbudget=0;
+                    double total_commsbudget=0;
+                    double total_riskbudget=0;
+                    
+
+                    var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.WPOutput_IdOCVMMain);
+                    foreach (var record in DB_Recs_Missions)
+                    {
+                        total_missionbudget=total_missionbudget+record.MobilityCost;
+                    }
+
+                    //foreach loop for procurment
+                    var DB_Recs_Procurement =  _wpProcurementRepository.GetRecordsByOutputId(model.WPOutput_IdOCVMMain).ToList();
+                    foreach (var record in DB_Recs_Procurement)
+                    {
+                        total_procurementbudget=total_procurementbudget+record.WPProcurementCost;
+                    }
+                    //foreach loop for comms
+                    var DB_Recs_Comms =  _wpCommunicationRepository.GetRecordsByOutputId(model.WPOutput_IdOCVMMain).ToList();
+                    foreach (var record in DB_Recs_Comms)
+                    {
+                        total_commsbudget=total_commsbudget+record.WPCommsCost;
+                    }
+
+                    //foreach loop for risk
+                    var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOCVMMain).ToList();
+                    foreach (var record in DB_Recs_Risk)
+                    {
+                        total_riskbudget=total_riskbudget+record.WPRiskCost;
+                    }
+
+
+                    totalremainingbudget=(total_outputbudget+rec_set.WPCommsCost)-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
+
+                
+
+                    if(totalremainingbudget>=model.WPCommsCostOCVMMain)
+                    {
+
+                        rec_set.WPMainRecord_id=model.WPMainRecord_idOCVMMain;
+                        rec_set.Project_Id=model.Project_IdOCVMMain;
+                        rec_set.FiscalYear_Id=model.FiscalYear_IdOCVMMain;
+                        rec_set.Period_Id=model.Period_IdOCVMMain;
+                        rec_set.WPOutput_Id=model.WPOutput_IdOCVMMain;
+                        rec_set.WPComms_Description=model.WPComms_DescriptionOCVMMain;
+                        rec_set.WPCommsChannel_Id=model.WPCommsChannel_IdOCVMMain;
+                        rec_set.WPComms_AdditionalNotes=model.WPComms_AdditionalNotesOCVMMain;
+                        rec_set.WPCommsStartDate=new LocalDate(model.WPCommsStartDateOCVMMain.Year, model.WPCommsStartDateOCVMMain.Month,model.WPCommsStartDateOCVMMain.Day);
+                        rec_set.WPCommsEndDate=new LocalDate(model.WPCommsEndDateOCVMMain.Year, model.WPCommsEndDateOCVMMain.Month,model.WPCommsEndDateOCVMMain.Day);
+                        rec_set.WPCommsCost=model.WPCommsCostOCVMMain;
+                        rec_set.TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                    
+                        _wpCommunicationRepository.Update(rec_set);
 
                     }
                     else
@@ -13183,6 +14044,43 @@ namespace AUDANEPAD_Integrated.Controllers
                     {
                             DropDown_IntId = fetched_rec.Record_Id,
                             DropDown_Name = fetched_rec.Record_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+
+                }
+            }
+
+            return Json(collection_recs.ToList());
+
+        }
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetAllTransCommunicationChannels()
+        {
+
+
+           var recs =  _transCommsChannelRepository.GetAllTrans_CommsChannel().ToList();
+
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                    LkUp_CommsChannel fetched_rec=_lkupCommsChannelRepository.GetCommsChannel(rec.CommsChannel_Id);
+
+
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = fetched_rec.CommsChannel_Id,
+                            DropDown_Name = fetched_rec.CommsChannel_Name
                     };
                     // EmployeeDropDownViewModel me = DB_Employees[_count];
                     collection_recs.Add(srec);

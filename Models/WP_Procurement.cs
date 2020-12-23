@@ -20,8 +20,13 @@ namespace AUDANEPAD_Integrated.Models
          public int  WPProcurementLeadTime_Id { get; set; }
         public LocalDate WPProcurementStartDate { get; set; }
         public LocalDate WPProcurementEndDate { get; set; }
+
+        public LocalDate WPTORSubmissionDate { get; set; }
+        public LocalDate WPContractStartDate { get; set; }
         public double  WPProcurementCost { get; set; }
         public string WPProcurement_AdditionalNotes { get; set; }
+
+        public string WPProcurement_SourceOfFundsDescr { get; set; }
         public LocalDate TransactionDate { get; set; }
         
     }

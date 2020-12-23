@@ -105,7 +105,7 @@
                                         <li><a href="#defaultStep4">Procurement<br /><small>Procurement Plan</small></a></li>
                                         <li><a href="#defaultStep5">Communication<br /><small>Communication Plan</small></a></li>
                                         <li><a href="#defaultStep6">Risk<br /><small>Risk Profile</small></a></li>
-                                        <li><a href="#defaultStep7">Submit<br /><small>Review &#38; Submit</small></a></li>
+                                        <li><a href="#defaultStep7">Review<br /><small>Review</small></a></li>
                                     </ul>
 
                                     <div class="card-body">
@@ -557,59 +557,109 @@
                                                             <br \>
                                         </div>
                                         <div id="defaultStep4">
-                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">8</span>  What are the procurements required to deliver the outputs?  <a href="javascript:void(0)" onclick="GenerateMobilityGanntt()" title="View Mobility Gantt Chart"><i class="k-icon k-i-saturation"></i></a> &nbsp; &nbsp;<a href="javascript:void(0)" onclick="GenerateProcurementPDFClick()" title="View Procurement Plan"><i class="k-icon k-i-file-pdf"></i></a></h6> 
+                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">8</span>  What are the procurements required to deliver the outputs?  <a href="javascript:void(0)" onclick="GenerateProcurementGanntt()" title="View Procurement Gantt Chart"><i class="k-icon k-i-saturation"></i></a> &nbsp; &nbsp;<a href="javascript:void(0)" onclick="GenerateProcurementPDFClick()" title="View Procurement Plan"><i class="k-icon k-i-file-pdf"></i></a></h6> 
                                               <div style="padding-left: 2em;">
-                                                @(Html.Kendo().Grid<WorkplansViewModel>()
-                                                        .Name("grid_outputprocurement")
-                                                        .Columns(columns =>
-                                                        {
-                                                            columns.Bound(c => c.Transaction_Id).Hidden();
-                                                            columns.Bound(c => c.WPMainRecord_Ident).Hidden();
-                                                            columns.Bound(c => c.ProjectId).Hidden();
-                                                            columns.Bound(c => c.FYearIdent).Hidden();
-                                                            columns.Bound(c => c.FPeriodIdent).Hidden();
-                                                            columns.Bound(c => c.ViewNumbering).Title("No").Width(20).Hidden(); 
-                                                            columns.Bound(c => c.Output).Title("Output").HeaderHtmlAttributes(new { @class = "hidden" });
-                                                            //  columns.Bound(c => c.Output_BudgetAmount).Title("Budget Amount").Format("{0:n2}").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { @class = "hidden" });
-                                                            //.HeaderHtmlAttributes(new { @class = "hidden" });
-                                                                                                    
+                                                    @(Html.Kendo().Grid<WorkplansViewModel>()
+                                                            .Name("grid_outputprocurement")
+                                                            .Columns(columns =>
+                                                            {
+                                                                columns.Bound(c => c.Transaction_Id).Hidden();
+                                                                columns.Bound(c => c.WPMainRecord_Ident).Hidden();
+                                                                columns.Bound(c => c.ProjectId).Hidden();
+                                                                columns.Bound(c => c.FYearIdent).Hidden();
+                                                                columns.Bound(c => c.FPeriodIdent).Hidden();
+                                                                columns.Bound(c => c.ViewNumbering).Title("No").Width(20).Hidden(); 
+                                                                columns.Bound(c => c.Output).Title("Output").HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                //  columns.Bound(c => c.Output_BudgetAmount).Title("Budget Amount").Format("{0:n2}").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                //.HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                                        
 
-                                                        
-                                                            columns.Command(command => command.Custom(" Add Procurement").IconClass("k-icon k-i-group-collection").Click("addoutputprocurement").HtmlAttributes(new { style = "border-radius: 12px;" })).Width(200).HeaderHtmlAttributes(new { @class = "hidden" });
-                                                            //columns.Command(command => command.Custom(" Add Indicator").IconClass("k-icon k-i-column-stacked"));
-                                                            //.HeaderHtmlAttributes(new { @class = "hidden" });
                                                             
+                                                                columns.Command(command => command.Custom(" Add Procurement").IconClass("k-icon k-i-group-collection").Click("addoutputprocurement").HtmlAttributes(new { style = "border-radius: 12px;" })).Width(200).HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                //columns.Command(command => command.Custom(" Add Indicator").IconClass("k-icon k-i-column-stacked"));
+                                                                //.HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                
 
-                                                        })
-                                                        
-                                                        
-                                                        .Resizable(r=>r.Columns(true))
-                                                        .ClientDetailTemplateId("templateoutputprocurement")
-                                                        .DataSource(dataSource => dataSource
-                                                            .Ajax()
-                                                            .Read(read => read.Action("WP_Outputs_for_Procurement_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod, periodtxt=Model.FisPeriod}))
-                                                            .Model(model => 
-                                                                {
-                                                                    model.Id(p => p.Transaction_Id);
-                                                                    //model.Field(field => field.LookUp_Status).Editable(false);
-                                                                })
-                                                    
-                                                            // .PageSize(20)
-                                                            .Events(events => events.Error("error_handler"))
-                                                                                
+                                                            })
                                                             
-                                                        )
-                                                        // .Events(events => events.DataBound("dataBoundOutputActMain"))
-                                                        .Events(events => events.DetailExpand("GridExpandedProc").DataBound("ExpandStashedSiteProc").DetailCollapse("GridCollapsedProc"))
-                                        )
-                                        </div>
+                                                            
+                                                            .Resizable(r=>r.Columns(true))
+                                                            .ClientDetailTemplateId("templateoutputprocurement")
+                                                            .DataSource(dataSource => dataSource
+                                                                .Ajax()
+                                                                .Read(read => read.Action("WP_Outputs_for_Procurement_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod, periodtxt=Model.FisPeriod}))
+                                                                .Model(model => 
+                                                                    {
+                                                                        model.Id(p => p.Transaction_Id);
+                                                                        //model.Field(field => field.LookUp_Status).Editable(false);
+                                                                    })
+                                                        
+                                                                // .PageSize(20)
+                                                                .Events(events => events.Error("error_handler"))
+                                                                                    
+                                                                
+                                                            )
+                                                            // .Events(events => events.DataBound("dataBoundOutputActMain"))
+                                                            .Events(events => events.DetailExpand("GridExpandedProc").DataBound("ExpandStashedSiteProc").DetailCollapse("GridCollapsedProc"))
+                                                )
+                                        
+                                            </div>
                                                             
                                                             <br \>
                                                             <br \>
                                         </div>
                                         <div id="defaultStep5">
-                                            <h4 class="pb-2">Communication Plan</h4>
-                                            <div>This functionality has not yet been activated </div>
+                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">9</span>  What are the communication requirements for the outputs?  <a href="javascript:void(0)" onclick="GenerateCommunicationGanntt()" title="View Communication Gantt Chart"><i class="k-icon k-i-saturation"></i></a> &nbsp; &nbsp;<a href="javascript:void(0)" onclick="GenerateCommunicationPDFClick()" title="View Communication Plan"><i class="k-icon k-i-file-pdf"></i></a></h6> 
+                                              <div style="padding-left: 2em;">
+                                                    @(Html.Kendo().Grid<WorkplansViewModel>()
+                                                            .Name("grid_outputcommunication")
+                                                            .Columns(columns =>
+                                                            {
+                                                                columns.Bound(c => c.Transaction_Id).Hidden();
+                                                                columns.Bound(c => c.WPMainRecord_Ident).Hidden();
+                                                                columns.Bound(c => c.ProjectId).Hidden();
+                                                                columns.Bound(c => c.FYearIdent).Hidden();
+                                                                columns.Bound(c => c.FPeriodIdent).Hidden();
+                                                                columns.Bound(c => c.ViewNumbering).Title("No").Width(20).Hidden(); 
+                                                                columns.Bound(c => c.Output).Title("Output").HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                //  columns.Bound(c => c.Output_BudgetAmount).Title("Budget Amount").Format("{0:n2}").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                //.HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                                        
+
+                                                            
+                                                                columns.Command(command => command.Custom(" Add Communication").IconClass("k-icon k-i-group-collection").Click("addoutputcommunication").HtmlAttributes(new { style = "border-radius: 12px;" })).Width(200).HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                //columns.Command(command => command.Custom(" Add Indicator").IconClass("k-icon k-i-column-stacked"));
+                                                                //.HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                
+
+                                                            })
+                                                            
+                                                            
+                                                            .Resizable(r=>r.Columns(true))
+                                                            .ClientDetailTemplateId("templateoutputcommunication")
+                                                            .DataSource(dataSource => dataSource
+                                                                .Ajax()
+                                                                .Read(read => read.Action("WP_Outputs_for_Communication_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod, periodtxt=Model.FisPeriod}))
+                                                                .Model(model => 
+                                                                    {
+                                                                        model.Id(p => p.Transaction_Id);
+                                                                        //model.Field(field => field.LookUp_Status).Editable(false);
+                                                                    })
+                                                        
+                                                                // .PageSize(20)
+                                                                .Events(events => events.Error("error_handler"))
+                                                                                    
+                                                                
+                                                            )
+                                                            // .Events(events => events.DataBound("dataBoundOutputActMain"))
+                                                            .Events(events => events.DetailExpand("GridExpandedComms").DataBound("ExpandStashedSiteComms").DetailCollapse("GridCollapsedComms"))
+                                                )
+                                        
+                                            </div>
+                                                            
+                                            <br \>
+                                            <br \>
+                                        
 
                                         </div>
                                         <div id="defaultStep6">
@@ -747,7 +797,7 @@
                 columns.Bound(o => o.ShowGridButtons).Hidden();
                 columns.Bound(o => o.ActivityTypeName_IdOAVM).Width(110).Title("Activity Type");
                 columns.Bound(o => o.ActivityDescriptionOAVM).Title("Activity Description");
-                columns.Bound(o => o.ActivityCostOAVM).Title("Cost (USD)").Format("{0:n2}").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { style = "text-align:right" }).Width(120);
+                columns.Bound(o => o.ActivityCostOAVM).Title("Budget").Format("{0:n0}").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { style = "text-align:right" }).Width(120);
                 columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("editoutputactivity").Visible("showactbuttons")).HtmlAttributes(new { style = "text-align:center" }).Width(80);
                 columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("deleteoutputactivity").Visible("showactbuttons")).HtmlAttributes(new { style = "text-align:center" }).Width(100);
                 
@@ -808,8 +858,7 @@
                 columns.Bound(o => o.WPProcurement_DescriptionOPVM).Title("Procurement Description");
                 columns.Bound(o => o.WPProcurementType_NameOPVM).Title("Type").Width(200);
                 columns.Bound(o => o.WPProcurementPeriodOPVM).Title("Procurement Period").Width(200);
-                columns.Bound(o => o.WPProcurementLeadTime_NameOPVM).Title("Lead Time").Width(100);
-                columns.Bound(o => o.ProcurementCostOPVM).Title("Budget").Format("{0:n0}").HtmlAttributes(new { style = "text-align:right" });
+                columns.Bound(o => o.ProcurementCostOPVM).Title("Budget").Format("{0:n0}").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { style = "text-align:right" });
 
 
                 columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("editoutputprocurment").Visible("showactbuttons")).HtmlAttributes(new { style = "text-align:center" }).Width(80);
@@ -827,6 +876,39 @@
      
             )
             .Events(events => events.DataBound("dataBoundOutputProcChild"))
+            .ToClientTemplate()
+    )
+</script>
+
+
+<script id="templateoutputcommunication" type="text/kendo-tmpl">
+    @(Html.Kendo().Grid<WP_OutputCommunicationVM>()
+            .Name("gridcommunicationsub_#=Transaction_Id#")
+            .Columns(columns =>
+            {
+                columns.Bound(o => o.Transaction_IdOCVM).Hidden();
+                columns.Bound(o => o.ShowGridButtons).Hidden();
+                columns.Bound(o => o.WPComms_DescriptionOCVM).Title("Communication Description");
+                columns.Bound(o => o.WPCommunicationChannelOCVM).Title("Communication Channel").Width(200);
+                columns.Bound(o => o.WPCommunicationPeriodOCVM).Title("Communication Period").Width(200);
+                columns.Bound(o => o.WPCommsCostOCVM).Title("Budget").Format("{0:n0}").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { style = "text-align:right" });
+
+
+                columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("editoutputcommunication").Visible("showactbuttons")).HtmlAttributes(new { style = "text-align:center" }).Width(80);
+                columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("deleteoutputcommunication").Visible("showactbuttons")).HtmlAttributes(new { style = "text-align:center" }).Width(100);
+               
+                columns.Bound(o => o.Output_ChildGridIdOCVM).Hidden();
+
+            })
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(10)
+                .Read(read => read.Action("WP_OutputsSubCommunication_Read", "Admin", new { output_transid = "#=Transaction_Id#" }))
+              // .Events(events => events.Error("error_handler")
+                                         //  .RequestEnd("onRequestEndOutputActivity"))
+     
+            )
+            .Events(events => events.DataBound("dataBoundOutputCommsChild"))
             .ToClientTemplate()
     )
 </script>
@@ -1098,6 +1180,65 @@
         }
 
     }
+
+    function ExpandStashedSiteComms(e) {
+
+        var grid = e.sender;
+   
+        grid.tbody.find("tr.k-master-row").click(function(e){                           
+            var target = $(e.target);  
+
+            var row = $(this).closest("tr");
+
+            if((target.hasClass("k-i-expand"))||(target.hasClass("k-i-collapse"))){
+                return;
+            }         
+                
+            var row = target.closest("tr.k-master-row");
+            var icon = row.find(".k-i-expand");
+            grid.expandRow(row);
+        });
+
+        //Expand opened rows
+        var grid2 = $("#grid_outputcommunication").data("kendoGrid"); 
+        var data = grid2.dataSource.data();
+        var len = data.length;
+
+
+       // var isFiltered = localStorage.getItem("ExpandedRowId");
+       // alert(isFiltered);
+        for (var i = 0; i < len; i++) {
+            var row2 = data[i];
+            if (row2.Transaction_Id == localStorage.getItem("ExpandedCommsRowId"))  {
+                grid2.expandRow("tr[data-uid='" + row2.uid + "']"); // expands the row with the specific uid
+            }
+        }
+
+        var rows = e.sender.tbody.children();
+        for (var j = 0; j < rows.length; j++) {
+            var row = $(rows[j]);
+            var dataItem = e.sender.dataItem(row);
+            
+           /* var cellIndex_5=5;
+            var cellIndex_6=6;
+            var cellIndex_7=7;*/
+            var cellIndex_8=8;
+
+          /*  var cell_5 = row.find("td:eq(" + cellIndex_5 + ")");
+            var cell_6 = row.find("td:eq(" + cellIndex_6 + ")");
+            var cell_7 = row.find("td:eq(" + cellIndex_7 + ")");*/
+            var cell_8 = row.find("td:eq(" + cellIndex_8 + ")");
+
+
+           /* cell_5.addClass("outputactmaingridcss");
+            cell_6.addClass("outputactmaingridcss");
+            cell_7.addClass("outputactmaingridcss");
+            cell_8.addClass("outputactmaingridcss");
+            cell_8.addClass("budgettotal");*/
+
+        }
+
+    }
     function GridExpandedMob(e) {
         //$.post("@Url.Action("SetExpandedRow", "Admin")", { rowident: e.sender.dataItem(e.masterRow).Transaction_Id });
         localStorage.setItem("ExpandedMobRowId", e.sender.dataItem(e.masterRow).Transaction_Id);
@@ -1107,6 +1248,11 @@
         //$.post("@Url.Action("SetExpandedRow", "Admin")", { rowident: e.sender.dataItem(e.masterRow).Transaction_Id });
         localStorage.setItem("ExpandedProcRowId", e.sender.dataItem(e.masterRow).Transaction_Id);
     }
+
+    function GridExpandedComms(e) {
+        //$.post("@Url.Action("SetExpandedRow", "Admin")", { rowident: e.sender.dataItem(e.masterRow).Transaction_Id });
+        localStorage.setItem("ExpandedCommsRowId", e.sender.dataItem(e.masterRow).Transaction_Id);
+    }
     function GridCollapsedMob(e) {
         //$.post("@Url.Action("SetExpandedRow", "Admin")", { rowident: e.sender.dataItem(e.masterRow).Transaction_Id });
         localStorage.setItem("ExpandedMobRowId", "");
@@ -1114,6 +1260,10 @@
     function GridCollapsedProc(e) {
         //$.post("@Url.Action("SetExpandedRow", "Admin")", { rowident: e.sender.dataItem(e.masterRow).Transaction_Id });
         localStorage.setItem("ExpandedProcRowId", "");
+    }
+    function GridCollapsedComms(e) {
+        //$.post("@Url.Action("SetExpandedRow", "Admin")", { rowident: e.sender.dataItem(e.masterRow).Transaction_Id });
+        localStorage.setItem("ExpandedCommsRowId", "");
     }
  
 
@@ -1284,7 +1434,7 @@
             var cellIndex_5=5;
             var cellIndex_6=6;
             var cellIndex_7=7;
-            var cellIndex_8=8;
+         //   var cellIndex_8=8;
     
 
             var cell_2 = row.find("td:eq(" + cellIndex_2 + ")");
@@ -1293,7 +1443,7 @@
             var cell_5 = row.find("td:eq(" + cellIndex_5 + ")");
             var cell_6 = row.find("td:eq(" + cellIndex_6 + ")");
             var cell_7 = row.find("td:eq(" + cellIndex_7 + ")");
-            var cell_8 = row.find("td:eq(" + cellIndex_8 + ")");
+           // var cell_8 = row.find("td:eq(" + cellIndex_8 + ")");
         
 
             
@@ -1305,7 +1455,7 @@
                 cell_5.addClass("outputactsubgridcss");
                 cell_6.addClass("outputactsubgridcss");
                 cell_7.addClass("outputactsubgridcss");
-                cell_8.addClass("outputactsubgridcss");
+               // cell_8.addClass("outputactsubgridcss");
           
             }
             else
@@ -1316,7 +1466,83 @@
                 cell_5.addClass("outputactsubgridcss_2");
                 cell_6.addClass("outputactsubgridcss_2");
                 cell_7.addClass("outputactsubgridcss_2");
-                cell_8.addClass("outputactsubgridcss_2");
+                //cell_8.addClass("outputactsubgridcss_2");
+           
+
+            }
+            row_alt=ToggleBoolean(row_alt);
+        
+
+       }
+
+
+    }
+
+
+    function dataBoundOutputCommsChild (e) {
+        // iterate the table rows and apply custom row and cell styling
+        var rows = e.sender.tbody.children();
+        for (var j = 0; j < rows.length; j++) 
+        {
+            var row = $(rows[j]);
+            var dataItem = e.sender.dataItem(row);
+
+            var showbut = dataItem.get("ShowGridButtons");
+
+            if (showbut=="NO") {
+                row.addClass("boldclass");
+            }
+
+        }
+
+        var rows = e.sender.tbody.children();
+        var row_alt = true;
+        for (var j = 0; j < rows.length; j++) 
+        {
+            var row = $(rows[j]);
+            var dataItem = e.sender.dataItem(row);
+           
+
+        
+            var cellIndex_2=2;
+            var cellIndex_3=3;
+            var cellIndex_4=4;
+            var cellIndex_5=5;
+            var cellIndex_6=6;
+            var cellIndex_7=7;
+           // var cellIndex_8=8;
+    
+
+            var cell_2 = row.find("td:eq(" + cellIndex_2 + ")");
+            var cell_3 = row.find("td:eq(" + cellIndex_3 + ")");
+            var cell_4 = row.find("td:eq(" + cellIndex_4 + ")");
+            var cell_5 = row.find("td:eq(" + cellIndex_5 + ")");
+            var cell_6 = row.find("td:eq(" + cellIndex_6 + ")");
+            var cell_7 = row.find("td:eq(" + cellIndex_7 + ")");
+         //   var cell_8 = row.find("td:eq(" + cellIndex_8 + ")");
+        
+
+            
+            if(row_alt==false)
+            {
+                cell_2.addClass("outputactsubgridcss");
+                cell_3.addClass("outputactsubgridcss");
+                cell_4.addClass("outputactsubgridcss");
+                cell_5.addClass("outputactsubgridcss");
+                cell_6.addClass("outputactsubgridcss");
+                cell_7.addClass("outputactsubgridcss");
+              //  cell_8.addClass("outputactsubgridcss");
+          
+            }
+            else
+            {
+                cell_2.addClass("outputactsubgridcss_2");
+                cell_3.addClass("outputactsubgridcss_2");
+                cell_4.addClass("outputactsubgridcss_2");
+                cell_5.addClass("outputactsubgridcss_2");
+                cell_6.addClass("outputactsubgridcss_2");
+                cell_7.addClass("outputactsubgridcss_2");
+              //  cell_8.addClass("outputactsubgridcss_2");
            
 
             }
@@ -1867,6 +2093,45 @@ function addoutputprocurement(e) {
 
 }
 
+
+
+function addoutputcommunication(e) {
+
+    e.preventDefault();
+
+
+
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+    var transid = dataItem.Transaction_Id;
+   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
+    
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/NEPADStaff/AddOutputCommunication?transid=" + transid,
+            width: 600,
+            height: 500,
+
+            title: "Add Communication",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+         
+
+}
+
 function editoutputmobility(e) {
 
     e.preventDefault();
@@ -1931,6 +2196,44 @@ function editoutputprocurment(e) {
             height: 500,
 
             title: "Edit Procurement",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+         
+
+}
+
+
+function editoutputcommunication(e) {
+
+    e.preventDefault();
+
+
+
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+    var transid = dataItem.Transaction_IdOCVM;
+   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
+    
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/NEPADStaff/EditOutputCommunication?transid=" + transid,
+            width: 600,
+            height: 500,
+
+            title: "Edit Communication",
             // close: onClose,
             deactivate: function () {
                 this.destroy();
@@ -2317,6 +2620,79 @@ function deleteoutputprocurement(e) {
 
                             var grid_outputmain = $("#grid_outputprocurement").data("kendoGrid"); 
                             grid_outputmain.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_Procurement_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod+ "&periodtxt=" + periodtxt;
+                            grid_outputmain.dataSource.read();
+                            //grid_outputsactivities.refresh();
+
+
+                        },
+                        error: function (data) {
+
+                        }
+                    })
+                    return true;
+                },
+                primary: true
+
+            },
+            { text: 'Cancel' }
+        ],
+        close: onClose
+    });
+
+    dialog.data("kendoDialog").open();
+    undo.fadeOut();
+
+}
+
+function deleteoutputcommunication(e) {
+    e.preventDefault();
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    //var subindicatorid = dataItem.Transaction_IndicatorId;
+    var subrecid = dataItem.Transaction_IdOCVM;
+    var childgridident = dataItem.Output_ChildGridIdOCVM;
+
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+    var periodtxt = $("#FisPeriod").val();  
+
+
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+    dialog.kendoDialog({
+        width: "450px",
+        title: "Confirmation",
+        closable: false,
+        modal: true,
+        content: "<p>Please confirm the DELETE action.<p>",
+        actions: [
+            {
+                text: 'Confirm',
+                action: function (e) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/Admin/WP_OutputsSubCommunication_Delete',     //your action
+                        data: { "subrecid": subrecid},
+                        dataType: 'json',
+                        success: function (result) {
+
+                          //  var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+
+                            var childGrid = $('#gridcommunicationsub_'+childgridident).data("kendoGrid");
+
+                            childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutputsSubCommunication_Read?output_transid=" + childgridident;
+                            childGrid.dataSource.read();
+                            childGrid.refresh();
+
+
+                            var grid_outputmain = $("#grid_outputcommunication").data("kendoGrid"); 
+                            grid_outputmain.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_Communication_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod+ "&periodtxt=" + periodtxt;
                             grid_outputmain.dataSource.read();
                             //grid_outputsactivities.refresh();
 
@@ -3654,6 +4030,156 @@ function GenerateMobilityGanntt() {
 }
 
 
+function GenerateProcurementGanntt() {
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+    var periodtxt = $("#FisPeriod").val();  
+    var empid = $("#Employee_Id").val(); 
+    var dirid = $("#Directorate_Id").val(); 
+    var divid = $("#Division_Id").val(); 
+    var progid = $("#Programme_Id").val();  
+    var mainrecid = $("#WPMainRecordId").val();
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+
+
+
+    if(mainrecid === "" && typeof mainrecid === "string")
+    {
+        $.ajax({
+                    type: "POST",
+                    url: '/Admin/CheckMainWPRecordStatus',     //your action
+                    //data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, selectedrows: JSON.parse( JSON.stringify(models))},
+                    data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "empid": empid, "dirid": dirid, "divid": divid, "progid": progid, "periodtxt": periodtxt},
+                    dataType: 'json',
+                    success: function (result) {
+                        var response = result.rtnmsg;
+
+                        if (response == "recordfound") {
+                            //window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+                            var url="/NEPADStaff/WorkplanProcurementGanttChart?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+                            redirect_blank(url);
+                        }
+                        else if(response == "norecord")
+                        {
+
+                            dialog.kendoDialog({
+                                width: "300px",
+                                title: "No Outcome or MTP",
+                                closable: false,
+                                modal: true,
+                                content: "<p>Please define at least one outcome or link an MTP Priority to the workplan<p>",
+                                actions: [
+                                    { text: 'Ok' }
+                                ],
+                                close: onClose
+                            });
+
+                            dialog.data("kendoDialog").open();
+                            undo.fadeOut();
+                        }
+
+                    },
+                    error: function (data) {
+                                
+                    }
+                })
+
+
+    }
+    else
+    {
+        // window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+        var url="/NEPADStaff/WorkplanProcurementGanttChart?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+        redirect_blank(url);
+    }
+
+
+ 
+}
+
+function GenerateCommunicationGanntt() {
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+    var periodtxt = $("#FisPeriod").val();  
+    var empid = $("#Employee_Id").val(); 
+    var dirid = $("#Directorate_Id").val(); 
+    var divid = $("#Division_Id").val(); 
+    var progid = $("#Programme_Id").val();  
+    var mainrecid = $("#WPMainRecordId").val();
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+
+
+
+    if(mainrecid === "" && typeof mainrecid === "string")
+    {
+        $.ajax({
+                    type: "POST",
+                    url: '/Admin/CheckMainWPRecordStatus',     //your action
+                    //data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, selectedrows: JSON.parse( JSON.stringify(models))},
+                    data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "empid": empid, "dirid": dirid, "divid": divid, "progid": progid, "periodtxt": periodtxt},
+                    dataType: 'json',
+                    success: function (result) {
+                        var response = result.rtnmsg;
+
+                        if (response == "recordfound") {
+                            //window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+                            var url="/NEPADStaff/WorkplanCommunicationGanttChart?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+                            redirect_blank(url);
+                        }
+                        else if(response == "norecord")
+                        {
+
+                            dialog.kendoDialog({
+                                width: "300px",
+                                title: "No Outcome or MTP",
+                                closable: false,
+                                modal: true,
+                                content: "<p>Please define at least one outcome or link an MTP Priority to the workplan<p>",
+                                actions: [
+                                    { text: 'Ok' }
+                                ],
+                                close: onClose
+                            });
+
+                            dialog.data("kendoDialog").open();
+                            undo.fadeOut();
+                        }
+
+                    },
+                    error: function (data) {
+                                
+                    }
+                })
+
+
+    }
+    else
+    {
+        // window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+        var url="/NEPADStaff/WorkplanCommunicationGanttChart?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+        redirect_blank(url);
+    }
+
+
+ 
+}
+
 function GenerateMobilityPDFClick() {
     var projid = $("#Project_Id").val();  
     var fyear = $("#FYear").val();  
@@ -3797,6 +4323,81 @@ function GenerateProcurementPDFClick() {
     {
         // window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
         var url="/NEPADStaff/WorkplanDraftProcurementPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+        redirect_blank(url);
+    }
+
+
+ 
+}
+
+function GenerateCommunicationPDFClick() {
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+    var periodtxt = $("#FisPeriod").val();  
+    var empid = $("#Employee_Id").val(); 
+    var dirid = $("#Directorate_Id").val(); 
+    var divid = $("#Division_Id").val(); 
+    var progid = $("#Programme_Id").val();  
+    var mainrecid = $("#WPMainRecordId").val();
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+
+
+
+    if(mainrecid === "" && typeof mainrecid === "string")
+    {
+        $.ajax({
+                    type: "POST",
+                    url: '/Admin/CheckMainWPRecordStatus',     //your action
+                    //data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, selectedrows: JSON.parse( JSON.stringify(models))},
+                    data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "empid": empid, "dirid": dirid, "divid": divid, "progid": progid, "periodtxt": periodtxt},
+                    dataType: 'json',
+                    success: function (result) {
+                        var response = result.rtnmsg;
+
+                        if (response == "recordfound") {
+                            //window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+                            var url="/NEPADStaff/WorkplanDraftCommunicationPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+                            redirect_blank(url);
+                        }
+                        else if(response == "norecord")
+                        {
+
+                            dialog.kendoDialog({
+                                width: "300px",
+                                title: "No Outcome or MTP",
+                                closable: false,
+                                modal: true,
+                                content: "<p>Please define at least one outcome or link an MTP Priority to the workplan<p>",
+                                actions: [
+                                    { text: 'Ok' }
+                                ],
+                                close: onClose
+                            });
+
+                            dialog.data("kendoDialog").open();
+                            undo.fadeOut();
+                        }
+
+                    },
+                    error: function (data) {
+                                
+                    }
+                })
+
+
+    }
+    else
+    {
+        // window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+        var url="/NEPADStaff/WorkplanDraftCommunicationPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
         redirect_blank(url);
     }
 
@@ -4731,6 +5332,93 @@ function onRequestEndOutputActivity(e){
  
 
 /* End  AUDA-NEPAD Outputs Procurement  Grid CSS*/
+
+
+/* Begin  AUDA-NEPAD Outputs Communication Grid CSS*/
+
+#grid_outputcommunication tr.k-alt {
+    background-color: #fff ;
+    }
+
+    #grid_outputcommunication td {
+    border-style: solid;
+    /*border-width: 0px 0px 1px 0px;*/
+    border-width: 0px ;
+    padding: .4em .6em;
+    overflow: hidden;
+    line-height: 1.6em;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    }
+
+     #grid_outputcommunication tr.k-alt.k-state-selected {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+
+    #grid_outputcommunication tr.k-state-selected  {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+    #grid_outputcommunication tr:hover {
+        background-color:  transparent;
+        
+    }
+    #grid_outputcommunication tr.k-state-selected:hover {
+        background-color: transparent;
+    }
+    #grid_outputcommunication tr.k-alt:hover {
+        background-color:  transparent;
+        
+    }
+    #grid_outputcommunication tr.k-alt.k-state-selected:hover {
+        background-color: transparent;
+    }
+    
+    #grid_outputcommunication>.k-grid-header tr, .hidden{
+        height: 0;
+        border-bottom-width: 0;
+        visibility: hidden;
+        overflow: hidden;
+        display: none;
+    }
+    .k-hierarchy-cell.k-header
+    {
+        height: 0;
+        border-bottom-width: 0;
+        visibility: hidden;
+        overflow: hidden;
+        display: none;
+
+
+    }
+    #grid_outputcommunication {
+        border-color: #ffffff;
+    }
+
+
+    /****Sub Grids******/
+
+
+    div[name^='gridcommunicationsub_'] td {
+        border-style: solid;
+    /* border-width: 1px 0px 0px 1px;*/
+        border-top-width: 1px ;
+        padding: .4em .6em;
+        overflow: hidden;
+        line-height: 1.6em;
+        vertical-align: middle;
+        text-overflow: ellipsis;
+    }
+
+
+ 
+
+/* End  AUDA-NEPAD Outputs Communication  Grid CSS*/
 
 
 

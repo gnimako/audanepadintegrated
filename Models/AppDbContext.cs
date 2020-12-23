@@ -674,6 +674,15 @@ namespace AUDANEPAD_Integrated.Models
             .Property(e => e.WPProcurementEndDate)
             .HasConversion(localDateConverter);
 
+
+            modelBuilder.Entity<WP_Procurement>()
+            .Property(e => e.WPTORSubmissionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_Procurement>()
+            .Property(e => e.WPContractStartDate)
+            .HasConversion(localDateConverter);
+
             modelBuilder.Entity<WP_Procurement>()
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);

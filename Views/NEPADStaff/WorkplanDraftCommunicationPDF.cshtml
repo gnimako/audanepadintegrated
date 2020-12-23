@@ -1,0 +1,238 @@
+﻿@model EmployeeViewModel
+@{
+    ViewBag.Title = "AUDA-NEPAD Integrated Planning System";
+    Layout = "_NEPADStaffLayout2";
+
+}
+
+
+
+
+<h1 style="font-family: Faktslab;">Workplan: Communication Plan &nbsp;  <a asp-controller="nepadstaff" asp-action="workplancommunicationreportpdf" asp-route-id="@Model.WPMainRecordId" title="Download Communication Plan"><i class="k-icon k-i-download"></i></a></h1>
+
+
+<div class="separator-breadcrumb border-top"></div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card mb-5">
+                            <div class="card-body">
+                                <form id="addformmain2">
+                                     <input hidden asp-for="WPMainRecordId" class="k-textbox" style="width:100%" value="@Model.WPMainRecordId">
+
+                                    <iframe runat="server" id="iframepdf" height="700" width=100% frameBorder="0" src="@Url.Action("GenerateDrateCommunicationReportPDF","NEPADStaff", new {id=Model.WPMainRecordId})"> </iframe>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+<div id="getstaffwindow">
+</div>
+<div id="windowstaff"></div>
+<div id="staffposwindow"></div>
+
+
+<div id="windowstaff2"></div>
+<div id="staffposwindow2"></div>
+
+<div id="windowstaffpos">
+</div>
+
+<div id="example">
+    <div id="dialog">
+    </div>
+    <div id="undo">
+    </div>
+</div>
+<script id="customaddbutton" type="text/x-kendo-template">
+<a class="k-button" href="" onclick="return toolbar_click()">Add Activity</a>
+</script>
+
+<script>
+function toolbar_click() {
+
+    var transid = $("#WPMainRecordId").val(); 
+   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+    
+    if(transid === "" && typeof transid === "string")
+    {
+        
+            dialog.kendoDialog({
+                width: "300px",
+                title: "No Outcome and/or Output",
+                closable: false,
+                modal: true,
+                content: "<p>Please define (1) at least one outcome or link an MTP Priority to the workplan and (2) at least one output<p>",
+                actions: [
+                    { text: 'Ok' }
+                ],
+                close: onClose
+            });
+
+            dialog.data("kendoDialog").open();
+            undo.fadeOut();
+
+
+    }
+    else{
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/NEPADStaff/AddOutputActivityGantt?transid=" + transid,
+            width: 600,
+            height: 600,
+
+            title: "Add an Output Activity",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+    }
+
+    return false;
+}
+</script>
+
+<script id="edit-template" type="text/x-kendo-template">
+  <div class="k-edit-form-container">
+
+     # if (summary) { #
+        <div class="k-edit-label">
+            <label for="title">Output: </label>
+        </div>
+
+         # } else { #
+        <div class="k-edit-label">
+            <label for="title">Activity: </label>
+        </div>
+
+          # }#
+        <div data-container-for="title" class="k-edit-field">
+            <textarea id="title" name="title" rows="3" style = "width: 100%;" class="k-textbox" disabled />
+        </div>
+        <br \>
+        <br \>
+        <div class="k-edit-label">
+            <label for="start">Start: </label>
+        </div>
+        <div data-container-for="start" class="k-edit-field">
+            <input data-role="datetimepicker" name="start" />
+        </div>
+
+        <div class="k-edit-label">
+            <label for="end">End: </label>
+        </div>
+        <div data-container-for="end" class="k-edit-field">
+            <input data-role="datetimepicker" name="end" />
+        </div>
+   # if (!summary) { #
+
+        <div class="k-edit-label">
+            <label for="percentComplete">Complete: </label>
+        </div>
+        <div data-container-for="percentComplete" class="k-edit-field">
+            <input type="text" id="percentComplete" name="percentComplete" title="Complete" required="required" autocomplete="off" min="0" max="1" step="0.01" data-type="number" data-bind="value:percentComplete" data-role="numerictextbox" role="spinbutton" aria-valuemin="0" aria-valuemax="1" class="k-input" style="display: none;" aria-disabled="false">
+        </div>
+
+      # } #
+
+
+
+   </div>
+</script>
+
+
+<script type="text/javascript">
+    function onUpdateCreate(e) {
+        e.End = e.End.toISOString();
+        e.Start = e.Start.toISOString();
+    }
+</script>
+
+
+<style>
+
+    .k-gantt-create{
+    visibility: hidden;
+}
+    /*Page Template for the exported PDF */
+    .page-template {
+        font-family: "DejaVu Sans", "Arial", sans-serif;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+
+        .page-template .header {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            right: 30px;
+            border-bottom: 1px solid #888;
+            color: #888;
+        }
+
+        .page-template .footer {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+            border-top: 1px solid #888;
+            text-align: center;
+            color: #888;
+        }
+
+        .page-template .watermark {
+            font-weight: bold;
+            font-size: 400%;
+            text-align: center;
+            margin-top: 30%;
+            color: #aaaaaa;
+            opacity: 0.1;
+            transform: rotate(-35deg) scale(1.7, 1.5);
+        }
+
+    /* Content styling */
+    .customer-photo {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-size: 32px 35px;
+        background-position: center center;
+        vertical-align: middle;
+        line-height: 32px;
+        box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0,0,0,.2);
+        margin-left: 5px;
+    }
+
+    .customer-name {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 32px;
+        padding-left: 3px;
+    }
+</style>
