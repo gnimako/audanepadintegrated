@@ -6509,6 +6509,83 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
         
+        public ActionResult WP_Outputs_for_RiskProfile_Read([DataSourceRequest]DataSourceRequest request, string projid, string fyear, string fperiod, string periodtxt)
+        {
+
+
+            List<WorkplansViewModel> collection_recs = new List<WorkplansViewModel>();
+            WP_MainRecord wp_mainrec_check=null;
+
+            if(Int32.Parse(fperiod)==8)
+            {
+                var DB_Records8 =  _wpMainRecordRepository.GetRecordsByProjectYearAndPeriodRecs(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+                int _countrecs =  DB_Records8.Count();
+                if(_countrecs>0)
+                {
+                    foreach (var rec_set in DB_Records8)
+                    {
+                        DateTime pstart=new DateTime(rec_set.PeriodStartDate.Year, rec_set.PeriodStartDate.Month, rec_set.PeriodStartDate.Day);
+                        DateTime pend=new DateTime(rec_set.PeriodEndDate.Year, rec_set.PeriodEndDate.Month, rec_set.PeriodEndDate.Day);
+                        string periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+                        if(periodinmain==periodtxt)
+                            wp_mainrec_check=rec_set;
+                    }
+                }
+
+            }
+            else
+            {
+                wp_mainrec_check=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+            }
+
+           var DB_Recs =  _wpOutputsRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod)).ToList();
+            //var DB_Recs =  _wpOutputBudgetRepository.GetRecordsByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod)).ToList();
+
+            if(wp_mainrec_check!=null)
+                DB_Recs=_wpOutputsRepository.GetRecordsByMainRecordId(wp_mainrec_check.Transaction_Id).ToList();
+            else
+                DB_Recs=_wpOutputsRepository.GetRecordsByMainRecordId("Null").ToList();
+
+            int _count =  DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+                    var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(rec.Transaction_Id);
+                    double total_budget=0;
+                    foreach (var record in DB_Recs_Activities)
+                    {
+                        total_budget=total_budget+record.ActivityCost;
+
+                    }
+
+                    WorkplansViewModel srec1 = new WorkplansViewModel
+                    {
+                        Transaction_Id = rec.Transaction_Id,
+                        WPMainRecord_Ident=rec.WPMainRecord_id,
+                        Output=rec.Output,
+                        Output_BudgetAmount= total_budget,
+                        TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                    };
+
+
+                    collection_recs.Add(srec1);
+                    
+
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+        
+
+
 
         [HttpPost]
         public ActionResult SetExpandedRow(string rowident)
@@ -7047,6 +7124,57 @@ namespace AUDANEPAD_Integrated.Controllers
                         ShowGridButtons="YES",
 
                         TransactionDateOCVM= new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                    };
+
+                 
+
+                    collection_recs.Add(srec);
+                }
+
+
+
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+
+        public ActionResult WP_OutputsSubRiskProfile_Read([DataSourceRequest]DataSourceRequest request, string output_transid)
+        {
+
+
+            List<WP_OutputRiskProfileVM> collection_recs = new List<WP_OutputRiskProfileVM>();
+
+           // WP_MainRecord wp_mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+
+            var DB_Recs =  _wpRiskProfileRepository.GetRecordsByOutputId(output_transid);
+
+            int _count =  DB_Recs.Count();
+        
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+
+          
+   
+                    WP_OutputRiskProfileVM srec = new WP_OutputRiskProfileVM
+                    {
+                        Transaction_IdORVM=rec.Transaction_Id,
+                        Output_ChildGridIdORVM=rec.WPOutput_Id,
+                        WPRisk_DescriptionORVM=rec.WPRisk_Description,
+                        WPCategory_NameORVM=_lkupRiskCategoryRepository.GetRecord(rec.WPCategory_Id).Record_Name,
+                        WPRiskImpactLevel_NameORVM=_lkupRiskImpactRepository.GetRecord(rec.WPRiskImpactLevel_Id).Record_Name,
+                        WPRiskCostORVM = rec.WPRiskCost,
+
+
+                        ShowGridButtons="YES",
+
+                        TransactionDateORVM= new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
                     };
 
                  
@@ -8650,6 +8778,42 @@ namespace AUDANEPAD_Integrated.Controllers
             }
         }
 
+
+        [HttpPost]
+        public ActionResult WP_OutputsSubRiskProfile_Delete(string subriskprofileid)
+        {
+            // var user = await userManager.GetUserAsync(HttpContext.User);
+            try
+            {
+
+                //Delete Risk Profile Countries
+                var _records =  _wpRiskProfileCountriesRepository.GetRecordsByRiskId(subriskprofileid);
+                foreach (var record in _records)
+                {
+                    _wpRiskProfileCountriesRepository.Delete(record.Transaction_Id);
+                }
+
+        
+
+                //Now Delete Risk Profile record
+                WP_RiskProfile _rec=_wpRiskProfileRepository.GetRecord(subriskprofileid);
+                
+                if (_rec != null)
+                {
+                    _wpRiskProfileRepository.Delete(_rec.Transaction_Id);
+
+                } 
+
+
+
+                 return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+        }
+
         [HttpPost]
         public ActionResult WP_OutputsSubProcurement_Delete(string subrecid)
         {
@@ -9494,7 +9658,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 double total_missionbudget=0;
                 double total_procurementbudget=0;
                 double total_commsbudget=0;
-                double total_riskbudget=0;
+               // double total_riskbudget=0;
                 
 
                 var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.Transaction_IdOMVMMain).ToList();
@@ -9517,13 +9681,13 @@ namespace AUDANEPAD_Integrated.Controllers
                 }
 
                 //foreach loop for risk
-                var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.Transaction_IdOMVMMain).ToList();
-                foreach (var record in DB_Recs_Risk)
-                {
-                    total_riskbudget=total_riskbudget+record.WPRiskCost;
-                }
+                // var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.Transaction_IdOMVMMain).ToList();
+                // foreach (var record in DB_Recs_Risk)
+                // {
+                //     total_riskbudget=total_riskbudget+record.WPRiskCost;
+                // }
 
-                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
+                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget);
     
 
                 if(totalremainingbudget>=model.MobilityCostOMVMMain)
@@ -9590,7 +9754,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 double total_missionbudget=0;
                 double total_procurementbudget=0;
                 double total_commsbudget=0;
-                double total_riskbudget=0;
+               //double total_riskbudget=0;
                 
 
                 var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.Transaction_IdOPVMMain).ToList();
@@ -9613,13 +9777,13 @@ namespace AUDANEPAD_Integrated.Controllers
                 }
 
                 //foreach loop for risk
-                var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.Transaction_IdOPVMMain).ToList();
-                foreach (var record in DB_Recs_Risk)
-                {
-                    total_riskbudget=total_riskbudget+record.WPRiskCost;
-                }
+                // var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.Transaction_IdOPVMMain).ToList();
+                // foreach (var record in DB_Recs_Risk)
+                // {
+                //     total_riskbudget=total_riskbudget+record.WPRiskCost;
+                // }
 
-                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
+                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget);
     
 
                 if(totalremainingbudget>=model.ProcurementCostOPVMMain)
@@ -9687,7 +9851,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 double total_missionbudget=0;
                 double total_procurementbudget=0;
                 double total_commsbudget=0;
-                double total_riskbudget=0;
+               // double total_riskbudget=0;
                 
 
                 var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.Transaction_IdOCVMMain).ToList();
@@ -9710,13 +9874,13 @@ namespace AUDANEPAD_Integrated.Controllers
                 }
 
                 //foreach loop for risk
-                var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.Transaction_IdOCVMMain).ToList();
-                foreach (var record in DB_Recs_Risk)
-                {
-                    total_riskbudget=total_riskbudget+record.WPRiskCost;
-                }
+                // var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.Transaction_IdOCVMMain).ToList();
+                // foreach (var record in DB_Recs_Risk)
+                // {
+                //     total_riskbudget=total_riskbudget+record.WPRiskCost;
+                // }
 
-                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
+                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget);
     
 
                 if(totalremainingbudget>=model.WPCommsCostOCVMMain)
@@ -9762,6 +9926,111 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
 
+
+        [HttpPost]
+        public ActionResult AddOutputRiskProfileNew(WP_OutputRiskProfileVMWindow model)
+        {
+            double totalremainingbudget=0;
+
+            try
+            {
+                                  
+                WP_Outputs recoutputrecord=_wpOutputsRepository.GetRecord(model.Transaction_IdORVMMain);
+
+                //Get the total budget for the output
+                var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.Transaction_IdORVMMain);
+                double total_outputbudget=0;
+                foreach (var record in DB_Recs_Activities)
+                {
+                    total_outputbudget=total_outputbudget+record.ActivityCost;
+                }
+
+                //Get all mission, procurement, communication and risk costs already captured against this output 
+                double total_missionbudget=0;
+                double total_procurementbudget=0;
+                double total_commsbudget=0;
+               // double total_riskbudget=0;
+                
+
+                var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.Transaction_IdORVMMain).ToList();
+                foreach (var record in DB_Recs_Missions)
+                {
+                    total_missionbudget=total_missionbudget+record.MobilityCost;
+                }
+
+                //foreach loop for procurment
+                var DB_Recs_Procurement =  _wpProcurementRepository.GetRecordsByOutputId(model.Transaction_IdORVMMain).ToList();
+                foreach (var record in DB_Recs_Procurement)
+                {
+                    total_procurementbudget=total_procurementbudget+record.WPProcurementCost;
+                }
+                //foreach loop for comms
+                var DB_Recs_Comms =  _wpCommunicationRepository.GetRecordsByOutputId(model.Transaction_IdORVMMain).ToList();
+                foreach (var record in DB_Recs_Comms)
+                {
+                    total_commsbudget=total_commsbudget+record.WPCommsCost;
+                }
+
+                //foreach loop for risk
+                // var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.Transaction_IdORVMMain).ToList();
+                // foreach (var record in DB_Recs_Risk)
+                // {
+                //     total_riskbudget=total_riskbudget+record.WPRiskCost;
+                // }
+
+                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget);
+    
+
+                //if(totalremainingbudget>=model.WPRiskCostORVMMain)
+                //{
+                    WP_RiskProfile rec_to_add_2 = new WP_RiskProfile
+                    {
+                        Transaction_Id=Guid.NewGuid().ToString(),
+                        WPMainRecord_id=model.WPMainRecord_idORVMMain,
+                        Project_Id=model.Project_IdORVMMain,
+                        FiscalYear_Id=model.FiscalYear_IdORVMMain,
+                        Period_Id=model.Period_IdORVMMain,
+                        WPOutput_Id=model.Transaction_IdORVMMain,
+                        WPRisk_Description=model.WPRisk_DescriptionORVMMain,
+                        WPRiskImpactLevel_Id=model.WPRiskImpactLevel_IdORVMMain,
+                        WPRiskProbability_Id=model.WPRiskProbability_IdORVMMain,
+                        WPFrequencyOfReporting_Id=model.WPFrequencyOfReporting_IdORVMMain,
+                        WPCategory_Id=model.WPCategory_IdORVMMain,
+                        WPRiskCost=model.WPRiskCostORVMMain,
+                        WPRiskOwner_Id=model.WPRiskOwner_IdORVMMain,
+                        WPRiskChampion_Id=model.WPRiskChampion_IdORVMMain,
+                        WPRisk_MitigationMeasures=model.WPRisk_MitigationMeasuresORVMMain,
+                        WPRisk_AdditionalNotes=model.WPRisk_AdditionalNotesORVMMain,
+    
+                      
+                        TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                    };
+
+                    _wpRiskProfileRepository.Add(rec_to_add_2);
+
+                // }
+                // else
+                // {
+                //     return Json(new { rtnmsg = "insufficientfunds", remainfunds= totalremainingbudget.ToString()});
+
+                // }
+                return Json(new { rtnmsg = "success", remainfunds= totalremainingbudget.ToString() });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error", remainfunds= totalremainingbudget.ToString() });
+            }
+             
+
+
+
+
+        }
+
+
+
+
+
         [HttpPost]
         public ActionResult AddOutputProcurementGanttNew(WP_OutputProcurementVMWindow model)
         {
@@ -9784,7 +10053,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 double total_missionbudget=0;
                 double total_procurementbudget=0;
                 double total_commsbudget=0;
-                double total_riskbudget=0;
+               // double total_riskbudget=0;
                 
 
                 var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain).ToList();
@@ -9807,13 +10076,13 @@ namespace AUDANEPAD_Integrated.Controllers
                 }
 
                 //foreach loop for risk
-                var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain).ToList();
-                foreach (var record in DB_Recs_Risk)
-                {
-                    total_riskbudget=total_riskbudget+record.WPRiskCost;
-                }
+                // var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain).ToList();
+                // foreach (var record in DB_Recs_Risk)
+                // {
+                //     total_riskbudget=total_riskbudget+record.WPRiskCost;
+                // }
 
-                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
+                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget);
     
 
                 if(totalremainingbudget>=model.ProcurementCostOPVMMain)
@@ -9884,7 +10153,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 double total_missionbudget=0;
                 double total_procurementbudget=0;
                 double total_commsbudget=0;
-                double total_riskbudget=0;
+               // double total_riskbudget=0;
                 
 
                 var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.WPOutput_IdOCVMMain).ToList();
@@ -9907,13 +10176,13 @@ namespace AUDANEPAD_Integrated.Controllers
                 }
 
                 //foreach loop for risk
-                var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOCVMMain).ToList();
-                foreach (var record in DB_Recs_Risk)
-                {
-                    total_riskbudget=total_riskbudget+record.WPRiskCost;
-                }
+                // var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOCVMMain).ToList();
+                // foreach (var record in DB_Recs_Risk)
+                // {
+                //     total_riskbudget=total_riskbudget+record.WPRiskCost;
+                // }
 
-                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
+                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget);
     
 
                 if(totalremainingbudget>=model.WPCommsCostOCVMMain)
@@ -9983,7 +10252,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 double total_missionbudget=0;
                 double total_procurementbudget=0;
                 double total_commsbudget=0;
-                double total_riskbudget=0;
+               // double total_riskbudget=0;
                 
 
                 var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.WPOutput_IdOMVMMain).ToList();
@@ -10006,13 +10275,13 @@ namespace AUDANEPAD_Integrated.Controllers
                 }
 
                 //foreach loop for risk
-                var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOMVMMain).ToList();
-                foreach (var record in DB_Recs_Risk)
-                {
-                    total_riskbudget=total_riskbudget+record.WPRiskCost;
-                }
+                // var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOMVMMain).ToList();
+                // foreach (var record in DB_Recs_Risk)
+                // {
+                //     total_riskbudget=total_riskbudget+record.WPRiskCost;
+                // }
 
-                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
+                totalremainingbudget=total_outputbudget-(total_missionbudget+total_procurementbudget+total_commsbudget);
     
 
                 if(totalremainingbudget>=model.MobilityCostOMVMMain)
@@ -10372,7 +10641,7 @@ namespace AUDANEPAD_Integrated.Controllers
                     double total_missionbudget=0;
                     double total_procurementbudget=0;
                     double total_commsbudget=0;
-                    double total_riskbudget=0;
+                  //  double total_riskbudget=0;
                     
 
                     var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.WPOutput_IdOMVMMain);
@@ -10395,14 +10664,14 @@ namespace AUDANEPAD_Integrated.Controllers
                     }
 
                     //foreach loop for risk
-                    var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOMVMMain).ToList();
-                    foreach (var record in DB_Recs_Risk)
-                    {
-                        total_riskbudget=total_riskbudget+record.WPRiskCost;
-                    }
+                    // var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOMVMMain).ToList();
+                    // foreach (var record in DB_Recs_Risk)
+                    // {
+                    //     total_riskbudget=total_riskbudget+record.WPRiskCost;
+                    // }
 
 
-                    totalremainingbudget=(total_outputbudget+rec_mobility.MobilityCost)-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
+                    totalremainingbudget=(total_outputbudget+rec_mobility.MobilityCost)-(total_missionbudget+total_procurementbudget+total_commsbudget);
 
                 
 
@@ -10477,7 +10746,7 @@ namespace AUDANEPAD_Integrated.Controllers
                     double total_missionbudget=0;
                     double total_procurementbudget=0;
                     double total_commsbudget=0;
-                    double total_riskbudget=0;
+                    //double total_riskbudget=0;
                     
 
                     var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain);
@@ -10500,14 +10769,14 @@ namespace AUDANEPAD_Integrated.Controllers
                     }
 
                     //foreach loop for risk
-                    var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain).ToList();
-                    foreach (var record in DB_Recs_Risk)
-                    {
-                        total_riskbudget=total_riskbudget+record.WPRiskCost;
-                    }
+                    // var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain).ToList();
+                    // foreach (var record in DB_Recs_Risk)
+                    // {
+                    //     total_riskbudget=total_riskbudget+record.WPRiskCost;
+                    // }
 
 
-                    totalremainingbudget=(total_outputbudget+rec_set.WPProcurementCost)-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
+                    totalremainingbudget=(total_outputbudget+rec_set.WPProcurementCost)-(total_missionbudget+total_procurementbudget+total_commsbudget);
 
                 
 
@@ -10582,7 +10851,7 @@ namespace AUDANEPAD_Integrated.Controllers
                     double total_missionbudget=0;
                     double total_procurementbudget=0;
                     double total_commsbudget=0;
-                    double total_riskbudget=0;
+                   // double total_riskbudget=0;
                     
 
                     var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.WPOutput_IdOCVMMain);
@@ -10605,14 +10874,14 @@ namespace AUDANEPAD_Integrated.Controllers
                     }
 
                     //foreach loop for risk
-                    var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOCVMMain).ToList();
-                    foreach (var record in DB_Recs_Risk)
-                    {
-                        total_riskbudget=total_riskbudget+record.WPRiskCost;
-                    }
+                    // var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOCVMMain).ToList();
+                    // foreach (var record in DB_Recs_Risk)
+                    // {
+                    //     total_riskbudget=total_riskbudget+record.WPRiskCost;
+                    // }
 
 
-                    totalremainingbudget=(total_outputbudget+rec_set.WPCommsCost)-(total_missionbudget+total_procurementbudget+total_commsbudget+total_riskbudget);
+                    totalremainingbudget=(total_outputbudget+rec_set.WPCommsCost)-(total_missionbudget+total_procurementbudget+total_commsbudget);
 
                 
 
@@ -10640,6 +10909,113 @@ namespace AUDANEPAD_Integrated.Controllers
                         return Json(new { rtnmsg = "insufficientfunds", remainfunds= totalremainingbudget.ToString()});
 
                     }
+
+                    
+
+                }
+              
+                return Json(new { rtnmsg = "success", remainfunds= totalremainingbudget.ToString() });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error", remainfunds= totalremainingbudget.ToString() });
+            }
+
+        }
+
+
+        [HttpPost]
+        public ActionResult EditOutputRiskProfile(WP_OutputRiskProfileVMWindow model)
+        {
+            double totalremainingbudget=0;
+            try
+            {
+                                  
+
+                //Check SAP Link Details and Update Total Budget
+                
+                WP_RiskProfile rec_set=_wpRiskProfileRepository.GetRecord(model.Transaction_IdORVMMain);
+            //    WP_OutputBudget recbudget=_wpOutputBudgetRepository.GetRecordsByProjectYearPeriodAndOutputId(model.Project_IdOAVMMain, model.FiscalYear_IdOAVMMain, model.Period_IdOAVMMain, model.WPOutput_IdOAVMMain);
+                WP_Outputs recoutputrecord=_wpOutputsRepository.GetRecord(model.WPOutput_IdORVMMain);
+
+                if(rec_set!=null)
+                {
+ 
+
+                    //Get the total budget for the output
+                    var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.WPOutput_IdORVMMain);
+                    double total_outputbudget=0;
+                    foreach (var record in DB_Recs_Activities)
+                    {
+                        total_outputbudget=total_outputbudget+record.ActivityCost;
+                    }
+
+                    //Get all mission, procurement, communication and risk costs already captured against this output 
+                    double total_missionbudget=0;
+                    double total_procurementbudget=0;
+                    double total_commsbudget=0;
+                    //double total_riskbudget=0;
+                    
+
+                    var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.WPOutput_IdORVMMain);
+                    foreach (var record in DB_Recs_Missions)
+                    {
+                        total_missionbudget=total_missionbudget+record.MobilityCost;
+                    }
+
+                    //foreach loop for procurment
+                    var DB_Recs_Procurement =  _wpProcurementRepository.GetRecordsByOutputId(model.WPOutput_IdORVMMain).ToList();
+                    foreach (var record in DB_Recs_Procurement)
+                    {
+                        total_procurementbudget=total_procurementbudget+record.WPProcurementCost;
+                    }
+                    //foreach loop for comms
+                    var DB_Recs_Comms =  _wpCommunicationRepository.GetRecordsByOutputId(model.WPOutput_IdORVMMain).ToList();
+                    foreach (var record in DB_Recs_Comms)
+                    {
+                        total_commsbudget=total_commsbudget+record.WPCommsCost;
+                    }
+
+                    //foreach loop for risk
+                    // var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdORVMMain).ToList();
+                    // foreach (var record in DB_Recs_Risk)
+                    // {
+                    //     total_riskbudget=total_riskbudget+record.WPRiskCost;
+                    // }
+
+
+                    totalremainingbudget=(total_outputbudget+rec_set.WPRiskCost)-(total_missionbudget+total_procurementbudget+total_commsbudget);
+
+                
+
+                    // if(totalremainingbudget>=model.WPRiskCostORVMMain)
+                    // {
+
+                        rec_set.WPMainRecord_id=model.WPMainRecord_idORVMMain;
+                        rec_set.Project_Id=model.Project_IdORVMMain;
+                        rec_set.FiscalYear_Id=model.FiscalYear_IdORVMMain;
+                        rec_set.Period_Id=model.Period_IdORVMMain;
+                        rec_set.WPOutput_Id=model.WPOutput_IdORVMMain;
+                        rec_set.WPRisk_Description=model.WPRisk_DescriptionORVMMain;
+                        rec_set.WPRiskImpactLevel_Id=model.WPRiskImpactLevel_IdORVMMain;
+                        rec_set.WPRiskProbability_Id=model.WPRiskProbability_IdORVMMain;
+                        rec_set.WPFrequencyOfReporting_Id=model.WPFrequencyOfReporting_IdORVMMain;
+                        rec_set.WPCategory_Id=model.WPCategory_IdORVMMain;
+                        rec_set.WPRiskCost=model.WPRiskCostORVMMain;
+                        rec_set.WPRiskOwner_Id=model.WPRiskOwner_IdORVMMain;
+                        rec_set.WPRiskChampion_Id=model.WPRiskChampion_IdORVMMain;
+                        rec_set.WPRisk_MitigationMeasures=model.WPRisk_MitigationMeasuresORVMMain;
+                        rec_set.WPRisk_AdditionalNotes=model.WPRisk_AdditionalNotesORVMMain;
+                        rec_set.TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                    
+                        _wpRiskProfileRepository.Update(rec_set);
+
+                    // }
+                    // else
+                    // {
+                    //     return Json(new { rtnmsg = "insufficientfunds", remainfunds= totalremainingbudget.ToString()});
+
+                    // }
 
                     
 
@@ -11953,6 +12329,82 @@ namespace AUDANEPAD_Integrated.Controllers
                     foreach (var record in records)
                     {
                         _wpMobilityInternalTeamRepository.Delete(record.Transaction_Id);
+                    }
+
+                    returnstring="empty";
+                }
+                
+            }
+
+
+            return Json(new { rtnmsg = returnstring, rtnemp= returnemployee});
+
+        }
+
+
+        [HttpPost]
+        public ActionResult AddWPRiskCountryMultiSelect(string transid, string wpmainrecid, string wpoutputid, string selectkeys)
+        {
+
+           // WP_MainRecord mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod)); _wpMobilityRepository.Add
+
+
+            string returnstring="";
+            string returnemployee="";
+            WP_RiskProfile wp_riskprofile_rec=_wpRiskProfileRepository.GetRecord(transid);
+            WP_MainRecord wpmainrecord=_wpMainRecordRepository.GetRecord(wpmainrecid);
+
+
+
+
+
+            if(wp_riskprofile_rec!=null)
+            {
+                if(selectkeys!=null)
+                {
+                    string[] selectedkeys = selectkeys.Split(',');
+
+
+
+                    //delete all related records GetRecordsByMobilityId
+                    var records =  _wpRiskProfileCountriesRepository.GetRecordsByRiskId(transid);
+                    foreach (var record in records)
+                    {
+                        _wpRiskProfileCountriesRepository.Delete(record.Transaction_Id);
+                    }
+
+
+                    foreach (string recid in selectedkeys)
+                    {
+
+                        WP_RiskProfileCountries rec_to_add = new WP_RiskProfileCountries
+                        {
+                            Transaction_Id= Guid.NewGuid().ToString(),
+                            WPMainRecord_id=wpmainrecid,
+                            Project_Id=wpmainrecord.Project_Id,
+                            FiscalYear_Id=wpmainrecord.FiscalYear_Id,
+                            Period_Id=wpmainrecord.Period_Id,
+                            WPOutput_Id=wpoutputid,
+                            WPRisk_id=transid,
+                            Country_Id=Int32.Parse(recid),
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+                        _wpRiskProfileCountriesRepository.Add(rec_to_add);
+                
+
+                
+                    }
+                    returnstring="success";
+
+                    
+                }
+                else
+                {
+                    //delete all related records
+                    var records =  _wpRiskProfileCountriesRepository.GetRecordsByRiskId(transid);
+                    foreach (var record in records)
+                    {
+                        _wpRiskProfileCountriesRepository.Delete(record.Transaction_Id);
                     }
 
                     returnstring="empty";
@@ -14091,6 +14543,159 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(collection_recs.ToList());
 
         }
+
+
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetAllTransRiskCategories()
+        {
+
+
+           var recs =  _transRiskCategoryRepository.GetAllRecords().ToList();
+
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                    LkUp_RiskCategory fetched_rec=_lkupRiskCategoryRepository.GetRecord(rec.Record_Id);
+
+
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = fetched_rec.Record_Id,
+                            DropDown_Name = fetched_rec.Record_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+
+                }
+            }
+
+            return Json(collection_recs.ToList());
+
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetAllTransImpactLevels()
+        {
+
+
+           var recs =  _transRiskImpactRepository.GetAllRecords().ToList();
+
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                    LkUp_RiskImpact fetched_rec=_lkupRiskImpactRepository.GetRecord(rec.Record_Id);
+
+
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = fetched_rec.Record_Id,
+                            DropDown_Name = fetched_rec.Record_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+
+                }
+            }
+
+            return Json(collection_recs.ToList());
+
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetAllTransProbabilities()
+        {
+
+
+           var recs =  _transRiskProbabilityRepository.GetAllRecords().OrderByDescending(x => x.Record_Id).ToList();
+
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                    LkUp_RiskProbability fetched_rec=_lkupRiskProbabilityRepository.GetRecord(rec.Record_Id);
+
+
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = fetched_rec.Record_Id,
+                            DropDown_Name = fetched_rec.Record_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+
+                }
+            }
+
+            return Json(collection_recs.ToList());
+
+        }
+
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetAllTransRiskReportingFreq()
+        {
+
+
+           var recs =  _transRiskRTimeframeRepository.GetAllRecords().OrderByDescending(x => x.Record_Id).ToList();
+
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                    LkUp_RiskRTimeframe fetched_rec=_lkupRiskRTimeframeRepository.GetRecord(rec.Record_Id);
+
+
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = fetched_rec.Record_Id,
+                            DropDown_Name = fetched_rec.Record_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+
+                }
+            }
+
+            return Json(collection_recs.ToList());
+
+        }
+
+
+
+
 
         [HttpGet]
         [AllowAnonymous]

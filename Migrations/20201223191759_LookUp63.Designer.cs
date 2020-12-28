@@ -3,15 +3,17 @@ using System;
 using AUDANEPAD_Integrated.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace AUDANEPAD_Integrated.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201223191759_LookUp63")]
+    partial class LookUp63
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2719,16 +2721,10 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.Property<string>("WPOutput_Id")
                         .HasColumnType("text");
 
-                    b.Property<int>("WPRiskChampion_Id")
-                        .HasColumnType("integer");
-
                     b.Property<double>("WPRiskCost")
                         .HasColumnType("double precision");
 
                     b.Property<int>("WPRiskImpactLevel_Id")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("WPRiskOwner_Id")
                         .HasColumnType("integer");
 
                     b.Property<int>("WPRiskProbability_Id")
@@ -2738,9 +2734,6 @@ namespace AUDANEPAD_Integrated.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("WPRisk_Description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("WPRisk_MitigationMeasures")
                         .HasColumnType("text");
 
                     b.HasKey("Transaction_Id");

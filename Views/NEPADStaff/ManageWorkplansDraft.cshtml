@@ -283,7 +283,7 @@
                                         <br \>
                                         <br \>
 
-                                        <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">4</span> What is the scope of delivery for this workplan?</h6>
+                                        <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">4</span> What is the coverage of the outcome(s)?</h6>
                                         <br \>
                                         <div style="padding-left: 4em;">
                                             <span class="pb-2" style="color: #000000;"><span class="blacknum">4</span> Continental Coverage  </span>       
@@ -663,14 +663,63 @@
 
                                         </div>
                                         <div id="defaultStep6">
-                                            <h4 class="pb-2">Risk Profile</h4>
-                                            <div>This functionality has not yet been activated</div>
+                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">10</span>  What are the potential risks associated with delivering the outputs? <a href="javascript:void(0)" onclick="GenerateRiskProfilePDFClick()" title="View Risk Profiles"><i class="k-icon k-i-file-pdf"></i></a></h6> 
+                                              <div style="padding-left: 2em;">
+                                                    @(Html.Kendo().Grid<WorkplansViewModel>()
+                                                            .Name("grid_outputriskprofile")
+                                                            .Columns(columns =>
+                                                            {
+                                                                columns.Bound(c => c.Transaction_Id).Hidden();
+                                                                columns.Bound(c => c.WPMainRecord_Ident).Hidden();
+                                                                columns.Bound(c => c.ProjectId).Hidden();
+                                                                columns.Bound(c => c.FYearIdent).Hidden();
+                                                                columns.Bound(c => c.FPeriodIdent).Hidden();
+                                                                columns.Bound(c => c.ViewNumbering).Title("No").Width(20).Hidden(); 
+                                                                columns.Bound(c => c.Output).Title("Output").HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                //  columns.Bound(c => c.Output_BudgetAmount).Title("Budget Amount").Format("{0:n2}").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                //.HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                                                        
+
+                                                            
+                                                                columns.Command(command => command.Custom(" Add Risk").IconClass("k-icon k-i-group-collection").Click("addoutputriskprofile").HtmlAttributes(new { style = "border-radius: 12px;" })).Width(200).HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                //columns.Command(command => command.Custom(" Add Indicator").IconClass("k-icon k-i-column-stacked"));
+                                                                //.HeaderHtmlAttributes(new { @class = "hidden" });
+                                                                
+
+                                                            })
+                                                            
+                                                            
+                                                            .Resizable(r=>r.Columns(true))
+                                                            .ClientDetailTemplateId("templateoutputriskprofile")
+                                                            .DataSource(dataSource => dataSource
+                                                                .Ajax()
+                                                                .Read(read => read.Action("WP_Outputs_for_RiskProfile_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod, periodtxt=Model.FisPeriod}))
+                                                                .Model(model => 
+                                                                    {
+                                                                        model.Id(p => p.Transaction_Id);
+                                                                        //model.Field(field => field.LookUp_Status).Editable(false);
+                                                                    })
+                                                        
+                                                                // .PageSize(20)
+                                                                .Events(events => events.Error("error_handler"))
+                                                                                    
+                                                                
+                                                            )
+                                                            // .Events(events => events.DataBound("dataBoundOutputActMain"))
+                                                            .Events(events => events.DetailExpand("GridExpandedRisks").DataBound("ExpandStashedSiteRisks").DetailCollapse("GridCollapsedRisks"))
+                                                )
+                                        
+                                            </div>
+                                                            
+                                            <br \>
+                                            <br \>
 
                                         </div>
 
                                         <div id="defaultStep7">
-                                            <h4 class="pb-2">Review Workplan and Submit</h4>
-                                            <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">D</span> Outputs and Budget</h6>
+                                            <h4 class="pb-2">Review Workplan for this Project</h4>
+                                            <h6 class="pb-2" style="color: #044a0d;"> This module has not yet been activated</h6>
+                                            @* <h6 class="pb-2" style="color: #044a0d;"><span class="bluenum">D</span> Outputs and Budget</h6>
                                               <div style="padding-left: 4em;">
                                                              @(Html.Kendo().Grid<WorkplansViewModel>()
                                                                             .Name("grid_outputsbudget")
@@ -706,7 +755,7 @@
                                                                             )
                                                                             .Events(evnts => evnts.DataBound("ColorMeBad"))
                                                             )
-                                                    </div>
+                                                    </div> *@
 
                                         </div>
                                     </div>
@@ -909,6 +958,38 @@
      
             )
             .Events(events => events.DataBound("dataBoundOutputCommsChild"))
+            .ToClientTemplate()
+    )
+</script>
+
+<script id="templateoutputriskprofile" type="text/kendo-tmpl">
+    @(Html.Kendo().Grid<WP_OutputRiskProfileVM>()
+            .Name("gridriskprofilesub_#=Transaction_Id#")
+            .Columns(columns =>
+            {
+                columns.Bound(o => o.Transaction_IdORVM).Hidden();
+                columns.Bound(o => o.ShowGridButtons).Hidden();
+                columns.Bound(o => o.WPRisk_DescriptionORVM).Title("Risk Description");
+                columns.Bound(o => o.WPCategory_NameORVM).Title("Risk Category").Width(200);
+                columns.Bound(o => o.WPRiskImpactLevel_NameORVM).Title("Impact Level").Width(200);
+                columns.Bound(o => o.WPRiskCostORVM).Title("Budget").Format("{0:n0}").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { style = "text-align:right" });
+
+
+                columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("editoutputriskprofile").Visible("showactbuttons")).HtmlAttributes(new { style = "text-align:center" }).Width(80);
+                columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("deleteoutputriskprofile").Visible("showactbuttons")).HtmlAttributes(new { style = "text-align:center" }).Width(100);
+               
+                columns.Bound(o => o.Output_ChildGridIdORVM).Hidden();
+
+            })
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(10)
+                .Read(read => read.Action("WP_OutputsSubRiskProfile_Read", "Admin", new { output_transid = "#=Transaction_Id#" }))
+              // .Events(events => events.Error("error_handler")
+                                         //  .RequestEnd("onRequestEndOutputActivity"))
+     
+            )
+            .Events(events => events.DataBound("dataBoundOutputRisksChild"))
             .ToClientTemplate()
     )
 </script>
@@ -1239,6 +1320,65 @@
         }
 
     }
+
+    function ExpandStashedSiteRisks(e) {
+
+        var grid = e.sender;
+   
+        grid.tbody.find("tr.k-master-row").click(function(e){                           
+            var target = $(e.target);  
+
+            var row = $(this).closest("tr");
+
+            if((target.hasClass("k-i-expand"))||(target.hasClass("k-i-collapse"))){
+                return;
+            }         
+                
+            var row = target.closest("tr.k-master-row");
+            var icon = row.find(".k-i-expand");
+            grid.expandRow(row);
+        });
+
+        //Expand opened rows
+        var grid2 = $("#grid_outputriskprofile").data("kendoGrid"); 
+        var data = grid2.dataSource.data();
+        var len = data.length;
+
+
+       // var isFiltered = localStorage.getItem("ExpandedRowId");
+       // alert(isFiltered);
+        for (var i = 0; i < len; i++) {
+            var row2 = data[i];
+            if (row2.Transaction_Id == localStorage.getItem("ExpandedRisksRowId"))  {
+                grid2.expandRow("tr[data-uid='" + row2.uid + "']"); // expands the row with the specific uid
+            }
+        }
+
+        var rows = e.sender.tbody.children();
+        for (var j = 0; j < rows.length; j++) {
+            var row = $(rows[j]);
+            var dataItem = e.sender.dataItem(row);
+            
+           /* var cellIndex_5=5;
+            var cellIndex_6=6;
+            var cellIndex_7=7;*/
+            var cellIndex_8=8;
+
+          /*  var cell_5 = row.find("td:eq(" + cellIndex_5 + ")");
+            var cell_6 = row.find("td:eq(" + cellIndex_6 + ")");
+            var cell_7 = row.find("td:eq(" + cellIndex_7 + ")");*/
+            var cell_8 = row.find("td:eq(" + cellIndex_8 + ")");
+
+
+           /* cell_5.addClass("outputactmaingridcss");
+            cell_6.addClass("outputactmaingridcss");
+            cell_7.addClass("outputactmaingridcss");
+            cell_8.addClass("outputactmaingridcss");
+            cell_8.addClass("budgettotal");*/
+
+        }
+
+    }
     function GridExpandedMob(e) {
         //$.post("@Url.Action("SetExpandedRow", "Admin")", { rowident: e.sender.dataItem(e.masterRow).Transaction_Id });
         localStorage.setItem("ExpandedMobRowId", e.sender.dataItem(e.masterRow).Transaction_Id);
@@ -1253,6 +1393,10 @@
         //$.post("@Url.Action("SetExpandedRow", "Admin")", { rowident: e.sender.dataItem(e.masterRow).Transaction_Id });
         localStorage.setItem("ExpandedCommsRowId", e.sender.dataItem(e.masterRow).Transaction_Id);
     }
+    function GridExpandedRisks(e) {
+        //$.post("@Url.Action("SetExpandedRow", "Admin")", { rowident: e.sender.dataItem(e.masterRow).Transaction_Id });
+        localStorage.setItem("ExpandedRisksRowId", e.sender.dataItem(e.masterRow).Transaction_Id);
+    }
     function GridCollapsedMob(e) {
         //$.post("@Url.Action("SetExpandedRow", "Admin")", { rowident: e.sender.dataItem(e.masterRow).Transaction_Id });
         localStorage.setItem("ExpandedMobRowId", "");
@@ -1265,6 +1409,11 @@
         //$.post("@Url.Action("SetExpandedRow", "Admin")", { rowident: e.sender.dataItem(e.masterRow).Transaction_Id });
         localStorage.setItem("ExpandedCommsRowId", "");
     }
+    function GridCollapsedRisks(e) {
+        //$.post("@Url.Action("SetExpandedRow", "Admin")", { rowident: e.sender.dataItem(e.masterRow).Transaction_Id });
+        localStorage.setItem("ExpandedRisksRowId", "");
+    }
+
  
 
     function dataBoundOutputActChild(e) {
@@ -1480,6 +1629,82 @@
 
 
     function dataBoundOutputCommsChild (e) {
+        // iterate the table rows and apply custom row and cell styling
+        var rows = e.sender.tbody.children();
+        for (var j = 0; j < rows.length; j++) 
+        {
+            var row = $(rows[j]);
+            var dataItem = e.sender.dataItem(row);
+
+            var showbut = dataItem.get("ShowGridButtons");
+
+            if (showbut=="NO") {
+                row.addClass("boldclass");
+            }
+
+        }
+
+        var rows = e.sender.tbody.children();
+        var row_alt = true;
+        for (var j = 0; j < rows.length; j++) 
+        {
+            var row = $(rows[j]);
+            var dataItem = e.sender.dataItem(row);
+           
+
+        
+            var cellIndex_2=2;
+            var cellIndex_3=3;
+            var cellIndex_4=4;
+            var cellIndex_5=5;
+            var cellIndex_6=6;
+            var cellIndex_7=7;
+           // var cellIndex_8=8;
+    
+
+            var cell_2 = row.find("td:eq(" + cellIndex_2 + ")");
+            var cell_3 = row.find("td:eq(" + cellIndex_3 + ")");
+            var cell_4 = row.find("td:eq(" + cellIndex_4 + ")");
+            var cell_5 = row.find("td:eq(" + cellIndex_5 + ")");
+            var cell_6 = row.find("td:eq(" + cellIndex_6 + ")");
+            var cell_7 = row.find("td:eq(" + cellIndex_7 + ")");
+         //   var cell_8 = row.find("td:eq(" + cellIndex_8 + ")");
+        
+
+            
+            if(row_alt==false)
+            {
+                cell_2.addClass("outputactsubgridcss");
+                cell_3.addClass("outputactsubgridcss");
+                cell_4.addClass("outputactsubgridcss");
+                cell_5.addClass("outputactsubgridcss");
+                cell_6.addClass("outputactsubgridcss");
+                cell_7.addClass("outputactsubgridcss");
+              //  cell_8.addClass("outputactsubgridcss");
+          
+            }
+            else
+            {
+                cell_2.addClass("outputactsubgridcss_2");
+                cell_3.addClass("outputactsubgridcss_2");
+                cell_4.addClass("outputactsubgridcss_2");
+                cell_5.addClass("outputactsubgridcss_2");
+                cell_6.addClass("outputactsubgridcss_2");
+                cell_7.addClass("outputactsubgridcss_2");
+              //  cell_8.addClass("outputactsubgridcss_2");
+           
+
+            }
+            row_alt=ToggleBoolean(row_alt);
+        
+
+       }
+
+
+    }
+
+
+    function dataBoundOutputRisksChild (e) {
         // iterate the table rows and apply custom row and cell styling
         var rows = e.sender.tbody.children();
         for (var j = 0; j < rows.length; j++) 
@@ -2132,6 +2357,44 @@ function addoutputcommunication(e) {
 
 }
 
+
+function addoutputriskprofile(e) {
+
+    e.preventDefault();
+
+
+
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+    var transid = dataItem.Transaction_Id;
+   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
+    
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/NEPADStaff/AddOutputRiskProfile?transid=" + transid,
+            width: 600,
+            height: 650,
+
+            title: "Add Risk",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+         
+
+}
+
 function editoutputmobility(e) {
 
     e.preventDefault();
@@ -2234,6 +2497,43 @@ function editoutputcommunication(e) {
             height: 500,
 
             title: "Edit Communication",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+         
+
+}
+
+function editoutputriskprofile(e) {
+
+    e.preventDefault();
+
+
+
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+    var transid = dataItem.Transaction_IdORVM;
+   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
+    
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/NEPADStaff/EditOutputRiskProfile?transid=" + transid,
+            width: 600,
+            height: 670,
+
+            title: "Edit Risk Profile",
             // close: onClose,
             deactivate: function () {
                 this.destroy();
@@ -2546,6 +2846,79 @@ function deleteoutputmobility(e) {
 
                             var grid_outputmobilities = $("#grid_outputmobilities").data("kendoGrid"); 
                             grid_outputmobilities.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_Mobilities_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod+ "&periodtxt=" + periodtxt;
+                            grid_outputmobilities.dataSource.read();
+                            //grid_outputsactivities.refresh();
+
+
+                        },
+                        error: function (data) {
+
+                        }
+                    })
+                    return true;
+                },
+                primary: true
+
+            },
+            { text: 'Cancel' }
+        ],
+        close: onClose
+    });
+
+    dialog.data("kendoDialog").open();
+    undo.fadeOut();
+
+}
+
+function deleteoutputriskprofile(e) {
+    e.preventDefault();
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    //var subindicatorid = dataItem.Transaction_IndicatorId;
+    var subriskprofileid = dataItem.Transaction_IdORVM;
+    var childgridident = dataItem.Output_ChildGridIdORVM;
+
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+    var periodtxt = $("#FisPeriod").val();  
+
+
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+    dialog.kendoDialog({
+        width: "450px",
+        title: "Confirmation",
+        closable: false,
+        modal: true,
+        content: "<p>Please confirm the DELETE action.<p>",
+        actions: [
+            {
+                text: 'Confirm',
+                action: function (e) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/Admin/WP_OutputsSubRiskProfile_Delete',     //your action
+                        data: { "subriskprofileid": subriskprofileid},
+                        dataType: 'json',
+                        success: function (result) {
+
+                          //  var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+
+                            var childGrid = $('#gridriskprofilesub_'+childgridident).data("kendoGrid");
+
+                            childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutputsSubRiskProfile_Read?output_transid=" + childgridident;
+                            childGrid.dataSource.read();
+                            childGrid.refresh();
+
+
+                            var grid_outputmobilities = $("#grid_outputmobilities").data("kendoGrid"); 
+                            grid_outputmobilities.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_RiskProfile_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod+ "&periodtxt=" + periodtxt;
                             grid_outputmobilities.dataSource.read();
                             //grid_outputsactivities.refresh();
 
@@ -2899,6 +3272,85 @@ function onChangeInternalParticipants() {
                 grid_outputmobilities.dataSource.read();
 
                  $('#targetDivStaffa_int').empty();
+
+            }
+          
+
+        },
+        error: function (data) {
+ 
+        }
+    })
+
+
+}
+
+
+function onChangeRiskCountries() {
+
+    var transid = $("#Transaction_IdORVMMain").val();  
+    var wpmainrecid = $("#WPMainRecord_idORVMMain").val();  
+    var wpoutputid = $("#WPOutput_IdORVMMain").val();  
+
+    var projid = $("#Project_IdORVMMain").val();  
+    var fyear = $("#FiscalYear_IdORVMMain").val();  
+    var fperiod = $("#Period_IdORVMMain").val();  
+    var periodtxt = $("#FisPeriodORVMMain").val();  
+
+
+    var multiselect = $("#countryriskselect").data("kendoMultiSelect");
+    //var dataItem = multiselect.dataItems();
+    var dataItem = multiselect.value().toString();
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+
+    $.ajax({
+        type: "POST",
+        url: '/Admin/AddWPRiskCountryMultiSelect',     //your action
+        //data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, selectedrows: JSON.parse( JSON.stringify(models))},
+        data:{"transid": transid, "wpmainrecid": wpmainrecid, "wpoutputid": wpoutputid, "selectkeys": dataItem},
+        //data: { selectkeys: dataItem},
+        dataType: 'json',
+        success: function (result) {
+            var response = result.rtnmsg;
+            var employeename=result.rtnemp;
+
+            var childGrid = $('#gridriskprofilesub_'+wpoutputid).data("kendoGrid");
+            var grid_outputriskprofile = $("#grid_outputriskprofile").data("kendoGrid"); 
+
+            if (response == "success") {
+
+              //  childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutputsSubRiskProfile_Read?output_transid=" + wpoutputid;
+              //  childGrid.dataSource.read();
+                
+            
+
+              //  grid_outputriskprofile.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_RiskProfile_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&periodtxt=" + periodtxt;
+               // grid_outputriskprofile.dataSource.read();
+
+                // $('#targetDivStaffa_int').empty();
+
+
+            }
+            else if  (response == "empty") 
+            {
+
+              //  childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutputsSubRiskProfile_Read?output_transid=" + wpoutputid;
+              //  childGrid.dataSource.read();
+                
+            
+
+              //  grid_outputriskprofile.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_RiskProfile_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&periodtxt=" + periodtxt;
+               // grid_outputriskprofile.dataSource.read();
+
+                // $('#targetDivStaffa_int').empty();
+     
 
             }
           
@@ -4180,6 +4632,9 @@ function GenerateCommunicationGanntt() {
  
 }
 
+
+
+
 function GenerateMobilityPDFClick() {
     var projid = $("#Project_Id").val();  
     var fyear = $("#FYear").val();  
@@ -4398,6 +4853,81 @@ function GenerateCommunicationPDFClick() {
     {
         // window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
         var url="/NEPADStaff/WorkplanDraftCommunicationPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+        redirect_blank(url);
+    }
+
+
+ 
+}
+
+function GenerateRiskProfilePDFClick() {
+    var projid = $("#Project_Id").val();  
+    var fyear = $("#FYear").val();  
+    var fperiod = $("#FPeriod").val();  
+    var periodtxt = $("#FisPeriod").val();  
+    var empid = $("#Employee_Id").val(); 
+    var dirid = $("#Directorate_Id").val(); 
+    var divid = $("#Division_Id").val(); 
+    var progid = $("#Programme_Id").val();  
+    var mainrecid = $("#WPMainRecordId").val();
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+
+
+
+    if(mainrecid === "" && typeof mainrecid === "string")
+    {
+        $.ajax({
+                    type: "POST",
+                    url: '/Admin/CheckMainWPRecordStatus',     //your action
+                    //data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "selectkeys": this.selectedKeyNames().join(","), "empid": empid, selectedrows: JSON.parse( JSON.stringify(models))},
+                    data:{"projid": projid, "fyear": fyear, "fperiod": fperiod, "empid": empid, "dirid": dirid, "divid": divid, "progid": progid, "periodtxt": periodtxt},
+                    dataType: 'json',
+                    success: function (result) {
+                        var response = result.rtnmsg;
+
+                        if (response == "recordfound") {
+                            //window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+                            var url="/NEPADStaff/WorkplanDraftRiskProflePDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+                            redirect_blank(url);
+                        }
+                        else if(response == "norecord")
+                        {
+
+                            dialog.kendoDialog({
+                                width: "300px",
+                                title: "No Outcome or MTP",
+                                closable: false,
+                                modal: true,
+                                content: "<p>Please define at least one outcome or link an MTP Priority to the workplan<p>",
+                                actions: [
+                                    { text: 'Ok' }
+                                ],
+                                close: onClose
+                            });
+
+                            dialog.data("kendoDialog").open();
+                            undo.fadeOut();
+                        }
+
+                    },
+                    error: function (data) {
+                                
+                    }
+                })
+
+
+    }
+    else
+    {
+        // window.location.href = "/NEPADStaff/WorkplanDraftActivityPDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+        var url="/NEPADStaff/WorkplanDraftRiskProflePDF?mainrecid="+mainrecid+"&divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
         redirect_blank(url);
     }
 
@@ -5419,6 +5949,93 @@ function onRequestEndOutputActivity(e){
  
 
 /* End  AUDA-NEPAD Outputs Communication  Grid CSS*/
+
+
+/* Begin  AUDA-NEPAD Outputs Risk Profile Grid CSS*/
+
+#grid_outputriskprofile tr.k-alt {
+    background-color: #fff ;
+    }
+
+    #grid_outputriskprofile td {
+    border-style: solid;
+    /*border-width: 0px 0px 1px 0px;*/
+    border-width: 0px ;
+    padding: .4em .6em;
+    overflow: hidden;
+    line-height: 1.6em;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    }
+
+     #grid_outputriskprofile tr.k-alt.k-state-selected {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+
+    #grid_outputriskprofile tr.k-state-selected  {
+        color: #fff;
+        background-color: #13688c;
+        font-weight: 570;
+        border-color: #146b90;
+    }
+    #grid_outputriskprofile tr:hover {
+        background-color:  transparent;
+        
+    }
+    #grid_outputriskprofile tr.k-state-selected:hover {
+        background-color: transparent;
+    }
+    #grid_outputriskprofile tr.k-alt:hover {
+        background-color:  transparent;
+        
+    }
+    #grid_outputriskprofile tr.k-alt.k-state-selected:hover {
+        background-color: transparent;
+    }
+    
+    #grid_outputriskprofile>.k-grid-header tr, .hidden{
+        height: 0;
+        border-bottom-width: 0;
+        visibility: hidden;
+        overflow: hidden;
+        display: none;
+    }
+    .k-hierarchy-cell.k-header
+    {
+        height: 0;
+        border-bottom-width: 0;
+        visibility: hidden;
+        overflow: hidden;
+        display: none;
+
+
+    }
+    #grid_outputriskprofile {
+        border-color: #ffffff;
+    }
+
+
+    /****Sub Grids******/
+
+
+    div[name^='gridriskprofilesub_'] td {
+        border-style: solid;
+    /* border-width: 1px 0px 0px 1px;*/
+        border-top-width: 1px ;
+        padding: .4em .6em;
+        overflow: hidden;
+        line-height: 1.6em;
+        vertical-align: middle;
+        text-overflow: ellipsis;
+    }
+
+
+ 
+
+/* End  AUDA-NEPAD Outputs Risk Profile  Grid CSS*/
 
 
 

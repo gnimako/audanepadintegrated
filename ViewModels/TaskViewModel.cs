@@ -16,6 +16,7 @@ namespace AUDANEPAD_Integrated.ViewModels
         public string Mobility_Id { get; set; }
         public string Procurement_Id { get; set; }
         public string Communication_Id { get; set; }
+        public string RiskProfile_Id { get; set; }
 
 
         public int TaskID { get; set; }

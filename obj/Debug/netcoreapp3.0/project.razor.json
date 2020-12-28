@@ -75698,6 +75698,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/WorkplanDraftRiskProflePDF.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\WorkplanDraftRiskProflePDF.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Admin/ManageIdentRoles.cshtml",
       "TargetPath": "Views\\Admin\\ManageIdentRoles.cshtml",
       "FileKind": "mvc"
@@ -75715,6 +75720,11 @@
     {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_AddOutcomeIndicator.cshtml",
       "TargetPath": "Views\\NEPADStaff\\_AddOutcomeIndicator.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_AddOutputRiskProfile.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\_AddOutputRiskProfile.cshtml",
       "FileKind": "mvc"
     },
     {
@@ -75965,6 +75975,11 @@
     {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Admin/EditorTemplates/ClientCategory.cshtml",
       "TargetPath": "Views\\Admin\\EditorTemplates\\ClientCategory.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_EditOutputRiskProfile.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\_EditOutputRiskProfile.cshtml",
       "FileKind": "mvc"
     },
     {
