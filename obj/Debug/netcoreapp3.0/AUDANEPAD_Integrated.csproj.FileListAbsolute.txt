@@ -51,12 +51,15 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/Npgsql.EntityFrameworkCore.PostgreSQL.Design.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/BouncyCastle.Crypto.dll
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/SixLabors.ImageSharp.dll
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/SkiaSharp.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/System.Composition.AttributedModel.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/System.Composition.Convention.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/System.Composition.Hosting.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/System.Composition.Runtime.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/System.Composition.TypedParts.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/System.Drawing.Common.dll
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/System.Runtime.CompilerServices.Unsafe.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/Kendo.Mvc.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/cs/Microsoft.CodeAnalysis.resources.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/de/Microsoft.CodeAnalysis.resources.dll
@@ -169,6 +172,10 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/runtimes/win7-x64/native/libuv.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/runtimes/win7-x86/native/libuv.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/runtimes/win/lib/netcoreapp3.0/Microsoft.Win32.SystemEvents.dll
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/runtimes/osx/native/libSkiaSharp.dylib
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/runtimes/win-arm64/native/libSkiaSharp.dll
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/runtimes/win-x64/native/libSkiaSharp.dll
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/runtimes/win-x86/native/libSkiaSharp.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/runtimes/unix/lib/netcoreapp3.0/System.Drawing.Common.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/runtimes/win/lib/netcoreapp3.0/System.Drawing.Common.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/AUDANEPAD_Integrated.csprojAssemblyReference.cache

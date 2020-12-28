@@ -30,6 +30,8 @@ using iText.Layout.Properties;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using SkiaSharp;
+
 
 
 
@@ -6155,6 +6157,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 string Path_Complete =  @"wwwroot/appdirectory/pdfreports/institutional/"+cycleid+"Complete.png";
                 string Path_PRC =  @"wwwroot/appdirectory/pdfreports/institutional/"+cycleid+"PRC.png";
+                string Path_PRC2 =  @"wwwroot/appdirectory/pdfreports/institutional/"+cycleid+"PRC2.png";
 
                 string Path_MTPContr =  @"wwwroot/appdirectory/pdfreports/institutional/"+cycleid+"MTPContr.png";
                 string Path_MTPContrDir =  @"wwwroot/appdirectory/pdfreports/institutional/"+cycleid+"MTPContrDir.png";
@@ -6175,7 +6178,35 @@ namespace AUDANEPAD_Integrated.Controllers
                 // bitmap.SetResolution(200, 400);
                 // bitmap.Save(Path_Complete2, System.Drawing.Imaging.ImageFormat.Png);
 
-    
+               // System.Drawing.Image image;
+                // using (MemoryStream ms = new MemoryStream(fileContents_prc))
+                // {
+                //     image = System.Drawing.Image.FromStream(ms);
+                // }
+
+
+                // MemoryStream ms = new MemoryStream(fileContents_prc)  ;  
+                // image = System.Drawing.Image.FromStream(ms);
+
+                // Bitmap bitmap = new Bitmap(image, new Size(320, 960));
+                // bitmap.SetResolution(200, 400);
+                // bitmap.Save(Path_PRC2, System.Drawing.Imaging.ImageFormat.Png);
+
+
+
+
+
+               
+
+
+
+
+
+
+
+
+
+
 
                 System.IO.File.WriteAllBytes(Path_Complete, fileContents_complete);
                 System.IO.File.WriteAllBytes(Path_PRC, fileContents_prc);
@@ -6188,6 +6219,54 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 System.IO.File.WriteAllBytes(Path_ImpDistr, fileContents_impdistr);
                 System.IO.File.WriteAllBytes(Path_NewProj, fileContents_newproj);
+
+
+
+
+
+
+/*
+                int size = 1000;
+                int quality = 300;
+
+
+                using (var input = System.IO.File.OpenRead(Path_PRC))
+                {
+                    using (var inputStream = new SKManagedStream(input))
+                    {
+                        using (var original = SKBitmap.Decode(inputStream))
+                        {
+                            int width, height;
+                            if (original.Width > original.Height)
+                            {
+                                width = size;
+                                height = original.Height * size / original.Width;
+                            }
+                            else
+                            {
+                                width = original.Width * size / original.Height;
+                                height = size;
+                            }
+
+                            using (var resized = original.Resize(new SKImageInfo(width, height), SKBitmapResizeMethod.Lanczos3))
+                            {
+                                if (resized == null) return Json(new { rtnmsg = "success" });
+
+                                using (var image = SKImage.FromBitmap(resized))
+                                {
+                                    using (var output = System.IO.File.OpenWrite(Path_PRC2))
+                                    {
+                                        image.Encode(SKEncodedImageFormat.Jpeg, quality)
+                                            .SaveTo(output);
+                                       // SKImageEncodeFormat
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                */
+
 
                 return Json(new { rtnmsg = "success" });
             }

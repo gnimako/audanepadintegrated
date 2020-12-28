@@ -12278,6 +12278,9 @@ namespace AUDANEPAD_Integrated.Controllers
                     .SetWidth(230);
                 document.Add(img);
 
+                //R Script
+                //shell (R CMD BATCH myRprogram.R)
+
                 Paragraph txt_gap=new Paragraph(new Text("\n"));
                 Paragraph txt=new Paragraph(new Text(" "))
                                 .SetFixedLeading(1f);

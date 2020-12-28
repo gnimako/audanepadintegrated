@@ -67,7 +67,7 @@
                                         series
                                             .Column(model => model.DirectorateMSBudget)
                                             .Stack(true)
-                                            .Color("#003c72")
+                                            .Color("#02203b")
                                             .Name("AUDA-NEPAD MS");
                                         series
                                             .Column(model => model.DirectorateDPBudget)
@@ -167,8 +167,9 @@
                                     .Name(@Model.FisYear)
                                     .Labels(labels => labels
                                         .Visible(true)
+                                        .Distance(20)
                                         .Position(ChartSeriesLabelsPosition.OutsideEnd)
-                                        .Template("#= category #: \n #= value#%")
+                                        .Template("#= category # \n #= value#%")
                                         .Background("transparent")
                                     );
                                 })
@@ -177,7 +178,7 @@
                                     .Template("#= dataItem.DNameOther # (#= series.name #): #= value #%")
                                    // .Template("#= category # (#= series.name #): #= value #%")
                                 )
-                                .SeriesColors("#003c72", "#166f99", "#0399d4", "#89CFF0", "#B0DFE5", "#e9eaf7")
+                                .SeriesColors("#02203b", "#166f99", "#0399d4", "#89CFF0", "#B0DFE5", "#e9eaf7")
                             )
                             </div>
                         </div>
@@ -196,7 +197,7 @@
                                     )
                                     .DataSource(ds => ds.Read(read => read.Action("_GetDirectorateMTPContributions_Draft", "Admin", new {cycleid=Model.DispatchCycle_Id})))
                                     .Series(series => {
-                                        series.Bar(model => model.Economic).Name("Economic Transformation…").Color("#003c72");
+                                        series.Bar(model => model.Economic).Name("Economic Transformation…").Color("#02203b");
                                         series.Bar(model => model.Invest).Name("Invest., in the African People…").Color("#166f99");
                                         series.Bar(model => model.Advancing).Name("Advancing Continental Integration").Color("#0399d4");
                                         series.Bar(model => model.Service).Name("Service Delivery, Capacity Dev…").Color("#89CFF0");
@@ -255,8 +256,9 @@
                                     .Name(@Model.FisYear)
                                     .Labels(labels => labels
                                         .Visible(true)
+                                        .Distance(20)
                                         .Position(ChartSeriesLabelsPosition.OutsideEnd)
-                                        .Template("#= category #: \n #= value#%")
+                                        .Template("#= category # \n #= value#%")
                                         .Background("transparent")
                                     );
                                 })
@@ -265,7 +267,7 @@
                                     .Template("#= dataItem.DNameOther # (#= series.name #): #= value #%")
                                    // .Template("#= category # (#= series.name #): #= value #%")
                                 )
-                                .SeriesColors("#003c72", "#166f99", "#0399d4", "#89CFF0", "#B0DFE5", "#e9eaf7", "#dbdbdb")
+                                .SeriesColors("#02203b", "#166f99", "#0399d4", "#89CFF0", "#B0DFE5", "#e9eaf7", "#a0a700")
                             )
                             </div>
                         </div>
@@ -284,13 +286,13 @@
                                     )
                                     .DataSource(ds => ds.Read(read => read.Action("_GetDirectorateStraContributions_Draft", "Admin", new {cycleid=Model.DispatchCycle_Id})))
                                     .Series(series => {
-                                        series.Bar(model => model.EconomicInt).Name("Economic Integration").Color("#003c72");
-                                        series.Bar(model => model.HumanCap).Name("Human & Institutional Dev.").Color("#166f99");
-                                        series.Bar(model => model.FoodSys).Name("Food Sys. & Empow… Rural Coms..").Color("#0399d4");
+                                        series.Bar(model => model.EconomicInt).Name("Economic Integration").Color("#02203b");
+                                        series.Bar(model => model.HumanCap).Name("Human & Institutional Development").Color("#166f99");
+                                        series.Bar(model => model.FoodSys).Name("Food Systems...").Color("#0399d4");
                                         series.Bar(model => model.SystEnergy).Name("Sustainable Energy").Color("#89CFF0");
-                                        series.Bar(model => model.ClimateRes).Name("Climate Resilience").Color("#B0DFE5");
-                                        series.Bar(model => model.STI).Name("STI").Color("#e9eaf7");
-                                        series.Bar(model => model.StraInstitutional).Name("Institutional Enhancement").Color("#dbdbdb");
+                                        series.Bar(model => model.ClimateRes).Name("Climate Resilience...").Color("#B0DFE5");
+                                        series.Bar(model => model.STI).Name("Science, Technology & Innovation").Color("#e9eaf7");
+                                        series.Bar(model => model.StraInstitutional).Name("Institutional Enhancement").Color("#a0a700");
                                     })
                                     .CategoryAxis(axis => axis
                                         .Categories(model => model.DName)
@@ -331,7 +333,7 @@
                                     )
                                     .DataSource(ds => ds.Read(read => read.Action("_GetDirectorateImplemenationType_Draft", "Admin", new {cycleid=Model.DispatchCycle_Id})))
                                     .Series(series => {
-                                        series.Bar(model => model.SubDelegation).Name("Sub-Delegation").Color("#003c72");
+                                        series.Bar(model => model.SubDelegation).Name("Sub-Delegation").Color("#02203b");
                                         series.Bar(model => model.DirectExe).Name("Direct Implementation").Color("#a0a700");
                                         series.Bar(model => model.JointExe).Name("Joint Implementation").Color("#0399d4");
                                     })
@@ -366,7 +368,7 @@
                                     )
                                     .DataSource(ds => ds.Read(read => read.Action("_GetDirectorateNewProjects_Draft", "Admin", new {cycleid=Model.DispatchCycle_Id})))
                                     .Series(series => {
-                                        series.Bar(model => model.ExistingProjs).Name("Existing Projects").Color("#003c72");
+                                        series.Bar(model => model.ExistingProjs).Name("Existing Projects").Color("#02203b");
                                         series.Bar(model => model.NewProjs).Name("New Projects (Inception)").Color("#a0a700");
                                     })
                                     .CategoryAxis(axis => axis
