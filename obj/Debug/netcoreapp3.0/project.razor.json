@@ -76078,6 +76078,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/ManageWorkplansDraft copy.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\ManageWorkplansDraft copy.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/ManageWorkplansDraft.cshtml",
       "TargetPath": "Views\\NEPADStaff\\ManageWorkplansDraft.cshtml",
       "FileKind": "mvc"

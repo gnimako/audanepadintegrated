@@ -12730,7 +12730,7 @@ namespace AUDANEPAD_Integrated.Controllers
                     tablestrategicprioritiessummary.AddCell(cellheader01);
 
                     Cell cellheader02 = new Cell(1, 2)
-                        .SetTextAlignment(TextAlignment.RIGHT)
+                        .SetTextAlignment(TextAlignment.LEFT)
                         .Add(new Paragraph("Directorates Contributing to Strategic Priority")
                                         .SetFont(ft_bold)
                                         .SetFixedLeading(14f)
@@ -12761,8 +12761,42 @@ namespace AUDANEPAD_Integrated.Controllers
 
                         //Get the Directorates Contributing to Strategic Priority
                         string rtnstringDirectorates_Stra= string.Empty;
+                        var DB_StrategicMainProjs=_wpAUDAPriorityRepository.GetRecordsByYearPeriodAndPriority(cyclerec.FiscalYear_Id, cyclerec.Period_Id, rec_set.Record_Id).GroupBy(x => x.WPMainRecord_id).Select(x => x.First()).ToList();
 
+                        if(cyclerec.Period_Id==8)
+                        {
 
+                        }
+                        else
+                        {
+                                int _interother=0;
+                                var dirlist = new List<string>();
+                             //   bool notinlist=true;
+
+                                foreach(var stramainproj in DB_StrategicMainProjs)
+                                {
+                                   // Strategy_Priority rec=_strategyPriorityRepository.GetRecord(stramainproj.Priority_Id);
+                                    Struc_Directorate rec=_strucDirectorateRepository.GetRecord(_wpMainRecordRepository.GetRecord(stramainproj.WPMainRecord_id).Directorate_Id);
+                                    _interother=_interother+1;
+
+                                    if(!dirlist.Contains(rec.AcronymName.TrimEnd()))
+                                    {
+                                        
+                                        if((_interother==DB_StrategicMainProjs.Count()) )
+                                        {
+                                            rtnstringDirectorates_Stra += rec.AcronymName.TrimEnd();  
+                                        }
+                                        else
+                                        {
+                                            rtnstringDirectorates_Stra += rec.AcronymName.TrimEnd()+", ";  
+
+                                        }
+                                        dirlist.Add(rec.AcronymName.TrimEnd());
+                                    }
+
+                                }
+
+                        }
 
 
 
@@ -12790,8 +12824,8 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
                             
-                                cell2.SetTextAlignment(TextAlignment.CENTER)
-                                .Add(new Paragraph("")
+                                cell2.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(rtnstringDirectorates_Stra)
                                                 //.SetFont(ft_montserrat_reg)
                                                 .SetFixedLeading(14f)
                                                 .SetFontColor(cl_grayDark)
@@ -12806,7 +12840,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
 
-                                cell3.SetTextAlignment(TextAlignment.LEFT)
+                                cell3.SetTextAlignment(TextAlignment.RIGHT)
                                 .Add(new Paragraph("")
                                                 // .SetFont(ft_montserrat_reg)
                                                 .SetFixedLeading(14f)
@@ -12834,8 +12868,8 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
                             
-                                cell2.SetTextAlignment(TextAlignment.CENTER)
-                                .Add(new Paragraph("")
+                                cell2.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(rtnstringDirectorates_Stra)
                                                 //.SetFont(ft_montserrat_reg)
                                                 .SetFixedLeading(14f)
                                                 .SetFontColor(cl_grayDark)
@@ -12850,7 +12884,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
 
-                                cell3.SetTextAlignment(TextAlignment.LEFT)
+                                cell3.SetTextAlignment(TextAlignment.RIGHT)
                                 .Add(new Paragraph("")
                                                 // .SetFont(ft_montserrat_reg)
                                                 .SetFixedLeading(14f)
