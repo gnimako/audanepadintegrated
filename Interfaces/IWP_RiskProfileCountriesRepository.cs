@@ -10,6 +10,7 @@ namespace AUDANEPAD_Integrated.Interfaces
 
 		IEnumerable<WP_RiskProfileCountries> GetAllRecords();
         IEnumerable<WP_RiskProfileCountries> GetRecordsByOutputId (string outputid);
+        IEnumerable<WP_RiskProfileCountries> GetRecordsByMainRecordId (string recid);
         IEnumerable<WP_RiskProfileCountries> GetRecordsByOutputIdAndRiskId (string outputid, string riskid);
         IEnumerable<WP_RiskProfileCountries> GetRecordsByRiskId (string riskid);
 		WP_RiskProfileCountries Add(WP_RiskProfileCountries rec);

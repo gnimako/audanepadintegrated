@@ -60,6 +60,14 @@ namespace AUDANEPAD_Integrated.Services
 
             return records;
         }
+		public IEnumerable<WP_RiskProfileCountries> GetRecordsByMainRecordId (string recid)
+        {
+            var records = context.WP_RiskProfileCountries
+                                .Where(s => s.WPMainRecord_id==recid)
+                                .ToList();
+
+            return records;
+        }
         public IEnumerable<WP_RiskProfileCountries> GetRecordsByOutputIdAndRiskId (string outputid, string riskid)
         {
             var records = context.WP_RiskProfileCountries

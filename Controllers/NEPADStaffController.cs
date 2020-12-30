@@ -12771,7 +12771,7 @@ namespace AUDANEPAD_Integrated.Controllers
                         }
                         else
                         {
-                                int _interother=0;
+
                                 var dirlist = new List<string>();
                 
                                 
@@ -12779,7 +12779,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 {
                                     //Directorate Names
                                     Struc_Directorate rec=_strucDirectorateRepository.GetRecord(_wpMainRecordRepository.GetRecord(stramainproj.WPMainRecord_id).Directorate_Id);
-                                    _interother=_interother+1;
+                      
 
                                     if(!dirlist.Contains(rec.AcronymName.TrimEnd()))
                                     {
@@ -13507,6 +13507,11 @@ namespace AUDANEPAD_Integrated.Controllers
 
                         int _countint =  DB_RecordsDivs.Count();
                         int inntercount=0;
+
+                        var dirCountriesList = new List<string>();
+                        var dirRECList = new List<string>();
+
+
                         
     
     
@@ -13535,6 +13540,8 @@ namespace AUDANEPAD_Integrated.Controllers
                                 var DB_CountryScopeRecs=_wpCountryScopeRepository.GetRecordsByMainRecordId(mainrec.Transaction_Id).GroupBy(x => x.Country_Id).Select(x => x.First()).ToList();
                                 var DB_RECScopeRecs=_wpRegionScopeRepository.GetRecordsByMainRecordId(mainrec.Transaction_Id).GroupBy(x => x.Region_Id).Select(x => x.First()).ToList();
 
+                                var DB_MobilitiesCountriesRecs=_wpMobilityRepository.GetRecordsByMainRecordId(mainrec.Transaction_Id).GroupBy(x => x.Country_Id).Select(x => x.First()).ToList();
+                                var DB_RiskProfileCountriesRecs=_wpRiskProfileCountriesRepository.GetRecordsByMainRecordId(mainrec.Transaction_Id).GroupBy(x => x.Country_Id).Select(x => x.First()).ToList();
                                //inntercount=inntercount+1;
 
                                 int _countrycount=DB_CountryScopeRecs.Count();
@@ -13548,14 +13555,53 @@ namespace AUDANEPAD_Integrated.Controllers
                                     LkUp_Country country=_lkupCountryRepository.GetCountry(countryrec.Country_Id);
                                     _countryinter=_countryinter+1;
                                     
-                                    if((inntercount==_countint) &&(_countryinter==_countrycount))
+                                    // if((inntercount==_countint) &&(_countryinter==_countrycount))
+                                    // {
+                                    //     rtnstringCountries += country.Country_Name.TrimEnd();  
+                                    // }
+                                    // else
+                                    // {
+                                    //     rtnstringCountries += country.Country_Name.TrimEnd()+", ";  
+
+                                    // }
+
+                                    if(!dirCountriesList.Contains(country.Country_Name.TrimEnd()))
                                     {
-                                        rtnstringCountries += country.Country_Name.TrimEnd();  
-                                    }
-                                    else
-                                    {
+                                        
                                         rtnstringCountries += country.Country_Name.TrimEnd()+", ";  
 
+                                       
+                                        dirCountriesList.Add(country.Country_Name.TrimEnd());
+                                    }
+
+                                }
+
+                                foreach(var countryrec in DB_MobilitiesCountriesRecs)
+                                {
+                                    LkUp_Country country=_lkupCountryRepository.GetCountry(countryrec.Country_Id);
+
+                                    if(!dirCountriesList.Contains(country.Country_Name.TrimEnd()))
+                                    {
+                                        
+                                        rtnstringCountries += country.Country_Name.TrimEnd()+", ";  
+
+                                       
+                                        dirCountriesList.Add(country.Country_Name.TrimEnd());
+                                    }
+
+                                }
+
+                                foreach(var countryrec in DB_RiskProfileCountriesRecs)
+                                {
+                                    LkUp_Country country=_lkupCountryRepository.GetCountry(countryrec.Country_Id);
+
+                                    if(!dirCountriesList.Contains(country.Country_Name.TrimEnd()))
+                                    {
+                                        
+                                        rtnstringCountries += country.Country_Name.TrimEnd()+", ";  
+
+                                       
+                                        dirCountriesList.Add(country.Country_Name.TrimEnd());
                                     }
 
                                 }
@@ -13566,14 +13612,24 @@ namespace AUDANEPAD_Integrated.Controllers
                                     LkUp_RegionScope region=_lkupRegionScopeRepository.GetRecord(recrec.Region_Id);
                                     _recinter=_recinter+1;
                                     
-                                    if((inntercount==_countint) &&(_recinter==_reccount))
+                                    // if((inntercount==_countint) &&(_recinter==_reccount))
+                                    // {
+                                    //     rtnstringRECs += region.Record_Name.TrimEnd();  
+                                    // }
+                                    // else
+                                    // {
+                                    //     rtnstringRECs += region.Record_Name.TrimEnd()+", ";  
+
+                                    // }
+
+
+                                    if(!dirRECList.Contains(region.Record_Name.TrimEnd()))
                                     {
-                                        rtnstringRECs += region.Record_Name.TrimEnd();  
-                                    }
-                                    else
-                                    {
+                                        
                                         rtnstringRECs += region.Record_Name.TrimEnd()+", ";  
 
+                                       
+                                        dirRECList.Add(region.Record_Name.TrimEnd());
                                     }
 
                                 }
@@ -13584,6 +13640,25 @@ namespace AUDANEPAD_Integrated.Controllers
 
                             
 
+                        }
+
+
+                        if(rtnstringCountries.Length>=2)
+                        {
+                            if(rtnstringCountries.Substring(rtnstringCountries.Length-2)==", ")
+                            {
+                                rtnstringCountries = rtnstringCountries.Remove(rtnstringCountries.Length - 2, 2);
+
+                            }
+                        }
+
+                        if(rtnstringRECs.Length>=2)
+                        {
+                            if(rtnstringRECs.Substring(rtnstringRECs.Length-2)==", ")
+                            {
+                                rtnstringRECs = rtnstringRECs.Remove(rtnstringRECs.Length - 2, 2);
+
+                            }
                         }
 
           
