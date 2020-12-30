@@ -13509,7 +13509,25 @@ namespace AUDANEPAD_Integrated.Controllers
                         int inntercount=0;
 
                         var dirCountriesList = new List<string>();
+                        var auMSList = new List<string>();
                         var dirRECList = new List<string>();
+
+                        //Get All AU Member States
+                        var aurecs =  _transCountryRepository.GetAllTrans_Country().ToList();
+                        int _aucount = aurecs.Count();
+
+                        if (_aucount > 0)
+                        {
+                            foreach (var rec in aurecs)
+                            {
+                                LkUp_Country fetched_rec=_lkupCountryRepository.GetCountry(rec.Country_Id);
+
+                                if(fetched_rec!=null && fetched_rec.AfricanCountry==1)
+                                {
+                                    auMSList.Add(fetched_rec.Country_Name.TrimEnd());
+                                }
+                            }
+                        }
 
 
                         
@@ -13554,18 +13572,9 @@ namespace AUDANEPAD_Integrated.Controllers
                                 {
                                     LkUp_Country country=_lkupCountryRepository.GetCountry(countryrec.Country_Id);
                                     _countryinter=_countryinter+1;
-                                    
-                                    // if((inntercount==_countint) &&(_countryinter==_countrycount))
-                                    // {
-                                    //     rtnstringCountries += country.Country_Name.TrimEnd();  
-                                    // }
-                                    // else
-                                    // {
-                                    //     rtnstringCountries += country.Country_Name.TrimEnd()+", ";  
+                              
 
-                                    // }
-
-                                    if(!dirCountriesList.Contains(country.Country_Name.TrimEnd()))
+                                    if(!dirCountriesList.Contains(country.Country_Name.TrimEnd()) && auMSList.Contains(country.Country_Name.TrimEnd()))
                                     {
                                         
                                         rtnstringCountries += country.Country_Name.TrimEnd()+", ";  
@@ -13580,7 +13589,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 {
                                     LkUp_Country country=_lkupCountryRepository.GetCountry(countryrec.Country_Id);
 
-                                    if(!dirCountriesList.Contains(country.Country_Name.TrimEnd()))
+                                    if(!dirCountriesList.Contains(country.Country_Name.TrimEnd()) && auMSList.Contains(country.Country_Name.TrimEnd()))
                                     {
                                         
                                         rtnstringCountries += country.Country_Name.TrimEnd()+", ";  
@@ -13595,7 +13604,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 {
                                     LkUp_Country country=_lkupCountryRepository.GetCountry(countryrec.Country_Id);
 
-                                    if(!dirCountriesList.Contains(country.Country_Name.TrimEnd()))
+                                    if(!dirCountriesList.Contains(country.Country_Name.TrimEnd()) && auMSList.Contains(country.Country_Name.TrimEnd()))
                                     {
                                         
                                         rtnstringCountries += country.Country_Name.TrimEnd()+", ";  
@@ -13605,6 +13614,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                     }
 
                                 }
+                               
 
 
                                 foreach(var recrec in DB_RECScopeRecs)
