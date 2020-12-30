@@ -12317,7 +12317,7 @@ namespace AUDANEPAD_Integrated.Controllers
                // document.Add(txt);
 
            
-                Paragraph sub_header = new Paragraph("Institutional Workplan (Draft)")
+                Paragraph sub_header = new Paragraph("Full Institutional Workplan (Draft)")
                     .SetFixedLeading(14f)
                     .SetTextAlignment(TextAlignment.CENTER)
                     .SetFont(ft_montserrat_thick)
@@ -12695,7 +12695,234 @@ namespace AUDANEPAD_Integrated.Controllers
                     
                 document.Add(Summary_header);
 
-                 document.Add(txt_gap);
+                document.Add(txt_gap);
+                document.Add(txt_gap);
+
+
+                //Strategic Priorities
+                var DB_RecordsStra = _transStrategyPriorityRepository.GetAllRecords().ToList();
+                int _countrecsstra =  DB_RecordsStra.Count();
+
+
+
+
+                Table tablestrategicprioritiessummary = new Table(UnitValue.CreatePercentArray(new float[]{14, 16, 18, 16, 18, 18}), false)
+                            .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
+                            .SetMarginLeft(0)
+                            .SetHorizontalAlignment(HorizontalAlignment.LEFT);
+
+                if(_countrecsstra>=1)
+                {
+                    
+
+
+
+                    //Row Header
+                    Cell cellheader01 = new Cell(1, 3)
+                    .SetTextAlignment(TextAlignment.LEFT)
+                    .Add(new Paragraph("Strategic Priorities")
+                                    .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                    .SetFontColor(cl_grayDark)
+                                    .SetBackgroundColor(cl_tableheader)
+                                    .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                    tablestrategicprioritiessummary.AddCell(cellheader01);
+
+                    Cell cellheader02 = new Cell(1, 2)
+                        .SetTextAlignment(TextAlignment.RIGHT)
+                        .Add(new Paragraph("Directorates Contributing to Strategic Priority")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(11))
+                        .SetBackgroundColor(cl_tableheader);
+                    tablestrategicprioritiessummary.AddCell(cellheader02);
+
+                    
+
+
+                    Cell cellheader03 = new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.RIGHT)
+                        .Add(new Paragraph("Total Budget (US$)")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                    tablestrategicprioritiessummary.AddCell(cellheader03);
+
+                    int _stracount=0;
+                    foreach (var rec_set in DB_RecordsStra)
+                    {
+
+
+                        //Get the Directorates Contributing to Strategic Priority
+                        string rtnstringDirectorates_Stra= string.Empty;
+
+
+
+
+
+
+                        _stracount=_stracount+1;
+
+                        Cell cell1 = new Cell(1, 3);
+                        Cell cell2 = new Cell(1, 2);
+                        Cell cell3 = new Cell(1, 1);
+
+
+                        if(row_alt==false)
+                        {
+                            //Row Rows
+                            cell1.SetTextAlignment(TextAlignment.JUSTIFIED)
+                            .Add(new Paragraph(_strategyPriorityRepository.GetRecord(rec_set.Record_Id).Record_Name)
+                                            //.SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_1)
+                                            .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+                            
+                                cell2.SetTextAlignment(TextAlignment.CENTER)
+                                .Add(new Paragraph("")
+                                                //.SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+                               
+
+
+
+
+                                cell3.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph("")
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_1)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+                        }
+                        else
+                        {
+                            //Row Rows
+                            cell1.SetTextAlignment(TextAlignment.JUSTIFIED)
+                            .Add(new Paragraph(_strategyPriorityRepository.GetRecord(rec_set.Record_Id).Record_Name)
+                                            //.SetFont(ft_montserrat_reg)
+                                            .SetFixedLeading(14f)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_2)
+                                            .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+
+                            
+                                cell2.SetTextAlignment(TextAlignment.CENTER)
+                                .Add(new Paragraph("")
+                                                //.SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+                               
+
+
+
+
+                                cell3.SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph("")
+                                                // .SetFont(ft_montserrat_reg)
+                                                .SetFixedLeading(14f)
+                                                .SetFontColor(cl_grayDark)
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetFontSize(10))
+                                .SetBackgroundColor(cl_tablecontent_2)
+                                .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(Border.NO_BORDER);
+
+                        }
+                        row_alt=ToggleBoolean(row_alt);
+
+
+                        if(_stracount==_countrecsstra)
+                        {
+                            cell1.SetBorderBottom(new SolidBorder(1f));
+                            cell2.SetBorderBottom(new SolidBorder(1f));
+                            cell3.SetBorderBottom(new SolidBorder(1f));
+                          
+
+                        }
+
+                        tablestrategicprioritiessummary.AddCell(cell1);
+                        tablestrategicprioritiessummary.AddCell(cell2);
+                        tablestrategicprioritiessummary.AddCell(cell3);   
+                 
+                    }
+
+                     //Total Footer
+
+                      Cell cellheader01t = new Cell(1, 5)
+                    .SetTextAlignment(TextAlignment.LEFT)
+                    .Add(new Paragraph("TOTAL")
+                                   // .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                    .SetFontColor(cl_grayDark)
+                                    .SetBackgroundColor(cl_tableheader)
+                                    .SetFontSize(10))
+                        .SetBorderBottom(new SolidBorder(1f))
+                        .SetBackgroundColor(cl_tableheader);
+                    tablestrategicprioritiessummary.AddCell(cellheader01t);
+
+                    
+
+
+                    Cell cellheader05t = new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.RIGHT)
+                        .Add(new Paragraph("")
+                       // .Add(new Paragraph(string.Format("{0:N0}", grand_directorate_total_budget))
+                                        //.SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBorderBottom(new SolidBorder(1f))
+                        .SetBackgroundColor(cl_tableheader);
+                    tablestrategicprioritiessummary.AddCell(cellheader05t);
+
+
+
+               
+                    row_alt=true;
+                    document.Add(tablestrategicprioritiessummary);
+
+
+
+
+                }
+
+                document.Add(txt_gap);
+                document.Add(txt_gap);
 
 
                 float indentmargin=document.GetLeftMargin()+0;
@@ -13146,6 +13373,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 }
                 document.Add(txt_gap);
+                document.Add(txt_gap);
      
     
                 Table tabledirectoratecountriesrecs = new Table(UnitValue.CreatePercentArray(new float[]{14, 16, 34, 36}), false)
@@ -13462,7 +13690,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 }
 
 
-  document.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+                document.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
 
                // document.Add(txt_gap);
                // document.Add(txt_gap);
@@ -13881,7 +14109,7 @@ namespace AUDANEPAD_Integrated.Controllers
             document.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
 
 
-            Paragraph Details_header = new Paragraph("DETAILS")
+            Paragraph Details_header = new Paragraph("DETAILED WORKPLAN CONTENT")
                     .SetTextAlignment(TextAlignment.CENTER)
                    // .SetUnderline()
                     .SetFont(ft_montserrat_thick)

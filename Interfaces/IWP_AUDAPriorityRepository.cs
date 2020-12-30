@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using AUDANEPAD_Integrated.Models;
-
+using NodaTime;
 
 namespace AUDANEPAD_Integrated.Interfaces
 {
@@ -17,6 +17,10 @@ namespace AUDANEPAD_Integrated.Interfaces
 
         IEnumerable<WP_AUDAPriority>  GetRecordsByProjectYearAndPeriod (int projectid, int year, int period);
         IEnumerable<WP_AUDAPriority>  GetRecordsByYearAndPeriod (int year, int period);
+
+        IEnumerable<WP_AUDAPriority>  GetRecordsByYearPeriodAndPriority (int year, int period, int priority);
+
+       // IEnumerable<WP_MainRecord> GetRecordsByYearPeriodPriorityAndPeriodStartEnd (int year, int period, int priority, LocalDate PeriodStartDate, LocalDate PeriodEndDate);
         IEnumerable<WP_AUDAPriority>  GetRecordsByProjectYearPeriodAndMainRecId (int projectid, int year, int period, string mainrecid);
 
 		IEnumerable<WP_AUDAPriority> GetAllRecords();
