@@ -848,6 +848,11 @@
                 columns.Bound(o => o.TargetOIVM).Title("Target");
                 columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("deleteoutputindicator")).Width(100);
             })
+            .Navigatable()
+            .Pageable(pageable => pageable
+                .Refresh(true)
+                .PageSizes(true)
+                .ButtonCount(5))
             .DataSource(dataSource => dataSource
                 .Ajax()
                 .PageSize(10)
@@ -870,6 +875,11 @@
                 columns.Bound(o => o.TargetOCIVM).Title("Target");
                 columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("deleteoutcomeindicator")).Width(100);
             })
+            .Navigatable()
+            .Pageable(pageable => pageable
+                .Refresh(true)
+                .PageSizes(true)
+                .ButtonCount(5))
             .DataSource(dataSource => dataSource
                 .Ajax()
                 .PageSize(10)
@@ -895,6 +905,11 @@
                 columns.Bound(o => o.Output_ChildGridId).Hidden();
 
             })
+            .Navigatable()
+            .Pageable(pageable => pageable
+                .Refresh(true)
+                .PageSizes(true)
+                .ButtonCount(5))
             .DataSource(dataSource => dataSource
                 .Ajax()
                 .PageSize(10)
@@ -927,6 +942,11 @@
                 columns.Bound(o => o.Output_ChildGridIdOMVM).Hidden();
 
             })
+            .Navigatable()
+            .Pageable(pageable => pageable
+                .Refresh(true)
+                .PageSizes(true)
+                .ButtonCount(5))
             .DataSource(dataSource => dataSource
                 .Ajax()
                 .PageSize(10)
@@ -958,6 +978,11 @@
                 columns.Bound(o => o.Output_ChildGridIdOPVM).Hidden();
 
             })
+           .Navigatable()
+            .Pageable(pageable => pageable
+                .Refresh(true)
+                .PageSizes(true)
+                .ButtonCount(5))
             .DataSource(dataSource => dataSource
                 .Ajax()
                 .PageSize(10)
@@ -991,6 +1016,11 @@
                 columns.Bound(o => o.Output_ChildGridIdOCVM).Hidden();
 
             })
+            .Navigatable()
+            .Pageable(pageable => pageable
+                .Refresh(true)
+                .PageSizes(true)
+                .ButtonCount(5))
             .DataSource(dataSource => dataSource
                 .Ajax()
                 .PageSize(10)
@@ -1023,6 +1053,11 @@
                 columns.Bound(o => o.Output_ChildGridIdORVM).Hidden();
 
             })
+            .Navigatable()
+            .Pageable(pageable => pageable
+                .Refresh(true)
+                .PageSizes(true)
+                .ButtonCount(5))
             .DataSource(dataSource => dataSource
                 .Ajax()
                 .PageSize(10)
