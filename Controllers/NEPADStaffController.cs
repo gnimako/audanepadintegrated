@@ -13462,13 +13462,13 @@ namespace AUDANEPAD_Integrated.Controllers
                 }
 
 
+  document.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
 
-
-                document.Add(txt_gap);
-                document.Add(txt_gap);
+               // document.Add(txt_gap);
+               // document.Add(txt_gap);
                 
 
-                Table table1stgraph = new Table(UnitValue.CreatePercentArray(new float[]{50, 50}), false)
+                Table table1stgraph = new Table(UnitValue.CreatePercentArray(new float[]{49, 2, 49}), false)
                             .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
                             .SetMarginLeft(0)
                             .SetHorizontalAlignment(HorizontalAlignment.LEFT);
@@ -13499,11 +13499,24 @@ namespace AUDANEPAD_Integrated.Controllers
                                     .SetFixedLeading(14f)
                                 // .SetFontColor(cl_white)
                                     .SetFontSize(10))
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
+                   // .SetBorderTop(Border.NO_BORDER)
+                   // .SetBorderLeft(Border.NO_BORDER)
+                  //  .SetBorderRight(Border.NO_BORDER)
                     .SetBorderBottom(Border.NO_BORDER);
                 table1stgraph.AddCell(celltitle11);
+
+                Cell celltitlemiddle = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("")
+                                    // .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                // .SetFontColor(cl_white)
+                                    .SetFontSize(10))
+                   .SetBorderTop(Border.NO_BORDER)
+                   .SetBorderLeft(Border.NO_BORDER)
+                   .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table1stgraph.AddCell(celltitlemiddle);
 
 
                 Cell celltitle12 = new Cell(1, 1)
@@ -13513,9 +13526,9 @@ namespace AUDANEPAD_Integrated.Controllers
                                     .SetFixedLeading(14f)
                                 // .SetFontColor(cl_white)
                                     .SetFontSize(10))
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
+                  //  .SetBorderTop(Border.NO_BORDER)
+                   // .SetBorderLeft(Border.NO_BORDER)
+                   // .SetBorderRight(Border.NO_BORDER)
                     .SetBorderBottom(Border.NO_BORDER);
                 table1stgraph.AddCell(celltitle12);
 
@@ -13524,18 +13537,31 @@ namespace AUDANEPAD_Integrated.Controllers
                     
                         Cell cellgraph101 = new Cell(1, 1)
                         .Add(img11)
-                        .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
+                        .SetBorderTop(Border.NO_BORDER);
+                    //.SetBorderLeft(Border.NO_BORDER)
+                    //.SetBorderRight(Border.NO_BORDER)
+                    //.SetBorderBottom(Border.NO_BORDER);
                         table1stgraph.AddCell(cellgraph101);
+
+
+                                    
+                        Cell cellgraphmiddle = new Cell(1, 1)
+                        .Add(new Paragraph("")
+                                        .SetFixedLeading(14f)
+                                // .SetFontColor(cl_white)
+                                    .SetFontSize(10))
+                        .SetBorderTop(Border.NO_BORDER)
+                        .SetBorderLeft(Border.NO_BORDER)
+                        .SetBorderRight(Border.NO_BORDER)
+                        .SetBorderBottom(Border.NO_BORDER);
+                        table1stgraph.AddCell(cellgraphmiddle);
 
                 Cell cellgraph102 = new Cell(1, 1)
                     .Add(img12)
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
+                    .SetBorderTop(Border.NO_BORDER);
+                   // .SetBorderLeft(Border.NO_BORDER)
+                   // .SetBorderRight(Border.NO_BORDER)
+                  //  .SetBorderBottom(Border.NO_BORDER);
                 table1stgraph.AddCell(cellgraph102);
 
                 document.Add(table1stgraph);
@@ -13543,12 +13569,12 @@ namespace AUDANEPAD_Integrated.Controllers
 
                // document.Add(txt_gap);
                // document.Add(txt_gap);
-                 document.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
                
+               document.Add(txt_gap);
                 
 
 
-                Table table2ndgraph = new Table(UnitValue.CreatePercentArray(new float[]{50, 50}), false)
+                Table table2ndgraph = new Table(UnitValue.CreatePercentArray(new float[]{49, 2, 49}), false)
                     .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
                     .SetMarginLeft(0)
                     .SetHorizontalAlignment(HorizontalAlignment.LEFT);
@@ -13580,11 +13606,24 @@ namespace AUDANEPAD_Integrated.Controllers
                                     .SetFixedLeading(14f)
                                 // .SetFontColor(cl_white)
                                     .SetFontSize(10))
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
+                    // .SetBorderTop(Border.NO_BORDER)
+                   // .SetBorderLeft(Border.NO_BORDER)
+                  //  .SetBorderRight(Border.NO_BORDER)
                     .SetBorderBottom(Border.NO_BORDER);
                 table2ndgraph.AddCell(celltitle21);
+
+                Cell celltitlemiddle2 = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("")
+                                    // .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                // .SetFontColor(cl_white)
+                                    .SetFontSize(10))
+                   .SetBorderTop(Border.NO_BORDER)
+                   .SetBorderLeft(Border.NO_BORDER)
+                   .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table2ndgraph.AddCell(celltitlemiddle2);
 
 
                 Cell celltitle22 = new Cell(1, 1)
@@ -13594,9 +13633,9 @@ namespace AUDANEPAD_Integrated.Controllers
                                     .SetFixedLeading(14f)
                                 // .SetFontColor(cl_white)
                                     .SetFontSize(10))
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
+                 //  .SetBorderTop(Border.NO_BORDER)
+                   // .SetBorderLeft(Border.NO_BORDER)
+                   // .SetBorderRight(Border.NO_BORDER)
                     .SetBorderBottom(Border.NO_BORDER);
                 table2ndgraph.AddCell(celltitle22);
 
@@ -13605,18 +13644,29 @@ namespace AUDANEPAD_Integrated.Controllers
                     
                 Cell cellgraph201 = new Cell(1, 1)
                     .Add(img21)
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
+                    .SetBorderTop(Border.NO_BORDER);
+                    //.SetBorderLeft(Border.NO_BORDER)
+                    //.SetBorderRight(Border.NO_BORDER)
+                    //.SetBorderBottom(Border.NO_BORDER);
                 table2ndgraph.AddCell(cellgraph201);
+
+                Cell cellgraphmiddle2 = new Cell(1, 1)
+                        .Add(new Paragraph("")
+                                        .SetFixedLeading(14f)
+                                // .SetFontColor(cl_white)
+                                    .SetFontSize(10))
+                        .SetBorderTop(Border.NO_BORDER)
+                        .SetBorderLeft(Border.NO_BORDER)
+                        .SetBorderRight(Border.NO_BORDER)
+                        .SetBorderBottom(Border.NO_BORDER);
+                table2ndgraph.AddCell(cellgraphmiddle2);
 
                 Cell cellgraph202 = new Cell(1, 1)
                     .Add(img22)
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
+                  .SetBorderTop(Border.NO_BORDER);
+                   // .SetBorderLeft(Border.NO_BORDER)
+                   // .SetBorderRight(Border.NO_BORDER)
+                  //  .SetBorderBottom(Border.NO_BORDER);
                 table2ndgraph.AddCell(cellgraph202);
 
                 document.Add(table2ndgraph);
@@ -13624,7 +13674,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 document.Add(txt_gap);
 
-                Table table3rdgraph = new Table(UnitValue.CreatePercentArray(new float[]{50, 50}), false)
+                Table table3rdgraph = new Table(UnitValue.CreatePercentArray(new float[]{49, 2, 49}), false)
                     .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
                     .SetMarginLeft(0)
                     .SetHorizontalAlignment(HorizontalAlignment.LEFT);
@@ -13656,11 +13706,24 @@ namespace AUDANEPAD_Integrated.Controllers
                                     .SetFixedLeading(14f)
                                 // .SetFontColor(cl_white)
                                     .SetFontSize(10))
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
+                   // .SetBorderTop(Border.NO_BORDER)
+                   // .SetBorderLeft(Border.NO_BORDER)
+                  //  .SetBorderRight(Border.NO_BORDER)
                     .SetBorderBottom(Border.NO_BORDER);
                 table3rdgraph.AddCell(celltitle31);
+
+                 Cell celltitlemiddle3 = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("")
+                                    // .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                // .SetFontColor(cl_white)
+                                    .SetFontSize(10))
+                   .SetBorderTop(Border.NO_BORDER)
+                   .SetBorderLeft(Border.NO_BORDER)
+                   .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table3rdgraph.AddCell(celltitlemiddle3);
 
 
                 Cell celltitle32 = new Cell(1, 1)
@@ -13670,39 +13733,51 @@ namespace AUDANEPAD_Integrated.Controllers
                                     .SetFixedLeading(14f)
                                 // .SetFontColor(cl_white)
                                     .SetFontSize(10))
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
+                     //  .SetBorderTop(Border.NO_BORDER)
+                   // .SetBorderLeft(Border.NO_BORDER)
+                   // .SetBorderRight(Border.NO_BORDER)
                     .SetBorderBottom(Border.NO_BORDER);
                 table3rdgraph.AddCell(celltitle32);
+
 
 
 
                     
                 Cell cellgraph301 = new Cell(1, 1)
                     .Add(img31)
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
+                     .SetBorderTop(Border.NO_BORDER);
+                    //.SetBorderLeft(Border.NO_BORDER)
+                    //.SetBorderRight(Border.NO_BORDER)
+                    //.SetBorderBottom(Border.NO_BORDER);
                 table3rdgraph.AddCell(cellgraph301);
+
+                    Cell cellgraphmiddle3 = new Cell(1, 1)
+                .Add(new Paragraph("")
+                                .SetFixedLeading(14f)
+                        // .SetFontColor(cl_white)
+                            .SetFontSize(10))
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+                table3rdgraph.AddCell(cellgraphmiddle3);
 
                 Cell cellgraph302 = new Cell(1, 1)
                     .Add(img32)
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
+                    .SetBorderTop(Border.NO_BORDER);
+                   // .SetBorderLeft(Border.NO_BORDER)
+                   // .SetBorderRight(Border.NO_BORDER)
+                  //  .SetBorderBottom(Border.NO_BORDER);
                 table3rdgraph.AddCell(cellgraph302);
 
                 document.Add(table3rdgraph);
 
 
                 document.Add(txt_gap);
-                document.Add(txt_gap);
+               // document.Add(txt_gap);
 
 
-                 Table table4thgraph = new Table(UnitValue.CreatePercentArray(new float[]{50, 50}), false)
+                 Table table4thgraph = new Table(UnitValue.CreatePercentArray(new float[]{49, 2, 49}), false)
                     .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
                     .SetMarginLeft(0)
                     .SetHorizontalAlignment(HorizontalAlignment.LEFT);
@@ -13734,11 +13809,24 @@ namespace AUDANEPAD_Integrated.Controllers
                                     .SetFixedLeading(14f)
                                 // .SetFontColor(cl_white)
                                     .SetFontSize(10))
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
+              // .SetBorderTop(Border.NO_BORDER)
+                   // .SetBorderLeft(Border.NO_BORDER)
+                  //  .SetBorderRight(Border.NO_BORDER)
                     .SetBorderBottom(Border.NO_BORDER);
                 table4thgraph.AddCell(celltitle41);
+
+                 Cell celltitlemiddle4 = new Cell(1, 1)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("")
+                                    // .SetFont(ft_bold)
+                                    .SetFixedLeading(14f)
+                                // .SetFontColor(cl_white)
+                                    .SetFontSize(10))
+                   .SetBorderTop(Border.NO_BORDER)
+                   .SetBorderLeft(Border.NO_BORDER)
+                   .SetBorderRight(Border.NO_BORDER)
+                    .SetBorderBottom(Border.NO_BORDER);
+                table4thgraph.AddCell(celltitlemiddle4);
 
 
                 Cell celltitle42 = new Cell(1, 1)
@@ -13748,9 +13836,9 @@ namespace AUDANEPAD_Integrated.Controllers
                                     .SetFixedLeading(14f)
                                 // .SetFontColor(cl_white)
                                     .SetFontSize(10))
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
+                     //  .SetBorderTop(Border.NO_BORDER)
+                   // .SetBorderLeft(Border.NO_BORDER)
+                   // .SetBorderRight(Border.NO_BORDER)
                     .SetBorderBottom(Border.NO_BORDER);
                 table4thgraph.AddCell(celltitle42);
 
@@ -13759,18 +13847,30 @@ namespace AUDANEPAD_Integrated.Controllers
                     
                 Cell cellgraph401 = new Cell(1, 1)
                     .Add(img41)
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
+                    .SetBorderTop(Border.NO_BORDER);
+                    //.SetBorderLeft(Border.NO_BORDER)
+                    //.SetBorderRight(Border.NO_BORDER)
+                    //.SetBorderBottom(Border.NO_BORDER);
                 table4thgraph.AddCell(cellgraph401);
+
+        Cell cellgraphmiddle4 = new Cell(1, 1)
+                .Add(new Paragraph("")
+                                .SetFixedLeading(14f)
+                        // .SetFontColor(cl_white)
+                            .SetFontSize(10))
+                .SetBorderTop(Border.NO_BORDER)
+                .SetBorderLeft(Border.NO_BORDER)
+                .SetBorderRight(Border.NO_BORDER)
+                .SetBorderBottom(Border.NO_BORDER);
+                table4thgraph.AddCell(cellgraphmiddle4);
+
 
                 Cell cellgraph402 = new Cell(1, 1)
                     .Add(img42)
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER)
-                    .SetBorderRight(Border.NO_BORDER)
-                    .SetBorderBottom(Border.NO_BORDER);
+                 .SetBorderTop(Border.NO_BORDER);
+                   // .SetBorderLeft(Border.NO_BORDER)
+                   // .SetBorderRight(Border.NO_BORDER)
+                  //  .SetBorderBottom(Border.NO_BORDER);
                 table4thgraph.AddCell(cellgraph402);
 
                 document.Add(table4thgraph);

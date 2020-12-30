@@ -32,6 +32,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using SkiaSharp;
 //using STATCONNECTORCLNTLib;
+using RDotNet;
 
 
 
@@ -6133,6 +6134,17 @@ namespace AUDANEPAD_Integrated.Controllers
         
 
            //return File(fileContents, contentType, fileName);
+        }
+
+        public static void ExecuteScriptFile(string scriptFilePath)//, string paramForScript1,  string paramForScript2)
+        {
+            using (var en = REngine.GetInstance())
+            {
+                //var args_r = new string[2] { paramForScript1, paramForScript2 };
+                var execution = "source('" + scriptFilePath + "')";
+               // en.SetCommandLineArguments(args_r);
+                en.Evaluate(execution);
+            }
         }
 
 

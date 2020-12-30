@@ -12,6 +12,7 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/ChilkatDnCore.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/Common.Logging.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/Common.Logging.Core.dll
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/DynamicInterop.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/itext.barcodes.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/itext.forms.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/itext.io.dll
@@ -51,6 +52,7 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/Npgsql.EntityFrameworkCore.PostgreSQL.Design.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/BouncyCastle.Crypto.dll
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/RDotNet.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/SixLabors.ImageSharp.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/SkiaSharp.dll
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/bin/Debug/netcoreapp3.0/System.Composition.AttributedModel.dll

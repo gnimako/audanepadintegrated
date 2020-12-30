@@ -197,10 +197,10 @@
                                     )
                                     .DataSource(ds => ds.Read(read => read.Action("_GetDirectorateMTPContributions_Draft", "Admin", new {cycleid=Model.DispatchCycle_Id})))
                                     .Series(series => {
-                                        series.Bar(model => model.Economic).Name("Economic Transformation…").Color("#02203b");
-                                        series.Bar(model => model.Invest).Name("Invest., in the African People…").Color("#166f99");
+                                        series.Bar(model => model.Economic).Name("Economic Transformation...").Color("#02203b");
+                                        series.Bar(model => model.Invest).Name("Investing in the African People...").Color("#166f99");
                                         series.Bar(model => model.Advancing).Name("Advancing Continental Integration").Color("#0399d4");
-                                        series.Bar(model => model.Service).Name("Service Delivery, Capacity Dev…").Color("#89CFF0");
+                                        series.Bar(model => model.Service).Name("Service Delivery, Capacity Development...").Color("#89CFF0");
                                         series.Bar(model => model.Institutional).Name("Institutional Reforms").Color("#B0DFE5");
                                     })
                                     .CategoryAxis(axis => axis
