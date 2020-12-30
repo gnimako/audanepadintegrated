@@ -75758,6 +75758,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/ManageWorkplansDraft .cshtml",
+      "TargetPath": "Views\\NEPADStaff\\ManageWorkplansDraft .cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Admin/_AddStrucDivision.cshtml",
       "TargetPath": "Views\\Admin\\_AddStrucDivision.cshtml",
       "FileKind": "mvc"
@@ -76075,11 +76080,6 @@
     {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/_ViewStart.cshtml",
       "TargetPath": "Views\\_ViewStart.cshtml",
-      "FileKind": "mvc"
-    },
-    {
-      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/ManageWorkplansDraft copy.cshtml",
-      "TargetPath": "Views\\NEPADStaff\\ManageWorkplansDraft copy.cshtml",
       "FileKind": "mvc"
     },
     {

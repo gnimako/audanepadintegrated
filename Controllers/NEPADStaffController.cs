@@ -12755,13 +12755,15 @@ namespace AUDANEPAD_Integrated.Controllers
                     tablestrategicprioritiessummary.AddCell(cellheader03);
 
                     int _stracount=0;
+                    double grand_stra_total_budget=0;
                     foreach (var rec_set in DB_RecordsStra)
                     {
 
 
-                        //Get the Directorates Contributing to Strategic Priority
+                        //Get the Directorates Contributing to Strategic Priority AND Total Budgets
                         string rtnstringDirectorates_Stra= string.Empty;
                         var DB_StrategicMainProjs=_wpAUDAPriorityRepository.GetRecordsByYearPeriodAndPriority(cyclerec.FiscalYear_Id, cyclerec.Period_Id, rec_set.Record_Id).GroupBy(x => x.WPMainRecord_id).Select(x => x.First()).ToList();
+                        double stra_total_budget=0;
 
                         if(cyclerec.Period_Id==8)
                         {
@@ -12771,30 +12773,53 @@ namespace AUDANEPAD_Integrated.Controllers
                         {
                                 int _interother=0;
                                 var dirlist = new List<string>();
-                             //   bool notinlist=true;
-
+                
+                                
                                 foreach(var stramainproj in DB_StrategicMainProjs)
                                 {
-                                   // Strategy_Priority rec=_strategyPriorityRepository.GetRecord(stramainproj.Priority_Id);
+                                    //Directorate Names
                                     Struc_Directorate rec=_strucDirectorateRepository.GetRecord(_wpMainRecordRepository.GetRecord(stramainproj.WPMainRecord_id).Directorate_Id);
                                     _interother=_interother+1;
 
                                     if(!dirlist.Contains(rec.AcronymName.TrimEnd()))
                                     {
                                         
-                                        if((_interother==DB_StrategicMainProjs.Count()) )
-                                        {
-                                            rtnstringDirectorates_Stra += rec.AcronymName.TrimEnd();  
-                                        }
-                                        else
-                                        {
-                                            rtnstringDirectorates_Stra += rec.AcronymName.TrimEnd()+", ";  
+                                        rtnstringDirectorates_Stra += rec.AcronymName.TrimEnd()+", ";  
 
-                                        }
+                                       
                                         dirlist.Add(rec.AcronymName.TrimEnd());
                                     }
 
+                                    //Total Budget for Strategic Priority
+                                    double proj_total_budget=0;
+                                    var DB_Activities_Records=_wpOutputActivitiesRepository.GetRecordsByMainRecordId(stramainproj.WPMainRecord_id).ToList();
+
+                                    foreach (var act in DB_Activities_Records)
+                                    {
+                                        proj_total_budget = proj_total_budget + act.ActivityCost;
+                                    }
+
+                                    var DB_MainProjsLinks=_wpAUDAPriorityRepository.GetRecordsByMainRecordId(stramainproj.WPMainRecord_id);
+                                    stra_total_budget=stra_total_budget+(Convert.ToDouble(proj_total_budget)/Convert.ToDouble(DB_MainProjsLinks.Count()));
+
+                                    
+
+
+
                                 }
+                                grand_stra_total_budget=grand_stra_total_budget+stra_total_budget;
+
+                                if(rtnstringDirectorates_Stra.Length>=2)
+                                {
+                                    if(rtnstringDirectorates_Stra.Substring(rtnstringDirectorates_Stra.Length-2)==", ")
+                                    {
+                                        rtnstringDirectorates_Stra = rtnstringDirectorates_Stra.Remove(rtnstringDirectorates_Stra.Length - 2, 2);
+
+                                    }
+                                }
+                       
+
+
 
                         }
 
@@ -12841,7 +12866,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
                                 cell3.SetTextAlignment(TextAlignment.RIGHT)
-                                .Add(new Paragraph("")
+                                .Add(new Paragraph(string.Format("{0:N0}", stra_total_budget))
                                                 // .SetFont(ft_montserrat_reg)
                                                 .SetFixedLeading(14f)
                                                 .SetFontColor(cl_grayDark)
@@ -12885,7 +12910,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
                                 cell3.SetTextAlignment(TextAlignment.RIGHT)
-                                .Add(new Paragraph("")
+                                .Add(new Paragraph(string.Format("{0:N0}", stra_total_budget))
                                                 // .SetFont(ft_montserrat_reg)
                                                 .SetFixedLeading(14f)
                                                 .SetFontColor(cl_grayDark)
@@ -12933,8 +12958,8 @@ namespace AUDANEPAD_Integrated.Controllers
 
                     Cell cellheader05t = new Cell(1, 1)
                         .SetTextAlignment(TextAlignment.RIGHT)
-                        .Add(new Paragraph("")
-                       // .Add(new Paragraph(string.Format("{0:N0}", grand_directorate_total_budget))
+                        //.Add(new Paragraph("")
+                       .Add(new Paragraph(string.Format("{0:N0}", grand_stra_total_budget))
                                         //.SetFont(ft_bold)
                                         .SetFixedLeading(14f)
                                         .SetFontColor(cl_grayDark)
@@ -13863,7 +13888,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 //Add title
                 Cell celltitle21 = new Cell(1, 1)
                     .SetTextAlignment(TextAlignment.CENTER)
-                    .Add(new Paragraph("Distribution of Contributions to MTP Priorities")
+                    .Add(new Paragraph("Distribution of Contributions to MTP Priorities (Nominal)")
                                     // .SetFont(ft_bold)
                                     .SetFixedLeading(14f)
                                 // .SetFontColor(cl_white)
@@ -13890,7 +13915,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 Cell celltitle22 = new Cell(1, 1)
                     .SetTextAlignment(TextAlignment.CENTER)
-                    .Add(new Paragraph("Contributions to MTP Priorities by Directorates")
+                    .Add(new Paragraph("Contributions to MTP Priorities by Directorates (Nominal)")
                                     // .SetFont(ft_bold)
                                     .SetFixedLeading(14f)
                                 // .SetFontColor(cl_white)
@@ -13963,7 +13988,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 //Add title
                 Cell celltitle31 = new Cell(1, 1)
                     .SetTextAlignment(TextAlignment.CENTER)
-                    .Add(new Paragraph("Distribution of Contributions to Strategic Priorities")
+                    .Add(new Paragraph("Distribution of Contributions to Strategic Priorities (Nominal)")
                                     // .SetFont(ft_bold)
                                     .SetFixedLeading(14f)
                                 // .SetFontColor(cl_white)
@@ -13990,7 +14015,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 Cell celltitle32 = new Cell(1, 1)
                     .SetTextAlignment(TextAlignment.CENTER)
-                    .Add(new Paragraph("Contributions to Strategic Priorities by Directorates")
+                    .Add(new Paragraph("Contributions to Strategic Priorities by Directorates (Nominal)")
                                     // .SetFont(ft_bold)
                                     .SetFixedLeading(14f)
                                 // .SetFontColor(cl_white)
