@@ -63,10 +63,26 @@ namespace AUDANEPAD_Integrated.Services
             return rec;
         }
 
+		public IEnumerable<WP_MainRecord>  GetRecordsByDirectorateYearAndPeriod (int dir, int year, int period)
+        {
+            var rec = context.WP_MainRecord
+						.Where(s => s.Directorate_Id==dir && s.FiscalYear_Id == year && s.Period_Id == period)
+						.ToList();
+            return rec;
+        }
+
 		public IEnumerable<WP_MainRecord> GetRecordsByDivisionYearAndPeriodStartEnd (int div, int year, int period, LocalDate PeriodStartDate, LocalDate PeriodEndDate)
         {
             var rec = context.WP_MainRecord
 						.Where(s => s.Division_Id==div && s.FiscalYear_Id == year && s.Period_Id == period && s.PeriodStartDate==PeriodStartDate && s.PeriodEndDate==PeriodEndDate)
+						.ToList();
+            return rec;
+        }
+
+		public IEnumerable<WP_MainRecord> GetRecordsByDirectorateYearAndPeriodStartEnd (int dir, int year, int period, LocalDate PeriodStartDate, LocalDate PeriodEndDate)
+        {
+            var rec = context.WP_MainRecord
+						.Where(s => s.Directorate_Id==dir && s.FiscalYear_Id == year && s.Period_Id == period && s.PeriodStartDate==PeriodStartDate && s.PeriodEndDate==PeriodEndDate)
 						.ToList();
             return rec;
         }
@@ -90,6 +106,14 @@ namespace AUDANEPAD_Integrated.Services
         {
             var rec = context.WP_MainRecord
 						.Where(s =>  s.Division_Id==div)
+						.ToList();
+            return rec;
+        }
+
+		public IEnumerable<WP_MainRecord> GetRecordsByDirRecs (int dir)
+        {
+            var rec = context.WP_MainRecord
+						.Where(s =>  s.Directorate_Id==dir)
 						.ToList();
             return rec;
         }

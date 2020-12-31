@@ -20,6 +20,11 @@ namespace AUDANEPAD_Integrated.Interfaces
         IEnumerable<WP_MainRecord>  GetRecordsByProjectYearAndPeriodRecs (int projectid, int year, int period);
         IEnumerable<WP_MainRecord>  GetDraftRecordsByDivRecs (int div);
         IEnumerable<WP_MainRecord>  GetRecordsByDivRecs (int div);
+        
+        //Directorate
+        IEnumerable<WP_MainRecord>  GetRecordsByDirRecs (int dir);
+        IEnumerable<WP_MainRecord> GetRecordsByDirectorateYearAndPeriod (int dir, int year, int period);
+        IEnumerable<WP_MainRecord> GetRecordsByDirectorateYearAndPeriodStartEnd (int dir, int year, int period, LocalDate PeriodStartDate, LocalDate PeriodEndDate);
 		IEnumerable<WP_MainRecord> GetAllRecords();
 
 		WP_MainRecord Add(WP_MainRecord rec);

@@ -39,7 +39,7 @@
                                                             columns.Bound(c => c.FisPeriod).Title("Period");
                 
 
-                                                            columns.Command(command => command.Custom(" View Summary and PDF Report").IconClass("k-icon k-i-file-pdf").Click("viewsummaryandpdf")).Width(300);
+                                                            columns.Command(command => command.Custom(" View Reports").IconClass("k-icon k-i-file-pdf").Click("viewreports")).Width(300);
                                                              columns.Command(command => command.Custom(" View and Approve").IconClass("k-icon k-i-check-outline").Click("viewandapprovewp").Visible("ceoapproveVisible"));
                                                             //columns.Command(command => { command.Destroy().Text(" Deactivate").IconClass("k-icon k-i-lock"); });
                                                         })
@@ -320,6 +320,45 @@ function viewsummaryandpdf(e) {
 
     redirect_blank(url);
 
+
+}
+
+
+
+function viewreports(e) {
+
+    e.preventDefault();
+
+
+
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+    var transid = dataItem.Transaction_Id;
+   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
+    
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/NEPADStaff/ChooseInstitutionalWPReport?transid=" + transid,
+            width: 600,
+            height: 500,
+
+            title: "Choose Institutional Report",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+         
 
 }
 
