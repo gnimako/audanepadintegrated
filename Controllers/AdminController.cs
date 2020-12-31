@@ -551,6 +551,66 @@ namespace AUDANEPAD_Integrated.Controllers
 
         }
 
+
+
+        public async Task<ActionResult> LookUpProcurementType()
+        {
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+
+
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            // DateTime test = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day);
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                // DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank,
+                ExistingPhotoPath = employee.PhotoPath
+
+            };
+
+
+
+            return View(emp_view);
+
+        }
+
+
+
         public async Task<ActionResult> ManageStrucDirectorate()
         {
 
@@ -2806,6 +2866,50 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(new [] { record }.ToDataSourceResult(request, ModelState));
         }
 
+
+      [AcceptVerbs("Post")]
+		public ActionResult LkUp_ProcurementType_Create([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                LkUp_ProcurementType rec = _lkupProcurementTypeRepository.GetRecordByName(record.LookUp_Name);
+
+                if (rec == null && record.LookUp_Name !=null)
+                {
+
+                        var DB_Recs = _lkupProcurementTypeRepository.GetAllRecords();
+                        int _count = DB_Recs.Count();
+
+                        LkUp_ProcurementType rec_to_add = new LkUp_ProcurementType
+                        {
+                            Record_Id=_count+1,
+                            Record_Name=record.LookUp_Name,
+                            Record_Status=true,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+                        _lkupProcurementTypeRepository.Add(rec_to_add);
+
+
+                        Trans_ProcurementType rec_trans = new Trans_ProcurementType
+                        {
+                            Transaction_Id = Guid.NewGuid().ToString(),
+                            Record_Id = _count+1,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+                        _transProcurementTypeRepository.Add(rec_trans);
+
+
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+
+
+
         [AcceptVerbs("Post")]
 		public ActionResult Struc_Directorate_Create([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
         {
@@ -3342,6 +3446,40 @@ namespace AUDANEPAD_Integrated.Controllers
             
             return Json(new [] { record }.ToDataSourceResult(request, ModelState));
         }
+
+
+        [AcceptVerbs("Post")]
+		public ActionResult LkUp_ProcurementType_Update([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                LkUp_ProcurementType rec = _lkupProcurementTypeRepository.GetRecord(record.LookUp_Id);
+                
+                if (rec != null)
+                {
+
+                        LkUp_ProcurementType rec_already_exist = _lkupProcurementTypeRepository.GetRecordByName(record.LookUp_Name);
+
+                        if(rec_already_exist==null)
+                        {
+                            rec.Record_Name=record.LookUp_Name;
+                            rec.TransactionDate=new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+
+
+                            _lkupProcurementTypeRepository.Update(rec);
+                        }
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+
+
+
+
+
         [AcceptVerbs("Post")]
 		public ActionResult Struc_Directorate_Update([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
         {
@@ -3601,6 +3739,35 @@ namespace AUDANEPAD_Integrated.Controllers
             
             return Json(new [] { record }.ToDataSourceResult(request, ModelState));
         }
+
+
+        [AcceptVerbs("Post")]
+		public ActionResult LkUp_ProcurementType_Delete([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                LkUp_ProcurementType rec = _lkupProcurementTypeRepository.GetRecord(record.LookUp_Id);
+                
+                if (rec != null)
+                {
+                    rec.Record_Status=false;
+                    _lkupProcurementTypeRepository.Update(rec);   
+                } 
+
+                Trans_ProcurementType transrec=_transProcurementTypeRepository.GetRecordByMainRecord_Id(record.LookUp_Id); 
+
+                if (transrec != null)
+                {
+                    _transProcurementTypeRepository.Delete(transrec.Transaction_Id);   
+                }  
+
+
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
 
 
 
@@ -3975,6 +4142,27 @@ namespace AUDANEPAD_Integrated.Controllers
             
             return Json(new [] { record }.ToDataSourceResult(request, ModelState));
         }
+
+        [AcceptVerbs("Post")]
+		public ActionResult Trans_ProcurementType_Delete([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                Trans_ProcurementType rec = _transProcurementTypeRepository.GetRecord(record.Trans_LookUp_Id);
+                
+                if (rec != null)
+                {
+                    _transProcurementTypeRepository.Delete(rec.Transaction_Id);
+
+                    LkUp_ProcurementType rec_update=_lkupProcurementTypeRepository.GetRecord(rec.Record_Id);
+                    rec_update.Record_Status=false;
+                    _lkupProcurementTypeRepository.Update(rec_update);
+                }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
         [AcceptVerbs("Post")]
 		public ActionResult Trans_StrucDirectorate_Delete([DataSourceRequest] DataSourceRequest request, LookUpTablesViewModel record)
         {
@@ -4057,6 +4245,48 @@ namespace AUDANEPAD_Integrated.Controllers
 
             return Json(collection_recs.ToDataSourceResult(request));
         }
+
+
+
+        public ActionResult LkUp_ProcurementType_Read([DataSourceRequest]DataSourceRequest request, string text)
+        {
+
+
+            List<LookUpTablesViewModel> collection_recs = new List<LookUpTablesViewModel>();
+
+
+
+            var DB_Recs =  _lkupProcurementTypeRepository.GetAllRecords();
+
+
+
+
+            int _count =  DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+   
+                    LookUpTablesViewModel srec = new LookUpTablesViewModel
+                    {
+                        LookUp_Id = rec.Record_Id,
+                        LookUp_Name =rec.Record_Name,
+                        Show_trans_button=rec.Record_Status,
+                        LookUp_Status = rec.Record_Status? "Transactional": "Inactive",
+                        TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                    };
+
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
 
         public ActionResult Struc_Directorate_Read([DataSourceRequest]DataSourceRequest request, string text)
         {
@@ -7815,6 +8045,46 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(collection_recs.ToDataSourceResult(request));
         }
 
+
+
+
+
+        public ActionResult Trans_ProcurementType_Read([DataSourceRequest]DataSourceRequest request, string text)
+        {
+
+
+            List<LookUpTablesViewModel> collection_recs = new List<LookUpTablesViewModel>();
+
+            var DB_Recs =  _transProcurementTypeRepository.GetAllRecords().ToList();
+
+            int _count = DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+
+                    LookUpTablesViewModel srec = new LookUpTablesViewModel
+                    {
+                        LookUp_Id = rec.Record_Id,
+                        Trans_LookUp_Id=rec.Transaction_Id,
+                        LookUp_Name =_lkupProcurementTypeRepository.GetRecord(rec.Record_Id).Record_Name,
+                        TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
+                    };
+
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+
+
+
         public ActionResult Trans_StrucDirectorate_Read([DataSourceRequest]DataSourceRequest request, string text)
         {
 
@@ -8647,6 +8917,33 @@ namespace AUDANEPAD_Integrated.Controllers
                     TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
                 };
                 _transActivityTypeRepository.Add(rec_trans);
+
+                 return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+        }
+
+
+
+        [HttpPost]
+        public ActionResult MakeProcurementTypeTrans(string recid)
+        {
+            try
+            {
+                LkUp_ProcurementType rec = _lkupProcurementTypeRepository.GetRecord(Int32.Parse(recid));
+                rec.Record_Status=true;
+                _lkupProcurementTypeRepository.Update(rec);
+
+                Trans_ProcurementType rec_trans = new Trans_ProcurementType
+                {
+                    Transaction_Id = Guid.NewGuid().ToString(),
+                    Record_Id = rec.Record_Id,
+                    TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                };
+                _transProcurementTypeRepository.Add(rec_trans);
 
                  return Json(new { rtnmsg = "success" });
             }

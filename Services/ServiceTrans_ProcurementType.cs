@@ -25,6 +25,15 @@ namespace AUDANEPAD_Integrated.Services
 		    return rec;
 		}
 
+
+        public Trans_ProcurementType GetRecordByMainRecord_Id (int Id)
+        {
+            var rec = context.Trans_ProcurementType
+						.Where(s => s.Record_Id == Id)
+						.FirstOrDefault();
+            return rec;
+        }
+
 		public Trans_ProcurementType Delete(string id)
 		{
 		    Trans_ProcurementType rec = context.Trans_ProcurementType.Find(id);
