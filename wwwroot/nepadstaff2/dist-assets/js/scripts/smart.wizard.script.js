@@ -15,7 +15,9 @@ $(document).ready(function () {
   }); // Toolbar extra buttons
 
   var btnFinish = $('<button></button>').text('Finish').addClass('btn btn-info').on('click', function () {
-    alert('Finish Clicked');
+   // alert('Finish Clicked');
+    var url="/NEPADStaff/WorkplanDraftList"
+    non_redirect_blank(url);
   });
   var btnCancel = $('<button></button>').text('Cancel').addClass('btn btn-danger').on('click', function () {
     $('#smartwizard').smartWizard("reset");

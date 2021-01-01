@@ -21115,573 +21115,568 @@ namespace AUDANEPAD_Integrated.Controllers
                     {
                         dirproject_count=dirproject_count+1;
 
-                       // var ProjectOutputsRecs=_wpOutputsRepository.GetRecordsByMainRecordId(mproject.Transaction_Id).ToList();
-
                        // var RiskProfilesRecs=_wpRiskProfileRepository.GetRecordsByMainRecordId(mproject.Transaction_Id).OrderBy(d => d.WPRiskImpactLevel_Id).ToList();
 
-                       // double _budget=0;
-                       // foreach(var rec_for_category in RiskProfilesRecs)
-                       // {
-                            diroutputs_count=diroutputs_count+1;
-                       
+                        diroutputs_count=diroutputs_count+1;
+                    
 
-                           
-                            grand_dir_totalbudget=grand_dir_totalbudget+rec_for_category.WPRiskCost;
+                        
+                        grand_dir_totalbudget=grand_dir_totalbudget+rec_for_category.WPRiskCost;
 
 
-                            string mitigationmeasures="";
-                            if(rec_for_category.WPRisk_MitigationMeasures!=null)
-                            {
-                                mitigationmeasures=rec_for_category.WPRisk_MitigationMeasures;
+                        string mitigationmeasures="";
+                        if(rec_for_category.WPRisk_MitigationMeasures!=null)
+                        {
+                            mitigationmeasures=rec_for_category.WPRisk_MitigationMeasures;
 
-                            }
-                            else
-                            {
-                                mitigationmeasures="N/A";
+                        }
+                        else
+                        {
+                            mitigationmeasures="N/A";
 
-                            }
+                        }
 
-                            string additonalnotes="";
-                            if(rec_for_category.WPRisk_AdditionalNotes!=null)
-                            {
-                                additonalnotes=rec_for_category.WPRisk_AdditionalNotes;
+                        string additonalnotes="";
+                        if(rec_for_category.WPRisk_AdditionalNotes!=null)
+                        {
+                            additonalnotes=rec_for_category.WPRisk_AdditionalNotes;
 
-                            }
-                            else
-                            {
-                                additonalnotes="N/A";
+                        }
+                        else
+                        {
+                            additonalnotes="N/A";
 
-                            }
+                        }
 
-                            Employee employee_owner=_employeeRepository.GetEmployee(rec_for_category.WPRiskOwner_Id);
-                            string owner=employee_owner.First_Name.TrimEnd()+ " "+employee_owner.Last_Name.TrimEnd();
+                        Employee employee_owner=_employeeRepository.GetEmployee(rec_for_category.WPRiskOwner_Id);
+                        string owner=employee_owner.First_Name.TrimEnd()+ " "+employee_owner.Last_Name.TrimEnd();
 
-                            Employee employee_champion=_employeeRepository.GetEmployee(rec_for_category.WPRiskChampion_Id);
-                            string champion=employee_champion.First_Name.TrimEnd()+ " "+employee_champion.Last_Name.TrimEnd();
+                        Employee employee_champion=_employeeRepository.GetEmployee(rec_for_category.WPRiskChampion_Id);
+                        string champion=employee_champion.First_Name.TrimEnd()+ " "+employee_champion.Last_Name.TrimEnd();
 
 
+                        
+
+
+
+
+
+
+
+
+                        DottedLine dottedline_new = new DottedLine(0.5f);
+
+
+                        if(rec_for_category.WPRiskImpactLevel_Id==1)
+                        {
+
+                            Cell cell1= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.CENTER)
+                            .Add(new Paragraph(diroutputs_count.ToString())
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_moderate)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_moderate);
+                            tabledivprojdetails.AddCell(cell1);
+
+                            Cell cell7= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(_wpOutputsRepository.GetRecord(rec_for_category.WPOutput_Id).Output)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_moderate)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_moderate);
+                            tabledivprojdetails.AddCell(cell7);
+
+                            Cell cell2= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(rec_for_category.WPRisk_Description)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_moderate)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_moderate);
+                            tabledivprojdetails.AddCell(cell2);
+
+                            Cell cell3= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(_lkupRiskCategoryRepository.GetRecord(rec_for_category.WPCategory_Id).Record_Name)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_moderate)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_moderate);
+                            tabledivprojdetails.AddCell(cell3);
+
+                            Cell cell4= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(_lkupRiskImpactRepository.GetRecord(rec_for_category.WPRiskImpactLevel_Id).Record_Name)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_moderate)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_moderate);
+                            tabledivprojdetails.AddCell(cell4);
+
+                            Cell cell5= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(_lkupRiskProbabilityRepository.GetRecord(rec_for_category.WPRiskProbability_Id).Record_Name)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_moderate)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_moderate);
+                            tabledivprojdetails.AddCell(cell5);
+
+
+                            Cell cell6= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(champion)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_moderate)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_moderate);
+                            tabledivprojdetails.AddCell(cell6);
+
+
+
+                            Cell cell8= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(mitigationmeasures)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_moderate)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_moderate);
+                            tabledivprojdetails.AddCell(cell8);
+
+                            
+                            Cell cell9 = new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph(string.Format("{0:N0}", rec_for_category.WPRiskCost))
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //.SetFontColor(cl_white)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_risk_moderate)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tablecontent_risk_moderate)
+                            .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f));
+                            tabledivprojdetails.AddCell(cell9);
+
+
+                        }
+                        else if(rec_for_category.WPRiskImpactLevel_Id==2)
+                        {
+
+                            Cell cell1= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.CENTER)
+                            .Add(new Paragraph(diroutputs_count.ToString())
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_significant)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_significant);
+                            tabledivprojdetails.AddCell(cell1);
+
+
+                            Cell cell7= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(_wpOutputsRepository.GetRecord(rec_for_category.WPOutput_Id).Output)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_significant)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_significant);
+                            tabledivprojdetails.AddCell(cell7);
+
+                            Cell cell2= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(rec_for_category.WPRisk_Description)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_significant)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_significant);
+                            tabledivprojdetails.AddCell(cell2);
+
+                            Cell cell3= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(_lkupRiskCategoryRepository.GetRecord(rec_for_category.WPCategory_Id).Record_Name)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_significant)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_significant);
+                            tabledivprojdetails.AddCell(cell3);
+
+                            Cell cell4= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(_lkupRiskImpactRepository.GetRecord(rec_for_category.WPRiskImpactLevel_Id).Record_Name)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_significant)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_significant);
+                            tabledivprojdetails.AddCell(cell4);
+
+                            Cell cell5= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(_lkupRiskProbabilityRepository.GetRecord(rec_for_category.WPRiskProbability_Id).Record_Name)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_significant)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_significant);
+                            tabledivprojdetails.AddCell(cell5);
+
+
+                            Cell cell6= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(champion)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_significant)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_significant);
+                            tabledivprojdetails.AddCell(cell6);
+
+
+                            Cell cell8= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(mitigationmeasures)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_significant)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_significant);
+                            tabledivprojdetails.AddCell(cell8);
+
+                            
+                            Cell cell9 = new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph(string.Format("{0:N0}", rec_for_category.WPRiskCost))
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //.SetFontColor(cl_white)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_risk_significant)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tablecontent_risk_significant)
+                            .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f));
+                            tabledivprojdetails.AddCell(cell9);
+
+
+                        }
+                        else if(rec_for_category.WPRiskImpactLevel_Id==3)
+                        {
+
+                            Cell cell1= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.CENTER)
+                            .Add(new Paragraph(diroutputs_count.ToString())
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_major)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_major);
+                            tabledivprojdetails.AddCell(cell1);
+
+                            Cell cell7= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(_wpOutputsRepository.GetRecord(rec_for_category.WPOutput_Id).Output)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_major)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_major);
+                            tabledivprojdetails.AddCell(cell7);
+
+
+                            Cell cell2= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(rec_for_category.WPRisk_Description)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_major)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_major);
+                            tabledivprojdetails.AddCell(cell2);
+
+                            Cell cell3= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(_lkupRiskCategoryRepository.GetRecord(rec_for_category.WPCategory_Id).Record_Name)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_major)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_major);
+                            tabledivprojdetails.AddCell(cell3);
+
+                            Cell cell4= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(_lkupRiskImpactRepository.GetRecord(rec_for_category.WPRiskImpactLevel_Id).Record_Name)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_major)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_major);
+                            tabledivprojdetails.AddCell(cell4);
+
+                            Cell cell5= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(_lkupRiskProbabilityRepository.GetRecord(rec_for_category.WPRiskProbability_Id).Record_Name)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_major)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_major);
+                            tabledivprojdetails.AddCell(cell5);
+
+
+                            Cell cell6= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(champion)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_major)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_major);
+                            tabledivprojdetails.AddCell(cell6);
+
+                            Cell cell8= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(mitigationmeasures)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_major)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_major);
+                            tabledivprojdetails.AddCell(cell8);
+
+                            
+                            Cell cell9 = new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph(string.Format("{0:N0}", rec_for_category.WPRiskCost))
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //.SetFontColor(cl_white)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_risk_major)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tablecontent_risk_major)
+                            .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f));
+                            tabledivprojdetails.AddCell(cell9);
+
+
+                        }
+                        else if(rec_for_category.WPRiskImpactLevel_Id==4)
+                        {
+
+                            Cell cell1= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.CENTER)
+                            .Add(new Paragraph(diroutputs_count.ToString())
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_critical)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_critical);
+                            tabledivprojdetails.AddCell(cell1);
+
+                            Cell cell7= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(_wpOutputsRepository.GetRecord(rec_for_category.WPOutput_Id).Output)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_critical)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_critical);
+                            tabledivprojdetails.AddCell(cell7);
+
+                            Cell cell2= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(rec_for_category.WPRisk_Description)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_critical)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_critical);
+                            tabledivprojdetails.AddCell(cell2);
+
+                            Cell cell3= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(_lkupRiskCategoryRepository.GetRecord(rec_for_category.WPCategory_Id).Record_Name)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_critical)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_critical);
+                            tabledivprojdetails.AddCell(cell3);
+
+                            Cell cell4= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(_lkupRiskImpactRepository.GetRecord(rec_for_category.WPRiskImpactLevel_Id).Record_Name)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_critical)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_critical);
+                            tabledivprojdetails.AddCell(cell4);
+
+                            Cell cell5= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(_lkupRiskProbabilityRepository.GetRecord(rec_for_category.WPRiskProbability_Id).Record_Name)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_critical)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_critical);
+                            tabledivprojdetails.AddCell(cell5);
+
+
+                            Cell cell6= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(champion)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_critical)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_critical);
+                            tabledivprojdetails.AddCell(cell6);
+
+                            Cell cell8= new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.LEFT)
+                            .Add(new Paragraph(mitigationmeasures)
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //  .SetFontColor(cl_white)
+                                            .SetBackgroundColor(cl_tablecontent_risk_critical)
+                                            .SetFontSize(10))
+                                    .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f))
+                            .SetBackgroundColor(cl_tablecontent_risk_critical);
+                            tabledivprojdetails.AddCell(cell8);
+
+                            
+                            Cell cell9 = new Cell(1, 1)
+                            .SetTextAlignment(TextAlignment.RIGHT)
+                            .Add(new Paragraph(string.Format("{0:N0}", rec_for_category.WPRiskCost))
+                                            .SetFont(ft_regular)
+                                            .SetFixedLeading(14f)
+                                            //.SetFontColor(cl_white)
+                                            .SetFontColor(cl_grayDark)
+                                            .SetBackgroundColor(cl_tablecontent_risk_critical)
+                                            .SetFontSize(10))
+                            .SetBackgroundColor(cl_tablecontent_risk_critical)
+                            .SetBorderTop(Border.NO_BORDER)
+                            .SetBorderBottom(new DottedBorder(0.5f));
+                            tabledivprojdetails.AddCell(cell9);
+
+
+                        }
                             
 
 
 
-
-
-
-
-
-                            DottedLine dottedline_new = new DottedLine(0.5f);
-
-
-                            if(rec_for_category.WPRiskImpactLevel_Id==1)
-                            {
-
-                                Cell cell1= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.CENTER)
-                                .Add(new Paragraph(diroutputs_count.ToString())
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_moderate)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_moderate);
-                                tabledivprojdetails.AddCell(cell1);
-
-                                Cell cell7= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_wpOutputsRepository.GetRecord(rec_for_category.WPOutput_Id).Output)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_moderate)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_moderate);
-                                tabledivprojdetails.AddCell(cell7);
-
-                                Cell cell2= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(rec_for_category.WPRisk_Description)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_moderate)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_moderate);
-                                tabledivprojdetails.AddCell(cell2);
-
-                                Cell cell3= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupRiskCategoryRepository.GetRecord(rec_for_category.WPCategory_Id).Record_Name)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_moderate)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_moderate);
-                                tabledivprojdetails.AddCell(cell3);
-
-                                Cell cell4= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupRiskImpactRepository.GetRecord(rec_for_category.WPRiskImpactLevel_Id).Record_Name)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_moderate)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_moderate);
-                                tabledivprojdetails.AddCell(cell4);
-
-                                Cell cell5= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupRiskProbabilityRepository.GetRecord(rec_for_category.WPRiskProbability_Id).Record_Name)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_moderate)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_moderate);
-                                tabledivprojdetails.AddCell(cell5);
-
-
-                                Cell cell6= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(champion)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_moderate)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_moderate);
-                                tabledivprojdetails.AddCell(cell6);
-
-
-
-                                Cell cell8= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(mitigationmeasures)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_moderate)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_moderate);
-                                tabledivprojdetails.AddCell(cell8);
-
-                                
-                                Cell cell9 = new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.RIGHT)
-                                .Add(new Paragraph(string.Format("{0:N0}", rec_for_category.WPRiskCost))
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //.SetFontColor(cl_white)
-                                                .SetFontColor(cl_grayDark)
-                                                .SetBackgroundColor(cl_tablecontent_risk_moderate)
-                                                .SetFontSize(10))
-                                .SetBackgroundColor(cl_tablecontent_risk_moderate)
-                                .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f));
-                                tabledivprojdetails.AddCell(cell9);
-
-
-                            }
-                            else if(rec_for_category.WPRiskImpactLevel_Id==2)
-                            {
-
-                                Cell cell1= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.CENTER)
-                                .Add(new Paragraph(diroutputs_count.ToString())
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_significant)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_significant);
-                                tabledivprojdetails.AddCell(cell1);
-
-
-                                Cell cell7= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_wpOutputsRepository.GetRecord(rec_for_category.WPOutput_Id).Output)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_significant)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_significant);
-                                tabledivprojdetails.AddCell(cell7);
-
-                                Cell cell2= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(rec_for_category.WPRisk_Description)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_significant)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_significant);
-                                tabledivprojdetails.AddCell(cell2);
-
-                                Cell cell3= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupRiskCategoryRepository.GetRecord(rec_for_category.WPCategory_Id).Record_Name)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_significant)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_significant);
-                                tabledivprojdetails.AddCell(cell3);
-
-                                Cell cell4= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupRiskImpactRepository.GetRecord(rec_for_category.WPRiskImpactLevel_Id).Record_Name)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_significant)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_significant);
-                                tabledivprojdetails.AddCell(cell4);
-
-                                Cell cell5= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupRiskProbabilityRepository.GetRecord(rec_for_category.WPRiskProbability_Id).Record_Name)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_significant)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_significant);
-                                tabledivprojdetails.AddCell(cell5);
-
-
-                                Cell cell6= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(champion)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_significant)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_significant);
-                                tabledivprojdetails.AddCell(cell6);
-
-
-                                Cell cell8= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(mitigationmeasures)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_significant)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_significant);
-                                tabledivprojdetails.AddCell(cell8);
-
-                                
-                                Cell cell9 = new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.RIGHT)
-                                .Add(new Paragraph(string.Format("{0:N0}", rec_for_category.WPRiskCost))
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //.SetFontColor(cl_white)
-                                                .SetFontColor(cl_grayDark)
-                                                .SetBackgroundColor(cl_tablecontent_risk_significant)
-                                                .SetFontSize(10))
-                                .SetBackgroundColor(cl_tablecontent_risk_significant)
-                                .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f));
-                                tabledivprojdetails.AddCell(cell9);
-
-
-                            }
-                            else if(rec_for_category.WPRiskImpactLevel_Id==3)
-                            {
-
-                                Cell cell1= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.CENTER)
-                                .Add(new Paragraph(diroutputs_count.ToString())
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_major)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_major);
-                                tabledivprojdetails.AddCell(cell1);
-
-                                Cell cell7= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_wpOutputsRepository.GetRecord(rec_for_category.WPOutput_Id).Output)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_major)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_major);
-                                tabledivprojdetails.AddCell(cell7);
-
-
-                                Cell cell2= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(rec_for_category.WPRisk_Description)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_major)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_major);
-                                tabledivprojdetails.AddCell(cell2);
-
-                                Cell cell3= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupRiskCategoryRepository.GetRecord(rec_for_category.WPCategory_Id).Record_Name)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_major)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_major);
-                                tabledivprojdetails.AddCell(cell3);
-
-                                Cell cell4= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupRiskImpactRepository.GetRecord(rec_for_category.WPRiskImpactLevel_Id).Record_Name)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_major)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_major);
-                                tabledivprojdetails.AddCell(cell4);
-
-                                Cell cell5= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupRiskProbabilityRepository.GetRecord(rec_for_category.WPRiskProbability_Id).Record_Name)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_major)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_major);
-                                tabledivprojdetails.AddCell(cell5);
-
-
-                                Cell cell6= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(champion)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_major)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_major);
-                                tabledivprojdetails.AddCell(cell6);
-
-                                Cell cell8= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(mitigationmeasures)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_major)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_major);
-                                tabledivprojdetails.AddCell(cell8);
-
-                                
-                                Cell cell9 = new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.RIGHT)
-                                .Add(new Paragraph(string.Format("{0:N0}", rec_for_category.WPRiskCost))
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //.SetFontColor(cl_white)
-                                                .SetFontColor(cl_grayDark)
-                                                .SetBackgroundColor(cl_tablecontent_risk_major)
-                                                .SetFontSize(10))
-                                .SetBackgroundColor(cl_tablecontent_risk_major)
-                                .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f));
-                                tabledivprojdetails.AddCell(cell9);
-
-
-                            }
-                            else if(rec_for_category.WPRiskImpactLevel_Id==4)
-                            {
-
-                                Cell cell1= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.CENTER)
-                                .Add(new Paragraph(diroutputs_count.ToString())
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_critical)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_critical);
-                                tabledivprojdetails.AddCell(cell1);
-
-                                Cell cell7= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_wpOutputsRepository.GetRecord(rec_for_category.WPOutput_Id).Output)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_critical)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_critical);
-                                tabledivprojdetails.AddCell(cell7);
-
-                                Cell cell2= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(rec_for_category.WPRisk_Description)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_critical)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_critical);
-                                tabledivprojdetails.AddCell(cell2);
-
-                                Cell cell3= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupRiskCategoryRepository.GetRecord(rec_for_category.WPCategory_Id).Record_Name)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_critical)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_critical);
-                                tabledivprojdetails.AddCell(cell3);
-
-                                Cell cell4= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupRiskImpactRepository.GetRecord(rec_for_category.WPRiskImpactLevel_Id).Record_Name)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_critical)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_critical);
-                                tabledivprojdetails.AddCell(cell4);
-
-                                Cell cell5= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupRiskProbabilityRepository.GetRecord(rec_for_category.WPRiskProbability_Id).Record_Name)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_critical)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_critical);
-                                tabledivprojdetails.AddCell(cell5);
-
-
-                                Cell cell6= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(champion)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_critical)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_critical);
-                                tabledivprojdetails.AddCell(cell6);
-
-                                Cell cell8= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(mitigationmeasures)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_critical)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_critical);
-                                tabledivprojdetails.AddCell(cell8);
-
-                                
-                                Cell cell9 = new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.RIGHT)
-                                .Add(new Paragraph(string.Format("{0:N0}", rec_for_category.WPRiskCost))
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //.SetFontColor(cl_white)
-                                                .SetFontColor(cl_grayDark)
-                                                .SetBackgroundColor(cl_tablecontent_risk_critical)
-                                                .SetFontSize(10))
-                                .SetBackgroundColor(cl_tablecontent_risk_critical)
-                                .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f));
-                                tabledivprojdetails.AddCell(cell9);
-
-
-                            }
-                            
-
-
-
-                        //}
+                        
 
                         if(diroutputs_count==_dirriskCount)
                         {
