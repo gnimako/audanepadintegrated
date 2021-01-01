@@ -20933,7 +20933,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 //Display Outputs
 
-                int diroutputs_count=0;
+              int diroutputs_count=0;
                 double grand_dir_totalbudget=0;
               //  row_alt=true;
 
@@ -20959,17 +20959,49 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 //Check if there are any risk profiles for directorate
                 int _dirriskCount=0;
+                var Categorylist = new List<WP_RiskProfileVM>();
                 foreach (var mproject in DirMainRecs)
                 {
                     var RiskProfilesRecs_Check=_wpRiskProfileRepository.GetRecordsByMainRecordId(mproject.Transaction_Id).ToList();
                     _dirriskCount=_dirriskCount+RiskProfilesRecs_Check.Count();
+
+                    foreach(var rec_for_category in RiskProfilesRecs_Check)
+                    {
+                        WP_RiskProfileVM rec_to_add =new WP_RiskProfileVM
+                        {
+                            Transaction_Id=rec_for_category.Transaction_Id,
+                            WPMainRecord_id=rec_for_category.WPMainRecord_id,
+                            Project_Id=rec_for_category.Project_Id,
+                            FiscalYear_Id=rec_for_category.FiscalYear_Id,
+                            Period_Id=rec_for_category.Period_Id,
+                            WPOutput_Id=rec_for_category.WPOutput_Id,
+
+                            WPRisk_Description=rec_for_category.WPRisk_Description,
+                            WPRiskImpactLevel_Id=rec_for_category.WPRiskImpactLevel_Id,
+                            WPRiskProbability_Id =rec_for_category.WPRiskProbability_Id,
+                            WPFrequencyOfReporting_Id=rec_for_category.WPFrequencyOfReporting_Id,
+                            WPCategory_Id=rec_for_category.WPCategory_Id,
+                            WPRiskOwner_Id=rec_for_category.WPRiskOwner_Id,
+                            WPRiskChampion_Id =rec_for_category.WPRiskChampion_Id,
+                            WPRisk_MitigationMeasures =rec_for_category.WPRisk_MitigationMeasures,
+
+                            WPRiskCost =rec_for_category.WPRiskCost,
+                            WPRisk_AdditionalNotes =rec_for_category.WPRisk_AdditionalNotes,
+                            TransactionDate =rec_for_category.TransactionDate
+
+
+
+                        };
+                        Categorylist.Add(rec_to_add);
+
+                    }
                 }
 
 
                 int dirproject_count=0;
                 if(_dirriskCount>0)
                 {
-                    Table tabledivprojdetails = new Table(UnitValue.CreatePercentArray(new float[]{2, 19, 10, 12, 10, 13, 10, 13, 11}), false)
+                    Table tabledivprojdetails = new Table(UnitValue.CreatePercentArray(new float[]{2, 17, 16, 8, 12, 8, 13,  13, 11}), false)
                         .SetWidth(PageSize.A3.GetWidth()-(subtractmargins+37))
                         .SetMarginLeft(37)
                         .SetHorizontalAlignment(HorizontalAlignment.LEFT);
@@ -20985,6 +21017,17 @@ namespace AUDANEPAD_Integrated.Controllers
                             //.SetBorder(Border.NO_BORDER)
                         .SetBackgroundColor(cl_tableheader);
                         tabledivprojdetails.AddCell(cellheader1);
+
+                    Cell cellheader7= new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.LEFT)
+                        .Add(new Paragraph("Output or Results")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        //.SetFontColor(cl_white)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                        tabledivprojdetails.AddCell(cellheader7);
 
                     Cell cellheader2= new Cell(1, 1)
                         .SetTextAlignment(TextAlignment.LEFT)
@@ -21042,16 +21085,7 @@ namespace AUDANEPAD_Integrated.Controllers
                         .SetBackgroundColor(cl_tableheader);
                         tabledivprojdetails.AddCell(cellheader6);
 
-                        Cell cellheader7= new Cell(1, 1)
-                        .SetTextAlignment(TextAlignment.LEFT)
-                        .Add(new Paragraph("Reporting")
-                                        .SetFont(ft_bold)
-                                        .SetFixedLeading(14f)
-                                        //.SetFontColor(cl_white)
-                                        .SetBackgroundColor(cl_tableheader)
-                                        .SetFontSize(10))
-                        .SetBackgroundColor(cl_tableheader);
-                        tabledivprojdetails.AddCell(cellheader7);
+
 
                         Cell cellheader8= new Cell(1, 1)
                         .SetTextAlignment(TextAlignment.LEFT)
@@ -21076,18 +21110,18 @@ namespace AUDANEPAD_Integrated.Controllers
                                         .SetFontSize(10))
                         .SetBackgroundColor(cl_tableheader);
                         tabledivprojdetails.AddCell(cellheader9);
-
-                    foreach (var mproject in DirMainRecs)
+                    var SortedCategorylist=Categorylist.OrderBy(d => d.WPRiskImpactLevel_Id).ThenBy(d => d.WPOutput_Id).ToList();
+                    foreach (var rec_for_category in SortedCategorylist)
                     {
                         dirproject_count=dirproject_count+1;
 
                        // var ProjectOutputsRecs=_wpOutputsRepository.GetRecordsByMainRecordId(mproject.Transaction_Id).ToList();
 
-                        var RiskProfilesRecs=_wpRiskProfileRepository.GetRecordsByMainRecordId(mproject.Transaction_Id).OrderBy(d => d.WPRiskImpactLevel_Id).ToList();
+                       // var RiskProfilesRecs=_wpRiskProfileRepository.GetRecordsByMainRecordId(mproject.Transaction_Id).OrderBy(d => d.WPRiskImpactLevel_Id).ToList();
 
                        // double _budget=0;
-                        foreach(var rec_for_category in RiskProfilesRecs)
-                        {
+                       // foreach(var rec_for_category in RiskProfilesRecs)
+                       // {
                             diroutputs_count=diroutputs_count+1;
                        
 
@@ -21154,6 +21188,19 @@ namespace AUDANEPAD_Integrated.Controllers
                                 .SetBackgroundColor(cl_tablecontent_risk_moderate);
                                 tabledivprojdetails.AddCell(cell1);
 
+                                Cell cell7= new Cell(1, 1)
+                                .SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(_wpOutputsRepository.GetRecord(rec_for_category.WPOutput_Id).Output)
+                                                .SetFont(ft_regular)
+                                                .SetFixedLeading(14f)
+                                                //  .SetFontColor(cl_white)
+                                                .SetBackgroundColor(cl_tablecontent_risk_moderate)
+                                                .SetFontSize(10))
+                                        .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(new DottedBorder(0.5f))
+                                .SetBackgroundColor(cl_tablecontent_risk_moderate);
+                                tabledivprojdetails.AddCell(cell7);
+
                                 Cell cell2= new Cell(1, 1)
                                 .SetTextAlignment(TextAlignment.LEFT)
                                 .Add(new Paragraph(rec_for_category.WPRisk_Description)
@@ -21220,18 +21267,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 .SetBackgroundColor(cl_tablecontent_risk_moderate);
                                 tabledivprojdetails.AddCell(cell6);
 
-                                Cell cell7= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupRiskRTimeframeRepository.GetRecord(rec_for_category.WPFrequencyOfReporting_Id).Record_Name)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_moderate)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_moderate);
-                                tabledivprojdetails.AddCell(cell7);
+
 
                                 Cell cell8= new Cell(1, 1)
                                 .SetTextAlignment(TextAlignment.LEFT)
@@ -21279,6 +21315,20 @@ namespace AUDANEPAD_Integrated.Controllers
                                 .SetBackgroundColor(cl_tablecontent_risk_significant);
                                 tabledivprojdetails.AddCell(cell1);
 
+
+                                Cell cell7= new Cell(1, 1)
+                                .SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(_wpOutputsRepository.GetRecord(rec_for_category.WPOutput_Id).Output)
+                                                .SetFont(ft_regular)
+                                                .SetFixedLeading(14f)
+                                                //  .SetFontColor(cl_white)
+                                                .SetBackgroundColor(cl_tablecontent_risk_significant)
+                                                .SetFontSize(10))
+                                        .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(new DottedBorder(0.5f))
+                                .SetBackgroundColor(cl_tablecontent_risk_significant);
+                                tabledivprojdetails.AddCell(cell7);
+
                                 Cell cell2= new Cell(1, 1)
                                 .SetTextAlignment(TextAlignment.LEFT)
                                 .Add(new Paragraph(rec_for_category.WPRisk_Description)
@@ -21345,18 +21395,6 @@ namespace AUDANEPAD_Integrated.Controllers
                                 .SetBackgroundColor(cl_tablecontent_risk_significant);
                                 tabledivprojdetails.AddCell(cell6);
 
-                                Cell cell7= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupRiskRTimeframeRepository.GetRecord(rec_for_category.WPFrequencyOfReporting_Id).Record_Name)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_significant)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_significant);
-                                tabledivprojdetails.AddCell(cell7);
 
                                 Cell cell8= new Cell(1, 1)
                                 .SetTextAlignment(TextAlignment.LEFT)
@@ -21404,6 +21442,20 @@ namespace AUDANEPAD_Integrated.Controllers
                                 .SetBackgroundColor(cl_tablecontent_risk_major);
                                 tabledivprojdetails.AddCell(cell1);
 
+                                Cell cell7= new Cell(1, 1)
+                                .SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(_wpOutputsRepository.GetRecord(rec_for_category.WPOutput_Id).Output)
+                                                .SetFont(ft_regular)
+                                                .SetFixedLeading(14f)
+                                                //  .SetFontColor(cl_white)
+                                                .SetBackgroundColor(cl_tablecontent_risk_major)
+                                                .SetFontSize(10))
+                                        .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(new DottedBorder(0.5f))
+                                .SetBackgroundColor(cl_tablecontent_risk_major);
+                                tabledivprojdetails.AddCell(cell7);
+
+
                                 Cell cell2= new Cell(1, 1)
                                 .SetTextAlignment(TextAlignment.LEFT)
                                 .Add(new Paragraph(rec_for_category.WPRisk_Description)
@@ -21469,19 +21521,6 @@ namespace AUDANEPAD_Integrated.Controllers
                                 .SetBorderBottom(new DottedBorder(0.5f))
                                 .SetBackgroundColor(cl_tablecontent_risk_major);
                                 tabledivprojdetails.AddCell(cell6);
-
-                                Cell cell7= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupRiskRTimeframeRepository.GetRecord(rec_for_category.WPFrequencyOfReporting_Id).Record_Name)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_major)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_major);
-                                tabledivprojdetails.AddCell(cell7);
 
                                 Cell cell8= new Cell(1, 1)
                                 .SetTextAlignment(TextAlignment.LEFT)
@@ -21529,6 +21568,19 @@ namespace AUDANEPAD_Integrated.Controllers
                                 .SetBackgroundColor(cl_tablecontent_risk_critical);
                                 tabledivprojdetails.AddCell(cell1);
 
+                                Cell cell7= new Cell(1, 1)
+                                .SetTextAlignment(TextAlignment.LEFT)
+                                .Add(new Paragraph(_wpOutputsRepository.GetRecord(rec_for_category.WPOutput_Id).Output)
+                                                .SetFont(ft_regular)
+                                                .SetFixedLeading(14f)
+                                                //  .SetFontColor(cl_white)
+                                                .SetBackgroundColor(cl_tablecontent_risk_critical)
+                                                .SetFontSize(10))
+                                        .SetBorderTop(Border.NO_BORDER)
+                                .SetBorderBottom(new DottedBorder(0.5f))
+                                .SetBackgroundColor(cl_tablecontent_risk_critical);
+                                tabledivprojdetails.AddCell(cell7);
+
                                 Cell cell2= new Cell(1, 1)
                                 .SetTextAlignment(TextAlignment.LEFT)
                                 .Add(new Paragraph(rec_for_category.WPRisk_Description)
@@ -21595,19 +21647,6 @@ namespace AUDANEPAD_Integrated.Controllers
                                 .SetBackgroundColor(cl_tablecontent_risk_critical);
                                 tabledivprojdetails.AddCell(cell6);
 
-                                Cell cell7= new Cell(1, 1)
-                                .SetTextAlignment(TextAlignment.LEFT)
-                                .Add(new Paragraph(_lkupRiskRTimeframeRepository.GetRecord(rec_for_category.WPFrequencyOfReporting_Id).Record_Name)
-                                                .SetFont(ft_regular)
-                                                .SetFixedLeading(14f)
-                                                //  .SetFontColor(cl_white)
-                                                .SetBackgroundColor(cl_tablecontent_risk_critical)
-                                                .SetFontSize(10))
-                                        .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(new DottedBorder(0.5f))
-                                .SetBackgroundColor(cl_tablecontent_risk_critical);
-                                tabledivprojdetails.AddCell(cell7);
-
                                 Cell cell8= new Cell(1, 1)
                                 .SetTextAlignment(TextAlignment.LEFT)
                                 .Add(new Paragraph(mitigationmeasures)
@@ -21642,14 +21681,14 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
 
-                        }
+                        //}
 
-                        if(DirMainRecs.Count()==dirproject_count)
+                        if(diroutputs_count==_dirriskCount)
                         {
                         
                             Cell cell12rowa = new Cell(1, 8)
                             .SetTextAlignment(TextAlignment.LEFT)
-                            .Add(new Paragraph("TOTAL")
+                            .Add(new Paragraph("TOTAL RISK COST")
                                             .SetFont(ft_bold)
                                             .SetFixedLeading(14f)
                                             //.SetFontColor(cl_white)
