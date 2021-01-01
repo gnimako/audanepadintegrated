@@ -31,7 +31,8 @@ $(document).ready(function () {
     toolbarSettings: {
       toolbarPosition: 'both',
       toolbarButtonPosition: 'end',
-      toolbarExtraButtons: [btnFinish, btnCancel]
+      toolbarExtraButtons: [btnFinish]
+      //toolbarExtraButtons: [btnFinish, btnCancel]
     }
   }); // External Button Events
 
