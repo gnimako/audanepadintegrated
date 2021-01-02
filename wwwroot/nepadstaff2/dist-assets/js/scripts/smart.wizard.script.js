@@ -29,7 +29,7 @@ $(document).ready(function () {
     transitionEffect: 'fade',
     showStepURLhash: true,
     toolbarSettings: {
-      toolbarPosition: 'both',
+     // toolbarPosition: 'both',
       toolbarButtonPosition: 'end',
       toolbarExtraButtons: [btnFinish]
       //toolbarExtraButtons: [btnFinish, btnCancel]

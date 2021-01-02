@@ -44,15 +44,15 @@
 
                                 <div class="d-flex flex-column flex-sm-row align-items-sm-center mb-3"><img class="avatar-lg mb-3 mb-sm-0 rounded mr-sm-3" src="~/nepadstaff2/images/mobility.png"  alt="" />
                                     <div class="flex-grow-1">
-                                        <h5><a href="">Institutional Mobility Plan</a></h5>
+                                        <h5><a href="javascript:void(0)" onclick="GenerateMobilityReport()">Institutional Mobility Plan</a></h5>
                                         <p class="m-0 text-small text-muted">This is an institutional mobility plan</p>
                                       
                                     </div>
                                     <div>
-                                        <button class="btn btn-outline-primary mt-3 mb-3 m-sm-0 btn-rounded btn-sm">
+                                       <a href="javascript:void(0)" onclick="GenerateMobilityReport()" class="btn btn-outline-primary mt-3 mb-3 m-sm-0 btn-rounded btn-sm">
                                             View
                                             Report
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
 
@@ -146,6 +146,18 @@ function GenerateRiskReport() {
     var cycleid = $("#WPCycle_Id").val();  
 
     var url="/NEPADStaff/InstitutionalWorkplanDraftRiskPDF?cycleid=" + cycleid;
+
+    redirect_blank(url);
+   
+
+
+ 
+}
+
+function GenerateMobilityReport() {
+    var cycleid = $("#WPCycle_Id").val();  
+
+    var url="/NEPADStaff/InstitutionalWorkplanDraftMobilityPDF?cycleid=" + cycleid;
 
     redirect_blank(url);
    
