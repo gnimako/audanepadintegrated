@@ -5285,7 +5285,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                     .SetMarginLeft(40)
                                     .SetHorizontalAlignment(HorizontalAlignment.LEFT);
 
-                var DB_InternalTeam=_wpMobilityInternalTeamRepository.GetRecordsByMainRecordId(mainrec.Transaction_Id).GroupBy(x => x.Employee_Id).Select(x => x.First()).ToList();;
+                var DB_InternalTeam=_wpMobilityInternalTeamRepository.GetRecordsByMainRecordId(mainrec.Transaction_Id).GroupBy(x => x.Employee_Id).Select(x => x.First()).ToList();
 
                 if(DB_InternalTeam.Count()>=1)
                 {
@@ -21916,6 +21916,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 Color cl_grayDark=new DeviceRgb(51, 52, 54);
                 Color cl_white=new DeviceRgb(255, 255, 255);
                 Color cl_red=new DeviceRgb(120, 60, 62);
+                Color cl_redfont=new DeviceRgb(163, 16, 8);
                 Color cl_tableheaderupper=new DeviceRgb(199, 198, 197);
                 Color cl_tableheader=new DeviceRgb(219, 217, 215);
                 Color cl_tableheaderblack=new DeviceRgb(0, 0, 0);
@@ -22308,7 +22309,7 @@ namespace AUDANEPAD_Integrated.Controllers
             document.Add(txt_gap);
 
             
-
+            var CategoryMDayslist = new List<WP_MobilityDaysVM>();
             foreach (var rec_set in DB_Records)
             {
 
@@ -22376,13 +22377,121 @@ namespace AUDANEPAD_Integrated.Controllers
                 }
 
 
-                //Check if there are any risk profiles for directorate
+                //Check if there are any risk profiles for directorate WP_MobilityDaysVM
                 int _dirriskCount=0;
                 var Categorylist = new List<WP_RiskProfileVM>();
+         
                 foreach (var mproject in DirMainRecs)
                 {
                     var CategoryRecs_Check=_wpMobilityRepository.GetRecordsByMainRecordId(mproject.Transaction_Id).ToList();
                     _dirriskCount=_dirriskCount+CategoryRecs_Check.Count();
+
+                    //Number of Mobility Days
+
+                    var DB_InternalTeam=_wpMobilityInternalTeamRepository.GetRecordsByMainRecordId(mproject.Transaction_Id).GroupBy(x => x.Employee_Id).Select(x => x.First()).ToList();;
+                    
+                    if(DB_InternalTeam.Count()>=1)
+                    {
+                        foreach (var internalteam in DB_InternalTeam)
+                        {
+                            Employee emp=_employeeRepository.GetEmployee(internalteam.Employee_Id);
+                            
+                            double noofdays_for_period=0;
+                            double maxdaysallowed_for_period=0;
+
+                            int max_month_days=0;
+                            int num_of_months=0;
+                            int totalnum_of_days_accumulated=0;
+                            int totalnum_of_days_allowed=0;
+
+                            WP_MobilityLimit wpmobilitylimit=null;
+
+                            if(mproject.Period_Id==8)
+                            {
+                                wpmobilitylimit=_wpMobilityLimitRepository.GetRecordByEmployeeYearPeriodStartEnd(internalteam.Employee_Id, mproject.FiscalYear_Id, mproject.Period_Id, mproject.PeriodStartDate, mproject.PeriodEndDate);
+
+                                List<MonthAndYear> nummonthobj=GetMonthsInPeriodRange(new DateTime(mproject.PeriodStartDate.Year,mproject.PeriodStartDate.Month,mproject.PeriodStartDate.Day), new DateTime(mproject.PeriodEndDate.Year,mproject.PeriodEndDate.Month,mproject.PeriodEndDate.Day));
+                                num_of_months=nummonthobj.Count();
+
+
+                                var DB_Records8 =  _wpMobilityInternalTeamRepository.GetRecordsByEmployeeYearPeriodStartEnd(internalteam.Employee_Id, mproject.FiscalYear_Id, mproject.Period_Id, mproject.PeriodStartDate, mproject.PeriodEndDate);
+                                foreach (var recordset in DB_Records8)
+                                {
+                                    WP_Mobility mobrec=_wpMobilityRepository.GetRecord(recordset.WPMobility_id);
+                                    DateTime mstart=new DateTime(mobrec.MobilityStartDate.Year, mobrec.MobilityStartDate.Month, mobrec.MobilityStartDate.Day);
+                                    DateTime mend=new DateTime(mobrec.MobilityEndDate.Year, mobrec.MobilityEndDate.Month, mobrec.MobilityEndDate.Day);
+
+                                    totalnum_of_days_accumulated=totalnum_of_days_accumulated+(mstart.Date.Subtract(mend.Date).Duration().Days + 1);
+
+                                }
+                                noofdays_for_period=(double)totalnum_of_days_accumulated;
+
+
+                            }
+                            else
+                            {
+                                wpmobilitylimit=_wpMobilityLimitRepository.GetRecordByEmployeeYearPeriod(internalteam.Employee_Id, mproject.FiscalYear_Id, mproject.Period_Id);
+                                if(mproject.Period_Id==1 || mproject.Period_Id==2 || mproject.Period_Id==3 || mproject.Period_Id==4)
+                                    num_of_months=3;
+                                else if(mproject.Period_Id==5 || mproject.Period_Id==6)
+                                    num_of_months=6;
+                                else 
+                                    num_of_months=12;
+
+                                var DB_RecordsWPM =  _wpMobilityInternalTeamRepository.GetRecordsByEmployeeYearPeriod(internalteam.Employee_Id, mproject.FiscalYear_Id, mproject.Period_Id);
+                                foreach (var recordset in DB_RecordsWPM)
+                                {
+                                    WP_Mobility mobrec=_wpMobilityRepository.GetRecord(recordset.WPMobility_id);
+                                    DateTime mstart=new DateTime(mobrec.MobilityStartDate.Year, mobrec.MobilityStartDate.Month, mobrec.MobilityStartDate.Day);
+                                    DateTime mend=new DateTime(mobrec.MobilityEndDate.Year, mobrec.MobilityEndDate.Month, mobrec.MobilityEndDate.Day);
+
+                                    totalnum_of_days_accumulated=totalnum_of_days_accumulated+(mstart.Date.Subtract(mend.Date).Duration().Days + 1);
+
+                                }
+                                noofdays_for_period=(double)totalnum_of_days_accumulated;
+
+                            }
+
+                            if(wpmobilitylimit!=null)
+                            {
+                                max_month_days=wpmobilitylimit.MonthlyLimit;
+                            }
+                            else
+                            {
+                                Trans_MobilityLimits translkupmoblimit=_transMobilityLimitsRepository.GetFirstOrDefaultRecordSet();
+                                max_month_days=_lkupMobilityLimitsRepository.GetRecord(translkupmoblimit.Record_Id).MonthlyLimit;
+                            }
+
+
+                            totalnum_of_days_allowed=max_month_days*num_of_months;
+                            maxdaysallowed_for_period=(double)totalnum_of_days_allowed;
+
+                            // bool dayexceeded=false;
+
+                            // if(maxdaysallowed_for_period<noofdays_for_period)
+                            // {
+                            //     dayexceeded=true;
+
+                            // }
+
+                            WP_MobilityDaysVM employeedays=new WP_MobilityDaysVM
+                            {
+                                EmployeeNumber=emp.Id,
+                                EmployeeName=emp.First_Name.TrimEnd()+" "+emp.Last_Name.TrimEnd(),
+                                NumberOfDays=noofdays_for_period,
+                                DaysExceeded=maxdaysallowed_for_period<noofdays_for_period?true:false
+                            };
+
+                            if(!CategoryMDayslist.Contains(employeedays))
+                            { 
+                                CategoryMDayslist.Add(employeedays);
+                            }
+
+                        }
+                    }
+
+
+
 
                     
                 }
@@ -22870,15 +22979,487 @@ namespace AUDANEPAD_Integrated.Controllers
 
                     }
                     document.Add(tabledivprojdetails);
+                    document.Add(txt_gap);
+                    
                 }
                 
                 
+                
+               
+
+
+
+
+
+
+
+
+
+
+            document.Add(txt_gap);
+            }
+
+            //Number of Mobility Days Table Here
+             //Number of Mobility Days
+                
+                
+                document.Add(txt_gap);
+                Paragraph Details_header2 = new Paragraph("NUMBER OF MOBILITY DAYS PER AUDA-NEPAD STAFF")
+                    .SetTextAlignment(TextAlignment.CENTER)
+                   // .SetUnderline()
+                    .SetFont(ft_montserrat_thick)
+                    .SetFontColor(cl_lightblueheader)
+                    .SetFontSize(13);
+                    
+                document.Add(Details_header2);
                 document.Add(txt_gap);
 
+                var GrpSortedCategoryMDayslist=CategoryMDayslist.GroupBy(x => x.EmployeeNumber).Select(x => x.First()).ToList();
+                var SortedCategoryMDayslist=GrpSortedCategoryMDayslist.OrderBy(d => d.EmployeeName).ToList();
+
+                if(SortedCategoryMDayslist.Count()>0)
+                {
+                    Table tabledivprojdetails = new Table(UnitValue.CreatePercentArray(new float[]{2, 58, 40}), false)
+                        .SetWidth(PageSize.A3.GetWidth()-(subtractmargins+37))
+                        .SetMarginLeft(37)
+                        .SetHorizontalAlignment(HorizontalAlignment.LEFT);
+
+                    Cell cellheader1= new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.CENTER)
+                        .Add(new Paragraph("No")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                    // .SetFontColor(cl_white)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                            //.SetBorder(Border.NO_BORDER)
+                        .SetBackgroundColor(cl_tableheader);
+                        tabledivprojdetails.AddCell(cellheader1);
+
+                    Cell cellheader2= new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.LEFT)
+                        .Add(new Paragraph("AUDA-NEPAD Staff")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        //.SetFontColor(cl_white)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                        tabledivprojdetails.AddCell(cellheader2);
+
+                    Cell cellheader3= new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.CENTER)
+                        .Add(new Paragraph("Number of Mobility Days for "+_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name+" ("+periodname+")")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        //.SetFontColor(cl_white)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                        tabledivprojdetails.AddCell(cellheader3);
+
+
+                        row_alt=true;
+
+                        int _recordCount=0;
+                        foreach (var recordset in SortedCategoryMDayslist)
+                        {
+                            _recordCount=_recordCount+1;
+
+                            if(recordset.DaysExceeded==true)
+                            {
+                                if(_recordCount==SortedCategoryMDayslist.Count())
+                                {
+                                    if(row_alt==false)
+                                    {
+                                        Cell cell1= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(_recordCount.ToString())
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_redfont)
+                                                        .SetBackgroundColor(cl_tablecontent_1)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                      //  .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_1);
+                                        tabledivprojdetails.AddCell(cell1);
+
+                                        Cell cell2= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.LEFT)
+                                        .Add(new Paragraph(recordset.EmployeeName)
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_redfont)
+                                                        .SetBackgroundColor(cl_tablecontent_1)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                       // .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_1);
+                                        tabledivprojdetails.AddCell(cell2);
+
+                                        Cell cell3= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(string.Format("{0:N0}", recordset.NumberOfDays))
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_redfont)
+                                                        .SetBackgroundColor(cl_tablecontent_1)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                       // .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_1);
+                                        tabledivprojdetails.AddCell(cell3);
+                                    }
+                                    else
+                                    {
+
+                                        Cell cell1= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(_recordCount.ToString())
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_redfont)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                       // .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_2);
+                                        tabledivprojdetails.AddCell(cell1);
+
+                                        Cell cell2= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.LEFT)
+                                        .Add(new Paragraph(recordset.EmployeeName)
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_redfont)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                        //.SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_2);
+                                        tabledivprojdetails.AddCell(cell2);
+
+                                        Cell cell3= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(string.Format("{0:N0}", recordset.NumberOfDays))
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_redfont)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                        //.SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_2);
+                                        tabledivprojdetails.AddCell(cell3);
+
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    if(row_alt==false)
+                                    {
+                                        Cell cell1= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(_recordCount.ToString())
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_redfont)
+                                                        .SetBackgroundColor(cl_tablecontent_1)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_1);
+                                        tabledivprojdetails.AddCell(cell1);
+
+                                        Cell cell2= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.LEFT)
+                                        .Add(new Paragraph(recordset.EmployeeName)
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_redfont)
+                                                        .SetBackgroundColor(cl_tablecontent_1)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_1);
+                                        tabledivprojdetails.AddCell(cell2);
+
+                                        Cell cell3= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(string.Format("{0:N0}", recordset.NumberOfDays))
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_redfont)
+                                                        .SetBackgroundColor(cl_tablecontent_1)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_1);
+                                        tabledivprojdetails.AddCell(cell3);
+                                    }
+                                    else
+                                    {
+
+                                        Cell cell1= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(_recordCount.ToString())
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_redfont)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_2);
+                                        tabledivprojdetails.AddCell(cell1);
+
+                                        Cell cell2= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.LEFT)
+                                        .Add(new Paragraph(recordset.EmployeeName)
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_redfont)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_2);
+                                        tabledivprojdetails.AddCell(cell2);
+
+                                        Cell cell3= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(string.Format("{0:N0}", recordset.NumberOfDays))
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        .SetFontColor(cl_redfont)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_2);
+                                        tabledivprojdetails.AddCell(cell3);
+
+
+                                    }
+                                    
+                                }
+                                
+                                
+
+                            }
+                            else
+                            {
+                                if(_recordCount==SortedCategoryMDayslist.Count())
+                                {
+                                    if(row_alt==false)
+                                    {
+
+                                        Cell cell1= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(_recordCount.ToString())
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        //  .SetFontColor(cl_white)
+                                                        .SetBackgroundColor(cl_tablecontent_1)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                        //.SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_1);
+                                        tabledivprojdetails.AddCell(cell1);
+
+                                        Cell cell2= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.LEFT)
+                                        .Add(new Paragraph(recordset.EmployeeName)
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        //  .SetFontColor(cl_white)
+                                                        .SetBackgroundColor(cl_tablecontent_1)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                       // .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_1);
+                                        tabledivprojdetails.AddCell(cell2);
+
+                                        Cell cell3= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(string.Format("{0:N0}", recordset.NumberOfDays))
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        //  .SetFontColor(cl_white)
+                                                        .SetBackgroundColor(cl_tablecontent_1)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                       // .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_1);
+                                        tabledivprojdetails.AddCell(cell3);
+                                    }
+                                    else
+                                    {
+
+                                        Cell cell1= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(_recordCount.ToString())
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        //  .SetFontColor(cl_white)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                       // .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_2);
+                                        tabledivprojdetails.AddCell(cell1);
+
+                                        Cell cell2= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.LEFT)
+                                        .Add(new Paragraph(recordset.EmployeeName)
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        //  .SetFontColor(cl_white)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                      //  .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_2);
+                                        tabledivprojdetails.AddCell(cell2);
+
+                                        Cell cell3= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(string.Format("{0:N0}", recordset.NumberOfDays))
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        //  .SetFontColor(cl_white)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                       // .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_2);
+                                        tabledivprojdetails.AddCell(cell3);
+
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    if(row_alt==false)
+                                    {
+
+                                        Cell cell1= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(_recordCount.ToString())
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        //  .SetFontColor(cl_white)
+                                                        .SetBackgroundColor(cl_tablecontent_1)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_1);
+                                        tabledivprojdetails.AddCell(cell1);
+
+                                        Cell cell2= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.LEFT)
+                                        .Add(new Paragraph(recordset.EmployeeName)
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        //  .SetFontColor(cl_white)
+                                                        .SetBackgroundColor(cl_tablecontent_1)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_1);
+                                        tabledivprojdetails.AddCell(cell2);
+
+                                        Cell cell3= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(string.Format("{0:N0}", recordset.NumberOfDays))
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        //  .SetFontColor(cl_white)
+                                                        .SetBackgroundColor(cl_tablecontent_1)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_1);
+                                        tabledivprojdetails.AddCell(cell3);
+                                    }
+                                    else
+                                    {
+
+                                        Cell cell1= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(_recordCount.ToString())
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        //  .SetFontColor(cl_white)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_2);
+                                        tabledivprojdetails.AddCell(cell1);
+
+                                        Cell cell2= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.LEFT)
+                                        .Add(new Paragraph(recordset.EmployeeName)
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        //  .SetFontColor(cl_white)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_2);
+                                        tabledivprojdetails.AddCell(cell2);
+
+                                        Cell cell3= new Cell(1, 1)
+                                        .SetTextAlignment(TextAlignment.CENTER)
+                                        .Add(new Paragraph(string.Format("{0:N0}", recordset.NumberOfDays))
+                                                        .SetFont(ft_regular)
+                                                        .SetFixedLeading(14f)
+                                                        //  .SetFontColor(cl_white)
+                                                        .SetBackgroundColor(cl_tablecontent_2)
+                                                        .SetFontSize(10))
+                                                .SetBorderTop(Border.NO_BORDER)
+                                        .SetBorderBottom(new DottedBorder(0.5f))
+                                        .SetBackgroundColor(cl_tablecontent_2);
+                                        tabledivprojdetails.AddCell(cell3);
+
+
+                                    }
+
+
+                                }
+                                
+                                
+
+                            }
+                            //Toggle
+                            row_alt=ToggleBoolean(row_alt);
+
+
+                            
 
 
 
-            }
+                        }
+
+
+                    document.Add(tabledivprojdetails);
+
+                }
+
+
+
+
+
+
+
+
+           
 
 
 

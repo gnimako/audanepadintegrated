@@ -8,7 +8,6 @@ namespace AUDANEPAD_Integrated.ViewModels
 {
     public class WP_RiskProfileVM
     {
-        [Key]
         public string Transaction_Id { get; set; }
         public string WPMainRecord_id { get; set; }
         public int  Project_Id { get; set; }
