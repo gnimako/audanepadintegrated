@@ -8,7 +8,7 @@
 
 
 
-<h1 style="font-family: Faktslab;"> Institutional Risk Profile  &nbsp;  <a asp-controller="nepadstaff" asp-action="institutionalworkplanreportriskpdf" asp-route-id="@Model.DispatchCycle_Id" title="View Institutional Workplan (PDF)"><i class="k-icon k-i-download"></i></a></h1>
+<h1 style="font-family: Faktslab;"> Institutional Procurement Plan &nbsp;  <a asp-controller="nepadstaff" asp-action="institutionalworkplanreportprocurementpdf" asp-route-id="@Model.DispatchCycle_Id" title="View Institutional Workplan (PDF)"><i class="k-icon k-i-download"></i></a></h1>
 
 
 <div class="separator-breadcrumb border-top"></div>
@@ -20,7 +20,7 @@
                                 <form id="addformmain2">
                                      <input hidden asp-for="WPMainRecordId" class="k-textbox" style="width:100%" value="@Model.WPMainRecordId">
 
-                                    <iframe runat="server" id="iframepdf" height="700" width=100% frameBorder="0" src="@Url.Action("GenerateInstitutionalWorkplanDraftRiskPDF","NEPADStaff", new {cycleid=Model.DispatchCycle_Id})"> </iframe>
+                                    <iframe runat="server" id="iframepdf" height="700" width=100% frameBorder="0" src="@Url.Action("GenerateInstitutionalWorkplanDraftProcurementPDF","NEPADStaff", new {cycleid=Model.DispatchCycle_Id})"> </iframe>
 
                                 </form>
                             </div>
