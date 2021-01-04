@@ -42,7 +42,7 @@
                 
 
                                                             columns.Command(command => command.Custom(" Manage Workplan").IconClass("k-icon k-i-track-changes").Click("manageworkplan")).Width(200);
-                                                             columns.Command(command => command.Custom(" Delete Workplan").IconClass("k-icon k-i-delete").Click("manageworkplan")).Width(200);
+                                                             columns.Command(command => command.Custom(" Delete Workplan").IconClass("k-icon k-i-delete").Click("deleteworkplan")).Width(200);
                                                             //columns.Command(command => { command.Destroy().Text(" Deactivate").IconClass("k-icon k-i-lock"); });
                                                         })
                                                         .HtmlAttributes(new { style = "height: 600px;" })
@@ -316,6 +316,78 @@ function manageworkplan(e) {
     var url="/NEPADStaff/ManageWorkplansDraft?divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
 
     redirect_blank(url);
+
+
+}
+
+
+function deleteworkplan(e) {
+   e.preventDefault();
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    var projid=dataItem.ProjectId;
+    var fyear =dataItem.FYearIdent;
+    var fperiod =dataItem.FPeriodIdent;
+    var periodtxt =dataItem.FisPeriodHidden;
+    var dirid = dataItem.Directorate_Id;
+    var divid = dataItem.Division_Id;
+    var progid =dataItem.Programme_Id;
+    var mainrecid = dataItem.WPMainRecord_Ident;
+    var empid = $("#Employee_Id").val();
+
+   // var url="/NEPADStaff/DeleteWorkplansDraft?divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+
+    //redirect_blank(url);
+
+
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+    dialog.kendoDialog({
+        width: "450px",
+        title: "Confirmation",
+        closable: false,
+        modal: true,
+        content: "<p>Please confirm the DELETE action.<p>",
+        actions: [
+            {
+                text: 'Confirm',
+                action: function (e) {
+                    $.ajax({
+                        type: "POST",
+                        url: url="/Admin/DeleteWorkplansDraft?transid=" + mainrecid,     //your action
+                        //data: { "subrecid": subrecid},
+                        dataType: 'json',
+                        success: function (result) {
+
+
+                            var grid_main = $("#grid").data("kendoGrid"); 
+                            grid_main.dataSource.transport.options.read.url = "/Admin/DraftWorkplans_Read?empid=" + empid;
+                            grid_main.dataSource.read();
+                            //grid_outputsactivities.refresh();
+
+
+                        },
+                        error: function (data) {
+
+                        }
+                    })
+                    return true;
+                },
+                primary: true
+
+            },
+            { text: 'Cancel' }
+        ],
+        close: onClose
+    });
+
+    dialog.data("kendoDialog").open();
+    undo.fadeOut();
 
 
 }

@@ -13108,6 +13108,174 @@ namespace AUDANEPAD_Integrated.Controllers
                 return Json(new { rtnmsg = "error" });
             }
         }
+
+
+        [HttpPost]
+        public ActionResult DeleteWorkplansDraft(string transid)
+        {
+            try
+            {
+                WP_MainRecord main_recfetch=_wpMainRecordRepository.GetRecord(transid);
+
+                if (main_recfetch != null)
+                {
+                    //Delete All Related WP_ApprovalStatus
+                    var DB_Recs1 =  _wpApprovalStatusRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs1)
+                    {
+                        _wpApprovalStatusRepository.Delete(recordset.Transaction_Id);
+                    }
+
+                    //Delete All Related WP_AUDAPriority
+                    var DB_Recs2 =  _wpAUDAPriorityRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs2)
+                    {
+                        _wpAUDAPriorityRepository.Delete(recordset.Transaction_Id);
+                    }
+
+                    //Delete All Related WP_Communication
+                    var DB_Recs3 =  _wpCommunicationRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs3)
+                    {
+                        _wpCommunicationRepository.Delete(recordset.Transaction_Id);
+                    }
+
+                    //Delete All Related WP_CountryScope
+                    var DB_Recs4 =  _wpCountryScopeRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs4)
+                    {
+                        _wpCountryScopeRepository.Delete(recordset.Transaction_Id);
+                    }
+
+                    //Delete All Related WP_Mobility
+                    var DB_Recs5 =  _wpMobilityRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs5)
+                    {
+
+                        
+                        //Delete All Related WP_MobilityExternalTeam
+                        var DB_RecsSubs=_wpMobilityExternalTeamRepository.GetRecordsByMobilityId(recordset.Transaction_Id).ToList();
+                        foreach (var record_set in DB_RecsSubs)
+                        {
+                            _wpMobilityExternalTeamRepository.Delete(record_set.Transaction_Id);
+
+                        }
+                        _wpMobilityRepository.Delete(recordset.Transaction_Id);
+
+
+                    }
+
+                   //Delete All Related WP_MobilityInternalTeam
+                    var DB_Recs6 =  _wpMobilityInternalTeamRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs6)
+                    {
+                        _wpMobilityInternalTeamRepository.Delete(recordset.Transaction_Id);
+                    }
+
+                    //Delete All Related WP_MTP
+                    var DB_Recs7 =  _wpMTPRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs7)
+                    {
+                        _wpMTPRepository.Delete(recordset.Transaction_Id);
+                    }
+
+                    //Delete All Related WP_OutcomeIndicators 
+                    var DB_Recs8 =  _wpOutcomeIndicatorsRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs8)
+                    {
+                        _wpOutcomeIndicatorsRepository.Delete(recordset.Transaction_Id);
+                    }
+
+                    //Delete All Related WP_Outcomes 
+                    var DB_Recs9 =  _wpOutcomesRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs9)
+                    {
+                        _wpOutcomesRepository.Delete(recordset.Transaction_Id);
+                    }
+
+                    //Delete All Related WP_OutputActivities 
+                    var DB_Recs10 =  _wpOutputActivitiesRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs10)
+                    {
+                        _wpOutputActivitiesRepository.Delete(recordset.Transaction_Id);
+                    }
+
+                    //Delete All Related WP_OutputActivityCountries  
+                    var DB_Recs11 =  _wpOutputActivityCountriesRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs11)
+                    {
+                        _wpOutputActivityCountriesRepository.Delete(recordset.Transaction_Id);
+                    }
+
+                    //Delete All Related WP_OutputBudget  
+                    var DB_Recs12 =  _wpOutputBudgetRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs12)
+                    {
+                        _wpOutputBudgetRepository.Delete(recordset.Transaction_Id);
+                    }
+
+
+                    //Delete All Related WP_OutputIndicators  
+                    var DB_Recs13 =  _wpOutputIndicatorsRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs13)
+                    {
+                        _wpOutputIndicatorsRepository.Delete(recordset.Transaction_Id);
+                    }
+
+                    //Delete All Related WP_Outputs  
+                    var DB_Recs14 =  _wpOutputsRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs14)
+                    {
+                        _wpOutputsRepository.Delete(recordset.Transaction_Id);
+                    }
+
+                    //Delete All Related WP_Procurement  
+                    var DB_Recs15 =  _wpProcurementRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs15)
+                    {
+                        _wpProcurementRepository.Delete(recordset.Transaction_Id);
+                    }
+
+                    //Delete All Related WP_RegionScope  
+                    var DB_Recs16 =  _wpRegionScopeRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs16)
+                    {
+                        _wpRegionScopeRepository.Delete(recordset.Transaction_Id);
+                    }
+
+                    //Delete All Related WP_RiskProfile   
+                    var DB_Recs17 =  _wpRiskProfileRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs17)
+                    {
+                        _wpRiskProfileRepository.Delete(recordset.Transaction_Id);
+                    }
+
+                    //Delete All Related WP_RiskProfileCountries   
+                    var DB_Recs18 =  _wpRiskProfileCountriesRepository.GetRecordsByMainRecordId(main_recfetch.Transaction_Id).ToList();
+                    foreach (var recordset in DB_Recs18)
+                    {
+                        _wpRiskProfileCountriesRepository.Delete(recordset.Transaction_Id);
+                    }
+
+                    //Delete Main Record
+                    _wpMainRecordRepository.Delete(main_recfetch.Transaction_Id);
+
+
+
+
+
+
+
+       
+                }
+
+                return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+        }
         [HttpPost]
         public ActionResult AddWPRECCoverage(string projid, string fyear, string fperiod, string selectkeys, string empid, string dirid, string divid,  string progid)
         {
