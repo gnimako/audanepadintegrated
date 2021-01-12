@@ -5010,8 +5010,10 @@ function redirect_blank(url) {
                         var grid_outputsactivities = $("#grid_outputactivities").data("kendoGrid"); 
                         var grid_outputmobilities = $("#grid_outputmobilities").data("kendoGrid"); 
                         var grid_outputprocurement = $("#grid_outputprocurement").data("kendoGrid"); 
+                        var grid_outputcommunication = $("#grid_outputcommunication").data("kendoGrid"); 
+                        var grid_outputriskprofile = $("#grid_outputriskprofile").data("kendoGrid"); 
 
-                        var grid_outputsbudget = $("#grid_outputsbudget").data("kendoGrid"); 
+                      //  var grid_outputsbudget = $("#grid_outputsbudget").data("kendoGrid"); 
 
 
 
@@ -5025,14 +5027,17 @@ function redirect_blank(url) {
                             grid_outputsactivities.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_Activities_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&periodtxt=" + periodtxt;
                             grid_outputsactivities.dataSource.read();
 
-                            grid_outputsbudget.dataSource.transport.options.read.url = "/Admin/WP_OutputsBudget_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
-                            grid_outputsbudget.dataSource.read();
-
                             grid_outputmobilities.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_Mobilities_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&periodtxt=" + periodtxt;
                             grid_outputmobilities.dataSource.read();
 
                             grid_outputprocurement.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_Procurement_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&periodtxt=" + periodtxt;
                             grid_outputprocurement.dataSource.read();
+
+                            grid_outputcommunication.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_Communication_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&periodtxt=" + periodtxt;
+                            grid_outputcommunication.dataSource.read();
+
+                            grid_outputriskprofile.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_RiskProfile_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&periodtxt=" + periodtxt;
+                            grid_outputriskprofile.dataSource.read();
 
 
 
@@ -5047,8 +5052,6 @@ function redirect_blank(url) {
                             grid_outputindicators.dataSource.transport.options.read.url = "/Admin/WP_Outputs_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
                             grid_outputindicators.dataSource.read();
 
-                            grid_outputsbudget.dataSource.transport.options.read.url = "/Admin/WP_OutputsBudget_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
-                            grid_outputsbudget.dataSource.read();
 
                             norecord.style.visibility = "visible";
                             recordstatus.style.visibility = "hidden";

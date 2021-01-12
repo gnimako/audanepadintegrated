@@ -4023,32 +4023,95 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 WP_Outputs rec=_wpOutputsRepository.GetRecord(record.Transaction_Id);
                 
-                if (rec != null)
-                {
-                    _wpOutputsRepository.Delete(rec.Transaction_Id);
 
-                } 
 
                 //Delete all related indicators
                 var DB_Recs_indicators =  _wpOutputIndicatorsRepository.GetRecordsByMainRecordOutputId(rec.WPMainRecord_id, rec.Transaction_Id);
                 foreach (var recordset in DB_Recs_indicators)
                 {
-                        _wpOutputIndicatorsRepository.Delete(recordset.Transaction_Id);
+                    _wpOutputIndicatorsRepository.Delete(recordset.Transaction_Id);
                 }
 
                 //Delete all related activities
                 var DB_Recs_activities=  _wpOutputActivitiesRepository.GetRecordsByMainRecordOutputId(rec.WPMainRecord_id, rec.Transaction_Id);
                 foreach (var recordset in DB_Recs_activities)
                 {
-                        _wpOutputActivitiesRepository.Delete(recordset.Transaction_Id);
+                    _wpOutputActivitiesRepository.Delete(recordset.Transaction_Id);
                 }
 
                 //Delete all related budget linees
                 var DB_Recs_budgetlines=  _wpOutputBudgetRepository.GetRecordsByMainRecordOutputId(rec.WPMainRecord_id, rec.Transaction_Id);
                 foreach (var recordset in DB_Recs_budgetlines)
                 {
-                        _wpOutputBudgetRepository.Delete(recordset.Transaction_Id);
+                    _wpOutputBudgetRepository.Delete(recordset.Transaction_Id);
                 }
+
+
+                //Delete All Mobility Related Records
+
+                var DB_Recs_Mobilities=  _wpMobilityRepository.GetRecordsByMainRecordOutputId(rec.WPMainRecord_id, rec.Transaction_Id);
+                foreach (var recordset in DB_Recs_Mobilities)
+                {
+                    //Delete Internal Participants
+                    var DB_Recs_MobilitiesInt=_wpMobilityInternalTeamRepository.GetRecordsByMobilityId(recordset.Transaction_Id);
+                    foreach (var innerrec in DB_Recs_MobilitiesInt)
+                    {
+                        _wpMobilityInternalTeamRepository.Delete(innerrec.Transaction_Id);
+
+                    }
+
+                    //Delete External Participants
+                    var DB_Recs_MobilitiesExt=_wpMobilityExternalTeamRepository.GetRecordsByMobilityId(recordset.Transaction_Id);
+                    foreach (var innerrec in DB_Recs_MobilitiesExt)
+                    {
+                        _wpMobilityExternalTeamRepository.Delete(innerrec.Transaction_Id);
+
+                    }
+
+                    _wpMobilityRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete All Procurement Related Records
+
+                var DB_Recs_Procurement=  _wpProcurementRepository.GetRecordsByMainRecordOutputId(rec.WPMainRecord_id, rec.Transaction_Id);
+                foreach (var recordset in DB_Recs_Procurement)
+                {
+                    _wpProcurementRepository.Delete(recordset.Transaction_Id);
+                }
+
+
+                //Delete All Communication Related Records
+
+
+                var DB_Recs_Communication=  _wpCommunicationRepository.GetRecordsByMainRecordOutputId(rec.WPMainRecord_id, rec.Transaction_Id);
+                foreach (var recordset in DB_Recs_Communication)
+                {
+                    _wpCommunicationRepository.Delete(recordset.Transaction_Id);
+                }
+
+                //Delete All Risk Related Records
+
+                var DB_Recs_RiskProfile=  _wpRiskProfileRepository.GetRecordsByMainRecordOutputId(rec.WPMainRecord_id, rec.Transaction_Id);
+                foreach (var recordset in DB_Recs_RiskProfile)
+                {
+                    //Delete Risk Profile Countries
+                    var DB_Recs_RiskProfileCountries=_wpRiskProfileCountriesRepository.GetRecordsByRiskId(recordset.Transaction_Id);
+                    foreach (var innerrec in DB_Recs_RiskProfileCountries)
+                    {
+                        _wpRiskProfileCountriesRepository.Delete(innerrec.Transaction_Id);
+
+                    }
+
+                    _wpRiskProfileRepository.Delete(recordset.Transaction_Id);
+                }
+
+
+                //Delete Output Record
+                if (rec != null)
+                {
+                    _wpOutputsRepository.Delete(rec.Transaction_Id);
+
+                } 
 
 
 
