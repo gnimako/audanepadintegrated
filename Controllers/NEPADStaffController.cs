@@ -13430,7 +13430,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 document.Add(Summary_header);
 
                 document.Add(txt_gap);
-                document.Add(txt_gap);
+             
 
 
                 //Strategic Priorities
@@ -13715,7 +13715,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 }
 
                 document.Add(txt_gap);
-                document.Add(txt_gap);
+            
 
 
                 float indentmargin=document.GetLeftMargin()+0;
@@ -14166,7 +14166,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 }
                 document.Add(txt_gap);
-                document.Add(txt_gap);
+             
      
     
                 Table tabledirectoratecountriesrecs = new Table(UnitValue.CreatePercentArray(new float[]{14, 16, 34, 36}), false)
