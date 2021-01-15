@@ -1,0 +1,297 @@
+
+
+
+
+@model WP_CycleVM
+
+<form id="addform">
+
+    <input hidden asp-for="WPCycle_Id" class="k-textbox" style="width:100%" value="@Model.WPCycle_Id">
+    <input hidden asp-for="Period_Id" class="k-textbox" style="width:100%" value="@Model.Period_Id">
+
+
+ <div class="card mb-4">
+                            <div class="card-body">
+                             
+                                <div class="d-flex flex-column flex-sm-row align-items-sm-center mb-3"><img class="avatar-lg mb-3 mb-sm-0 rounded mr-sm-3" src="~/nepadstaff2/images/summary.png"  alt="" />
+                                    <div class="flex-grow-1">
+                                        <h5><a href="javascript:void(0)" onclick="GenerateSummaryReport()">Summary Report for Workplan</a></h5>
+                                        <p class="m-0 text-small text-muted">The target users of this report is senior management.</p>
+                                      
+                                    </div>
+                                    <div>
+                                        <a href="javascript:void(0)" onclick="GenerateSummaryReport()" class="btn btn-outline-primary mt-3 mb-3 m-sm-0 btn-rounded btn-sm">
+                                            View
+                                            Report
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex flex-column flex-sm-row align-items-sm-center mb-3"><img class="avatar-lg mb-3 mb-sm-0 rounded mr-sm-3" src="~/nepadstaff2/images/full.png"  alt="" />
+                                    <div class="flex-grow-1">
+                                        <h5><a href="javascript:void(0)" onclick="GenerateFullReport()">Full Institutional Workplan</a></h5>
+                                        <p class="m-0 text-small text-muted">This is a detailed institutional workplan</p>
+                                      
+                                    </div>
+                                    <div>
+                                
+
+                                        <a href="javascript:void(0)" onclick="GenerateFullReport()" class="btn btn-outline-primary mt-3 mb-3 m-sm-0 btn-rounded btn-sm">
+                                            View
+                                            Report
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex flex-column flex-sm-row align-items-sm-center mb-3"><img class="avatar-lg mb-3 mb-sm-0 rounded mr-sm-3" src="~/nepadstaff2/images/mobility.png"  alt="" />
+                                    <div class="flex-grow-1">
+                                        <h5><a href="javascript:void(0)" onclick="GenerateMobilityReport()">Institutional Mobility Plan</a></h5>
+                                        <p class="m-0 text-small text-muted">This is an institutional mobility plan</p>
+                                      
+                                    </div>
+                                    <div>
+                                       <a href="javascript:void(0)" onclick="GenerateMobilityReport()" class="btn btn-outline-primary mt-3 mb-3 m-sm-0 btn-rounded btn-sm">
+                                            View
+                                            Report
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex flex-column flex-sm-row align-items-sm-center mb-3"><img class="avatar-lg mb-3 mb-sm-0 rounded mr-sm-3" src="~/nepadstaff2/images/procurement.png"  alt="" />
+                                    <div class="flex-grow-1">
+                                        <h5><a href="javascript:void(0)" onclick="GenerateProcurementReport()">Institutional Procurement Plan</a></h5>
+                                        <p class="m-0 text-small text-muted">This is an institutional procurement plan</p>
+                                      
+                                    </div>
+                                    <div>
+                                       <a href="javascript:void(0)" onclick="GenerateProcurementReport()" class="btn btn-outline-primary mt-3 mb-3 m-sm-0 btn-rounded btn-sm">
+                                            View
+                                            Report
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex flex-column flex-sm-row align-items-sm-center mb-3"><img class="avatar-lg mb-3 mb-sm-0 rounded mr-sm-3" src="~/nepadstaff2/images/communication.png"  alt="" />
+                                    <div class="flex-grow-1">
+                                        <h5><a href="javascript:void(0)" onclick="GenerateCommunicationReport()">Institutional Communication Plan</a></h5>
+                                        <p class="m-0 text-small text-muted">This is an institutional communication plan</p>
+                                      
+                                    </div>
+                                    <div>
+                                       <a href="javascript:void(0)" onclick="GenerateCommunicationReport()" class="btn btn-outline-primary mt-3 mb-3 m-sm-0 btn-rounded btn-sm">
+                                            View
+                                            Report
+                                        </a>
+                                    </div>
+                                </div>
+
+                                 <div class="d-flex flex-column flex-sm-row align-items-sm-center mb-3"><img class="avatar-lg mb-3 mb-sm-0 rounded mr-sm-3" src="~/nepadstaff2/images/risk.png"  alt="" />
+                                    <div class="flex-grow-1">
+                                        <h5><a href="javascript:void(0)" onclick="GenerateRiskReport()">Institutional Risk Profile</a></h5>
+                                        <p class="m-0 text-small text-muted">This is an risk profile for the period</p>
+                                      
+                                    </div>
+                                    <div>
+                                       <a href="javascript:void(0)" onclick="GenerateRiskReport()" class="btn btn-outline-primary mt-3 mb-3 m-sm-0 btn-rounded btn-sm">
+                                            View
+                                            Report
+                                        </a>
+                                    </div>
+                                </div>
+                            
+                            </div>
+                        </div>
+
+
+
+</form>
+
+
+
+
+
+
+
+
+<script>
+
+function GenerateFullReport() {
+    var transid = $("#WPCycle_Id").val();  
+
+    var url="/NEPADStaff/InstitutionalWorkplanDraft?transid=" + transid;
+
+    redirect_blank(url);
+   
+
+
+ 
+}
+
+function GenerateSummaryReport() {
+    var transid = $("#WPCycle_Id").val();  
+    var periodid = $("#Period_Id").val();
+
+    var url="/NEPADStaff/InstitutionalWorkplanDraftSummaryPeriodRange?transid=" + transid+"&periodid=" + periodid;
+
+    redirect_blank(url);
+   
+
+
+ 
+}
+
+
+
+
+
+function GenerateRiskReport() {
+    var cycleid = $("#WPCycle_Id").val();  
+
+    var url="/NEPADStaff/InstitutionalWorkplanDraftRiskPDF?cycleid=" + cycleid;
+
+    redirect_blank(url);
+   
+
+
+ 
+}
+
+function GenerateMobilityReport() {
+    var cycleid = $("#WPCycle_Id").val();  
+
+    var url="/NEPADStaff/InstitutionalWorkplanDraftMobilityPDF?cycleid=" + cycleid;
+
+    redirect_blank(url);
+   
+
+
+ 
+}
+
+function GenerateProcurementReport() {
+    var cycleid = $("#WPCycle_Id").val();  
+
+    var url="/NEPADStaff/InstitutionalWorkplanDraftProcurementPDF?cycleid=" + cycleid;
+
+    redirect_blank(url);
+   
+
+
+ 
+}
+
+function GenerateCommunicationReport() {
+    var cycleid = $("#WPCycle_Id").val();  
+
+    var url="/NEPADStaff/InstitutionalWorkplanDraftCommunicationPDF?cycleid=" + cycleid;
+
+    redirect_blank(url);
+   
+
+
+ 
+}
+
+function redirect_blank(url) {
+  var a = document.createElement('a');
+  a.target="_blank";
+  a.href=url;
+  a.click();
+}
+
+    
+$("#btnCloseStaffa").click(function () {
+    $(".k-window-content").each(function () {
+                $(this).data("kendoWindow").close();
+            });
+});
+
+
+
+$("#btnSubmita").click(function () {
+    var divid = $("#Division_Id").val();  
+    var indicator_txt = $("#Record_Name").val();  
+    var indicator_type = $("#Indicator_Type_Ident").val();  
+    var recid = $("#Employee_Id").val();  
+
+    if(divid === "" && typeof divid === "string")
+    {
+        $('#targetDivStaffa').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select division. </span>').appendTo('.rssedStaffa');
+
+    }
+    else if (indicator_txt === "" && typeof indicator_txt === "string")
+    {
+        $('#targetDivStaffa').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">Please provide the text for the indicator. </span>').appendTo('.rssedStaffa');
+    }
+    else if (indicator_type === "" && typeof indicator_type === "string")
+    {
+        $('#targetDivStaffa').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">Selection : Please select the type of indicator.  </span>').appendTo('.rssedStaffa');
+    }
+    else{
+        $.ajax({
+            type: "POST",
+            url: '/Admin/AddDivisionKPI',     //your action
+            data: $('#addform').serialize(),   //your form name.it takes all the values of model
+            dataType: 'json',
+            success: function (result) {
+                var response = result.rtnmsg;
+
+                if (response == "success") {
+                            $('#targetDivStaffa').empty();
+                            $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Indicator Saved Successfully. </span>').appendTo('.rssedStaffa');
+
+                             
+                            var grid = $("#gridkpis").data("kendoGrid"); 
+
+                            grid.dataSource.transport.options.read.url = "/Admin/DivisionTransKPIs_Read/?recid=" + recid;
+                            grid.dataSource.read();
+                            grid.refresh();
+
+                }
+                else if (response == "pkerror") {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to Save. Indicator Already Exist.  Please use different options </span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
+                else if (response == "createerror") {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to save indicator</span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
+                else if (response == "doesnotexist") {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">No Record: Indicator does not exist</span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
+                else {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
+
+            },
+            error: function (data) {
+                    $('#targetDivStaffa').empty();
+                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffa');
+                    //$('#targetDivStaffa').empty();
+            }
+        })
+    }
+    
+        return false;
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using AUDANEPAD_Integrated.Models;
+using NodaTime;
 
 
 namespace AUDANEPAD_Integrated.Interfaces
@@ -12,6 +13,7 @@ namespace AUDANEPAD_Integrated.Interfaces
 
 		IEnumerable<WP_Procurement> GetAllRecords();
         IEnumerable<WP_Procurement> GetRecordsByOutputId (string outputid);
+        IEnumerable<WP_Procurement> GetRecordsByOutputIdStartEndRange (string outputid, LocalDate StartDate, LocalDate EndDate);
         IEnumerable<WP_Procurement> GetRecordsByMainRecordId (string recid);
         IEnumerable<WP_Procurement> GetRecordsByMainRecordOutputId (string wpmainrecid, string outputid);
 		WP_Procurement Add(WP_Procurement rec);

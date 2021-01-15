@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using NodaTime;
 
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
+
+
 
 namespace AUDANEPAD_Integrated.ViewModels
 {
@@ -75,6 +79,11 @@ namespace AUDANEPAD_Integrated.ViewModels
         public DateTime PeriodEnd { get; set; }
 
         public DateTime TransactionDate { get; set; }
+
+        [UIHint("ClientPeriodType")]
+        public CategoryViewModel PeriodType { get; set; }
+
+        public string PeriodTypeSingle  { get; set; }
 
         
     }

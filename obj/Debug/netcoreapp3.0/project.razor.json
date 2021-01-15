@@ -75713,6 +75713,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/InstitutionalWorkplanDraftSummaryPeriodRange.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\InstitutionalWorkplanDraftSummaryPeriodRange.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/InstitutionalWorkplanDraft_Old.cshtml",
       "TargetPath": "Views\\NEPADStaff\\InstitutionalWorkplanDraft_Old.cshtml",
       "FileKind": "mvc"
@@ -75838,6 +75843,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/InstitutionalWorkplanDraftList_Old.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\InstitutionalWorkplanDraftList_Old.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_AddSAPLinkage.cshtml",
       "TargetPath": "Views\\NEPADStaff\\_AddSAPLinkage.cshtml",
       "FileKind": "mvc"
@@ -75950,6 +75960,11 @@
     {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/WorkplanCommunicationGanttChart.cshtml",
       "TargetPath": "Views\\NEPADStaff\\WorkplanCommunicationGanttChart.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_ChooseInstitutionalWPReportPeriodRange.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\_ChooseInstitutionalWPReportPeriodRange.cshtml",
       "FileKind": "mvc"
     },
     {
@@ -76130,6 +76145,11 @@
     {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/ManageWorkplansDraft.cshtml",
       "TargetPath": "Views\\NEPADStaff\\ManageWorkplansDraft.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Shared/EditorTemplates/ClientPeriodType.cshtml",
+      "TargetPath": "Views\\Shared\\EditorTemplates\\ClientPeriodType.cshtml",
       "FileKind": "mvc"
     },
     {

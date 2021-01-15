@@ -108,6 +108,11 @@ namespace AUDANEPAD_Integrated.ViewModels
         public double PRCThresold_Max { get; set; }
         public double Project_Max { get; set; }
 
+        public string InstitutionalRepPeriod { get; set; }
+        public string InstitutionalRepPeriodIdent { get; set; }
+
+
+
 
         public List<DropDownListViewModel> SelectedCountries { get; set; }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using AUDANEPAD_Integrated.Models;
+using NodaTime;
 
 namespace AUDANEPAD_Integrated.Interfaces
 {
@@ -10,6 +11,8 @@ namespace AUDANEPAD_Integrated.Interfaces
 
 		IEnumerable<WP_Mobility> GetAllRecords();
         IEnumerable<WP_Mobility> GetRecordsByOutputId (string outputid);
+
+        IEnumerable<WP_Mobility> GetRecordsByOutputIdStartEndRange (string outputid, LocalDate StartDate, LocalDate EndDate);
         IEnumerable<WP_Mobility> GetRecordsByMainRecordId (string recid);
         IEnumerable<WP_Mobility> GetRecordsByMainRecordOutputId (string wpmainrecid, string outputid);
 		WP_Mobility Add(WP_Mobility rec);

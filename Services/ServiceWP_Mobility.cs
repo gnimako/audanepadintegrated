@@ -4,6 +4,7 @@ using AUDANEPAD_Integrated.Models;
 using AUDANEPAD_Integrated.Interfaces;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 
 
 namespace AUDANEPAD_Integrated.Services
@@ -44,6 +45,15 @@ namespace AUDANEPAD_Integrated.Services
         {
             var records = context.WP_Mobility
                                 .Where(s => s.WPOutput_Id==outputid)
+                                .ToList();
+
+            return records;
+        }
+
+		public IEnumerable<WP_Mobility> GetRecordsByOutputIdStartEndRange (string outputid, LocalDate StartDate, LocalDate EndDate)
+        {
+            var records = context.WP_Mobility
+                                .Where(s => s.WPOutput_Id==outputid && s.MobilityStartDate>=StartDate && s.MobilityStartDate<=EndDate)
                                 .ToList();
 
             return records;

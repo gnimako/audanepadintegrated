@@ -4,6 +4,7 @@ using AUDANEPAD_Integrated.Models;
 using AUDANEPAD_Integrated.Interfaces;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 
 
 
@@ -49,6 +50,14 @@ namespace AUDANEPAD_Integrated.Services
 
             return records;
         }
+		public IEnumerable<WP_Procurement> GetRecordsByOutputIdStartEndRange (string outputid, LocalDate StartDate, LocalDate EndDate)
+		{
+			var records = context.WP_Procurement
+								.Where(s => s.WPOutput_Id==outputid && s.WPProcurementStartDate>=StartDate && s.WPProcurementStartDate<=EndDate)
+								.ToList();
+
+			return records;
+		}
 		public IEnumerable<WP_Procurement> GetRecordsByMainRecordId (string recid)
         {
             var records = context.WP_Procurement
