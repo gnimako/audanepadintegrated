@@ -15,6 +15,7 @@
                             <div class="card-body">
                                 <div class="card-title mb-3"> Completion Level of Workplans By Directorate</div>
                                     <input hidden asp-for="DispatchCycle_Id" class="k-textbox" style="width:100%" value="@Model.DispatchCycle_Id">
+                                    <input hidden asp-for="InstitutionalRepPeriodIdent" class="k-textbox" style="width:100%" value="@Model.InstitutionalRepPeriodIdent">
                                 
                                  @(Html.Kendo().Chart<WP_InstitutionalGraphsVM>()
                                     .Name("chartcompleteness")
@@ -391,6 +392,10 @@
                             <a class="k-button " id="btnViewPDF" style="color: #003f59;">
                                             <span class="k-icon k-i-file-pdf"></span> View Summary PDF Report
                             </a>
+                            &nbsp;&nbsp;
+                            <a class="k-button " id="btnViewExcel" style="color: #003f59;">
+                                            <span class="k-icon k-i-file-excel"></span> View Summary Excel Report
+                            </a>
 
 
 
@@ -456,6 +461,7 @@ function redirect_blank(url) {
 
 $("#btnViewPDF").click(function () {
     var cycleid = $("#DispatchCycle_Id").val();  
+    var periodid = $("#InstitutionalRepPeriodIdent").val(); 
     
     //var chart = $("#chartprcbudget").getKendoChart();
 
@@ -509,14 +515,14 @@ $("#btnViewPDF").click(function () {
 
     $.ajax({
         type: "POST",
-        url: '/Admin/ExportSave_InstitutionalCharts',     //your action 
+        url: '/Admin/ExportSave_InstitutionalChartsRange',     //your action 
         data:{"contentType": "image/png", "base64_complete": rawData_Complete, "base64_prc": rawData_PRC, "base64_mtpcontr": rawData_MTPContr, "base64_mtpcontrdir": rawData_MTPContrDir, "base64_stracontr": rawData_StraContr, "base64_stracontrdir": rawData_StraContrDir, "base64_impdistr": rawData_ImpDistr, "base64_newproj": rawData_NewProj,"cycleid": cycleid},
         dataType: 'json',
         success: function (result) {
             var response = result.rtnmsg;
 
             if (response == "success") {
-                var url="/NEPADStaff/InstitutionalWorkplanDraftSummaryPDF?cycleid="+cycleid;
+                var url="/NEPADStaff/InstitutionalWorkplanDraftRangeSummaryPDF?cycleid="+cycleid+"&periodid=" + periodid;
                 redirect_blank(url);
 
 

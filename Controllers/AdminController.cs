@@ -6463,6 +6463,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                // bool dpfunding=false;
                                 int ms_count=0;
                                 int dp_count=0;
+                                double output_total_budget=0;
 
                                 var DB_OutputActivities=_wpOutputActivitiesRepository.GetRecordsByOutputId(rec_proj_output.Transaction_Id).ToList();
 
@@ -6476,11 +6477,13 @@ namespace AUDANEPAD_Integrated.Controllers
                                     {
                                         ms_count=ms_count+1;
                                     }
+                                    output_total_budget=output_total_budget+rec_proj_output_act.ActivityCost;
 
                                 }
 
                                 //Get All the Mobility Records that Meet the Period Range Boundry
                                 var DB_Mobilities_Recs=_wpMobilityRepository.GetRecordsByOutputId(rec_proj_output.Transaction_Id).ToList();
+                                var DB_Mobilities_Recs_All=_wpMobilityRepository.GetRecordsByOutputId(rec_proj_output.Transaction_Id).ToList();
                                 if(periodid=="1")
                                 {
                                     DB_Mobilities_Recs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(currentcyclerec.FiscalYear_Id).Record_Name), 1, 1),
@@ -6526,6 +6529,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 //Get All the Procurement Records that Meet the Period Range Boundry
 
                                 var DB_Procurement_Recs=_wpProcurementRepository.GetRecordsByOutputId(rec_proj_output.Transaction_Id).ToList();
+                                var DB_Procurement_Recs_All=_wpProcurementRepository.GetRecordsByOutputId(rec_proj_output.Transaction_Id).ToList();
                                 if(periodid=="1")
                                 {
                                     DB_Procurement_Recs=_wpProcurementRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(currentcyclerec.FiscalYear_Id).Record_Name), 1, 1),
@@ -6569,6 +6573,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 //Get All the Communication Records that Meet the Period Range Boundry
 
                                 var DB_Communication_Recs=_wpCommunicationRepository.GetRecordsByOutputId(rec_proj_output.Transaction_Id).ToList();
+                                var DB_Communication_Recs_All=_wpCommunicationRepository.GetRecordsByOutputId(rec_proj_output.Transaction_Id).ToList();
                                 if(periodid=="1")
                                 {
                                     DB_Communication_Recs=_wpCommunicationRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(currentcyclerec.FiscalYear_Id).Record_Name), 1, 1),
@@ -6612,7 +6617,8 @@ namespace AUDANEPAD_Integrated.Controllers
                                 //inner totals
                                 double output_dp_budget=0;
                                 double output_ms_budget=0;
-                                double output_total_budget=0;
+                                double output_budget_all=0;
+                                
 
 
 
@@ -6635,13 +6641,24 @@ namespace AUDANEPAD_Integrated.Controllers
                                         output_dp_budget=output_dp_budget+_innerrec.WPCommsCost;
                                     }
 
-                                    //Get the Total Cycle Cost of Output
-                                    var DB_Activities_Recs=_wpOutputActivitiesRepository.GetRecordsByOutputId(rec_proj_output.Transaction_Id).ToList();
-                                    foreach (var _innerrec in DB_Activities_Recs)
+                                    //Get the Overall Total for Mobility, Procurement and Communication 
+                                        
+                                    foreach (var _innerrec in DB_Mobilities_Recs_All)
                                     {
-                                        output_total_budget=output_total_budget+_innerrec.ActivityCost;
+                                        output_budget_all=output_budget_all+_innerrec.MobilityCost;
                                     }
-                                    double remainingfunds=output_total_budget-output_dp_budget;
+
+                                    foreach (var _innerrec in DB_Procurement_Recs_All)
+                                    {
+                                        output_budget_all=output_budget_all+_innerrec.WPProcurementCost;
+                                    }
+
+                                    foreach (var _innerrec in DB_Communication_Recs_All)
+                                    {
+                                        output_budget_all=output_budget_all+_innerrec.WPCommsCost;
+                                    }
+                                 
+                                    double remainingfunds=output_total_budget-output_budget_all;
 
                                     //Add Adjust Cost to DP
                                     if(periodid=="1" || periodid=="2" || periodid=="3" || periodid=="4")
@@ -6678,13 +6695,24 @@ namespace AUDANEPAD_Integrated.Controllers
                                         output_ms_budget=output_ms_budget+_innerrec.WPCommsCost;
                                     }
 
-                                    //Get the Total Cycle Cost of Output
-                                    var DB_Activities_Recs=_wpOutputActivitiesRepository.GetRecordsByOutputId(rec_proj_output.Transaction_Id).ToList();
-                                    foreach (var _innerrec in DB_Activities_Recs)
+                                     //Get the Overall Total for Mobility, Procurement and Communication 
+                                        
+                                    foreach (var _innerrec in DB_Mobilities_Recs_All)
                                     {
-                                        output_total_budget=output_total_budget+_innerrec.ActivityCost;
+                                        output_budget_all=output_budget_all+_innerrec.MobilityCost;
                                     }
-                                    double remainingfunds=output_total_budget-output_ms_budget;
+
+                                    foreach (var _innerrec in DB_Procurement_Recs_All)
+                                    {
+                                        output_budget_all=output_budget_all+_innerrec.WPProcurementCost;
+                                    }
+
+                                    foreach (var _innerrec in DB_Communication_Recs_All)
+                                    {
+                                        output_budget_all=output_budget_all+_innerrec.WPCommsCost;
+                                    }
+
+                                    double remainingfunds=output_total_budget-output_budget_all;
 
                                     //Add Adjust Cost to DP
                                     if(periodid=="1" || periodid=="2" || periodid=="3" || periodid=="4")
@@ -6915,6 +6943,68 @@ namespace AUDANEPAD_Integrated.Controllers
                     }
                 }
                 */
+
+
+                return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+
+        }
+
+        
+
+
+         [HttpPost]
+        public ActionResult ExportSave_InstitutionalChartsRange(string contentType, string base64_complete, string base64_prc, string base64_mtpcontr, string base64_mtpcontrdir, string base64_stracontr, string base64_stracontrdir,  string base64_impdistr, string base64_newproj, string cycleid)
+        {
+
+
+            try
+            {
+                var fileContents_complete = Convert.FromBase64String(base64_complete);
+                var fileContents_prc = Convert.FromBase64String(base64_prc);
+
+                var fileContents_mtpcontr = Convert.FromBase64String(base64_mtpcontr);
+                var fileContents_mtpcontrdir = Convert.FromBase64String(base64_mtpcontrdir);
+
+                var fileContents_stracontr = Convert.FromBase64String(base64_stracontr);
+                var fileContents_stracontrdir = Convert.FromBase64String(base64_stracontrdir);
+
+                var fileContents_impdistr = Convert.FromBase64String(base64_impdistr);
+                var fileContents_newproj = Convert.FromBase64String(base64_newproj);
+                
+
+                string Path_Complete =  @"wwwroot/appdirectory/pdfreports/institutionalrange/"+cycleid+"Complete.png";
+                string Path_PRC =  @"wwwroot/appdirectory/pdfreports/institutionalrange/"+cycleid+"PRC.png";
+                string Path_PRC2 =  @"wwwroot/appdirectory/pdfreports/institutionalrange/"+cycleid+"PRC2.png";
+
+                string Path_MTPContr =  @"wwwroot/appdirectory/pdfreports/institutionalrange/"+cycleid+"MTPContr.png";
+                string Path_MTPContrDir =  @"wwwroot/appdirectory/pdfreports/institutionalrange/"+cycleid+"MTPContrDir.png";
+
+                string Path_StraContr =  @"wwwroot/appdirectory/pdfreports/institutionalrange/"+cycleid+"StraContr.png";
+                string Path_StraContrDir =  @"wwwroot/appdirectory/pdfreports/institutionalrange/"+cycleid+"StraContrDir.png";
+
+                string Path_ImpDistr =  @"wwwroot/appdirectory/pdfreports/institutionalrange/"+cycleid+"ImpDistr.png";
+                string Path_NewProj =  @"wwwroot/appdirectory/pdfreports/institutionalrange/"+cycleid+"NewProj.png";
+           
+
+
+                System.IO.File.WriteAllBytes(Path_Complete, fileContents_complete);
+                System.IO.File.WriteAllBytes(Path_PRC, fileContents_prc);
+
+                System.IO.File.WriteAllBytes(Path_MTPContr, fileContents_mtpcontr);
+                System.IO.File.WriteAllBytes(Path_MTPContrDir, fileContents_mtpcontrdir);
+
+                System.IO.File.WriteAllBytes(Path_StraContr, fileContents_stracontr);
+                System.IO.File.WriteAllBytes(Path_StraContrDir, fileContents_stracontrdir);
+
+                System.IO.File.WriteAllBytes(Path_ImpDistr, fileContents_impdistr);
+                System.IO.File.WriteAllBytes(Path_NewProj, fileContents_newproj);
+
+
 
 
                 return Json(new { rtnmsg = "success" });
