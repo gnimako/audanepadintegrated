@@ -27271,6 +27271,10 @@ namespace AUDANEPAD_Integrated.Controllers
             double institutional_dp_budget=0;
             double institutional_ms_budget=0;
             double institutional_total_budget=0;
+
+            // double institutional_dp_budget_act=0;
+            // double institutional_ms_budget_act=0;
+            // double institutional_diff_budget_act=0;
    
             if(_countrecs>0)
             {
@@ -27511,19 +27515,21 @@ namespace AUDANEPAD_Integrated.Controllers
                                         //Add Adjust Cost to DP
                                         if(periodid=="1" || periodid=="2" || periodid=="3" || periodid=="4")
                                         {
-                                            if(remainingfunds>0)
+                                            if(remainingfunds!=0)
                                                 output_dp_budget=output_dp_budget+(remainingfunds/4.0);
                                         }
                                         else if(periodid=="5" || periodid=="6" )
                                         {
-                                            if(remainingfunds>0)
+                                            if(remainingfunds!=0)
                                                 output_dp_budget=output_dp_budget+(remainingfunds/2.0);
                                         }
                                         else
                                         {
-                                            if(remainingfunds>0)
+                                            if(remainingfunds!=0)
                                                 output_dp_budget=output_dp_budget+(remainingfunds/1.0);
                                         }
+
+                                        institutional_dp_budget=institutional_dp_budget+output_dp_budget;
                                             
                                     }
                                     else //Sum as MS
@@ -27564,23 +27570,25 @@ namespace AUDANEPAD_Integrated.Controllers
                                         //Add Adjust Cost to DP
                                         if(periodid=="1" || periodid=="2" || periodid=="3" || periodid=="4")
                                         {
-                                            if(remainingfunds>0)
+                                            if(remainingfunds!=0)
                                                 output_ms_budget=output_ms_budget+(remainingfunds/4.0);
                                         }
                                         else if(periodid=="5" || periodid=="6" )
                                         {
-                                            if(remainingfunds>0)
+                                            if(remainingfunds!=0)
                                                 output_ms_budget=output_ms_budget+(remainingfunds/2.0);
                                         }
                                         else
                                         {
-                                            if(remainingfunds>0)
+                                            if(remainingfunds!=0)
                                                 output_ms_budget=output_ms_budget+(remainingfunds/1.0);
                                         }
 
+                                        institutional_ms_budget=institutional_ms_budget+output_ms_budget;
+
                                     }
-                                    institutional_dp_budget=institutional_dp_budget+output_dp_budget;
-                                    institutional_ms_budget=institutional_ms_budget+output_ms_budget;
+                                    
+                                    
 
 
 
