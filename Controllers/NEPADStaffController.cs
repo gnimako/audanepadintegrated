@@ -3100,6 +3100,57 @@ namespace AUDANEPAD_Integrated.Controllers
 
         }
 
+        public FileResult InstitutionalWorkplanReportRangeSummaryPDF(string id, string periodid)
+        {
+
+            string contentType = "application/pdf";
+            WP_DispatchCycle cyclerec=_wpDispatchCycleRepository.GetRecord(id);
+
+            MemoryStream workStream=GetMemoryInstitutionalWorkplanWithIconsDraftRangeSummary(cyclerec, periodid);
+
+            byte[] byte1 = workStream.ToArray();
+
+            string periodname="";
+            if(periodid=="1")
+                periodname="Q1";
+            else if (periodid=="2")
+                periodname="Q2";
+            else if (periodid=="3")
+                periodname="Q3";
+            else if (periodid=="4")
+                periodname="Q4"; 
+            else if (periodid=="5")
+                periodname="Semester_1"; 
+            else if (periodid=="6")
+                periodname="Semester_2";
+            else if (periodid=="7")
+                periodname="Annual";
+            else
+            {
+                DateTime pstart=new DateTime(cyclerec.PeriodStartDate.Year, cyclerec.PeriodStartDate.Month, cyclerec.PeriodStartDate.Day);
+                DateTime pend=new DateTime(cyclerec.PeriodEndDate.Year, cyclerec.PeriodEndDate.Month, cyclerec.PeriodEndDate.Day);
+                periodname=pstart.Date.ToString("MMM d, yyyy") + " - "+ pend.Date.ToString("MMM d, yyyy"); 
+                
+            }
+
+
+
+
+            // if(cyclerec.Period_Id==8)
+            // {
+            //     DateTime pstart=new DateTime(cyclerec.PeriodStartDate.Year, cyclerec.PeriodStartDate.Month, cyclerec.PeriodStartDate.Day);
+            //     DateTime pend=new DateTime(cyclerec.PeriodEndDate.Year, cyclerec.PeriodEndDate.Month, cyclerec.PeriodEndDate.Day);
+            //     periodname=pstart.Date.ToString("MMM d, yyyy") + " - "+ pend.Date.ToString("MMM d, yyyy"); 
+            // }
+            // else
+            // {
+            //     periodname=_lkupPeriodRepository.GetRecord(cyclerec.Period_Id).Record_Name;
+            // }
+
+            return File(byte1, contentType, "Institutional_Workplan_Summary_" +_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name +"_" +periodname+".pdf");
+
+        }
+
 
         public FileResult InstitutionalWorkplanReportRiskPDF(string id)
         {
