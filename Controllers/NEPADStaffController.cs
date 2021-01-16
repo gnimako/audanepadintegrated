@@ -27871,6 +27871,36 @@ namespace AUDANEPAD_Integrated.Controllers
                 document.Add(Summary_header);
 
                 document.Add(txt_gap);
+
+
+                string rangnameinst=periodnameinst+", "+_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name;
+                string rangnameinstupper=rangnameinst.ToUpper();
+
+                string rangnameinst_short="";
+                if(periodid=="1")
+                    rangnameinst_short="Q1";// of "+_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name;
+                else if (periodid=="2")
+                    rangnameinst_short="Q2";// of "+_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name;
+                else if (periodid=="3")
+                    rangnameinst_short="Q3";//of "+_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name;
+                else if (periodid=="4")
+                    rangnameinst_short="Q4"; //of "+_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name;
+                else if (periodid=="5")
+                    rangnameinst_short="Semester 1"; //of "+_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name;
+                else if (periodid=="6")
+                    rangnameinst_short="Semester 2";// of "+_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name;
+                else if (periodid=="7")
+                    rangnameinst_short=_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name+ " (Annual)";
+                else
+                    rangnameinst_short=_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name+ " ("+periodnameinst+")";
+
+                string rangnameinst_short_tot="";
+                if (periodid=="5")
+                    rangnameinst_short_tot="S1";
+                else if (periodid=="6")
+                    rangnameinst_short_tot="S2";
+                else
+                    rangnameinst_short_tot=rangnameinst_short;
             
 
 
@@ -27916,10 +27946,11 @@ namespace AUDANEPAD_Integrated.Controllers
                         .SetBackgroundColor(cl_tableheader);
                     tablestrategicprioritiessummary.AddCell(cellheader02);
 
-                    
 
 
-                    Cell cellheader03 = new Cell(1, 1)
+                    if(periodid=="7" || periodid=="8")
+                    {
+                        Cell cellheader03 = new Cell(1, 1)
                         .SetTextAlignment(TextAlignment.RIGHT)
                         .Add(new Paragraph("Total Budget (US$)")
                                         .SetFont(ft_bold)
@@ -27928,7 +27959,22 @@ namespace AUDANEPAD_Integrated.Controllers
                                         .SetBackgroundColor(cl_tableheader)
                                         .SetFontSize(10))
                         .SetBackgroundColor(cl_tableheader);
-                    tablestrategicprioritiessummary.AddCell(cellheader03);
+                        tablestrategicprioritiessummary.AddCell(cellheader03);
+
+                    }
+                    else
+                    {
+                        Cell cellheader03 = new Cell(1, 1)
+                        .SetTextAlignment(TextAlignment.RIGHT)
+                        .Add(new Paragraph("Total Budget for "+rangnameinst_short_tot+" (US$)")
+                                        .SetFont(ft_bold)
+                                        .SetFixedLeading(14f)
+                                        .SetFontColor(cl_grayDark)
+                                        .SetBackgroundColor(cl_tableheader)
+                                        .SetFontSize(10))
+                        .SetBackgroundColor(cl_tableheader);
+                        tablestrategicprioritiessummary.AddCell(cellheader03);
+                    }
 
                     int _stracount=0;
                     double grand_stra_total_budget=0;
@@ -28453,6 +28499,10 @@ namespace AUDANEPAD_Integrated.Controllers
                                         .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
                                         .SetMarginLeft(0)
                                         .SetHorizontalAlignment(HorizontalAlignment.LEFT);
+                
+                
+                
+
 
 
 
@@ -28476,7 +28526,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                     Cell cellheader02 = new Cell(1, 1)
                         .SetTextAlignment(TextAlignment.RIGHT)
-                        .Add(new Paragraph("MS Budget (US$)")
+                        .Add(new Paragraph("MS Budget for "+rangnameinst_short+" (US$)")
                                         .SetFont(ft_bold)
                                         .SetFixedLeading(14f)
                                         .SetFontColor(cl_grayDark)
@@ -28490,7 +28540,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                     Cell cellheader03 = new Cell(1, 1)
                         .SetTextAlignment(TextAlignment.RIGHT)
-                        .Add(new Paragraph("DP Budget (US$)")
+                        .Add(new Paragraph("DP Budget for "+rangnameinst_short+" (US$)")
                                         .SetFont(ft_bold)
                                         .SetFixedLeading(14f)
                                         .SetFontColor(cl_grayDark)
@@ -28502,16 +28552,34 @@ namespace AUDANEPAD_Integrated.Controllers
                     
 
 
-                    Cell cellheader05 = new Cell(1, 1)
-                        .SetTextAlignment(TextAlignment.RIGHT)
-                        .Add(new Paragraph("Total Budget (US$)")
-                                        .SetFont(ft_bold)
-                                        .SetFixedLeading(14f)
-                                        .SetFontColor(cl_grayDark)
-                                        .SetBackgroundColor(cl_tableheader)
-                                        .SetFontSize(10))
-                        .SetBackgroundColor(cl_tableheader);
-                    tabledirectoratebudget.AddCell(cellheader05);
+                    if(periodid=="7" || periodid=="8")
+                    {
+                        Cell cellheader05 = new Cell(1, 1)
+                                            .SetTextAlignment(TextAlignment.RIGHT)
+                                            .Add(new Paragraph("Total Budget (US$)")
+                                                            .SetFont(ft_bold)
+                                                            .SetFixedLeading(14f)
+                                                            .SetFontColor(cl_grayDark)
+                                                            .SetBackgroundColor(cl_tableheader)
+                                                            .SetFontSize(10))
+                                            .SetBackgroundColor(cl_tableheader);
+                                        tabledirectoratebudget.AddCell(cellheader05);
+
+                    }
+                    else
+                    {
+                        Cell cellheader05 = new Cell(1, 1)
+                                            .SetTextAlignment(TextAlignment.RIGHT)
+                                            .Add(new Paragraph("Total Budget for "+rangnameinst_short_tot+" (US$)")
+                                                            .SetFont(ft_bold)
+                                                            .SetFixedLeading(14f)
+                                                            .SetFontColor(cl_grayDark)
+                                                            .SetBackgroundColor(cl_tableheader)
+                                                            .SetFontSize(10))
+                                            .SetBackgroundColor(cl_tableheader);
+                            tabledirectoratebudget.AddCell(cellheader05);
+                    }
+                    
 
 
                     double grand_directorate_ms_budget=0;
@@ -29208,48 +29276,6 @@ namespace AUDANEPAD_Integrated.Controllers
                                 var DB_RECScopeRecs=_wpRegionScopeRepository.GetRecordsByMainRecordId(mainrec.Transaction_Id).GroupBy(x => x.Region_Id).Select(x => x.First()).ToList();
 
                                 var DB_MobilitiesCountriesRecs=_wpMobilityRepository.GetRecordsByMainRecordId(mainrec.Transaction_Id).GroupBy(x => x.Country_Id).Select(x => x.First()).ToList();
-                                if(periodid=="1")
-                                {
-                                    DB_MobilitiesCountriesRecs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(mainrec.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 1, 1),
-                                                                                                                                            new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 3, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 3))).GroupBy(x => x.Country_Id).Select(x => x.First()).ToList();
-                                }
-                                else if(periodid=="2")
-                                {
-                                    DB_MobilitiesCountriesRecs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(mainrec.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 4, 1),
-                                                                                                                                            new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6))).GroupBy(x => x.Country_Id).Select(x => x.First()).ToList();
-                                }
-                                else if(periodid=="3")
-                                {
-                                    DB_MobilitiesCountriesRecs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(mainrec.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 7, 1),
-                                                                                                                                            new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 9, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 9))).GroupBy(x => x.Country_Id).Select(x => x.First()).ToList();
-                                }
-                                else if(periodid=="4")
-                                {
-                                    DB_MobilitiesCountriesRecs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(mainrec.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 10, 1),
-                                                                                                                                            new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12))).GroupBy(x => x.Country_Id).Select(x => x.First()).ToList();
-                                }
-                                else if(periodid=="5")
-                                {
-                                    DB_MobilitiesCountriesRecs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(mainrec.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 1, 1),
-                                                                                                                                            new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6))).GroupBy(x => x.Country_Id).Select(x => x.First()).ToList();
-                                }
-                                else if(periodid=="6")
-                                {
-                                    DB_MobilitiesCountriesRecs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(mainrec.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 7, 1),
-                                                                                                                                            new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12))).GroupBy(x => x.Country_Id).Select(x => x.First()).ToList();
-                                }
-                                else if(periodid=="7")
-                                {
-                                    DB_MobilitiesCountriesRecs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(mainrec.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 1, 1),
-                                                                                                                                            new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12))).GroupBy(x => x.Country_Id).Select(x => x.First()).ToList();
-                                }
-                                else if(periodid=="8")
-                                {
-                                    DB_MobilitiesCountriesRecs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(mainrec.Transaction_Id, cyclerec.PeriodStartDate, cyclerec.PeriodEndDate).GroupBy(x => x.Country_Id).Select(x => x.First()).ToList();
-                                }
-
-
-
                                 var DB_RiskProfileCountriesRecs=_wpRiskProfileCountriesRepository.GetRecordsByMainRecordId(mainrec.Transaction_Id).GroupBy(x => x.Country_Id).Select(x => x.First()).ToList();
                                
                                
@@ -29260,25 +29286,25 @@ namespace AUDANEPAD_Integrated.Controllers
                                 int _countrycount=DB_CountryScopeRecs.Count();
                                 int _reccount=DB_RECScopeRecs.Count();
 
-                               // int _countryinter=0;
-                                //int _recinter=0;
+                               int _countryinter=0;
+                               // int _recinter=0;
 
-                                // foreach(var countryrec in DB_CountryScopeRecs)
-                                // {
-                                //     LkUp_Country country=_lkupCountryRepository.GetCountry(countryrec.Country_Id);
-                                //     _countryinter=_countryinter+1;
+                                foreach(var countryrec in DB_CountryScopeRecs)
+                                {
+                                    LkUp_Country country=_lkupCountryRepository.GetCountry(countryrec.Country_Id);
+                                    _countryinter=_countryinter+1;
                               
 
-                                //     if(!dirCountriesList.Contains(country.Country_Name.TrimEnd()) && auMSList.Contains(country.Country_Name.TrimEnd()))
-                                //     {
+                                    if(!dirCountriesList.Contains(country.Country_Name.TrimEnd()) && auMSList.Contains(country.Country_Name.TrimEnd()))
+                                    {
                                         
-                                //         rtnstringCountries += country.Country_Name.TrimEnd()+", ";  
+                                        rtnstringCountries += country.Country_Name.TrimEnd()+", ";  
 
                                        
-                                //         dirCountriesList.Add(country.Country_Name.TrimEnd());
-                                //     }
+                                        dirCountriesList.Add(country.Country_Name.TrimEnd());
+                                    }
 
-                                // }
+                                }
 
                                 foreach(var countryrec in DB_MobilitiesCountriesRecs)
                                 {
@@ -29487,8 +29513,7 @@ namespace AUDANEPAD_Integrated.Controllers
                             .SetMarginLeft(0)
                             .SetHorizontalAlignment(HorizontalAlignment.LEFT);
 
-            string rangnameinst=periodnameinst+", "+_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name;
-            string rangnameinstupper=rangnameinst.ToUpper();
+            
 
                 Image img11 = new Image(ImageDataFactory
                         .Create(@"wwwroot/appdirectory/pdfreports/institutionalrange/"+cyclerec.Transaction_Id+"Complete.png"))
@@ -29896,7 +29921,7 @@ namespace AUDANEPAD_Integrated.Controllers
             document.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
 
 
-            Paragraph Details_header = new Paragraph("PLANNED OUTPUTS AND RESULTS FOR "+rangnameinstupper)
+            Paragraph Details_header = new Paragraph("PLANNED OUTPUTS AND RESULTS FOR "+rangnameinst_short)
                     .SetTextAlignment(TextAlignment.CENTER)
                    // .SetUnderline()
                     .SetFont(ft_montserrat_thick)
