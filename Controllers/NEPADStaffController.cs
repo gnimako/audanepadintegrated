@@ -28449,7 +28449,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 //MS and DP Budgets by Directorates
                 float indentmargin=document.GetLeftMargin()+0;
-                Table tabledirectoratebudget = new Table(UnitValue.CreatePercentArray(new float[]{14, 16, 18, 16, 18, 18}), false)
+                Table tabledirectoratebudget = new Table(UnitValue.CreatePercentArray(new float[]{14, 34, 34, 18}), false)
                                         .SetWidth(PageSize.A3.GetWidth()-subtractmargins)
                                         .SetMarginLeft(0)
                                         .SetHorizontalAlignment(HorizontalAlignment.LEFT);
@@ -28485,16 +28485,7 @@ namespace AUDANEPAD_Integrated.Controllers
                         .SetBackgroundColor(cl_tableheader);
                     tabledirectoratebudget.AddCell(cellheader02);
 
-                    Cell cellheader02b = new Cell(1, 1)
-                        .SetTextAlignment(TextAlignment.RIGHT)
-                        .Add(new Paragraph("PRC MS Threshold (US$)")
-                                        .SetFont(ft_bold)
-                                        .SetFixedLeading(14f)
-                                        .SetFontColor(cl_grayDark)
-                                        .SetBackgroundColor(cl_tableheader)
-                                        .SetFontSize(10))
-                        .SetBackgroundColor(cl_tableheader);
-                    tabledirectoratebudget.AddCell(cellheader02b);
+                    
 
 
                     Cell cellheader03 = new Cell(1, 1)
@@ -28508,16 +28499,7 @@ namespace AUDANEPAD_Integrated.Controllers
                         .SetBackgroundColor(cl_tableheader);
                     tabledirectoratebudget.AddCell(cellheader03);
 
-                    Cell cellheader04 = new Cell(1, 1)
-                        .SetTextAlignment(TextAlignment.RIGHT)
-                        .Add(new Paragraph("PRC DP Threshold (US$)")
-                                        .SetFont(ft_bold)
-                                        .SetFixedLeading(14f)
-                                        .SetFontColor(cl_grayDark)
-                                        .SetBackgroundColor(cl_tableheader)
-                                        .SetFontSize(10))
-                        .SetBackgroundColor(cl_tableheader);
-                    tabledirectoratebudget.AddCell(cellheader04);
+                    
 
 
                     Cell cellheader05 = new Cell(1, 1)
@@ -28533,9 +28515,9 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
                     double grand_directorate_ms_budget=0;
-                    double grand_directorate_ms_prc=0;
+                   // double grand_directorate_ms_prc=0;
                     double grand_directorate_dp_budget=0;
-                    double grand_directorate_dp_prc=0;
+                   // double grand_directorate_dp_prc=0;
                     double grand_directorate_total_budget=0;
 
 
@@ -28565,26 +28547,333 @@ namespace AUDANEPAD_Integrated.Controllers
                                 DivMainRecs=_wpMainRecordRepository.GetRecordsByDivisionYearAndPeriod(rec_div.Division_Id, cyclerec.FiscalYear_Id,cyclerec.Period_Id).ToList();
                             }
 
+
+
                             foreach (var rec_proj_main in DivMainRecs)
                             {
-                                var DB_ActivitiesRecs=_wpOutputActivitiesRepository.GetRecordsByMainRecordId(rec_proj_main.Transaction_Id).ToList();
-                                foreach (var rec_proj_act in DB_ActivitiesRecs)
-                                {
-                                    directorate_total_budget=directorate_total_budget+rec_proj_act.ActivityCost;
-                                    grand_directorate_total_budget=grand_directorate_total_budget+rec_proj_act.ActivityCost;
                                 
-                                    if(rec_proj_act.PartnerFunding==true)
+                                
+                                //New for loop for Range
+                                var DB_Outpus_for_Project=_wpOutputsRepository.GetRecordsByMainRecordId(rec_proj_main.Transaction_Id).ToList();
+
+                                foreach (var rec_proj_output in DB_Outpus_for_Project)
+                                {
+                                // bool dpfunding=false;
+                                    int ms_count=0;
+                                    int dp_count=0;
+                                    double output_total_budget=0;
+
+                                    var DB_OutputActivities=_wpOutputActivitiesRepository.GetRecordsByOutputId(rec_proj_output.Transaction_Id).ToList();
+
+                                    foreach (var rec_proj_output_act in DB_OutputActivities)
                                     {
-                                        directorate_dp_budget=directorate_dp_budget+rec_proj_act.ActivityCost;
-                                        grand_directorate_dp_budget=grand_directorate_dp_budget+rec_proj_act.ActivityCost;
+                                        if(rec_proj_output_act.PartnerFunding==true)
+                                        {
+                                            dp_count=dp_count+1;
+                                        }
+                                        else
+                                        {
+                                            ms_count=ms_count+1;
+                                        }
+                                        output_total_budget=output_total_budget+rec_proj_output_act.ActivityCost;
+
                                     }
 
+                                    //Get All the Mobility Records that Meet the Period Range Boundry
+                                    var DB_Mobilities_Recs=_wpMobilityRepository.GetRecordsByOutputId(rec_proj_output.Transaction_Id).ToList();
+                                    var DB_Mobilities_Recs_All=_wpMobilityRepository.GetRecordsByOutputId(rec_proj_output.Transaction_Id).ToList();
+                                    if(periodid=="1")
+                                    {
+                                        DB_Mobilities_Recs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 1, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 3, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 3))).ToList();
+                                    }
+                                    else if(periodid=="2")
+                                    {
+                                        DB_Mobilities_Recs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 4, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6))).ToList();
+                                    }
+                                    else if(periodid=="3")
+                                    {
+                                        DB_Mobilities_Recs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 7, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 9, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 9))).ToList();
+                                    }
+                                    else if(periodid=="4")
+                                    {
+                                        DB_Mobilities_Recs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 10, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12))).ToList();
+                                    }
+                                    else if(periodid=="5")
+                                    {
+                                        DB_Mobilities_Recs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 1, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6))).ToList();
+                                    }
+                                    else if(periodid=="6")
+                                    {
+                                        DB_Mobilities_Recs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 7, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12))).ToList();
+                                    }
+                                    else if(periodid=="7")
+                                    {
+                                        DB_Mobilities_Recs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 1, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12))).ToList();
+                                    }
+                                    else if(periodid=="8")
+                                    {
+                                        DB_Mobilities_Recs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, cyclerec.PeriodStartDate, cyclerec.PeriodEndDate).ToList();
+                                    }
+
+
+
+                                    //Get All the Procurement Records that Meet the Period Range Boundry
+
+                                    var DB_Procurement_Recs=_wpProcurementRepository.GetRecordsByOutputId(rec_proj_output.Transaction_Id).ToList();
+                                    var DB_Procurement_Recs_All=_wpProcurementRepository.GetRecordsByOutputId(rec_proj_output.Transaction_Id).ToList();
+                                    if(periodid=="1")
+                                    {
+                                        DB_Procurement_Recs=_wpProcurementRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 1, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 3, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 3))).ToList();
+                                    }
+                                    else if(periodid=="2")
+                                    {
+                                        DB_Procurement_Recs=_wpProcurementRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 4, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6))).ToList();
+                                    }
+                                    else if(periodid=="3")
+                                    {
+                                        DB_Procurement_Recs=_wpProcurementRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 7, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 9, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 9))).ToList();
+                                    }
+                                    else if(periodid=="4")
+                                    {
+                                        DB_Procurement_Recs=_wpProcurementRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 10, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12))).ToList();
+                                    }
+                                    else if(periodid=="5")
+                                    {
+                                        DB_Procurement_Recs=_wpProcurementRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 1, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6))).ToList();
+                                    }
+                                    else if(periodid=="6")
+                                    {
+                                        DB_Procurement_Recs=_wpProcurementRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 7, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12))).ToList();
+                                    }
+                                    else if(periodid=="7")
+                                    {
+                                        DB_Procurement_Recs=_wpProcurementRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 1, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12))).ToList();
+                                    }
+                                    else if(periodid=="8")
+                                    {
+                                        DB_Procurement_Recs=_wpProcurementRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, cyclerec.PeriodStartDate, cyclerec.PeriodEndDate).ToList();
+                                    }
+
+                                    //Get All the Communication Records that Meet the Period Range Boundry
+
+                                    var DB_Communication_Recs=_wpCommunicationRepository.GetRecordsByOutputId(rec_proj_output.Transaction_Id).ToList();
+                                    var DB_Communication_Recs_All=_wpCommunicationRepository.GetRecordsByOutputId(rec_proj_output.Transaction_Id).ToList();
+                                    if(periodid=="1")
+                                    {
+                                        DB_Communication_Recs=_wpCommunicationRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 1, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 3, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 3))).ToList();
+                                    }
+                                    else if(periodid=="2")
+                                    {
+                                        DB_Communication_Recs=_wpCommunicationRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 4, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6))).ToList();
+                                    }
+                                    else if(periodid=="3")
+                                    {
+                                        DB_Communication_Recs=_wpCommunicationRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 7, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 9, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 9))).ToList();
+                                    }
+                                    else if(periodid=="4")
+                                    {
+                                        DB_Communication_Recs=_wpCommunicationRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 10, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12))).ToList();
+                                    }
+                                    else if(periodid=="5")
+                                    {
+                                        DB_Communication_Recs=_wpCommunicationRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 1, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6))).ToList();
+                                    }
+                                    else if(periodid=="6")
+                                    {
+                                        DB_Communication_Recs=_wpCommunicationRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 7, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12))).ToList();
+                                    }
+                                    else if(periodid=="7")
+                                    {
+                                        DB_Communication_Recs=_wpCommunicationRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 1, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12))).ToList();
+                                    }
+                                    else if(periodid=="8")
+                                    {
+                                        DB_Communication_Recs=_wpCommunicationRepository.GetRecordsByOutputIdStartEndRange(rec_proj_output.Transaction_Id, cyclerec.PeriodStartDate, cyclerec.PeriodEndDate).ToList();
+                                    }
+
+                                    //inner totals
+                                    double output_dp_budget=0;
+                                    double output_ms_budget=0;
+                                    double output_budget_all=0;
+                                    
+
+
+
+
+                                    //Sum as DP
+                                    if(dp_count>ms_count)
+                                    {
+                                        foreach (var _innerrec in DB_Mobilities_Recs)
+                                        {
+                                            output_dp_budget=output_dp_budget+_innerrec.MobilityCost;
+                                        }
+
+                                        foreach (var _innerrec in DB_Procurement_Recs)
+                                        {
+                                            output_dp_budget=output_dp_budget+_innerrec.WPProcurementCost;
+                                        }
+
+                                        foreach (var _innerrec in DB_Communication_Recs)
+                                        {
+                                            output_dp_budget=output_dp_budget+_innerrec.WPCommsCost;
+                                        }
+
+                                        //Get the Overall Total for Mobility, Procurement and Communication 
+                                        
+                                        foreach (var _innerrec in DB_Mobilities_Recs_All)
+                                        {
+                                            output_budget_all=output_budget_all+_innerrec.MobilityCost;
+                                        }
+
+                                        foreach (var _innerrec in DB_Procurement_Recs_All)
+                                        {
+                                            output_budget_all=output_budget_all+_innerrec.WPProcurementCost;
+                                        }
+
+                                        foreach (var _innerrec in DB_Communication_Recs_All)
+                                        {
+                                            output_budget_all=output_budget_all+_innerrec.WPCommsCost;
+                                        }
+
+                                        double remainingfunds=output_total_budget-output_budget_all;
+
+                                        //Add Adjust Cost to DP
+                                        if(periodid=="1" || periodid=="2" || periodid=="3" || periodid=="4")
+                                        {
+                                            if(remainingfunds!=0)
+                                                output_dp_budget=output_dp_budget+(remainingfunds/4.0);
+                                        }
+                                        else if(periodid=="5" || periodid=="6" )
+                                        {
+                                            if(remainingfunds!=0)
+                                                output_dp_budget=output_dp_budget+(remainingfunds/2.0);
+                                        }
+                                        else
+                                        {
+                                            if(remainingfunds!=0)
+                                                output_dp_budget=output_dp_budget+(remainingfunds/1.0);
+                                        }
+
+                                        directorate_dp_budget=directorate_dp_budget+output_dp_budget;
+                                        grand_directorate_dp_budget=grand_directorate_dp_budget+output_dp_budget;
+
+                                        directorate_total_budget=directorate_total_budget+output_dp_budget;
+                                        grand_directorate_total_budget=grand_directorate_total_budget+output_dp_budget;
+
+
+                                            
+                                    }
+                                    else //Sum as MS
+                                    {
+                                        foreach (var _innerrec in DB_Mobilities_Recs)
+                                        {
+                                            output_ms_budget=output_ms_budget+_innerrec.MobilityCost;
+                                        }
+
+                                        foreach (var _innerrec in DB_Procurement_Recs)
+                                        {
+                                            output_ms_budget=output_ms_budget+_innerrec.WPProcurementCost;
+                                        }
+
+                                        foreach (var _innerrec in DB_Communication_Recs)
+                                        {
+                                            output_ms_budget=output_ms_budget+_innerrec.WPCommsCost;
+                                        }
+
+                                       //Get the Overall Total for Mobility, Procurement and Communication 
+                                        
+                                        foreach (var _innerrec in DB_Mobilities_Recs_All)
+                                        {
+                                            output_budget_all=output_budget_all+_innerrec.MobilityCost;
+                                        }
+
+                                        foreach (var _innerrec in DB_Procurement_Recs_All)
+                                        {
+                                            output_budget_all=output_budget_all+_innerrec.WPProcurementCost;
+                                        }
+
+                                        foreach (var _innerrec in DB_Communication_Recs_All)
+                                        {
+                                            output_budget_all=output_budget_all+_innerrec.WPCommsCost;
+                                        }
+                                        double remainingfunds=output_total_budget-output_budget_all;
+
+                                        //Add Adjust Cost to DP
+                                        if(periodid=="1" || periodid=="2" || periodid=="3" || periodid=="4")
+                                        {
+                                            if(remainingfunds!=0)
+                                                output_ms_budget=output_ms_budget+(remainingfunds/4.0);
+                                        }
+                                        else if(periodid=="5" || periodid=="6" )
+                                        {
+                                            if(remainingfunds!=0)
+                                                output_ms_budget=output_ms_budget+(remainingfunds/2.0);
+                                        }
+                                        else
+                                        {
+                                            if(remainingfunds!=0)
+                                                output_ms_budget=output_ms_budget+(remainingfunds/1.0);
+                                        }
+
+                                        directorate_ms_budget=directorate_ms_budget+output_ms_budget;
+                                        grand_directorate_ms_budget=grand_directorate_ms_budget+output_ms_budget;
+
+                                        directorate_total_budget=directorate_total_budget+output_ms_budget;
+                                        grand_directorate_total_budget=grand_directorate_total_budget+output_ms_budget;
+
+
+                                    }
+                                    
+                                    
+
+
+
+
+                                    
+
                                 }
+                                
+                                
+                                
+                                // var DB_ActivitiesRecs=_wpOutputActivitiesRepository.GetRecordsByMainRecordId(rec_proj_main.Transaction_Id).ToList();
+                                // foreach (var rec_proj_act in DB_ActivitiesRecs)
+                                // {
+                                //     directorate_total_budget=directorate_total_budget+rec_proj_act.ActivityCost;
+                                //     grand_directorate_total_budget=grand_directorate_total_budget+rec_proj_act.ActivityCost;
+                                
+                                //     if(rec_proj_act.PartnerFunding==true)
+                                //     {
+                                //         directorate_dp_budget=directorate_dp_budget+rec_proj_act.ActivityCost;
+                                //         grand_directorate_dp_budget=grand_directorate_dp_budget+rec_proj_act.ActivityCost;
+                                //     }
+
+                                // }
                             }
 
                         }
 
-                        directorate_ms_budget=directorate_total_budget-directorate_dp_budget;
+                       // directorate_ms_budget=directorate_total_budget-directorate_dp_budget;
 
                 
 
@@ -28596,21 +28885,7 @@ namespace AUDANEPAD_Integrated.Controllers
                     // Retrieve PRC Thresholds  
             
 
-                        WP_PRCBudgetLimits prccyclelimit=_wpPRCBudgetLimitsRepository.GetRecordByDirectorateAndCycle(rec_set.Record_Id,cyclerec.Transaction_Id);
-
-                    
-                        double directorate_dp_prc=0;//change this
-                        double directorate_ms_prc=0;//change this 
-
-                        if(prccyclelimit!=null)
-                        {
-                            directorate_dp_prc=prccyclelimit.DP_Limit;
-                            grand_directorate_dp_prc=grand_directorate_dp_prc+prccyclelimit.DP_Limit;
-
-
-                            directorate_ms_prc=prccyclelimit.MS_Limit;
-                            grand_directorate_ms_prc=grand_directorate_ms_prc+prccyclelimit.MS_Limit;
-                        }
+                       
 
 
 
@@ -28620,9 +28895,9 @@ namespace AUDANEPAD_Integrated.Controllers
 
                         Cell cell1 = new Cell(1, 1);
                         Cell cell2 = new Cell(1, 1);
-                        Cell cell2b = new Cell(1, 1);
+                       // Cell cell2b = new Cell(1, 1);
                         Cell cell3 = new Cell(1, 1);
-                        Cell cell4 = new Cell(1, 1);
+                       // Cell cell4 = new Cell(1, 1);
                         Cell cell5 = new Cell(1, 1);
 
 
@@ -28654,16 +28929,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 .SetBorderTop(Border.NO_BORDER)
                                 .SetBorderBottom(Border.NO_BORDER);
 
-                                cell2b.SetTextAlignment(TextAlignment.RIGHT)
-                                .Add(new Paragraph(string.Format("{0:N0}", directorate_ms_prc))
-                                                //.SetFont(ft_montserrat_reg)
-                                                .SetFixedLeading(14f)
-                                                .SetFontColor(cl_grayDark)
-                                                .SetBackgroundColor(cl_tablecontent_1)
-                                                .SetFontSize(10))
-                                .SetBackgroundColor(cl_tablecontent_1)
-                                .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(Border.NO_BORDER);
+                               
 
 
 
@@ -28681,16 +28947,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
 
-                            cell4.SetTextAlignment(TextAlignment.RIGHT)
-                                .Add(new Paragraph(string.Format("{0:N0}", directorate_dp_prc))
-                                                // .SetFont(ft_montserrat_reg)
-                                                .SetFixedLeading(14f)
-                                                .SetFontColor(cl_grayDark)
-                                                .SetBackgroundColor(cl_tablecontent_1)
-                                                .SetFontSize(10))
-                                .SetBackgroundColor(cl_tablecontent_1)
-                                .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(Border.NO_BORDER);
+                            
 
                             cell5.SetTextAlignment(TextAlignment.RIGHT)
                                 .Add(new Paragraph(string.Format("{0:N0}", directorate_total_budget))
@@ -28732,16 +28989,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 .SetBorderTop(Border.NO_BORDER)
                                 .SetBorderBottom(Border.NO_BORDER);
 
-                            cell2b.SetTextAlignment(TextAlignment.RIGHT)
-                                .Add(new Paragraph(string.Format("{0:N0}", directorate_ms_prc))
-                                                // .SetFont(ft_montserrat_reg)
-                                                .SetFixedLeading(14f)
-                                                .SetFontColor(cl_grayDark)
-                                                .SetBackgroundColor(cl_tablecontent_2)
-                                                .SetFontSize(10))
-                                .SetBackgroundColor(cl_tablecontent_2)
-                                .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(Border.NO_BORDER);
+                            
 
 
 
@@ -28759,16 +29007,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
 
-                            cell4.SetTextAlignment(TextAlignment.RIGHT)
-                                    .Add(new Paragraph(string.Format("{0:N0}", directorate_dp_prc))
-                                                //.SetFont(ft_montserrat_reg)
-                                                .SetFixedLeading(14f)
-                                                .SetFontColor(cl_grayDark)
-                                                .SetBackgroundColor(cl_tablecontent_2)
-                                                .SetFontSize(10))
-                                .SetBackgroundColor(cl_tablecontent_2)
-                                .SetBorderTop(Border.NO_BORDER)
-                                .SetBorderBottom(Border.NO_BORDER);
+                           
 
                             cell5.SetTextAlignment(TextAlignment.RIGHT)
                                     .Add(new Paragraph(string.Format("{0:N0}", directorate_total_budget))
@@ -28789,18 +29028,18 @@ namespace AUDANEPAD_Integrated.Controllers
                         {
                             cell1.SetBorderBottom(new SolidBorder(1f));
                             cell2.SetBorderBottom(new SolidBorder(1f));
-                            cell2b.SetBorderBottom(new SolidBorder(1f));
+                           // cell2b.SetBorderBottom(new SolidBorder(1f));
                             cell3.SetBorderBottom(new SolidBorder(1f));
-                            cell4.SetBorderBottom(new SolidBorder(1f));
+                           // cell4.SetBorderBottom(new SolidBorder(1f));
                             cell5.SetBorderBottom(new SolidBorder(1f));
 
                         }
 
                         tabledirectoratebudget.AddCell(cell1);
                         tabledirectoratebudget.AddCell(cell2);
-                        tabledirectoratebudget.AddCell(cell2b);
+                       // tabledirectoratebudget.AddCell(cell2b);
                         tabledirectoratebudget.AddCell(cell3);   
-                        tabledirectoratebudget.AddCell(cell4);
+                       // tabledirectoratebudget.AddCell(cell4);
                         tabledirectoratebudget.AddCell(cell5);
 
 
@@ -28838,17 +29077,7 @@ namespace AUDANEPAD_Integrated.Controllers
                         .SetBackgroundColor(cl_tableheader);
                     tabledirectoratebudget.AddCell(cellheader02t);
 
-                    Cell cellheader02bt = new Cell(1, 1)
-                        .SetTextAlignment(TextAlignment.RIGHT)
-                        .Add(new Paragraph(string.Format("{0:N0}", grand_directorate_ms_prc))
-                                       // .SetFont(ft_bold)
-                                        .SetFixedLeading(14f)
-                                        .SetFontColor(cl_grayDark)
-                                        .SetBackgroundColor(cl_tableheader)
-                                        .SetFontSize(10))
-                        .SetBorderBottom(new SolidBorder(1f))
-                        .SetBackgroundColor(cl_tableheader);
-                    tabledirectoratebudget.AddCell(cellheader02bt);
+                    
 
 
                     Cell cellheader03t = new Cell(1, 1)
@@ -28863,17 +29092,7 @@ namespace AUDANEPAD_Integrated.Controllers
                         .SetBackgroundColor(cl_tableheader);
                     tabledirectoratebudget.AddCell(cellheader03t);
 
-                    Cell cellheader04t = new Cell(1, 1)
-                        .SetTextAlignment(TextAlignment.RIGHT)
-                        .Add(new Paragraph(string.Format("{0:N0}", grand_directorate_dp_prc))
-                                       // .SetFont(ft_bold)
-                                        .SetFixedLeading(14f)
-                                        .SetFontColor(cl_grayDark)
-                                        .SetBackgroundColor(cl_tableheader)
-                                        .SetFontSize(10))
-                        .SetBorderBottom(new SolidBorder(1f))
-                        .SetBackgroundColor(cl_tableheader);
-                    tabledirectoratebudget.AddCell(cellheader04t);
+                    
 
 
                     Cell cellheader05t = new Cell(1, 1)
