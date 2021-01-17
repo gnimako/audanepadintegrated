@@ -117,8 +117,9 @@
 
 function GenerateFullReport() {
     var transid = $("#WPCycle_Id").val();  
+    var periodid = $("#Period_Id").val();
 
-    var url="/NEPADStaff/InstitutionalWorkplanDraft?transid=" + transid;
+    var url="/NEPADStaff/InstitutionalWorkplanRangeDraft?transid=" + transid+"&periodid=" + periodid;
 
     redirect_blank(url);
    
