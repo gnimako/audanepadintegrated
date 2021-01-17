@@ -58,6 +58,14 @@ namespace AUDANEPAD_Integrated.Services
 
             return records;
         }
+		public IEnumerable<WP_Mobility> GetRecordsByMainRecordIdStartEndRange (string recid, LocalDate StartDate, LocalDate EndDate)
+        {
+            var records = context.WP_Mobility
+                                .Where(s => s.WPMainRecord_id==recid && s.MobilityStartDate>=StartDate && s.MobilityStartDate<=EndDate)
+                                .ToList();
+
+            return records;
+        }
 		public IEnumerable<WP_Mobility> GetRecordsByMainRecordId (string recid)
         {
             var records = context.WP_Mobility

@@ -13,6 +13,7 @@ namespace AUDANEPAD_Integrated.Interfaces
         IEnumerable<WP_Mobility> GetRecordsByOutputId (string outputid);
 
         IEnumerable<WP_Mobility> GetRecordsByOutputIdStartEndRange (string outputid, LocalDate StartDate, LocalDate EndDate);
+        IEnumerable<WP_Mobility> GetRecordsByMainRecordIdStartEndRange (string recid, LocalDate StartDate, LocalDate EndDate);
         IEnumerable<WP_Mobility> GetRecordsByMainRecordId (string recid);
         IEnumerable<WP_Mobility> GetRecordsByMainRecordOutputId (string wpmainrecid, string outputid);
 		WP_Mobility Add(WP_Mobility rec);
