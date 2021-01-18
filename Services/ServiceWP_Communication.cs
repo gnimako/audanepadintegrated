@@ -74,6 +74,14 @@ namespace AUDANEPAD_Integrated.Services
 
 			return records;
 		}
+		public IEnumerable<WP_Communication> GetRecordsByMainRecordIdStartEndRange (string recid, LocalDate StartDate, LocalDate EndDate)
+		{
+			var records = context.WP_Communication
+								.Where(s => s.WPMainRecord_id==recid && s.WPCommsStartDate>=StartDate && s.WPCommsStartDate<=EndDate)
+								.ToList();
+
+			return records;
+		}
 
 		public WP_Communication GetRecord(string Id)
 		{
