@@ -24441,122 +24441,124 @@ namespace AUDANEPAD_Integrated.Controllers
                                     //Range Ends Here...
 
 
-
-                                    if(row_alt==false)
+                                    if(proj_total_budget>0)
                                     {
-                                        //Row Rows
-                                        cell1.SetTextAlignment(TextAlignment.JUSTIFIED)
-                                        .Add(new Paragraph(project.Record_Name)
-                                                        //.SetFont(ft_montserrat_reg)
-                                                        .SetFixedLeading(14f)
-                                                        .SetFontColor(cl_grayDark)
-                                                        .SetBackgroundColor(cl_tablecontent_1)
-                                                        .SetFontSize(10))
-                                            .SetBackgroundColor(cl_tablecontent_1)
-                                            .SetBorderTop(Border.NO_BORDER)
-                                            .SetBorderBottom(Border.NO_BORDER);
-                                        tabledivprojssummarybudget.AddCell(cell1);
-
-
-
-                                        cell2.SetTextAlignment(TextAlignment.RIGHT)
-                                            .Add(new Paragraph(string.Format("{0:N0}", proj_ms_budget))
-                                                        // .SetFont(ft_montserrat_reg)
+                                        if(row_alt==false)
+                                        {
+                                            //Row Rows
+                                            cell1.SetTextAlignment(TextAlignment.JUSTIFIED)
+                                            .Add(new Paragraph(project.Record_Name)
+                                                            //.SetFont(ft_montserrat_reg)
                                                             .SetFixedLeading(14f)
                                                             .SetFontColor(cl_grayDark)
                                                             .SetBackgroundColor(cl_tablecontent_1)
                                                             .SetFontSize(10))
-                                            .SetBackgroundColor(cl_tablecontent_1)
-                                            .SetBorderTop(Border.NO_BORDER)
-                                            .SetBorderBottom(Border.NO_BORDER);
-                                        tabledivprojssummarybudget.AddCell(cell2);
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetBorderTop(Border.NO_BORDER)
+                                                .SetBorderBottom(Border.NO_BORDER);
+                                            tabledivprojssummarybudget.AddCell(cell1);
 
 
-                                        cell3.SetTextAlignment(TextAlignment.RIGHT)
-                                            .Add(new Paragraph(string.Format("{0:N0}", proj_dp_budget))
-                                                        // .SetFont(ft_montserrat_reg)
+
+                                            cell2.SetTextAlignment(TextAlignment.RIGHT)
+                                                .Add(new Paragraph(string.Format("{0:N0}", proj_ms_budget))
+                                                            // .SetFont(ft_montserrat_reg)
+                                                                .SetFixedLeading(14f)
+                                                                .SetFontColor(cl_grayDark)
+                                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                                .SetFontSize(10))
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetBorderTop(Border.NO_BORDER)
+                                                .SetBorderBottom(Border.NO_BORDER);
+                                            tabledivprojssummarybudget.AddCell(cell2);
+
+
+                                            cell3.SetTextAlignment(TextAlignment.RIGHT)
+                                                .Add(new Paragraph(string.Format("{0:N0}", proj_dp_budget))
+                                                            // .SetFont(ft_montserrat_reg)
+                                                                .SetFixedLeading(14f)
+                                                                .SetFontColor(cl_grayDark)
+                                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                                .SetFontSize(10))
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetBorderTop(Border.NO_BORDER)
+                                                .SetBorderBottom(Border.NO_BORDER);
+                                            tabledivprojssummarybudget.AddCell(cell3);
+
+
+
+                                            cell4.SetTextAlignment(TextAlignment.RIGHT)
+                                                .Add(new Paragraph(string.Format("{0:N0}", proj_total_budget))
+                                                            // .SetFont(ft_montserrat_reg)
+                                                                .SetFixedLeading(14f)
+                                                                .SetFontColor(cl_grayDark)
+                                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                                .SetFontSize(10))
+                                                .SetBackgroundColor(cl_tablecontent_1)
+                                                .SetBorderTop(Border.NO_BORDER)
+                                                .SetBorderBottom(Border.NO_BORDER);
+                                            tabledivprojssummarybudget.AddCell(cell4);
+
+                                        }
+                                        else
+                                        {
+                                            //Row Rows
+                                            cell1.SetTextAlignment(TextAlignment.JUSTIFIED)
+                                            .Add(new Paragraph(project.Record_Name)
+                                                            //.SetFont(ft_montserrat_reg)
                                                             .SetFixedLeading(14f)
                                                             .SetFontColor(cl_grayDark)
-                                                            .SetBackgroundColor(cl_tablecontent_1)
+                                                            .SetBackgroundColor(cl_tablecontent_2)
                                                             .SetFontSize(10))
-                                            .SetBackgroundColor(cl_tablecontent_1)
-                                            .SetBorderTop(Border.NO_BORDER)
-                                            .SetBorderBottom(Border.NO_BORDER);
-                                        tabledivprojssummarybudget.AddCell(cell3);
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetBorderTop(Border.NO_BORDER)
+                                                .SetBorderBottom(Border.NO_BORDER);
+                                            tabledivprojssummarybudget.AddCell(cell1);
 
 
 
-                                        cell4.SetTextAlignment(TextAlignment.RIGHT)
-                                            .Add(new Paragraph(string.Format("{0:N0}", proj_total_budget))
-                                                        // .SetFont(ft_montserrat_reg)
-                                                            .SetFixedLeading(14f)
-                                                            .SetFontColor(cl_grayDark)
-                                                            .SetBackgroundColor(cl_tablecontent_1)
-                                                            .SetFontSize(10))
-                                            .SetBackgroundColor(cl_tablecontent_1)
-                                            .SetBorderTop(Border.NO_BORDER)
-                                            .SetBorderBottom(Border.NO_BORDER);
-                                        tabledivprojssummarybudget.AddCell(cell4);
+                                            cell2.SetTextAlignment(TextAlignment.RIGHT)
+                                                .Add(new Paragraph(string.Format("{0:N0}", proj_ms_budget))
+                                                            // .SetFont(ft_montserrat_reg)
+                                                                .SetFixedLeading(14f)
+                                                                .SetFontColor(cl_grayDark)
+                                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                                .SetFontSize(10))
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetBorderTop(Border.NO_BORDER)
+                                                .SetBorderBottom(Border.NO_BORDER);
+                                            tabledivprojssummarybudget.AddCell(cell2);
 
+
+                                            cell3.SetTextAlignment(TextAlignment.RIGHT)
+                                                .Add(new Paragraph(string.Format("{0:N0}", proj_dp_budget))
+                                                            // .SetFont(ft_montserrat_reg)
+                                                                .SetFixedLeading(14f)
+                                                                .SetFontColor(cl_grayDark)
+                                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                                .SetFontSize(10))
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetBorderTop(Border.NO_BORDER)
+                                                .SetBorderBottom(Border.NO_BORDER);
+                                            tabledivprojssummarybudget.AddCell(cell3);
+
+
+
+                                            cell4.SetTextAlignment(TextAlignment.RIGHT)
+                                                .Add(new Paragraph(string.Format("{0:N0}", proj_total_budget))
+                                                            // .SetFont(ft_montserrat_reg)
+                                                                .SetFixedLeading(14f)
+                                                                .SetFontColor(cl_grayDark)
+                                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                                .SetFontSize(10))
+                                                .SetBackgroundColor(cl_tablecontent_2)
+                                                .SetBorderTop(Border.NO_BORDER)
+                                                .SetBorderBottom(Border.NO_BORDER);
+                                            tabledivprojssummarybudget.AddCell(cell4);
+
+                                        }
+                                        row_alt=ToggleBoolean(row_alt);
                                     }
-                                    else
-                                    {
-                                        //Row Rows
-                                        cell1.SetTextAlignment(TextAlignment.JUSTIFIED)
-                                        .Add(new Paragraph(project.Record_Name)
-                                                        //.SetFont(ft_montserrat_reg)
-                                                        .SetFixedLeading(14f)
-                                                        .SetFontColor(cl_grayDark)
-                                                        .SetBackgroundColor(cl_tablecontent_2)
-                                                        .SetFontSize(10))
-                                            .SetBackgroundColor(cl_tablecontent_2)
-                                            .SetBorderTop(Border.NO_BORDER)
-                                            .SetBorderBottom(Border.NO_BORDER);
-                                        tabledivprojssummarybudget.AddCell(cell1);
-
-
-
-                                        cell2.SetTextAlignment(TextAlignment.RIGHT)
-                                            .Add(new Paragraph(string.Format("{0:N0}", proj_ms_budget))
-                                                        // .SetFont(ft_montserrat_reg)
-                                                            .SetFixedLeading(14f)
-                                                            .SetFontColor(cl_grayDark)
-                                                            .SetBackgroundColor(cl_tablecontent_2)
-                                                            .SetFontSize(10))
-                                            .SetBackgroundColor(cl_tablecontent_2)
-                                            .SetBorderTop(Border.NO_BORDER)
-                                            .SetBorderBottom(Border.NO_BORDER);
-                                        tabledivprojssummarybudget.AddCell(cell2);
-
-
-                                        cell3.SetTextAlignment(TextAlignment.RIGHT)
-                                            .Add(new Paragraph(string.Format("{0:N0}", proj_dp_budget))
-                                                        // .SetFont(ft_montserrat_reg)
-                                                            .SetFixedLeading(14f)
-                                                            .SetFontColor(cl_grayDark)
-                                                            .SetBackgroundColor(cl_tablecontent_2)
-                                                            .SetFontSize(10))
-                                            .SetBackgroundColor(cl_tablecontent_2)
-                                            .SetBorderTop(Border.NO_BORDER)
-                                            .SetBorderBottom(Border.NO_BORDER);
-                                        tabledivprojssummarybudget.AddCell(cell3);
-
-
-
-                                        cell4.SetTextAlignment(TextAlignment.RIGHT)
-                                            .Add(new Paragraph(string.Format("{0:N0}", proj_total_budget))
-                                                        // .SetFont(ft_montserrat_reg)
-                                                            .SetFixedLeading(14f)
-                                                            .SetFontColor(cl_grayDark)
-                                                            .SetBackgroundColor(cl_tablecontent_2)
-                                                            .SetFontSize(10))
-                                            .SetBackgroundColor(cl_tablecontent_2)
-                                            .SetBorderTop(Border.NO_BORDER)
-                                            .SetBorderBottom(Border.NO_BORDER);
-                                        tabledivprojssummarybudget.AddCell(cell4);
-
-                                    }
-                                    row_alt=ToggleBoolean(row_alt);
 
                                     if(inneriter==DivMainRecs.Count())
                                     {
