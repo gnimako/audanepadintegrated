@@ -24637,7 +24637,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 {
                                    
 
-                                    Table tabledivprojdetails = new Table(UnitValue.CreatePercentArray(new float[]{3, 5,  25, 19, 18, 15, 15}), false)
+                                    Table tabledivprojdetails = new Table(UnitValue.CreatePercentArray(new float[]{3, 5,  24, 19, 18, 15, 16}), false)
                                     .SetWidth(PageSize.A3.GetWidth()-(subtractmargins+65))
                                     .SetMarginLeft(65)
                                     .SetHorizontalAlignment(HorizontalAlignment.LEFT);
