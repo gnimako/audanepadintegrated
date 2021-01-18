@@ -24065,7 +24065,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 document.Add(txt);
 
                                 //Division Project Summary
-                                Table tabledivprojssummarybudget = new Table(UnitValue.CreatePercentArray(new float[]{30, 20, 20, 15, 15}), false)
+                                Table tabledivprojssummarybudget = new Table(UnitValue.CreatePercentArray(new float[]{30, 14, 19, 18, 19}), false)
                                 .SetWidth(PageSize.A3.GetWidth()-(subtractmargins+65))
                                 .SetMarginLeft(65)
                                 .SetHorizontalAlignment(HorizontalAlignment.LEFT);
@@ -24086,7 +24086,11 @@ namespace AUDANEPAD_Integrated.Controllers
                                     .SetBackgroundColor(cl_tableheader);
                                 tabledivprojssummarybudget.AddCell(cellheaderdiv1);
 
-                                Cell cellheaderdiv2 = new Cell(1, 1)
+                                
+
+                                if(periodid=="7" || periodid=="8")
+                                {
+                                    Cell cellheaderdiv2 = new Cell(1, 1)
                                         .SetTextAlignment(TextAlignment.RIGHT)
                                         .Add(new Paragraph("MS Budget (US$)")
                                                         .SetFont(ft_bold)
@@ -24095,32 +24099,70 @@ namespace AUDANEPAD_Integrated.Controllers
                                                         .SetBackgroundColor(cl_tableheader)
                                                         .SetFontSize(10))
                                         .SetBackgroundColor(cl_tableheader);
-                                tabledivprojssummarybudget.AddCell(cellheaderdiv2);
+                                    tabledivprojssummarybudget.AddCell(cellheaderdiv2);
 
-                
-                                Cell cellheaderdiv3 = new Cell(1, 1)
+                                    Cell cellheaderdiv3 = new Cell(1, 1)
+                                            .SetTextAlignment(TextAlignment.RIGHT)
+                                            .Add(new Paragraph("DP Budget (US$)")
+                                                            .SetFont(ft_bold)
+                                                            .SetFixedLeading(14f)
+                                                            .SetFontColor(cl_grayDark)
+                                                            .SetBackgroundColor(cl_tableheader)
+                                                            .SetFontSize(10))
+                                            .SetBackgroundColor(cl_tableheader);
+                                    tabledivprojssummarybudget.AddCell(cellheaderdiv3);
+
+                    
+
+                                    Cell cellheaderdiv4 = new Cell(1, 1)
+                                            .SetTextAlignment(TextAlignment.RIGHT)
+                                            .Add(new Paragraph("Total Budget (US$)")
+                                                            .SetFont(ft_bold)
+                                                            .SetFixedLeading(14f)
+                                                            .SetFontColor(cl_grayDark)
+                                                            .SetBackgroundColor(cl_tableheader)
+                                                            .SetFontSize(10))
+                                            .SetBackgroundColor(cl_tableheader);
+                                    tabledivprojssummarybudget.AddCell(cellheaderdiv4);
+                                }
+                                else
+                                {
+                                    Cell cellheaderdiv2 = new Cell(1, 1)
                                         .SetTextAlignment(TextAlignment.RIGHT)
-                                        .Add(new Paragraph("DP Budget (US$)")
+                                        .Add(new Paragraph("MS Budget for "+rangnameinst_short_tot+" (US$)")
                                                         .SetFont(ft_bold)
                                                         .SetFixedLeading(14f)
                                                         .SetFontColor(cl_grayDark)
                                                         .SetBackgroundColor(cl_tableheader)
                                                         .SetFontSize(10))
                                         .SetBackgroundColor(cl_tableheader);
-                                tabledivprojssummarybudget.AddCell(cellheaderdiv3);
+                                    tabledivprojssummarybudget.AddCell(cellheaderdiv2);
 
-                
+                                    Cell cellheaderdiv3 = new Cell(1, 1)
+                                            .SetTextAlignment(TextAlignment.RIGHT)
+                                            .Add(new Paragraph("DP Budget for "+rangnameinst_short_tot+" (US$)")
+                                                            .SetFont(ft_bold)
+                                                            .SetFixedLeading(14f)
+                                                            .SetFontColor(cl_grayDark)
+                                                            .SetBackgroundColor(cl_tableheader)
+                                                            .SetFontSize(10))
+                                            .SetBackgroundColor(cl_tableheader);
+                                    tabledivprojssummarybudget.AddCell(cellheaderdiv3);
 
-                                Cell cellheaderdiv4 = new Cell(1, 1)
-                                        .SetTextAlignment(TextAlignment.RIGHT)
-                                        .Add(new Paragraph("Total Budget (US$)")
-                                                        .SetFont(ft_bold)
-                                                        .SetFixedLeading(14f)
-                                                        .SetFontColor(cl_grayDark)
-                                                        .SetBackgroundColor(cl_tableheader)
-                                                        .SetFontSize(10))
-                                        .SetBackgroundColor(cl_tableheader);
-                                tabledivprojssummarybudget.AddCell(cellheaderdiv4);
+                    
+
+                                    Cell cellheaderdiv4 = new Cell(1, 1)
+                                            .SetTextAlignment(TextAlignment.RIGHT)
+                                            .Add(new Paragraph("Total Budget for "+rangnameinst_short_tot+" (US$)")
+                                                            .SetFont(ft_bold)
+                                                            .SetFixedLeading(14f)
+                                                            .SetFontColor(cl_grayDark)
+                                                            .SetBackgroundColor(cl_tableheader)
+                                                            .SetFontSize(10))
+                                            .SetBackgroundColor(cl_tableheader);
+                                    tabledivprojssummarybudget.AddCell(cellheaderdiv4);
+
+                                }
 
                                 double proj_totalms_budget=0;
                                 double proj_totaldp_budget=0;
