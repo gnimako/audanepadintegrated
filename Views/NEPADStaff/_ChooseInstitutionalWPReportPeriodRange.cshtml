@@ -172,8 +172,9 @@ function GenerateMobilityReport() {
 
 function GenerateProcurementReport() {
     var cycleid = $("#WPCycle_Id").val();  
+    var periodid = $("#Period_Id").val(); 
 
-    var url="/NEPADStaff/InstitutionalWorkplanDraftProcurementPDF?cycleid=" + cycleid;
+    var url="/NEPADStaff/InstitutionalWorkplanDraftRangeProcurementPDF?cycleid=" + cycleid+"&periodid=" + periodid;
 
     redirect_blank(url);
    
