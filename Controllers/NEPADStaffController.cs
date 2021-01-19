@@ -21058,7 +21058,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                Cell celllast2 = new Cell(1, 1)
                   .SetTextAlignment(TextAlignment.LEFT)
-                  .Add(new Paragraph("Draft")
+                  .Add(new Paragraph("Approved")
                                 .SetFont(ft_montserrat_reg)
                                 .SetFixedLeading(12f)
                                 .SetFontColor(cl_grayDark)
@@ -37493,7 +37493,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                Cell celllast2 = new Cell(1, 1)
                   .SetTextAlignment(TextAlignment.LEFT)
-                  .Add(new Paragraph("Draft")
+                  .Add(new Paragraph("Approved")
                                 .SetFont(ft_montserrat_reg)
                                 .SetFixedLeading(12f)
                                 .SetFontColor(cl_grayDark)
@@ -42302,7 +42302,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                Cell celllast2 = new Cell(1, 1)
                   .SetTextAlignment(TextAlignment.LEFT)
-                  .Add(new Paragraph("Draft")
+                  .Add(new Paragraph("Approved")
                                 .SetFont(ft_montserrat_reg)
                                 .SetFixedLeading(12f)
                                 .SetFontColor(cl_grayDark)
@@ -45594,7 +45594,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                Cell celllast2 = new Cell(1, 1)
                   .SetTextAlignment(TextAlignment.LEFT)
-                  .Add(new Paragraph("Draft")
+                  .Add(new Paragraph("Approved")
                                 .SetFont(ft_montserrat_reg)
                                 .SetFixedLeading(12f)
                                 .SetFontColor(cl_grayDark)
@@ -48886,7 +48886,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                Cell celllast2 = new Cell(1, 1)
                   .SetTextAlignment(TextAlignment.LEFT)
-                  .Add(new Paragraph("Draft")
+                  .Add(new Paragraph("Approved")
                                 .SetFont(ft_montserrat_reg)
                                 .SetFixedLeading(12f)
                                 .SetFontColor(cl_grayDark)
@@ -51076,7 +51076,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                Cell celllast2 = new Cell(1, 1)
                   .SetTextAlignment(TextAlignment.LEFT)
-                  .Add(new Paragraph("Draft")
+                  .Add(new Paragraph("Approved")
                                 .SetFont(ft_montserrat_reg)
                                 .SetFixedLeading(12f)
                                 .SetFontColor(cl_grayDark)
