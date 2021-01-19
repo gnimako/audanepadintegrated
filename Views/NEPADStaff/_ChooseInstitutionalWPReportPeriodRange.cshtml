@@ -185,8 +185,9 @@ function GenerateProcurementReport() {
 
 function GenerateCommunicationReport() {
     var cycleid = $("#WPCycle_Id").val();  
+    var periodid = $("#Period_Id").val(); 
 
-    var url="/NEPADStaff/InstitutionalWorkplanDraftCommunicationPDF?cycleid=" + cycleid;
+    var url="/NEPADStaff/InstitutionalWorkplanDraftRangeCommunicationPDF?cycleid=" + cycleid+"&periodid=" + periodid;
 
     redirect_blank(url);
    
