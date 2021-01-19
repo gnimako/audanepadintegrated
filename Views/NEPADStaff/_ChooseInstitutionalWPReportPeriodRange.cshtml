@@ -147,8 +147,9 @@ function GenerateSummaryReport() {
 
 function GenerateRiskReport() {
     var cycleid = $("#WPCycle_Id").val();  
+    var periodid = $("#Period_Id").val(); 
 
-    var url="/NEPADStaff/InstitutionalWorkplanDraftRiskPDF?cycleid=" + cycleid;
+    var url="/NEPADStaff/InstitutionalWorkplanDraftRangeRiskPDF?cycleid=" + cycleid+"&periodid=" + periodid;
 
     redirect_blank(url);
    
