@@ -158,9 +158,10 @@ function GenerateRiskReport() {
 }
 
 function GenerateMobilityReport() {
-    var cycleid = $("#WPCycle_Id").val();  
+    var cycleid = $("#WPCycle_Id").val(); 
+    var periodid = $("#Period_Id").val(); 
 
-    var url="/NEPADStaff/InstitutionalWorkplanDraftMobilityPDF?cycleid=" + cycleid;
+    var url="/NEPADStaff/InstitutionalWorkplanDraftRangeMobilityPDF?cycleid=" + cycleid+"&periodid=" + periodid;
 
     redirect_blank(url);
    

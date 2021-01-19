@@ -11,6 +11,7 @@ namespace AUDANEPAD_Integrated.ViewModels
         public int EmployeeNumber { get; set; }
         public string EmployeeName { get; set; }
         public double NumberOfDays { get; set; }
+        public double NumberOfDaysRange { get; set; }
 
         public bool DaysExceeded { get; set; }
         
