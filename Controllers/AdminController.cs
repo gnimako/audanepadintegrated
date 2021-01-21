@@ -8912,7 +8912,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 }
 
                 //Sorting
-                collection_recs=collection_recs.OrderBy(d => d.Directorate_NameGVM).ThenBy(d => d.Division_NameGVM).ToList();
+                collection_recs=collection_recs.OrderBy(d => d.Directorate_IdGVM).ThenBy(d => d.Division_IdGVM).ToList();
    
 
 

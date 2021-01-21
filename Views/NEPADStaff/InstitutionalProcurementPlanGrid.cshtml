@@ -71,7 +71,7 @@
                                                                         .Action("AllProcurementPlans_Read", "Admin", new { cycleid = @Model.DispatchCycle_Id, periodid=@Model.InstitutionalRepPeriodIdent}))
                                                             .Model(model => model.Id(p => p.Transaction_IdGVM))
                                                        
-                                                            .PageSize(50)
+                                                            .PageSize(500)
                                                             .Events(events => events.Error("error_handler")
                                                                                 .RequestEnd("onRequestEnd"))
                                                         )
