@@ -35,12 +35,17 @@ namespace AUDANEPAD_Integrated.ViewModels
         public DateTime WPTORSubmissionDateOPVMMain { get; set; }
         public DateTime WPContractStartDateOPVMMain { get; set; }
         public string WPProcurementPeriodOPVMMain  { get; set; }
-         public string WPProcurement_AdditionalNotesOPVMMain  { get; set; }
+        public string WPProcurement_AdditionalNotesOPVMMain  { get; set; }
+
+        public string WPProcurement_SourceOfFundsDescrOPVMMain  { get; set; }
         public double  ProcurementCostOPVMMain { get; set; }
         
         
         //Output_ChildGridId //
         public string Output_ChildGridIdOPVMMain  { get; set; }
+
+        public string DispatchCycle_IdOPVMMain { get; set; }
+        public string InstitutionalRepPeriodIdentOPVMMain  { get; set; }
        
   
        

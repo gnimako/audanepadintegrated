@@ -24,6 +24,14 @@
                                 
 
                                     <div class="form-group row" style="padding-right: 1.25rem; padding-left: 1.25rem; padding-bottom: 1.25rem;">
+                                        <a class="k-button " id="btnAddInstProc" style="color: #003f59;">   
+                                         <span class="k-icon k-i-plus-outline"></span> Add Procurement
+                                        </a>
+                                        &nbsp;&nbsp;
+                                        <a asp-controller="nepadstaff" asp-action="InstitutionalProcurementPlanExcel" asp-route-id="@Model.DispatchCycle_Id" asp-route-periodid="@Model.InstitutionalRepPeriodIdent" class="k-button " id="btnExportInstProc" style="color: #003f59;">
+                                         <span class="k-icon k-i-file-excel"></span> Export
+                                        </a>
+
 
                                         @(Html.Kendo().Grid<WP_ProcurementGridVM>()
                                                         .Name("grid")
@@ -43,15 +51,15 @@
                                                             columns.Bound(c => c.Division_IdGVM).Hidden();
                                                             columns.Bound(c => c.Cycle_IdGVM).Hidden();
                                                             columns.Bound(c => c.InstitutionalSelectdedPeriodIdentGVM).Hidden();
-                                                            columns.Bound(c => c.WPProcurement_DescriptionGVM).Title("Description");
-                                                            columns.Bound(c => c.Directorate_NameGVM).Title("Directorate");
+                                                            columns.Bound(c => c.WPProcurement_DescriptionGVM).Title("Description");//.Width(400);
+                                                            columns.Bound(c => c.Directorate_NameGVM).Title("Directorate");//.Width(200);
                                                             columns.Bound(c => c.Division_NameGVM).Title("Department");
                                                             columns.Bound(c => c.WPProcurementType_NameGVM).Title("Type");
                                                             columns.Bound(c => c.WPProcurementCostGVM).Title("Est. Amount").Format("{0:n0}").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { style = "text-align:right" });
                 
 
-                                                            columns.Command(command => command.Custom(" Edit Procurement").IconClass("k-icon k-i-track-changes").Click("manageworkplan")).Width(200);
-                                                             columns.Command(command => command.Custom(" Delete Procurement").IconClass("k-icon k-i-delete").Click("deleteworkplan")).Width(200);
+                                                            columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("editoutputprocurment"));//.Width(200);
+                                                             columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("deleteoutputprocurement"));//.Width(200);
                                                             //columns.Command(command => { command.Destroy().Text(" Deactivate").IconClass("k-icon k-i-lock"); });
                                                         })
                                                         .HtmlAttributes(new { style = "height: 600px;" })
@@ -150,6 +158,118 @@ function redirect_blank(url) {
                 grid.dataSource.read();
             }
     }
+
+
+function deleteoutputprocurement(e) {
+    e.preventDefault();
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    //var subindicatorid = dataItem.Transaction_IndicatorId;
+    var subrecid = dataItem.Transaction_IdGVM;
+
+    var cycleid = $("#DispatchCycle_Id").val();
+    var periodid = $("#InstitutionalRepPeriodIdent").val();
+   
+
+
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+    dialog.kendoDialog({
+        width: "450px",
+        title: "Confirmation",
+        closable: false,
+        modal: true,
+        content: "<p>Please confirm the DELETE action.<p>",
+        actions: [
+            {
+                text: 'Confirm',
+                action: function (e) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/Admin/WP_OutputsSubProcurement_Delete',     //your action
+                        data: { "subrecid": subrecid},
+                        dataType: 'json',
+                        success: function (result) {
+
+                          //  var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+                          //  .Action("AllProcurementPlans_Read", "Admin", new { cycleid = @Model.DispatchCycle_Id, periodid=@Model.InstitutionalRepPeriodIdent}))
+
+                            var grid = $('#grid').data("kendoGrid");
+
+                            grid.dataSource.transport.options.read.url = "/Admin/AllProcurementPlans_Read?cycleid=" + cycleid+"&periodid=" + periodid;
+                            grid.dataSource.read();
+                            grid.refresh();
+
+
+                      
+
+
+                        },
+                        error: function (data) {
+
+                        }
+                    })
+                    return true;
+                },
+                primary: true
+
+            },
+            { text: 'Cancel' }
+        ],
+        close: onClose
+    });
+
+    dialog.data("kendoDialog").open();
+    undo.fadeOut();
+
+}
+
+
+function editoutputprocurment(e) {
+
+    e.preventDefault();
+
+
+
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+    var transid = dataItem.Transaction_IdGVM;
+
+    var cycleid = $("#DispatchCycle_Id").val();
+    var periodid = $("#InstitutionalRepPeriodIdent").val();
+   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
+    
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/NEPADStaff/EditOutputProcurementInst?transid=" + transid+"&cycleid=" + cycleid+"&periodid=" + periodid,
+            width: 600,
+            height: 500,
+
+            title: "Edit Procurement",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+         
+
+}
+
 
    $("#btnAdd").click(function () {
 

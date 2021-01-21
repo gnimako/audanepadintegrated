@@ -10,6 +10,10 @@ namespace AUDANEPAD_Integrated.Interfaces
         IEnumerable<WP_OutputActivities> GetRecordsByMainRecordId (string recid);
         IEnumerable<WP_OutputActivities> GetRecordsByMainRecordIdMS (string recid);
         IEnumerable<WP_OutputActivities> GetRecordsByMainRecordOutputId (string wpmainrecid, string outputid);
+
+        IEnumerable<WP_OutputActivities> GetRecordsByMainRecordOutputIdDPStatusRecs (string wpmainrecid, string outputid, bool DPStatus);
+        WP_OutputActivities GetRecordsByMainRecordOutputIdDPStatusRecord (string wpmainrecid, string outputid, bool DPStatus);
+
         IEnumerable<WP_OutputActivities> GetRecordsByMainRecordImpType (string wpmainrecid, int implementationtypeid);
 
         IEnumerable<WP_OutputActivities> GetRecordsByMainRecIDYearAndWithinMonth(string wpmainrecid, int year, int month);

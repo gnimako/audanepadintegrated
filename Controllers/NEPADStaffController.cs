@@ -4181,6 +4181,50 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
 
+        public FileResult InstitutionalProcurementPlanExcel(string id, string periodid)
+        {
+
+            string contentType =  "application/vnd.ms-excel";//"application/pdf"
+           // string pathtofile=@"wwwroot/appdirectory/excelreports/institutional/Procurement_Plan_2021.xlsx";
+            string pathtofile="/appdirectory/excelreports/institutional/Procurement_Plan_2021.xlsx";
+            // WP_DispatchCycle cyclerec=_wpDispatchCycleRepository.GetRecord(id);
+
+            // MemoryStream workStream=GetMemoryInstitutionalWorkplanWithIconsDraftRangeSummary(cyclerec, periodid);
+
+            // byte[] byte1 = workStream.ToArray();
+
+            // string periodname="";
+            // if(periodid=="1")
+            //     periodname="Q1";
+            // else if (periodid=="2")
+            //     periodname="Q2";
+            // else if (periodid=="3")
+            //     periodname="Q3";
+            // else if (periodid=="4")
+            //     periodname="Q4"; 
+            // else if (periodid=="5")
+            //     periodname="Semester_1"; 
+            // else if (periodid=="6")
+            //     periodname="Semester_2";
+            // else if (periodid=="7")
+            //     periodname="Annual";
+            // else
+            // {
+            //     DateTime pstart=new DateTime(cyclerec.PeriodStartDate.Year, cyclerec.PeriodStartDate.Month, cyclerec.PeriodStartDate.Day);
+            //     DateTime pend=new DateTime(cyclerec.PeriodEndDate.Year, cyclerec.PeriodEndDate.Month, cyclerec.PeriodEndDate.Day);
+            //     periodname=pstart.Date.ToString("MMM d, yyyy") + " - "+ pend.Date.ToString("MMM d, yyyy"); 
+                
+            // }
+
+
+
+
+
+            return File(pathtofile, contentType, "Procurement Plan_2021.xlsx");
+
+        }
+
+
         public FileResult InstitutionalWorkplanReportRiskPDF(string id)
         {
 
@@ -61666,6 +61710,114 @@ namespace AUDANEPAD_Integrated.Controllers
 
             return PartialView("_EditOutputProcurement", model);
         }
+
+
+        public async Task<ActionResult> EditOutputProcurementInst(string transid, string cycleid, string periodid)
+        {
+           // WP_Outputs rec = _wpOutputsRepository.GetRecord(transid);
+
+            WP_Procurement rec=_wpProcurementRepository.GetRecord(transid);
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            WP_MainRecord mainrecord=_wpMainRecordRepository.GetRecord(rec.WPMainRecord_id);
+            string periodinmain="";
+            if(mainrecord.Period_Id==8)
+            {
+                DateTime pstart=new DateTime(mainrecord.PeriodStartDate.Year, mainrecord.PeriodStartDate.Month, mainrecord.PeriodStartDate.Day);
+                DateTime pend=new DateTime(mainrecord.PeriodEndDate.Year, mainrecord.PeriodEndDate.Month, mainrecord.PeriodEndDate.Day);
+                periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+            }
+            else
+            {
+                periodinmain=_lkupPeriodRepository.GetRecord(mainrecord.Period_Id).Record_Name;
+
+            }  
+
+            //Source of Funding Starts Here...
+
+            int ms_count=0;
+            int dp_count=0;
+            string fundssource="";
+      
+
+            WP_Outputs rec_proj_output=_wpOutputsRepository.GetRecord(rec.WPOutput_Id);
+
+            var DB_OutputActivities=_wpOutputActivitiesRepository.GetRecordsByOutputId(rec_proj_output.Transaction_Id).ToList();
+
+            foreach (var rec_proj_output_act in DB_OutputActivities)
+            {
+                if(rec_proj_output_act.PartnerFunding==true)
+                {
+                    dp_count=dp_count+1;
+                }
+                else
+                {
+                    ms_count=ms_count+1;
+                }
+            }
+
+            if(rec.WPProcurement_SourceOfFundsDescr==null)
+            {
+                if(dp_count>ms_count)
+                {
+                    WP_OutputActivities refactivity=_wpOutputActivitiesRepository.GetRecordsByMainRecordOutputIdDPStatusRecord(rec.WPMainRecord_id, rec.WPOutput_Id, true);
+                    if(refactivity.PartnerFunding==true && refactivity.PartnerFundingDescr!=null)
+                    {
+                        fundssource="DP ("+refactivity.PartnerFundingDescr+")";
+                    }
+                    else if (refactivity.PartnerFunding==true && refactivity.PartnerFundingDescr!=null)
+                    {
+                        fundssource="DP";
+                    }
+
+                }
+                else
+                {
+                    fundssource="MS";
+                }
+            }
+            else
+            {
+                fundssource=rec.WPProcurement_SourceOfFundsDescr;
+            }
+
+
+            //Source of Funding Ends Here...
+
+
+
+            
+            WP_OutputProcurementVMWindow model = new WP_OutputProcurementVMWindow
+            {
+                Transaction_IdOPVMMain=rec.Transaction_Id,
+                WPMainRecord_idOPVMMain=rec.WPMainRecord_id,
+                WPOutput_IdOPVMMain=rec.WPOutput_Id,
+                Employee_IdOPVMMain = user.Employee_Id,
+                FiscalYear_IdOPVMMain=rec.FiscalYear_Id,
+                Period_IdOPVMMain =rec.Period_Id,
+                Project_IdOPVMMain=rec.Project_Id,
+                WPProcurement_DescriptionOPVMMain=rec.WPProcurement_Description,
+                WPProcurementType_IdOPVMMain=rec.WPProcurementType_Id,
+                WPProcurementLeadTime_IdOPVMMain=rec.WPProcurementLeadTime_Id,
+                WPProcurement_AdditionalNotesOPVMMain=rec.WPProcurement_AdditionalNotes,
+                ProcurementCostOPVMMain=rec.WPProcurementCost,
+                WPProcurement_SourceOfFundsDescrOPVMMain=fundssource,
+                DispatchCycle_IdOPVMMain=cycleid,
+                InstitutionalRepPeriodIdentOPVMMain=periodid,
+                ProcurementStartDateOPVMMain=new DateTime(rec.WPProcurementStartDate.Year, rec.WPProcurementStartDate.Month, rec.WPProcurementStartDate.Day),
+                ProcurementEndDateOPVMMain=new DateTime(rec.WPProcurementEndDate.Year, rec.WPProcurementEndDate.Month, rec.WPProcurementEndDate.Day),
+                WPTORSubmissionDateOPVMMain=new DateTime(rec.WPTORSubmissionDate.Year, rec.WPTORSubmissionDate.Month, rec.WPTORSubmissionDate.Day),
+                WPContractStartDateOPVMMain=new DateTime(rec.WPContractStartDate.Year, rec.WPContractStartDate.Month, rec.WPContractStartDate.Day)
+                
+
+            };
+
+            
+
+            return PartialView("_EditOutputProcurementInst", model);
+        }
+
 
         public async Task<ActionResult> EditOutputCommunication(string transid)
         {

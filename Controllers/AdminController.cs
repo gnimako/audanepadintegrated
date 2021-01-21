@@ -11813,6 +11813,112 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
         [HttpPost]
+        public ActionResult EditOutputProcurementInst(WP_OutputProcurementVMWindow model)
+        {
+            double totalremainingbudget=0;
+            try
+            {
+                                  
+
+                //Check SAP Link Details and Update Total Budget
+                
+                WP_Procurement rec_set=_wpProcurementRepository.GetRecord(model.Transaction_IdOPVMMain);
+            //    WP_OutputBudget recbudget=_wpOutputBudgetRepository.GetRecordsByProjectYearPeriodAndOutputId(model.Project_IdOAVMMain, model.FiscalYear_IdOAVMMain, model.Period_IdOAVMMain, model.WPOutput_IdOAVMMain);
+                WP_Outputs recoutputrecord=_wpOutputsRepository.GetRecord(model.WPOutput_IdOPVMMain);
+
+                if(rec_set!=null)
+                {
+ 
+
+                    //Get the total budget for the output
+                    var DB_Recs_Activities =  _wpOutputActivitiesRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain);
+                    double total_outputbudget=0;
+                    foreach (var record in DB_Recs_Activities)
+                    {
+                        total_outputbudget=total_outputbudget+record.ActivityCost;
+                    }
+
+                    //Get all mission, procurement, communication and risk costs already captured against this output 
+                    double total_missionbudget=0;
+                    double total_procurementbudget=0;
+                    double total_commsbudget=0;
+                    //double total_riskbudget=0;
+                    
+
+                    var DB_Recs_Missions =  _wpMobilityRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain);
+                    foreach (var record in DB_Recs_Missions)
+                    {
+                        total_missionbudget=total_missionbudget+record.MobilityCost;
+                    }
+
+                    //foreach loop for procurment
+                    var DB_Recs_Procurement =  _wpProcurementRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain).ToList();
+                    foreach (var record in DB_Recs_Procurement)
+                    {
+                        total_procurementbudget=total_procurementbudget+record.WPProcurementCost;
+                    }
+                    //foreach loop for comms
+                    var DB_Recs_Comms =  _wpCommunicationRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain).ToList();
+                    foreach (var record in DB_Recs_Comms)
+                    {
+                        total_commsbudget=total_commsbudget+record.WPCommsCost;
+                    }
+
+                    //foreach loop for risk
+                    // var DB_Recs_Risk =  _wpRiskProfileRepository.GetRecordsByOutputId(model.WPOutput_IdOPVMMain).ToList();
+                    // foreach (var record in DB_Recs_Risk)
+                    // {
+                    //     total_riskbudget=total_riskbudget+record.WPRiskCost;
+                    // }
+
+
+                    totalremainingbudget=(total_outputbudget+rec_set.WPProcurementCost)-(total_missionbudget+total_procurementbudget+total_commsbudget);
+
+                
+
+                    if(totalremainingbudget>=model.ProcurementCostOPVMMain)
+                    {
+
+                        rec_set.WPMainRecord_id=model.WPMainRecord_idOPVMMain;
+                        rec_set.Project_Id=model.Project_IdOPVMMain;
+                        rec_set.FiscalYear_Id=model.FiscalYear_IdOPVMMain;
+                        rec_set.Period_Id=model.Period_IdOPVMMain;
+                        rec_set.WPOutput_Id=model.WPOutput_IdOPVMMain;
+                        rec_set.WPProcurement_Description=model.WPProcurement_DescriptionOPVMMain;
+                        rec_set.WPProcurementType_Id=model.WPProcurementType_IdOPVMMain;
+                        rec_set.WPProcurementLeadTime_Id=model.WPProcurementLeadTime_IdOPVMMain;
+                        rec_set.WPProcurement_AdditionalNotes=model.WPProcurement_AdditionalNotesOPVMMain;
+                        rec_set.WPProcurement_SourceOfFundsDescr=model.WPProcurement_SourceOfFundsDescrOPVMMain;
+                        rec_set.WPProcurementStartDate=new LocalDate(model.ProcurementStartDateOPVMMain.Year, model.ProcurementStartDateOPVMMain.Month,model.ProcurementStartDateOPVMMain.Day);
+                        rec_set.WPProcurementEndDate=new LocalDate(model.ProcurementEndDateOPVMMain.Year, model.ProcurementEndDateOPVMMain.Month,model.ProcurementEndDateOPVMMain.Day);
+                        rec_set.WPTORSubmissionDate=new LocalDate(model.WPTORSubmissionDateOPVMMain.Year, model.WPTORSubmissionDateOPVMMain.Month,model.WPTORSubmissionDateOPVMMain.Day);
+                        rec_set.WPContractStartDate=new LocalDate(model.WPContractStartDateOPVMMain.Year, model.WPContractStartDateOPVMMain.Month,model.WPContractStartDateOPVMMain.Day);
+                        rec_set.WPProcurementCost=model.ProcurementCostOPVMMain;
+                        rec_set.TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                    
+                        _wpProcurementRepository.Update(rec_set);
+
+                    }
+                    else
+                    {
+                        return Json(new { rtnmsg = "insufficientfunds", remainfunds= totalremainingbudget.ToString()});
+
+                    }
+
+                    
+
+                }
+              
+                return Json(new { rtnmsg = "success", remainfunds= totalremainingbudget.ToString() });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error", remainfunds= totalremainingbudget.ToString() });
+            }
+
+        }
+
+        [HttpPost]
         public ActionResult EditOutputCommunication(WP_OutputCommunicationVMWindow model)
         {
             double totalremainingbudget=0;

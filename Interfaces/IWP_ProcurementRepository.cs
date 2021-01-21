@@ -17,6 +17,8 @@ namespace AUDANEPAD_Integrated.Interfaces
         IEnumerable<WP_Procurement> GetRecordsByMainRecordIdStartEndRange (string recid, LocalDate StartDate, LocalDate EndDate);
         IEnumerable<WP_Procurement> GetRecordsByMainRecordId (string recid);
         IEnumerable<WP_Procurement> GetRecordsByMainRecordOutputId (string wpmainrecid, string outputid);
+
+        
 		WP_Procurement Add(WP_Procurement rec);
 		WP_Procurement Update(WP_Procurement recChanges);
 		WP_Procurement Delete(string id);

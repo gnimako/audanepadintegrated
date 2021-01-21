@@ -1,0 +1,467 @@
+
+
+
+
+@model WP_OutputProcurementVMWindow
+
+<form id="addform">
+
+    <input hidden asp-for="Employee_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.Employee_IdOPVMMain">
+    <input hidden asp-for="Transaction_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.Transaction_IdOPVMMain">
+    <input hidden asp-for="FiscalYear_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.FiscalYear_IdOPVMMain">
+    <input hidden asp-for="Period_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.Period_IdOPVMMain">
+    <input hidden asp-for="FisPeriodOPVMMain" class="k-textbox" style="width:100%" value="@Model.FisPeriodOPVMMain">
+    <input hidden asp-for="Project_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.Project_IdOPVMMain">
+    <input hidden asp-for="WPMainRecord_idOPVMMain" class="k-textbox" style="width:100%" value="@Model.WPMainRecord_idOPVMMain">
+    <input hidden asp-for="WPOutput_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.WPOutput_IdOPVMMain">
+
+    <input hidden asp-for="DispatchCycle_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.DispatchCycle_IdOPVMMain">
+    <input hidden asp-for="InstitutionalRepPeriodIdentOPVMMain" class="k-textbox" style="width:100%" value="@Model.InstitutionalRepPeriodIdentOPVMMain">
+    
+    <div class="form-body" style="padding: 1.25rem;">
+           
+            <h6 style="color:#807878">Brief Procurement Description</h6>
+            @Html.TextAreaFor(model => model.WPProcurement_DescriptionOPVMMain, new { @class = "k-textbox", style = "width: 100%;", value="", rows="3"})
+            <br />
+            <br />
+
+           <div class="div1">
+                <h6 style="color:#807878">Type of Procurement</h6>
+                @(Html.Kendo().DropDownListFor(model => model.WPProcurementType_IdOPVMMain)
+                    // .Name("Department_Id")
+                    .HtmlAttributes(new { style = "width:90%", id = "WPProcurementType_IdOPVMMain" })
+                    .OptionLabel("Select...")
+                    .DataTextField("DropDown_Name")
+                    .DataValueField("DropDown_IntId")
+                    .DataSource(source =>
+                    {
+                        source.Read(read =>
+                        {
+                                read.Action("GetAllTransProcurementTypes", "Admin");
+                            
+                        })
+                        .ServerFiltering(true);
+                    })
+                    
+                
+                    //.SelectedIndex(Model.Department_Id)
+                )
+                <br />
+                <br />
+            </div>
+            <div class="div2">
+                <h6 style="color:#807878">TOR/Docs Submission Date</h6>
+                @(Html.Kendo().DatePickerFor(model => model.WPTORSubmissionDateOPVMMain)
+                .Value(Model.WPTORSubmissionDateOPVMMain)
+                //.HtmlAttributes(new { style = "width: 100%", title = "datepicker" })
+                )
+                <br />
+                <br />
+            </div>
+
+
+
+            <div class="div1">
+                <h6 style="color:#807878">Actual Start Date</h6>
+                @(Html.Kendo().DatePickerFor(model => model.ProcurementStartDateOPVMMain)
+                .Value(Model.ProcurementStartDateOPVMMain)
+                //.HtmlAttributes(new { style = "width: 100%", title = "datepicker" })
+                )
+                <br />
+                <br />
+            </div>
+            <div class="div2">
+                <h6 style="color:#807878">Actual End Date</h6>
+                @(Html.Kendo().DatePickerFor(model => model.ProcurementEndDateOPVMMain)
+                .Value(Model.ProcurementEndDateOPVMMain)
+                //.HtmlAttributes(new { style = "width: 100%", title = "datepicker" })
+                )
+                <br />
+                <br />
+            </div>
+           <div class="div1">
+                <div id="procurementcost"><h6 style="color:#807878"><span id="costinfo">Procurement Cost (in USD)</span></h6></div>
+                @Html.TextBoxFor(model => model.ProcurementCostOPVMMain, new { @class = "k-textbox",  style = "width: 90%;", value=""})
+                @(Html.Kendo().Tooltip()
+                    .For("#procurementcost")
+                    .Filter("span")
+                    .Content("Please provide the actual total procurement cost, excluding others such as air ticket etc. ")
+                    .Position(TooltipPosition.Top)
+                    .Width(350)
+                )
+                <br />
+                <br />
+            </div>
+            <div class="div2">
+                <h6 style="color:#807878">Contract or Service Start Date</h6>
+                @(Html.Kendo().DatePickerFor(model => model.WPContractStartDateOPVMMain)
+                .Value(Model.WPContractStartDateOPVMMain)
+                //.HtmlAttributes(new { style = "width: 100%", title = "datepicker" })
+                )
+                <br />
+                <br />
+            </div>
+
+            <div><h6 style="color:#807878">Source of Funding</h6></div>
+                @Html.TextBoxFor(model => model.WPProcurement_SourceOfFundsDescrOPVMMain, new { @class = "k-textbox", style = "width: 100%;"})
+                <br />
+                <br />
+
+                <div><h6 style="color:#807878">Additional Notes</h6></div>
+                @Html.TextAreaFor(model => model.WPProcurement_AdditionalNotesOPVMMain, new { @class = "k-textbox", style = "width: 100%;", value="", rows="3"})
+                <br />
+                <br />
+
+                <div id="targetDivStaffa_act" class="rssedStaffa_act">
+                </div>
+                <br />
+
+                <div style="align-content:center; text-align:center">
+                    <a class="k-button" id="btnSubmita_act">
+                        <span class="k-icon k-i-save"></span> Save
+                    </a>
+
+                    <a class="k-button" id="btnCloseStaffa_act">
+                        <span class="k-icon k-i-cancel"></span> Close
+                    </a>
+                </div>
+
+
+    </div>
+
+
+
+
+
+</form>
+
+
+
+
+
+
+
+<script>
+    
+    $("#btnCloseStaffa_act").click(function () {
+        $(".k-window-content").each(function () {
+            $(this).data("kendoWindow").close();
+        });
+    });
+
+
+
+
+
+
+$("#btnSubmita_act").click(function (e) {
+
+    var gridid = $("#WPOutput_IdOPVMMain").val(); 
+
+    var projid = $("#Project_IdOPVMMain").val();  
+    var fyear = $("#FiscalYear_IdOPVMMain").val();  
+    var fperiod = $("#Period_IdOPVMMain").val();  
+    var periodtxt = $("#FisPeriodOPVMMain").val();  
+
+    var procurementdesc = $("#WPProcurement_DescriptionOPVMMain").val();  
+    var procurement_typeid = $("#WPProcurementType_IdOPVMMain").val();  //Mobility_City
+   // var procurement_leadtime = $("#WPProcurementLeadTime_IdOPVMMain").val();
+    var procurement_additionalnotes = $("#WPProcurement_AdditionalNotesOPVMMain").val();  
+    var startDate= $("#ProcurementStartDateOPVMMain").data("kendoDatePicker");
+    var endDate= $("#ProcurementEndDateOPVMMain").data("kendoDatePicker");
+    var procurement_cost = $("#ProcurementCostOPVMMain").val();  
+    var sourceoffunds = $("#WPProcurement_SourceOfFundsDescrOPVMMain").val(); 
+
+    var cycleid = $("#DispatchCycle_IdOPVMMain").val();
+    var periodid = $("#InstitutionalRepPeriodIdentOPVMMain").val();
+
+
+    
+
+
+
+
+    if(procurementdesc === "" && typeof procurementdesc === "string")
+    {
+        $('#targetDivStaffa_act').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Entry : Please describe the procurement. </span>').appendTo('.rssedStaffa_act');
+    }
+    else if(procurement_typeid === "" && typeof procurement_typeid === "string")
+    {
+        $('#targetDivStaffa_act').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select the type of procurement. </span>').appendTo('.rssedStaffa_act');
+    }
+    else if(procurement_cost === "" && typeof procurement_cost === "string")
+    {
+        $('#targetDivStaffa_act').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Entry : Please provide procurement cost. </span>').appendTo('.rssedStaffa_act');
+    }
+    else if(isNaN(procurement_cost))
+    {
+        $('#targetDivStaffa_act').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">Procurement cost should be a number. </span>').appendTo('.rssedStaffa_act');
+    }
+    else if(startDate.value()>endDate.value())
+    {
+        $('#targetDivStaffa_act').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">End Date should be a future date</span>').appendTo('.rssedStaffa_act');
+    }
+    else if(sourceoffunds === "" && typeof sourceoffunds === "string")
+    {
+        $('#targetDivStaffa_act').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Entry : Please provide source of funds for the procurement. </span>').appendTo('.rssedStaffa_act');
+    }
+    else
+    {
+        //Work on this...
+        $.ajax({
+                type: "POST",
+                url: '/Admin/EditOutputProcurementInst',     //your action
+                data: $('#addform').serialize(),   //your form name.it takes all the values of model
+                dataType: 'json',
+                success: function (result) {
+                    var response = result.rtnmsg;
+                    var remainfunds = result.remainfunds;
+
+
+                    if (response == "success") {
+                        $('#targetDivStaffa_act').empty();
+                        $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Procurement Saved Successfully. </span>').appendTo('.rssedStaffa_act');
+
+
+                        var grid = $('#grid').data("kendoGrid");
+
+                        grid.dataSource.transport.options.read.url = "/Admin/AllProcurementPlans_Read?cycleid=" + cycleid+"&periodid=" + periodid;
+                        grid.dataSource.read();
+                        grid.refresh();
+
+
+
+                    }
+                    else if (response == "insufficientfunds") {
+                            $('#targetDivStaffa_act').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Insufficient funds available for this output. Remaining Funds: $'+ remainfunds+' </span>').appendTo('.rssedStaffa_act');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else if (response == "pkerror") {
+                            $('#targetDivStaffa_act').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unable to Save. Procurement Already Exist. </span>').appendTo('.rssedStaffa_act');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else if (response == "createerror") {
+                            $('#targetDivStaffa_act').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to save procurement</span>').appendTo('.rssedStaffa_act');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else if (response == "doesnotexist") {
+                            $('#targetDivStaffa_act').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">No Record: Procurement does not exist</span>').appendTo('.rssedStaffa_act');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else {
+                            $('#targetDivStaffa_act').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffa_act');
+                            //$('#targetDivStaffa').empty();
+                    }
+
+                },
+                error: function (data) {
+                        $('#targetDivStaffa_act').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffa_act');
+                        //$('#targetDivStaffa').empty();
+                }
+            });
+
+
+    }
+
+
+
+
+
+
+
+
+        
+    
+    
+    return false;
+});
+
+
+
+
+
+
+</script>
+
+
+<style>
+
+.div1 {
+    width: 50%;
+    float: left;
+    height: 100%;
+}
+.div2 {
+    width: 50%;
+    float: right;
+    height: 100%;
+}
+/*TOOLTIP*/
+.k-widget.k-tooltip{
+        color: #353623;
+        background-color: #f6f7e1;
+        border-color: #f6f7e1;
+
+}
+
+/*SWITCH ON*/
+
+    .k-switch-on .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28
+    }
+
+    .k-switch-on:hover .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:hover .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+    .k-switch-on:active .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4
+    }
+
+    .k-switch-on:active .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28
+    }
+
+
+
+    .k-switch-on:visited .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:visited .k-switch-handle{
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+    .k-switch-on:focus .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:focus .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+
+
+    /*SWITCH OFF*/
+
+    .k-switch-off .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+
+    .k-switch-off:hover .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:hover .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+    .k-switch-off:active .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:active .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+    .k-switch-off:visited .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:visited .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+    .k-switch-off:focus .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:focus .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+
+</style>
+
+
+
+
+
+
+
+
+
+
+

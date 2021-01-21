@@ -64,6 +64,23 @@ namespace AUDANEPAD_Integrated.Services
 
             return records;
         }
+
+        public IEnumerable<WP_OutputActivities> GetRecordsByMainRecordOutputIdDPStatusRecs (string wpmainrecid, string outputid, bool DPStatus)
+        {
+            var records = context.WP_OutputActivities
+                                .Where(s => s.WPMainRecord_id==wpmainrecid && s.WPOutput_Id==outputid && s.PartnerFunding==DPStatus)
+                                .ToList();
+
+            return records;
+        }
+
+        public WP_OutputActivities GetRecordsByMainRecordOutputIdDPStatusRecord (string wpmainrecid, string outputid, bool DPStatus)
+        {
+            var rec = context.WP_OutputActivities
+						.Where(s => s.WPMainRecord_id==wpmainrecid && s.WPOutput_Id==outputid && s.PartnerFunding==DPStatus)
+						.FirstOrDefault();
+            return rec;
+        }
         public IEnumerable<WP_OutputActivities> GetRecordsByMainRecordImpType (string wpmainrecid, int implementationtypeid)
         {
             var records = context.WP_OutputActivities
