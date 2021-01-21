@@ -75928,6 +75928,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/InstitutionalProcurementPlanGrid.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\InstitutionalProcurementPlanGrid.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/WorkplanDraftActivityPDF.cshtml",
       "TargetPath": "Views\\NEPADStaff\\WorkplanDraftActivityPDF.cshtml",
       "FileKind": "mvc"
@@ -75980,6 +75985,11 @@
     {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_ChooseInstitutionalWPReportPeriodRange.cshtml",
       "TargetPath": "Views\\NEPADStaff\\_ChooseInstitutionalWPReportPeriodRange.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/InstitutionalProcurementPlanDraftList.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\InstitutionalProcurementPlanDraftList.cshtml",
       "FileKind": "mvc"
     },
     {

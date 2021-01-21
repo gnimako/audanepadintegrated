@@ -110,6 +110,7 @@ namespace AUDANEPAD_Integrated.ViewModels
 
         public string InstitutionalRepPeriod { get; set; }
         public string InstitutionalRepPeriodIdent { get; set; }
+        public string InstitutionalWPYear { get; set; }
 
 
 

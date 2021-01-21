@@ -7,45 +7,51 @@
 
 
 
-<h1 style="font-family: Faktslab;">All Workplans</h1>
+<h1 style="font-family: Faktslab;">Institutional Procurement Plan</h1>
 <div class="separator-breadcrumb border-top"></div>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card mb-5">
                             <div class="card-body">
-                                <div class="card-title mb-3">Institutional All Workplans</div>
+                                <div class="card-title mb-3">Manage Institutional Procurement Plan for @Model.InstitutionalWPYear (@Model.InstitutionalRepPeriod) </div>
 
                                 <form id="addformmain">
                                 <input hidden asp-for="IdentityUserId" class="k-textbox" style="width:100%" value="@Model.IdentityUserId">
                                 <input hidden asp-for="Employee_Id" class="k-textbox" style="width:100%" value="@Model.Id">
-                                    
+
+                                <input hidden asp-for="DispatchCycle_Id" class="k-textbox" style="width:100%" value="@Model.DispatchCycle_Id">
+                                <input hidden asp-for="InstitutionalRepPeriodIdent" class="k-textbox" style="width:100%" value="@Model.InstitutionalRepPeriodIdent">
+                                
 
                                     <div class="form-group row" style="padding-right: 1.25rem; padding-left: 1.25rem; padding-bottom: 1.25rem;">
 
-                                        @(Html.Kendo().Grid<WorkplansViewModel>()
+                                        @(Html.Kendo().Grid<WP_ProcurementGridVM>()
                                                         .Name("grid")
                                                         .Columns(columns =>
                                                         {
 
-                                                            columns.Bound(c => c.Employee_Id).Hidden();
-                                                            columns.Bound(c => c.Transaction_Id).Hidden();
-                                                            columns.Bound(c => c.WPCEOApproveRole_String).Hidden();
-                                                            columns.Bound(c => c.PeriodStart).Hidden();
-                                                            columns.Bound(c => c.PeriodEnd).Hidden();
-                                                            columns.Bound(c => c.FYearIdent).Hidden();
-                                                            columns.Bound(c => c.FPeriodIdent).Hidden();
-                                                            columns.Bound(c => c.FisPeriodHidden).Hidden();
-                                                            columns.Bound(c => c.FisYear).Title("Year");
-                                                            columns.Bound(c => c.FisPeriod).Title("Period");
+                                                            columns.Bound(c => c.Transaction_IdGVM).Hidden();
+                                                            columns.Bound(c => c.WPMainRecord_idGVM).Hidden();
+                                                            columns.Bound(c => c.Project_IdGVM).Hidden();
+                                                            columns.Bound(c => c.FiscalYear_IdGVM).Hidden();
+                                                            columns.Bound(c => c.Period_IdGVM).Hidden();
+                                                            columns.Bound(c => c.WPOutput_IdGVM).Hidden();
+                                                            columns.Bound(c => c.WPProcurementType_IdGVM).Hidden();
+                                                            columns.Bound(c => c.WPProcurementLeadTime_IdGVM).Hidden();
+                                                            columns.Bound(c => c.WPProcurement_SourceOfFundsDescrGVM).Hidden();
+                                                            columns.Bound(c => c.Directorate_IdGVM).Hidden();
+                                                            columns.Bound(c => c.Division_IdGVM).Hidden();
+                                                            columns.Bound(c => c.Cycle_IdGVM).Hidden();
+                                                            columns.Bound(c => c.InstitutionalSelectdedPeriodIdentGVM).Hidden();
+                                                            columns.Bound(c => c.WPProcurement_DescriptionGVM).Title("Description");
+                                                            columns.Bound(c => c.Directorate_NameGVM).Title("Directorate");
+                                                            columns.Bound(c => c.Division_NameGVM).Title("Department");
+                                                            columns.Bound(c => c.WPProcurementType_NameGVM).Title("Type");
+                                                            columns.Bound(c => c.WPProcurementCostGVM).Title("Est. Amount").Format("{0:n0}").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { style = "text-align:right" });
+                
 
-                                                            //columns.Bound(c => c.PeriodType).ClientTemplate("#=PeriodType.CategoryName#").Title("View Reports").Width(300);
-                                                           // columns.Bound(x => x.PeriodTypeSingle).FooterTemplate("<input id='dropDownList'></input>")});
-
-                                                          // columns.Bound(c => c.PeriodTypeSingle).ClientTemplate("#=columnTemplateFunction#").Title("View Reports").Width(300);
-                                                           columns.Bound(c => c.PeriodTypeSingle).ClientTemplate("<input class='dropDownTemplate'></input>").Title("View Reports").Width(300);
-
-                                                           // columns.Command(command => command.Custom(" View Reports").IconClass("k-icon k-i-file-pdf").Click("viewreports")).Width(300);
-                                                             columns.Command(command => command.Custom(" View and Approve").IconClass("k-icon k-i-check-outline").Click("viewandapprovewp").Visible("ceoapproveVisible"));
+                                                            columns.Command(command => command.Custom(" Edit Procurement").IconClass("k-icon k-i-track-changes").Click("manageworkplan")).Width(200);
+                                                             columns.Command(command => command.Custom(" Delete Procurement").IconClass("k-icon k-i-delete").Click("deleteworkplan")).Width(200);
                                                             //columns.Command(command => { command.Destroy().Text(" Deactivate").IconClass("k-icon k-i-lock"); });
                                                         })
                                                         .HtmlAttributes(new { style = "height: 600px;" })
@@ -58,17 +64,14 @@
                                                             .Refresh(true)
                                                             .PageSizes(true)
                                                             .ButtonCount(5))
-                                                        .Events(events => events.DataBound("onDataBound"))
                                                         .DataSource(dataSource => dataSource
                                                             .Ajax()
-                                                            .Sort(sort => sort.Add("FisYear").Ascending())
+                                                          //  .Sort(sort => sort.Add("Division_Name").Ascending())
                                                             .Read(read => read
-                                                                        .Action("CurrentInstitutionalWorkplan_Read", "Admin"))
-                                                            .Model(model => model.Id(p => p.Transaction_Id))
-                                                           // .Create(create => create.Action("Struc_DivisionKPI_Create", "Admin", new {dirid=Model.Directorate_Id, divid=@Model.Division_Id}))
-                                                           // .Destroy(destroy => destroy.Action("Strategy_MTPStrategyMapping_Delete", "Admin"))
-                                                           // .Update(update => update.Action("WP_Outcomes_Update", "Admin"))
-                                                            .PageSize(20)
+                                                                        .Action("AllProcurementPlans_Read", "Admin", new { cycleid = @Model.DispatchCycle_Id, periodid=@Model.InstitutionalRepPeriodIdent}))
+                                                            .Model(model => model.Id(p => p.Transaction_IdGVM))
+                                                       
+                                                            .PageSize(50)
                                                             .Events(events => events.Error("error_handler")
                                                                                 .RequestEnd("onRequestEnd"))
                                                         )
@@ -116,129 +119,6 @@
 
 <script type="text/javascript">
 
-
-    function columnTemplateFunction(dataItem) {
-        var input = '<input class="dropDownTemplate"/>'
-
-        return input
-    };
-
-    function onDataBound(e) {
-        var grid = e.sender;
-        var items = e.sender.items();
-
-        items.each(function(e) {
-            var dataItem = grid.dataItem(this);
-            var ddt = $(this).find('.dropDownTemplate');
-            var cycleid=dataItem.Transaction_Id;
-
-            $(ddt).width(280).kendoDropDownList({
-               // value: dataItem.value,
-               // dataSource: ddlDataSource,
-                dataTextField: "DropDown_Name",
-                dataValueField: "DropDown_IntId",
-                dataSource: {
-                    transport: {
-                        read: {
-                            dataType: "json",
-                            url: "/Admin/GetTransFiscalPeriodsInstiutionalReports",
-                            data:{"cycleid": cycleid},
-                        }
-                    }
-                },
-                optionLabel: "Select...",
-                change: onDDLChange
-            });
-        });
-
-    }
-
-    function onDDLChange(e) {
-        var element = e.sender.element;
-        var row = element.closest("tr");
-        var grid = $("#grid").data("kendoGrid");
-        var dataItem = grid.dataItem(row);
-
-
-
-         var transid = dataItem.Transaction_Id;
-   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
-    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
-    
-
-        $("#windowstaff").append("<div id='getstaffwindow'></div>");
-        var selecteddropdown=this.dataItem().DropDown_IntId;
-        var selecteddropdowntext=this.dataItem().DropDown_Name;
-
-        if(selecteddropdown=="7")
-        {
-            var wnd2 = $("#getstaffwindow").kendoWindow({
-                //actions: ["Close"],
-                draggable: true,
-                modal: true,
-                animation: false,
-                resizable: true,
-                content: "/NEPADStaff/ChooseInstitutionalWPReport?transid=" + transid,
-                width: 600,
-                height: 500,
-
-                title: "Choose Institutional Report",
-                // close: onClose,
-                deactivate: function () {
-                    this.destroy();
-                }
-
-            }).data("kendoWindow");
-            wnd2.center().open();
-        }
-        else if(selecteddropdown === "" && typeof selecteddropdown === "string") 
-        {
-           
-
-        }
-        else
-        {
-             var wnd2 = $("#getstaffwindow").kendoWindow({
-                //actions: ["Close"],
-                draggable: true,
-                modal: true,
-                animation: false,
-                resizable: true,
-                content: "/NEPADStaff/ChooseInstitutionalWPReportPeriodRange?transid=" + transid+"&periodid=" + selecteddropdown,
-                width: 600,
-                height: 500,
-
-                title: "Choose "+selecteddropdowntext+" Institutional Report",
-                // close: onClose,
-                deactivate: function () {
-                    this.destroy();
-                }
-
-            }).data("kendoWindow");
-            wnd2.center().open();
-
-        }
-
-
-       // dataItem.set("value", e.sender.value());
-    };
-
-
-
-
-
-    function ceoapproveVisible(dataItem) {
-        // hide the Edit button for the item with ProductID=1
-        return dataItem.WPCEOApproveRole_String != "Cannot Approve";
-    }
-
-    function viewandapprovewp(e) {
-
-         
-
-         
-
-    }
 
 function redirect_blank(url) {
   var a = document.createElement('a');
@@ -428,13 +308,19 @@ function activatekpi(e) {
 
 }
 
-function viewsummaryandpdf(e) {
+function manageworkplan(e) {
    e.preventDefault();
     var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-    var transid=dataItem.Transaction_Id;
+    var projid=dataItem.ProjectId;
+    var fyear =dataItem.FYearIdent;
+    var fperiod =dataItem.FPeriodIdent;
+    var periodtxt =dataItem.FisPeriodHidden;
+    var dirid = dataItem.Directorate_Id;
+    var divid = dataItem.Division_Id;
+    var progid =dataItem.Programme_Id;
+    var mainrecid = dataItem.WPMainRecord_Ident;
 
-
-    var url="/NEPADStaff/InstitutionalWorkplanDraft?transid=" + transid;
+    var url="/NEPADStaff/ManageWorkplansDraft?divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
 
     redirect_blank(url);
 
@@ -442,41 +328,74 @@ function viewsummaryandpdf(e) {
 }
 
 
-
-function viewreports(e) {
-
-    e.preventDefault();
-
-
-
+function deleteworkplan(e) {
+   e.preventDefault();
     var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    var projid=dataItem.ProjectId;
+    var fyear =dataItem.FYearIdent;
+    var fperiod =dataItem.FPeriodIdent;
+    var periodtxt =dataItem.FisPeriodHidden;
+    var dirid = dataItem.Directorate_Id;
+    var divid = dataItem.Division_Id;
+    var progid =dataItem.Programme_Id;
+    var mainrecid = dataItem.WPMainRecord_Ident;
+    var empid = $("#Employee_Id").val();
 
-    var transid = dataItem.Transaction_Id;
-   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
-    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
-    
+   // var url="/NEPADStaff/DeleteWorkplansDraft?divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
 
-        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+    //redirect_blank(url);
 
-        var wnd2 = $("#getstaffwindow").kendoWindow({
-            //actions: ["Close"],
-            draggable: true,
-            modal: true,
-            animation: false,
-            resizable: true,
-            content: "/NEPADStaff/ChooseInstitutionalWPReport?transid=" + transid,
-            width: 600,
-            height: 500,
 
-            title: "Choose Institutional Report",
-            // close: onClose,
-            deactivate: function () {
-                this.destroy();
-            }
 
-        }).data("kendoWindow");
-        wnd2.center().open();
-         
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+    dialog.kendoDialog({
+        width: "450px",
+        title: "Confirmation",
+        closable: false,
+        modal: true,
+        content: "<p>Please confirm the DELETE action.<p>",
+        actions: [
+            {
+                text: 'Confirm',
+                action: function (e) {
+                    $.ajax({
+                        type: "POST",
+                        url: url="/Admin/DeleteWorkplansDraft?transid=" + mainrecid,     //your action
+                        //data: { "subrecid": subrecid},
+                        dataType: 'json',
+                        success: function (result) {
+
+
+                            var grid_main = $("#grid").data("kendoGrid"); 
+                            grid_main.dataSource.transport.options.read.url = "/Admin/DraftWorkplans_Read?empid=" + empid;
+                            grid_main.dataSource.read();
+                            //grid_outputsactivities.refresh();
+
+
+                        },
+                        error: function (data) {
+
+                        }
+                    })
+                    return true;
+                },
+                primary: true
+
+            },
+            { text: 'Cancel' }
+        ],
+        close: onClose
+    });
+
+    dialog.data("kendoDialog").open();
+    undo.fadeOut();
+
 
 }
 

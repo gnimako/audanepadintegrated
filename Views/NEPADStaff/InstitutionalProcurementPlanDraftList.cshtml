@@ -7,13 +7,13 @@
 
 
 
-<h1 style="font-family: Faktslab;">All Workplans</h1>
+<h1 style="font-family: Faktslab;">All Procurement Plans</h1>
 <div class="separator-breadcrumb border-top"></div>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card mb-5">
                             <div class="card-body">
-                                <div class="card-title mb-3">Institutional All Workplans</div>
+                                <div class="card-title mb-3">Institutional Procurement Plans</div>
 
                                 <form id="addformmain">
                                 <input hidden asp-for="IdentityUserId" class="k-textbox" style="width:100%" value="@Model.IdentityUserId">
@@ -172,24 +172,12 @@
 
         if(selecteddropdown=="7")
         {
-            var wnd2 = $("#getstaffwindow").kendoWindow({
-                //actions: ["Close"],
-                draggable: true,
-                modal: true,
-                animation: false,
-                resizable: true,
-                content: "/NEPADStaff/ChooseInstitutionalWPReport?transid=" + transid,
-                width: 600,
-                height: 500,
 
-                title: "Choose Institutional Report",
-                // close: onClose,
-                deactivate: function () {
-                    this.destroy();
-                }
+            var url="/NEPADStaff/InstitutionalProcurementPlanGrid?cycleid=" + transid+"&periodid=" + selecteddropdown;
 
-            }).data("kendoWindow");
-            wnd2.center().open();
+            redirect_blank(url);
+
+
         }
         else if(selecteddropdown === "" && typeof selecteddropdown === "string") 
         {

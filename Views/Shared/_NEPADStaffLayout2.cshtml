@@ -219,6 +219,13 @@
                     </li>
                  }
 
+                 @if(Model.Procurement==true)
+                 {
+                    <li class="nav-item" data-item="procurement"><a class="nav-item-hold" href="#"><i class="nav-icon i-Management"></i><span class="nav-text">Institutional Procurement</span></a>
+                        <div class="triangle"></div>
+                    </li>
+                 }
+
                     <li class="nav-item"><a class="nav-item-hold" href="javascript:setLogout()"><i class="nav-icon i-Power-2"></i><span class="nav-text">Logout</span></a>
                         <div class="triangle"></div>
                     </li>
@@ -238,9 +245,9 @@
                    
                     <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-File-Clipboard-Text--Image"></i><span class="item-name" style="color: #003473;">Institutional-Level</span><i class="dd-arrow i-Arrow-Down"></i></a>
                         <ul class="submenu">
-                            <li><a asp-controller="nepadstaff" asp-action="institutionalworkplandraftlist"><span style="color: #003473;">Draft Workplans</span></a></li>
-                            <li><a href="charts.apexBarCharts.html"><span style="color: #003473;">Approved Workplans</span></a></li>
-                            <li><a href="charts.apexBubbleCharts.html"><span style="color: #003473;">Closed Workplans</span></a></li>
+                            <li><a asp-controller="nepadstaff" asp-action="institutionalworkplandraftlist"><span style="color: #003473;">All Workplans</span></a></li>
+                            <li><a href="#"><span style="color: #003473;">Approved Workplans</span></a></li>
+                            <li><a href="#"><span style="color: #003473;">Closed Workplans</span></a></li>
                         </ul>
                     </li>
                  }
@@ -263,6 +270,17 @@
                 <ul class="childNav" data-parent="pipd">
                     <li class="nav-item"><a asp-controller="nepadstaff" asp-action="workplancycle"><i class="nav-icon i-Blinklist"></i><span class="item-name">Workplan Cycles</span></a></li>
                      <li class="nav-item"><a asp-controller="nepadstaff" asp-action="mtppriortymapping"><i class="nav-icon i-Link-2"></i><span class="item-name">MTP Mappings</span></a></li>
+                </ul>
+
+                <ul class="childNav" data-parent="procurement">
+                    <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-File-Clipboard-Text--Image"></i><span class="item-name" style="color: #003473;">Procurement Plans</span><i class="dd-arrow i-Arrow-Down"></i></a>
+                        <ul class="submenu">
+                            <li><a asp-controller="nepadstaff" asp-action="institutionalprocurementplandraftlist"><span style="color: #003473;">All Plans</span></a></li>
+                            <li><a href="#"><span style="color: #003473;">Approved Plans</span></a></li>
+                            <li><a href="#"><span style="color: #003473;">Closed Plans</span></a></li>
+                        </ul>
+                    </li>
+                     
                 </ul>
 
                 
