@@ -101,6 +101,7 @@ namespace AUDANEPAD_Integrated.ViewModels
         public bool CEO { get; set; }
         public bool PIPD { get; set; }
         public bool Procurement { get; set; }
+        public bool Finance { get; set; }
         public bool Travel { get; set; }
 
         //Workplans
@@ -109,6 +110,7 @@ namespace AUDANEPAD_Integrated.ViewModels
         public double Project_Max { get; set; }
 
         public string InstitutionalRepPeriod { get; set; }
+        public string InstitutionalRepPeriodShort { get; set; }
         public string InstitutionalRepPeriodIdent { get; set; }
         public string InstitutionalWPYear { get; set; }
 

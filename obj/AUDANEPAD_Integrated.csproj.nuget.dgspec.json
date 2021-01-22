@@ -45,6 +45,10 @@
               "target": "Package",
               "version": "[9.5.0.80, )"
             },
+            "GemBox.Spreadsheet": {
+              "target": "Package",
+              "version": "[47.0.1029, )"
+            },
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
               "version": "[3.0.0, )"

@@ -186,24 +186,9 @@
         }
         else
         {
-             var wnd2 = $("#getstaffwindow").kendoWindow({
-                //actions: ["Close"],
-                draggable: true,
-                modal: true,
-                animation: false,
-                resizable: true,
-                content: "/NEPADStaff/ChooseInstitutionalWPReportPeriodRange?transid=" + transid+"&periodid=" + selecteddropdown,
-                width: 600,
-                height: 500,
+            var url="/NEPADStaff/InstitutionalProcurementPlanRangeGrid?cycleid=" + transid+"&periodid=" + selecteddropdown;
 
-                title: "Choose "+selecteddropdowntext+" Institutional Report",
-                // close: onClose,
-                deactivate: function () {
-                    this.destroy();
-                }
-
-            }).data("kendoWindow");
-            wnd2.center().open();
+            redirect_blank(url);
 
         }
 

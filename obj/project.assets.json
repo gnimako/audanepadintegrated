@@ -76,6 +76,21 @@
           "lib/netstandard2.0/DynamicInterop.dll": {}
         }
       },
+      "GemBox.Spreadsheet/47.0.1029": {
+        "type": "package",
+        "compile": {
+          "lib/netcoreapp3.0/GemBox.Spreadsheet.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp3.0/GemBox.Spreadsheet.dll": {}
+        },
+        "runtimeTargets": {
+          "runtimes/unix/lib/netcoreapp3.0/GemBox.Spreadsheet.dll": {
+            "assetType": "runtime",
+            "rid": "unix"
+          }
+        }
+      },
       "itext7/7.1.12": {
         "type": "package",
         "dependencies": {
@@ -3488,6 +3503,29 @@
         "dynamicinterop.nuspec",
         "lib/netstandard2.0/DynamicInterop.dll",
         "lib/netstandard2.0/DynamicInterop.xml"
+      ]
+    },
+    "GemBox.Spreadsheet/47.0.1029": {
+      "sha512": "NnKG0STv5DnYTzv+N9tpwsXDoQl89Uw16q71nKl+enh1LO4SN2Uz3gn49YbZCcbbvFPqpmKjC4qYxUBIrHOi5Q==",
+      "type": "package",
+      "path": "gembox.spreadsheet/47.0.1029",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Readme.txt",
+        "gembox.spreadsheet.47.0.1029.nupkg.sha512",
+        "gembox.spreadsheet.nuspec",
+        "images/NugetGbs.png",
+        "lib/net35/GemBox.Spreadsheet.dll",
+        "lib/net35/GemBox.Spreadsheet.xml",
+        "lib/netcoreapp3.0/GemBox.Spreadsheet.dll",
+        "lib/netcoreapp3.0/GemBox.Spreadsheet.xml",
+        "lib/netstandard2.0/GemBox.Spreadsheet.dll",
+        "lib/netstandard2.0/GemBox.Spreadsheet.xml",
+        "licenses/EULA.txt",
+        "licenses/ThirdPartyCodeLicenses.txt",
+        "runtimes/unix/lib/netcoreapp3.0/GemBox.Spreadsheet.dll",
+        "runtimes/unix/lib/netcoreapp3.0/GemBox.Spreadsheet.xml"
       ]
     },
     "itext7/7.1.12": {
@@ -9983,6 +10021,7 @@
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.0": [
       "ChilkatDnCore >= 9.5.0.80",
+      "GemBox.Spreadsheet >= 47.0.1029",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 3.0.0",
       "Microsoft.EntityFrameworkCore >= 3.0.0",
       "Microsoft.EntityFrameworkCore.Design >= 3.0.0",
@@ -10045,6 +10084,10 @@
           "ChilkatDnCore": {
             "target": "Package",
             "version": "[9.5.0.80, )"
+          },
+          "GemBox.Spreadsheet": {
+            "target": "Package",
+            "version": "[47.0.1029, )"
           },
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
             "target": "Package",

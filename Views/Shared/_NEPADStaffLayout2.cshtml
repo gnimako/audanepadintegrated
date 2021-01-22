@@ -226,6 +226,13 @@
                     </li>
                  }
 
+                @if(Model.Finance==true)
+                {
+                    <li class="nav-item" data-item="finance"><a class="nav-item-hold" href="#"><i class="nav-icon i-Money-Bag"></i><span class="nav-text">Finance</span></a>
+                        <div class="triangle"></div>
+                    </li>
+                }
+
                     <li class="nav-item"><a class="nav-item-hold" href="javascript:setLogout()"><i class="nav-icon i-Power-2"></i><span class="nav-text">Logout</span></a>
                         <div class="triangle"></div>
                     </li>
@@ -278,6 +285,20 @@
                             <li><a asp-controller="nepadstaff" asp-action="institutionalprocurementplandraftlist"><span style="color: #003473;">All Plans</span></a></li>
                             <li><a href="#"><span style="color: #003473;">Approved Plans</span></a></li>
                             <li><a href="#"><span style="color: #003473;">Closed Plans</span></a></li>
+                        </ul>
+                    </li>
+                     
+                </ul>
+
+
+                 <ul class="childNav" data-parent="finance">
+                    <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-File-Clipboard-Text--Image"></i><span class="item-name" style="color: #003473;">Workplans</span><i class="dd-arrow i-Arrow-Down"></i></a>
+                        <ul class="submenu">
+                            <li><a href="#"><span style="color: #003473;">Outputs</span></a></li>
+                            <li><a href="#"><span style="color: #003473;">Activity Plans</span></a></li>
+                            <li><a href="#"><span style="color: #003473;">Mobility Plans</span></a></li>
+                            <li><a asp-controller="nepadstaff" asp-action="institutionalprocurementplandraftlist"><span style="color: #003473;">Procurement Plans</span></a></li>
+                            <li><a href="#"><span style="color: #003473;">Communication Plan</span></a></li>
                         </ul>
                     </li>
                      

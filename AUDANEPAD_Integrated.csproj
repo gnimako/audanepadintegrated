@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="ChilkatDnCore" Version="9.5.0.80" />
+    <PackageReference Include="GemBox.Spreadsheet" Version="47.0.1029" />
     <PackageReference Include="itext7" Version="7.1.12" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />

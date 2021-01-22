@@ -36,6 +36,7 @@ using iText.Layout.Borders;
 using iText.Layout.Properties;
 
 using iText.Barcodes;
+using GemBox.Spreadsheet;
 
 
 namespace AUDANEPAD_Integrated.Controllers
@@ -441,6 +442,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
             
 
             return View(emp_view);
@@ -518,6 +521,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             return View(emp_view);
 
@@ -598,6 +603,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
 
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(transid);
@@ -774,6 +781,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
 
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(transid);
@@ -1181,6 +1190,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
 
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(transid);
@@ -1359,6 +1370,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
 
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(transid);
@@ -1767,6 +1780,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             return View(emp_view);
 
@@ -1843,6 +1858,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             return View(emp_view);
 
@@ -1953,6 +1970,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             return View(emp_view);
 
@@ -2065,6 +2084,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             return View(emp_view);
 
@@ -2179,6 +2200,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             return View(emp_view);
 
@@ -2292,6 +2315,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             return View(emp_view);
 
@@ -2407,6 +2432,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             return View(emp_view);
 
@@ -2518,6 +2545,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             return View(emp_view);
 
@@ -2629,6 +2658,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             return View(emp_view);
 
@@ -2741,6 +2772,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             return View(emp_view);
 
@@ -2854,6 +2887,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             return View(emp_view);
 
@@ -2932,6 +2967,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             return View(emp_view);
 
@@ -3012,6 +3049,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
 
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
@@ -3109,6 +3148,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             return View(emp_view);
 
@@ -3191,6 +3232,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
 
@@ -3289,6 +3332,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             return View(emp_view);
 
@@ -3366,6 +3411,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
 
@@ -3462,6 +3509,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             return View(emp_view);
 
@@ -3544,6 +3593,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
 
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
@@ -3643,6 +3694,9 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
+
 
             return View(emp_view);
 
@@ -3721,6 +3775,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
 
              WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
@@ -3741,6 +3797,152 @@ namespace AUDANEPAD_Integrated.Controllers
             }
 
             emp_view.InstitutionalWPYear=_lkupFiscalYearRepository.GetRecord(currentcyclerec.FiscalYear_Id).Record_Name;
+
+            return View(emp_view);
+
+        }
+
+
+
+
+
+        public async Task<ActionResult> InstitutionalProcurementPlanRangeGrid(string cycleid, string periodid)
+        {
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+
+            
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            // DateTime test = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day);
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                // DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank,
+                ExistingPhotoPath = employee.PhotoPath,
+                CurrentYear=DateTime.Now.Year.ToString(),
+                DispatchCycle_Id=cycleid,
+                DirectorateName=_strucDirectorateRepository.GetRecord(_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(employee.Id).Directorate_Id).Record_Name
+
+            };
+
+            Struc_DivStaffMapping chkrec=_strucDivStaffMappingRepository.GetRecordByEmployeeAndPrimaryDivision(employee.Id);
+
+            if (chkrec==null)
+            {
+                return RedirectToAction("systemmessage", "nepadstaff");
+            }
+
+            if (await userManager.IsInRoleAsync(user, "PIPD"))
+                emp_view.PIPD=true;
+            if (await userManager.IsInRoleAsync(user, "Procurement"))
+                emp_view.Procurement=true;
+            if (await userManager.IsInRoleAsync(user, "Travel"))
+                emp_view.Travel=true;
+            if (await userManager.IsInRoleAsync(user, "Division Head"))
+                emp_view.Division_Head=true;
+            if (await userManager.IsInRoleAsync(user, "Director"))
+                emp_view.Director=true;
+            if (await userManager.IsInRoleAsync(user, "CEO"))
+                emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
+
+
+             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
+
+            emp_view.InstitutionalRepPeriodIdent=periodid;
+
+            if(currentcyclerec.Period_Id==8)
+            {
+                DateTime pstart=new DateTime(currentcyclerec.PeriodStartDate.Year, currentcyclerec.PeriodStartDate.Month, currentcyclerec.PeriodStartDate.Day);
+                DateTime pend=new DateTime(currentcyclerec.PeriodEndDate.Year, currentcyclerec.PeriodEndDate.Month, currentcyclerec.PeriodEndDate.Day);
+                emp_view.InstitutionalRepPeriod=pstart.Date.ToString("MMM d, yy") + " - "+ pend.Date.ToString("MMM d, yy");
+
+            }
+            else
+            {
+                emp_view.InstitutionalRepPeriod=_lkupPeriodRepository.GetRecord(Int32.Parse(periodid)).Record_Name;
+
+            }
+
+
+
+            //Range Name
+            string periodnameinst="";
+            if(periodid=="8")
+            {
+                DateTime pstart=new DateTime(currentcyclerec.PeriodStartDate.Year, currentcyclerec.PeriodStartDate.Month, currentcyclerec.PeriodStartDate.Day);
+                DateTime pend=new DateTime(currentcyclerec.PeriodEndDate.Year, currentcyclerec.PeriodEndDate.Month, currentcyclerec.PeriodEndDate.Day);
+                periodnameinst=pstart.Date.ToString("MMM d, yy") + " - "+ pend.Date.ToString("MMM d, yy");
+
+            }
+            else
+            {
+                periodnameinst=_lkupPeriodRepository.GetRecord(Int32.Parse(periodid)).Record_Name;
+            }
+
+
+
+            string rangnameinst=periodnameinst+", "+_lkupFiscalYearRepository.GetRecord(currentcyclerec.FiscalYear_Id).Record_Name;
+            string rangnameinstupper=rangnameinst.ToUpper();
+
+
+            string rangnameinst_short="";
+            if(periodid=="1")
+                rangnameinst_short="Q1";
+            else if (periodid=="2")
+                rangnameinst_short="Q2";
+            else if (periodid=="3")
+                rangnameinst_short="Q3";
+            else if (periodid=="4")
+                rangnameinst_short="Q4";
+            else if (periodid=="5")
+                rangnameinst_short="Semester 1"; 
+            else if (periodid=="6")
+                rangnameinst_short="Semester 2";
+            else if (periodid=="7")
+                rangnameinst_short=_lkupFiscalYearRepository.GetRecord(currentcyclerec.FiscalYear_Id).Record_Name+ " (Annual)";
+            else
+                rangnameinst_short=_lkupFiscalYearRepository.GetRecord(currentcyclerec.FiscalYear_Id).Record_Name+ " ("+periodnameinst+")";
+
+
+
+            emp_view.InstitutionalWPYear=_lkupFiscalYearRepository.GetRecord(currentcyclerec.FiscalYear_Id).Record_Name;
+            emp_view.InstitutionalRepPeriodShort=rangnameinst_short;
 
             return View(emp_view);
 
@@ -3821,6 +4023,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
 
@@ -3920,6 +4124,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
             return View(emp_view);
 
@@ -3999,6 +4205,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
              WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
 
@@ -4183,44 +4391,132 @@ namespace AUDANEPAD_Integrated.Controllers
 
         public FileResult InstitutionalProcurementPlanExcel(string id, string periodid)
         {
+            WP_DispatchCycle cyclerec=_wpDispatchCycleRepository.GetRecord(id);
+            string pathtofile_save="";
+
+            SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
+
+            var workbook = new ExcelFile();
+            var worksheet = workbook.Worksheets.Add("Consultancy Services");
+
+            //Empty
+            var range_0 = worksheet.Cells.GetSubrange("A1:H2");
+            range_0.Merged = true;
+            range_0.Value = "";
+
+             // Get the cell range.
+            var range_1 = worksheet.Cells.GetSubrange("I1:J2");
+            range_1.Merged = true;
+            range_1.Value = "Prep & Submission by Directorate";
+            range_1.Style.VerticalAlignment=VerticalAlignmentStyle.Top;
+            range_1.Style.ShrinkToFit=true;
+            range_1.Style.Font.Weight = ExcelFont.BoldWeight;
+            range_1.Style.WrapText = true;
+            range_1.Style.Font.Name="Arial";
+            range_1.Style.Borders.SetBorders(MultipleBorders.All, SpreadsheetColor.FromName(ColorName.Black), LineStyle.Thin);
+            range_1.Style.FillPattern.SetPattern(FillPatternStyle.Solid, SpreadsheetColor.FromArgb(204, 255, 255), SpreadsheetColor.FromArgb(204, 255, 255));
+
+            var range_2 = worksheet.Cells.GetSubrange("K1:L2");
+            range_2.Merged = true;
+            range_2.Value = "TOR Approval Date";
+            range_2.Style.VerticalAlignment=VerticalAlignmentStyle.Top;
+            range_2.Style.ShrinkToFit=true;
+            range_2.Style.Font.Weight = ExcelFont.BoldWeight;
+            range_2.Style.WrapText = true;
+            range_2.Style.Font.Name="Arial";
+            range_2.Style.Borders.SetBorders(MultipleBorders.All, SpreadsheetColor.FromName(ColorName.Black), LineStyle.Thin);
+            range_2.Style.FillPattern.SetPattern(FillPatternStyle.Solid, SpreadsheetColor.FromArgb(204, 255, 255), SpreadsheetColor.FromArgb(204, 255, 255));
+
+
+
+
+
+            worksheet.Cells[2, 0].Value = "Inline text formatting examples:";
+            worksheet.PrintOptions.PrintGridlines = true;
+
+
+            // Column width of 20 characters.
+            worksheet.Columns[0].Width = 20 * 256;
+
+            worksheet.Cells[4, 0].Value = "This is big and red text!";
+
+            // Apply size to 'big and red' part of text
+            worksheet.Cells[4, 0].GetCharacters(8, 11).Font.Size = 400;
+
+            // Apply color to 'red' part of text
+            worksheet.Cells[4, 0].GetCharacters(16, 3).Font.Color = SpreadsheetColor.FromName(ColorName.Red);
+
+            // Format cell content
+            worksheet.Cells[6, 0].Value = "Formatting selected characters with GemBox.Spreadsheet component.";
+            worksheet.Cells[6, 0].Style.Font.Color = SpreadsheetColor.FromName(ColorName.Blue);
+            worksheet.Cells[6, 0].Style.Font.Italic = true;
+            worksheet.Cells[6, 0].Style.WrapText = true;
+
+            // Get characters from index 36 to the end of string
+            var characters = worksheet.Cells[6, 0].GetCharacters(36);
+
+            // Apply color and underline to selected characters
+            characters.Font.Color = SpreadsheetColor.FromName(ColorName.Orange);
+            characters.Font.UnderlineStyle = UnderlineStyle.Single;
+
+            // Write selected characters
+            worksheet.Cells[8, 0].Value = "Selected characters: " + characters.Text;
+
+
+
+            //Save File Starts Here....
+      
+            string periodname="";
+            if(periodid=="1")
+                periodname="Q1";
+            else if (periodid=="2")
+                periodname="Q2";
+            else if (periodid=="3")
+                periodname="Q3";
+            else if (periodid=="4")
+                periodname="Q4"; 
+            else if (periodid=="5")
+                periodname="Semester_1"; 
+            else if (periodid=="6")
+                periodname="Semester_2";
+            else if (periodid=="7")
+                periodname="Annual";
+            else
+            {
+                DateTime pstart=new DateTime(cyclerec.PeriodStartDate.Year, cyclerec.PeriodStartDate.Month, cyclerec.PeriodStartDate.Day);
+                DateTime pend=new DateTime(cyclerec.PeriodEndDate.Year, cyclerec.PeriodEndDate.Month, cyclerec.PeriodEndDate.Day);
+                periodname=pstart.Date.ToString("MMM d, yyyy") + " - "+ pend.Date.ToString("MMM d, yyyy"); 
+                
+            }
+
+            pathtofile_save=@"wwwroot/appdirectory/excelreports/institutional/Institutional_Procurement_Plan_" +_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name +"_" +periodname+".xlsx";
+            workbook.Save(pathtofile_save);
+
+            
+
+
+
+            //Save File Ends Here...
+
+
+            
+
+
+
+
+
 
             string contentType =  "application/vnd.ms-excel";//"application/pdf"
            // string pathtofile=@"wwwroot/appdirectory/excelreports/institutional/Procurement_Plan_2021.xlsx";
-            string pathtofile="/appdirectory/excelreports/institutional/Procurement_Plan_2021.xlsx";
-            // WP_DispatchCycle cyclerec=_wpDispatchCycleRepository.GetRecord(id);
-
-            // MemoryStream workStream=GetMemoryInstitutionalWorkplanWithIconsDraftRangeSummary(cyclerec, periodid);
-
-            // byte[] byte1 = workStream.ToArray();
-
-            // string periodname="";
-            // if(periodid=="1")
-            //     periodname="Q1";
-            // else if (periodid=="2")
-            //     periodname="Q2";
-            // else if (periodid=="3")
-            //     periodname="Q3";
-            // else if (periodid=="4")
-            //     periodname="Q4"; 
-            // else if (periodid=="5")
-            //     periodname="Semester_1"; 
-            // else if (periodid=="6")
-            //     periodname="Semester_2";
-            // else if (periodid=="7")
-            //     periodname="Annual";
-            // else
-            // {
-            //     DateTime pstart=new DateTime(cyclerec.PeriodStartDate.Year, cyclerec.PeriodStartDate.Month, cyclerec.PeriodStartDate.Day);
-            //     DateTime pend=new DateTime(cyclerec.PeriodEndDate.Year, cyclerec.PeriodEndDate.Month, cyclerec.PeriodEndDate.Day);
-            //     periodname=pstart.Date.ToString("MMM d, yyyy") + " - "+ pend.Date.ToString("MMM d, yyyy"); 
-                
-            // }
+            
+            string pathtofile="/appdirectory/excelreports/institutional/Testing.xlsx";
+           
+            
 
 
 
 
-
-            return File(pathtofile, contentType, "Procurement Plan_2021.xlsx");
+            return File(pathtofile, contentType, "Institutional_Procurement_Plan_" +_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name +"_" +periodname+".xlsx");
 
         }
 
@@ -59967,6 +60263,9 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
+                
             return View(emp_view);
 
         }
@@ -60092,6 +60391,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
 
           //  WP_MainRecord wp_mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
 
@@ -60250,6 +60551,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
             
 
             return View(emp_view);
@@ -60313,6 +60616,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
             
             PopulatePeriodType();
 
@@ -60376,6 +60681,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
             
             PopulatePeriodType();
 
@@ -60440,6 +60747,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.Director=true;
             if (await userManager.IsInRoleAsync(user, "CEO"))
                 emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
             
 
             return View(emp_view);

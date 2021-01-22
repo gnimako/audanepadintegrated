@@ -35,11 +35,11 @@
 
                                                         //columns.Command(command => { command.Edit(); command.Destroy(); });
 
-                                                       // columns.Command(command => { command.Edit().Text(" Edit").IconClass("k-icon k-i-track-changes"); });
-                                                        //columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
+                                                       columns.Command(command => { command.Edit().Text(" Edit").IconClass("k-icon k-i-track-changes"); });
+                                                       columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
   
                                                     })
-                                                  //  .ToolBar(toolbar => toolbar.Create().Text(" Add Roles").IconClass("k-icon k-i-plus-outline"))
+                                                    .ToolBar(toolbar => toolbar.Create().Text(" Add Roles").IconClass("k-icon k-i-plus-outline"))
                                                     .Editable(editable => editable.Mode(GridEditMode.InLine))
                                                     .HtmlAttributes(new { style = "height: 550px;" })
                                                     .Scrollable()
@@ -59,9 +59,9 @@
                                                                 model.Id(p => p.LookUp_Id);
                                                                 model.Field(field => field.LookUp_Status).Editable(false);
                                                             })
-                                                       // .Create(create => create.Action("Ident_Role_Create", "Admin"))
-                                                       // .Update(update => update.Action("Struc_Directorate_Update", "Admin"))
-                                                       // .Destroy(destroy => destroy.Action("Struc_Directorate_Delete", "Admin"))
+                                                        .Create(create => create.Action("Ident_Role_Create", "Admin"))
+                                                        .Update(update => update.Action("Struc_Directorate_Update", "Admin"))
+                                                        .Destroy(destroy => destroy.Action("Struc_Directorate_Delete", "Admin"))
                                                         .PageSize(20)
                                                         .Events(events => events.Error("error_handler")
                                                                                 .RequestEnd("onRequestEnd"))
