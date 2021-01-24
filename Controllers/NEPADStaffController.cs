@@ -39,6 +39,8 @@ using iText.Barcodes;
 using GemBox.Spreadsheet;
 
 
+
+
 namespace AUDANEPAD_Integrated.Controllers
 {
     public class NEPADStaffController: Controller
@@ -3801,6 +3803,109 @@ namespace AUDANEPAD_Integrated.Controllers
             return View(emp_view);
 
         }
+
+
+
+
+        public async Task<ActionResult> InstitutionalOutputsGrid(string cycleid, string periodid)
+        {
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+
+            
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            // DateTime test = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day);
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                // DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank,
+                ExistingPhotoPath = employee.PhotoPath,
+                CurrentYear=DateTime.Now.Year.ToString(),
+                DispatchCycle_Id=cycleid,
+                DirectorateName=_strucDirectorateRepository.GetRecord(_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(employee.Id).Directorate_Id).Record_Name
+
+            };
+
+            Struc_DivStaffMapping chkrec=_strucDivStaffMappingRepository.GetRecordByEmployeeAndPrimaryDivision(employee.Id);
+
+            if (chkrec==null)
+            {
+                return RedirectToAction("systemmessage", "nepadstaff");
+            }
+
+            if (await userManager.IsInRoleAsync(user, "PIPD"))
+                emp_view.PIPD=true;
+            if (await userManager.IsInRoleAsync(user, "Procurement"))
+                emp_view.Procurement=true;
+            if (await userManager.IsInRoleAsync(user, "Travel"))
+                emp_view.Travel=true;
+            if (await userManager.IsInRoleAsync(user, "Division Head"))
+                emp_view.Division_Head=true;
+            if (await userManager.IsInRoleAsync(user, "Director"))
+                emp_view.Director=true;
+            if (await userManager.IsInRoleAsync(user, "CEO"))
+                emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
+
+
+             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
+
+            emp_view.InstitutionalRepPeriodIdent=periodid;
+
+            if(currentcyclerec.Period_Id==8)
+            {
+                DateTime pstart=new DateTime(currentcyclerec.PeriodStartDate.Year, currentcyclerec.PeriodStartDate.Month, currentcyclerec.PeriodStartDate.Day);
+                DateTime pend=new DateTime(currentcyclerec.PeriodEndDate.Year, currentcyclerec.PeriodEndDate.Month, currentcyclerec.PeriodEndDate.Day);
+                emp_view.InstitutionalRepPeriod=pstart.Date.ToString("MMM d, yy") + " - "+ pend.Date.ToString("MMM d, yy");
+
+            }
+            else
+            {
+                emp_view.InstitutionalRepPeriod=_lkupPeriodRepository.GetRecord(Int32.Parse(periodid)).Record_Name;
+
+            }
+
+            emp_view.InstitutionalWPYear=_lkupFiscalYearRepository.GetRecord(currentcyclerec.FiscalYear_Id).Record_Name;
+
+            return View(emp_view);
+
+        }
+
 
 
 
@@ -60624,6 +60729,74 @@ namespace AUDANEPAD_Integrated.Controllers
             return View(emp_view);
         }
         public async Task<ActionResult> InstitutionalProcurementPlanDraftList()
+        {
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+
+
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                //DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank
+            };
+
+            if (await userManager.IsInRoleAsync(user, "PIPD"))
+                emp_view.PIPD=true;
+            if (await userManager.IsInRoleAsync(user, "Procurement"))
+                emp_view.Procurement=true;
+            if (await userManager.IsInRoleAsync(user, "Travel"))
+                emp_view.Travel=true;
+            if (await userManager.IsInRoleAsync(user, "Division Head"))
+                emp_view.Division_Head=true;
+            if (await userManager.IsInRoleAsync(user, "Director"))
+                emp_view.Director=true;
+            if (await userManager.IsInRoleAsync(user, "CEO"))
+                emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
+            
+            PopulatePeriodType();
+
+            return View(emp_view);
+        }
+
+
+
+        public async Task<ActionResult> InstitutionalOutputsDraftList()
         {
             var user = await userManager.GetUserAsync(HttpContext.User);
 

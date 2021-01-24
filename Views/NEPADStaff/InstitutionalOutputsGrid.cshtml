@@ -7,13 +7,13 @@
 
 
 
-<h1 style="font-family: Faktslab;">Institutional Procurement Plan</h1>
+<h1 style="font-family: Faktslab;">Institutional Results or Outputs</h1>
 <div class="separator-breadcrumb border-top"></div>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card mb-5">
                             <div class="card-body">
-                                <div class="card-title mb-3">Manage Institutional Procurement Plan for @Model.InstitutionalWPYear (@Model.InstitutionalRepPeriod) </div>
+                                <div class="card-title mb-3">Manage Institutional Results or Outputs for @Model.InstitutionalWPYear (@Model.InstitutionalRepPeriod) </div>
 
                                 <form id="addformmain">
                                 <input hidden asp-for="IdentityUserId" class="k-textbox" style="width:100%" value="@Model.IdentityUserId">
@@ -25,7 +25,7 @@
 
                                     <div class="form-group row" style="padding-right: 1.25rem; padding-left: 1.25rem; padding-bottom: 1.25rem;">
                                         <a class="k-button " id="btnAddInstProc" style="color: #003f59;">   
-                                         <span class="k-icon k-i-plus-outline"></span> Add Procurement
+                                         <span class="k-icon k-i-plus-outline"></span> Add an Output
                                         </a>
                                         &nbsp;&nbsp;
                                         <a asp-controller="ExcelAPI" asp-action="InstitutionalProcurementPlanExcel" asp-route-id="@Model.DispatchCycle_Id" asp-route-periodid="@Model.InstitutionalRepPeriodIdent" class="k-button " id="btnExportInstProc" style="color: #003f59;">
@@ -33,7 +33,7 @@
                                         </a>
 
 
-                                        @(Html.Kendo().Grid<WP_ProcurementGridVM>()
+                                        @(Html.Kendo().Grid<WP_OutputsGridVM>()
                                                         .Name("grid")
                                                         .Columns(columns =>
                                                         {
@@ -43,23 +43,19 @@
                                                             columns.Bound(c => c.Project_IdGVM).Hidden();
                                                             columns.Bound(c => c.FiscalYear_IdGVM).Hidden();
                                                             columns.Bound(c => c.Period_IdGVM).Hidden();
-                                                            columns.Bound(c => c.WPOutput_IdGVM).Hidden();
-                                                            columns.Bound(c => c.WPProcurementType_IdGVM).Hidden();
-                                                            columns.Bound(c => c.WPProcurementLeadTime_IdGVM).Hidden();
-                                                            columns.Bound(c => c.WPProcurement_SourceOfFundsDescrGVM).Hidden();
                                                             columns.Bound(c => c.Directorate_IdGVM).Hidden();
                                                             columns.Bound(c => c.Division_IdGVM).Hidden();
                                                             columns.Bound(c => c.Cycle_IdGVM).Hidden();
                                                             columns.Bound(c => c.InstitutionalSelectdedPeriodIdentGVM).Hidden();
-                                                            columns.Bound(c => c.WPProcurement_DescriptionGVM).Title("Description");//.Width(400);
+                                                            columns.Bound(c => c.OutputGVM).Title("Outputs");//.Width(400);
                                                             columns.Bound(c => c.Directorate_NameGVM).Title("Directorate");//.Width(200);
-                                                            columns.Bound(c => c.Division_NameGVM).Title("Department");
-                                                            columns.Bound(c => c.WPProcurementType_NameGVM).Title("Type");
-                                                            columns.Bound(c => c.WPProcurementCostGVM).Title("Est. Amount").Format("{0:n0}").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { style = "text-align:right" });
+                                                            columns.Bound(c => c.Project_NameGVM).Title("Project");
+                                                            columns.Bound(c => c.Strategic_PrioritiesGVM).Title("Strategic Priorities");
+                                                            columns.Bound(c => c.WPOutputCostGVM).Title("Est. Amount").Format("{0:n0}").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { style = "text-align:right" });
                 
 
-                                                            columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click("editoutputprocurment"));//.Width(200);
-                                                             columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click("deleteoutputprocurement"));//.Width(200);
+                                                            columns.Command(command => command.Custom(" Edit").IconClass("k-icon k-i-track-changes").Click(""));//.Width(200);
+                                                             columns.Command(command => command.Custom(" Delete").IconClass("k-icon k-i-delete").Click(""));//.Width(200);
                                                             //columns.Command(command => { command.Destroy().Text(" Deactivate").IconClass("k-icon k-i-lock"); });
                                                         })
                                                         .HtmlAttributes(new { style = "height: 600px;" })
@@ -76,7 +72,7 @@
                                                             .Ajax()
                                                           //  .Sort(sort => sort.Add("Division_Name").Ascending())
                                                             .Read(read => read
-                                                                        .Action("AllProcurementPlans_Read", "Admin", new { cycleid = @Model.DispatchCycle_Id, periodid=@Model.InstitutionalRepPeriodIdent}))
+                                                                        .Action("AllOutputsPlans_Read", "Admin", new { cycleid = @Model.DispatchCycle_Id, periodid=@Model.InstitutionalRepPeriodIdent}))
                                                             .Model(model => model.Id(p => p.Transaction_IdGVM))
                                                        
                                                             .PageSize(500)

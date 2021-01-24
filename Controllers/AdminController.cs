@@ -8942,6 +8942,131 @@ namespace AUDANEPAD_Integrated.Controllers
             return Json(collection_recs.ToDataSourceResult(request));
         }
 
+        public ActionResult AllOutputsPlans_Read ([DataSourceRequest]DataSourceRequest request, string cycleid, string periodid)
+        {
+
+
+            List<WP_OutputsGridVM> collection_recs = new List<WP_OutputsGridVM>();
+
+            
+
+            
+
+            if (cycleid != null && periodid!=null)
+            {
+                WP_DispatchCycle cyclerec= _wpDispatchCycleRepository.GetRecord(cycleid);
+
+                var DB_Records = _transStrucDirectorateRepository.GetAllRecords().ToList();
+                int _countrecs =  DB_Records.Count();
+
+                if(_countrecs>0)
+                {
+                    foreach (var rec_set in DB_Records)
+                    {
+                        var DirMainRecs=_wpMainRecordRepository.GetRecordsByDirRecs(rec_set.Record_Id).ToList();
+                                
+
+                        //Fetch the Directorate Project Records that correspond the cycle 
+                        if(cyclerec.Period_Id==8)
+                        {
+                            DirMainRecs=_wpMainRecordRepository.GetRecordsByDirectorateYearAndPeriodStartEnd(rec_set.Record_Id, cyclerec.FiscalYear_Id,cyclerec.Period_Id, cyclerec.PeriodStartDate, cyclerec.PeriodEndDate).ToList();
+                        }
+                        else
+                        {
+                            DirMainRecs=_wpMainRecordRepository.GetRecordsByDirectorateYearAndPeriod(rec_set.Record_Id, cyclerec.FiscalYear_Id,cyclerec.Period_Id).ToList();
+                        }
+
+                        if(DirMainRecs.Count()>0)
+                        {
+
+
+                            foreach (var mproject in DirMainRecs)
+                            {
+                                //Get Periorities
+                                var DB_MainProjsPriorities=_wpAUDAPriorityRepository.GetRecordsByMainRecordId(mproject.Transaction_Id);
+                                string rtnstringPriorities = string.Empty;
+                                int prioritycount=0;
+                                foreach(var record in DB_MainProjsPriorities)
+                                {
+                                    prioritycount=prioritycount+1;
+                                    Strategy_Priority priority=_strategyPriorityRepository.GetRecord(record.Priority_Id);
+
+                                    if(prioritycount==DB_MainProjsPriorities.Count())
+                                    {
+                                        rtnstringPriorities += "("+prioritycount.ToString()+") " + priority.Record_Name.TrimEnd();  
+
+                                    }
+                                    else
+                                    {
+                                        rtnstringPriorities += "("+prioritycount.ToString()+") " + priority.Record_Name.TrimEnd()+", ";  
+                                    }
+
+                                }
+
+
+                                
+
+                                //Get WP_RiskProfiles
+
+                                var CategoryRecs=_wpOutputsRepository.GetRecordsByMainRecordId(mproject.Transaction_Id).ToList();
+
+                                
+                                foreach(var record in CategoryRecs)
+                                {
+                                    WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(record.WPMainRecord_id);
+
+                                    //Total Output Budget
+                                    var DB_Activities_Recs=_wpOutputActivitiesRepository.GetRecordsByOutputId(record.Transaction_Id).ToList();
+                                    double output_total_budget=0;
+                                    foreach (var _innerrec in DB_Activities_Recs)
+                                    {
+                                        output_total_budget=output_total_budget+_innerrec.ActivityCost;
+                                    }
+
+                                    WP_OutputsGridVM srec = new WP_OutputsGridVM
+                                    {
+                                        Transaction_IdGVM = record.Transaction_Id,
+                                        WPMainRecord_idGVM = record.WPMainRecord_id,
+                                        Project_IdGVM  = record.Project_Id,
+                                        Project_NameGVM=_lkupProjectRepository.GetRecord(record.Project_Id).Record_Name,
+                                        FiscalYear_IdGVM  = record.FiscalYear_Id,
+                                        Period_IdGVM = record.Period_Id,
+                                        OutputGVM = record.Output,
+                                        WPOutputCostGVM=output_total_budget,
+                                        Strategic_PrioritiesGVM=rtnstringPriorities,
+                                        Directorate_IdGVM = mainrec.Directorate_Id,
+                                        Directorate_NameGVM = _strucDirectorateRepository.GetRecord(mainrec.Directorate_Id).AcronymName,
+                                        Division_IdGVM =  mainrec.Division_Id,
+                                        Division_NameGVM = _strucDivisionRepository.GetRecord(mainrec.Division_Id).Record_Name,
+                                        Cycle_IdGVM = cycleid,
+                                        InstitutionalSelectdedPeriodIdentGVM = periodid
+
+                                    };
+                                     collection_recs.Add(srec);
+
+                                }
+
+                            }
+
+                        }
+
+
+                    }
+
+                }
+
+                //Sorting
+                collection_recs=collection_recs.OrderBy(d => d.Directorate_IdGVM).ThenBy(d => d.Division_IdGVM).ThenBy(d => d.Project_NameGVM).ToList();
+   
+
+
+                
+            }
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
 
 
 

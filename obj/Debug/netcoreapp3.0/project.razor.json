@@ -75963,6 +75963,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/InstitutionalOutputsGrid.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\InstitutionalOutputsGrid.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Account/LoginAssessment.cshtml",
       "TargetPath": "Views\\Account\\LoginAssessment.cshtml",
       "FileKind": "mvc"
@@ -76075,6 +76080,11 @@
     {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Shared/_NEPADStaffLayout_Test.cshtml",
       "TargetPath": "Views\\Shared\\_NEPADStaffLayout_Test.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/InstitutionalOutputsDraftList.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\InstitutionalOutputsDraftList.cshtml",
       "FileKind": "mvc"
     },
     {
