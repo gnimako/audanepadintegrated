@@ -16,6 +16,7 @@ namespace AUDANEPAD_Integrated.ViewModels
         public int  Project_IdGVM  { get; set; }
         public string  Project_NameGVM  { get; set; }
         public int  FiscalYear_IdGVM  { get; set; }
+        public string  FiscalYear_NameGVM  { get; set; }     
         public int  Period_IdGVM  { get; set; }
         public string OutputGVM   { get; set; }
         public int  Employee_IdGVM { get; set; }
@@ -30,6 +31,12 @@ namespace AUDANEPAD_Integrated.ViewModels
 
         public string Strategic_PrioritiesGVM { get; set; }
         public double  WPOutputCostGVM  { get; set; }
+        public double  WPOutputQ1CostGVM  { get; set; }
+        public double  WPOutputQ2CostGVM  { get; set; }
+        public double  WPOutputQ3CostGVM  { get; set; }
+        public double  WPOutputQ4CostGVM  { get; set; }
+
+        public string  WPFundingSourceGVM  { get; set; }
 
         public string Cycle_IdGVM { get; set; }
         public string InstitutionalSelectdedPeriodGVM  { get; set; }

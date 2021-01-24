@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Globalization;
 using AUDANEPAD_Integrated.Interfaces;
 using AUDANEPAD_Integrated.Models;
 using AUDANEPAD_Integrated.ViewModels;
@@ -23,6 +24,7 @@ using System.Threading;
 using NPOI.XSSF.UserModel;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
+using NPOI.SS.Util;
 
 
 namespace AUDANEPAD_Integrated.Controllers
@@ -539,6 +541,688 @@ namespace AUDANEPAD_Integrated.Controllers
             return File(pathtofile, contentType, "Institutional_Procurement_Plan_" +_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name +"_" +periodname+".xlsx");
 
         }
+
+
+        public FileResult InstitutionalOutputsFullExcel(string id, string periodid)
+        {
+            IWorkbook workbook;
+            string path=@"wwwroot/appdirectory/excelreports/institutional/finance/SAP_Budget_Load_Template_Annual.xlsx";
+
+
+            WP_DispatchCycle cyclerec=_wpDispatchCycleRepository.GetRecord(id);
+            string pathtofile_save="";
+
+           
+      
+            string periodname="";
+            if(periodid=="1")
+                periodname="Q1";
+            else if (periodid=="2")
+                periodname="Q2";
+            else if (periodid=="3")
+                periodname="Q3";
+            else if (periodid=="4")
+                periodname="Q4"; 
+            else if (periodid=="5")
+                periodname="Semester_1"; 
+            else if (periodid=="6")
+                periodname="Semester_2";
+            else if (periodid=="7")
+                periodname="Annual";
+            else
+            {
+                DateTime pstart=new DateTime(cyclerec.PeriodStartDate.Year, cyclerec.PeriodStartDate.Month, cyclerec.PeriodStartDate.Day);
+                DateTime pend=new DateTime(cyclerec.PeriodEndDate.Year, cyclerec.PeriodEndDate.Month, cyclerec.PeriodEndDate.Day);
+                periodname=pstart.Date.ToString("MMM d, yyyy") + " - "+ pend.Date.ToString("MMM d, yyyy"); 
+                
+            }
+
+            pathtofile_save=@"wwwroot/appdirectory/excelreports/institutional/finance/Institutional_Workplan_Budget_Lines_" +_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name +"_" +periodname+".xlsx";
+           
+
+
+            try
+            {
+                //OPENING TEMPLATE STARTS HERE....
+                    FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+                    // Try to read workbook as XLSX:
+                    try
+                    {
+                        workbook = new XSSFWorkbook(fs);
+                    }
+                    catch
+                    {
+                        workbook = null;
+                    }
+
+                    // If reading fails, try to read workbook as XLS:
+                    if (workbook == null)
+                    {
+                        workbook = new HSSFWorkbook(fs);
+                    }
+                //OPENING TEMPLATE ENDS HERE....
+
+
+                //EDITING TEMPLATE STARTS HERE....
+                List<WP_OutputsGridVM> collection_recs = new List<WP_OutputsGridVM>();
+
+            
+
+            
+
+                if (id != null && periodid!=null)
+                {
+                    
+
+                    var DB_Records = _transStrucDirectorateRepository.GetAllRecords().ToList();
+                    int _countrecs =  DB_Records.Count();
+
+                    if(_countrecs>0)
+                    {
+                        foreach (var rec_set in DB_Records)
+                        {
+                            var DirMainRecs=_wpMainRecordRepository.GetRecordsByDirRecs(rec_set.Record_Id).ToList();
+                                    
+
+                            //Fetch the Directorate Project Records that correspond the cycle 
+                            if(cyclerec.Period_Id==8)
+                            {
+                                DirMainRecs=_wpMainRecordRepository.GetRecordsByDirectorateYearAndPeriodStartEnd(rec_set.Record_Id, cyclerec.FiscalYear_Id,cyclerec.Period_Id, cyclerec.PeriodStartDate, cyclerec.PeriodEndDate).ToList();
+                            }
+                            else
+                            {
+                                DirMainRecs=_wpMainRecordRepository.GetRecordsByDirectorateYearAndPeriod(rec_set.Record_Id, cyclerec.FiscalYear_Id,cyclerec.Period_Id).ToList();
+                            }
+
+                            if(DirMainRecs.Count()>0)
+                            {
+
+
+                                foreach (var mproject in DirMainRecs)
+                                {
+                                    //Get Periorities
+                                    var DB_MainProjsPriorities=_wpAUDAPriorityRepository.GetRecordsByMainRecordId(mproject.Transaction_Id);
+                                    string rtnstringPriorities = string.Empty;
+                                    int prioritycount=0;
+                                    foreach(var record in DB_MainProjsPriorities)
+                                    {
+                                        prioritycount=prioritycount+1;
+                                        Strategy_Priority priority=_strategyPriorityRepository.GetRecord(record.Priority_Id);
+
+                                        if(prioritycount==DB_MainProjsPriorities.Count())
+                                        {
+                                            rtnstringPriorities += "("+prioritycount.ToString()+") " + priority.Record_Name.TrimEnd();  
+
+                                        }
+                                        else
+                                        {
+                                            rtnstringPriorities += "("+prioritycount.ToString()+") " + priority.Record_Name.TrimEnd()+", ";  
+                                        }
+
+                                    }
+
+
+                                    
+
+                                    //Get WP_RiskProfiles
+
+                                    var CategoryRecs=_wpOutputsRepository.GetRecordsByMainRecordId(mproject.Transaction_Id).ToList();
+
+                                    
+                                    foreach(var record in CategoryRecs)
+                                    {
+                                        int ms_count=0;
+                                        int dp_count=0;
+                                        string fundssource="";
+
+                                        WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(record.WPMainRecord_id);
+
+                                        //Total Output Budget
+                                        var DB_Activities_Recs=_wpOutputActivitiesRepository.GetRecordsByOutputId(record.Transaction_Id).ToList();
+                                        double output_total_budget=0;
+                                        foreach (var _innerrec in DB_Activities_Recs)
+                                        {
+                                            output_total_budget=output_total_budget+_innerrec.ActivityCost;
+
+                                            if(_innerrec.PartnerFunding==true)
+                                            {
+                                                dp_count=dp_count+1;
+                                            }
+                                            else
+                                            {
+                                                ms_count=ms_count+1;
+                                            }
+                                        }
+
+                                        if(dp_count>ms_count)
+                                        {
+                                            WP_OutputActivities refactivity=_wpOutputActivitiesRepository.GetRecordsByMainRecordOutputIdDPStatusRecord(mainrec.Transaction_Id, record.Transaction_Id, true);
+                                            if(refactivity.PartnerFunding==true && refactivity.PartnerFundingDescr!=null)
+                                            {
+                                                fundssource="DP ("+refactivity.PartnerFundingDescr+")";
+                                            }
+                                            else if (refactivity.PartnerFunding==true && refactivity.PartnerFundingDescr!=null)
+                                            {
+                                                fundssource="DP";
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            fundssource="MS";
+                                        }
+
+
+
+
+                                        WP_OutputsGridVM srec = new WP_OutputsGridVM
+                                        {
+                                            Transaction_IdGVM = record.Transaction_Id,
+                                            WPMainRecord_idGVM = record.WPMainRecord_id,
+                                            Project_IdGVM  = record.Project_Id,
+                                            Project_NameGVM=_lkupProjectRepository.GetRecord(record.Project_Id).Record_Name,
+                                            FiscalYear_IdGVM  = record.FiscalYear_Id,
+                                            FiscalYear_NameGVM=_lkupFiscalYearRepository.GetRecord(record.FiscalYear_Id).Record_Name,
+                                            Period_IdGVM = record.Period_Id,
+                                            OutputGVM = record.Output,
+                                            WPOutputCostGVM=output_total_budget,
+                                            WPOutputQ1CostGVM=0,
+                                            WPOutputQ2CostGVM=0,
+                                            WPOutputQ3CostGVM=0,
+                                            WPOutputQ4CostGVM=0,
+                                            WPFundingSourceGVM=fundssource,
+                                            Strategic_PrioritiesGVM=rtnstringPriorities,
+                                            Directorate_IdGVM = mainrec.Directorate_Id,
+                                            Directorate_NameGVM = _strucDirectorateRepository.GetRecord(mainrec.Directorate_Id).AcronymName,
+                                            Division_IdGVM =  mainrec.Division_Id,
+                                            Division_NameGVM = _strucDivisionRepository.GetRecord(mainrec.Division_Id).Record_Name,
+                                            Cycle_IdGVM = id,
+                                            InstitutionalSelectdedPeriodIdentGVM = periodid
+
+                                        };
+                                        collection_recs.Add(srec);
+
+                                    }
+
+                                }
+
+                            }
+
+
+                        }
+
+                    }
+
+                    //Sorting
+                    collection_recs=collection_recs.OrderBy(d => d.Directorate_IdGVM).ThenBy(d => d.Division_IdGVM).ThenBy(d => d.Project_NameGVM).ToList();
+    
+
+
+                    
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+                
+
+                IFont fontnormal = workbook.CreateFont();
+                fontnormal.IsBold = false;
+                fontnormal.FontHeightInPoints = 11;
+                fontnormal.FontName="Arial";
+
+                IFont fontnormalbold = workbook.CreateFont();
+                fontnormalbold.IsBold = true;
+                fontnormalbold.FontHeightInPoints = 11;
+                fontnormalbold.FontName="Arial";
+
+                ICellStyle cellStyleNormal = workbook.CreateCellStyle();
+                cellStyleNormal.SetFont(fontnormal);
+                cellStyleNormal.BorderLeft = BorderStyle.Thin;
+                cellStyleNormal.BorderTop = BorderStyle.Thin;
+                cellStyleNormal.BorderRight = BorderStyle.Thin;
+                cellStyleNormal.BorderBottom = BorderStyle.Thin;
+                cellStyleNormal.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleNormal.Alignment =HorizontalAlignment.Left;
+                cellStyleNormal.WrapText=true;
+                cellStyleNormal.FillForegroundColor=26;
+                cellStyleNormal.FillPattern=FillPattern.SolidForeground; 
+
+                ICellStyle cellStyleNormalRight = workbook.CreateCellStyle();
+                cellStyleNormalRight.SetFont(fontnormal);
+                cellStyleNormalRight.BorderLeft = BorderStyle.Thin;
+                cellStyleNormalRight.BorderTop = BorderStyle.Thin;
+                cellStyleNormalRight.BorderRight = BorderStyle.Thin;
+                cellStyleNormalRight.BorderBottom = BorderStyle.Thin;
+                cellStyleNormalRight.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleNormalRight.Alignment =HorizontalAlignment.Right;
+                cellStyleNormalRight.WrapText=true;
+                cellStyleNormalRight.FillForegroundColor=26;
+                cellStyleNormalRight.FillPattern=FillPattern.SolidForeground; 
+
+                ICellStyle cellStyleYellowNormalSTART = workbook.CreateCellStyle();
+                cellStyleYellowNormalSTART.SetFont(fontnormal);
+                cellStyleYellowNormalSTART.BorderLeft = BorderStyle.Thin;
+                cellStyleYellowNormalSTART.BorderTop = BorderStyle.Thin;
+                cellStyleYellowNormalSTART.BorderRight = BorderStyle.None;
+                cellStyleYellowNormalSTART.BorderBottom = BorderStyle.Thin;
+                cellStyleYellowNormalSTART.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleYellowNormalSTART.Alignment =HorizontalAlignment.Left;
+                cellStyleYellowNormalSTART.WrapText=true;
+                cellStyleYellowNormalSTART.FillForegroundColor=13;
+                cellStyleYellowNormalSTART.FillPattern=FillPattern.SolidForeground; 
+
+                ICellStyle cellStyleYellowNormalEND = workbook.CreateCellStyle();
+                cellStyleYellowNormalEND.SetFont(fontnormalbold);
+                cellStyleYellowNormalEND.BorderLeft = BorderStyle.None;
+                cellStyleYellowNormalEND.BorderTop = BorderStyle.Thin;
+                cellStyleYellowNormalEND.BorderRight = BorderStyle.Thin;
+                cellStyleYellowNormalEND.BorderBottom = BorderStyle.Thin;
+                cellStyleYellowNormalEND.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleYellowNormalEND.Alignment =HorizontalAlignment.Right;
+                cellStyleYellowNormalEND.WrapText=true;
+                cellStyleYellowNormalEND.FillForegroundColor=13;
+                cellStyleYellowNormalEND.FillPattern=FillPattern.SolidForeground; 
+
+                ICellStyle cellStyleYellowNormal = workbook.CreateCellStyle();
+                cellStyleYellowNormal.SetFont(fontnormalbold);
+                cellStyleYellowNormal.BorderLeft = BorderStyle.Thin;
+                cellStyleYellowNormal.BorderTop = BorderStyle.Thin;
+                cellStyleYellowNormal.BorderRight = BorderStyle.Thin;
+                cellStyleYellowNormal.BorderBottom = BorderStyle.Thin;
+                cellStyleYellowNormal.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleYellowNormal.Alignment =HorizontalAlignment.Left;
+                cellStyleYellowNormal.WrapText=true;
+                cellStyleYellowNormal.FillForegroundColor=13;
+                cellStyleYellowNormal.FillPattern=FillPattern.SolidForeground; 
+
+                ICellStyle cellStyleNormalYellowRight = workbook.CreateCellStyle();
+                cellStyleNormalYellowRight.SetFont(fontnormalbold);
+                cellStyleNormalYellowRight.BorderLeft = BorderStyle.Thin;
+                cellStyleNormalYellowRight.BorderTop = BorderStyle.Thin;
+                cellStyleNormalYellowRight.BorderRight = BorderStyle.Thin;
+                cellStyleNormalYellowRight.BorderBottom = BorderStyle.Thin;
+                cellStyleNormalYellowRight.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleNormalYellowRight.Alignment =HorizontalAlignment.Right;
+                cellStyleNormalYellowRight.WrapText=true;
+                cellStyleNormalYellowRight.FillForegroundColor=13;
+                cellStyleNormalYellowRight.FillPattern=FillPattern.SolidForeground; 
+
+
+
+
+
+                ICellStyle cellStyleYellowNormalMiddle = workbook.CreateCellStyle();
+                cellStyleYellowNormalMiddle.SetFont(fontnormalbold);
+                cellStyleYellowNormalMiddle.BorderLeft = BorderStyle.None;
+                cellStyleYellowNormalMiddle.BorderTop = BorderStyle.Thin;
+                cellStyleYellowNormalMiddle.BorderRight = BorderStyle.None;
+                cellStyleYellowNormalMiddle.BorderBottom = BorderStyle.Thin;
+                cellStyleYellowNormalMiddle.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleYellowNormalMiddle.Alignment =HorizontalAlignment.Left;
+                cellStyleYellowNormalMiddle.WrapText=true;
+                cellStyleYellowNormalMiddle.FillForegroundColor=13;
+                cellStyleYellowNormalMiddle.FillPattern=FillPattern.SolidForeground; 
+
+                ICellStyle cellStyleNormalYellowRightMiddle = workbook.CreateCellStyle();
+                cellStyleNormalYellowRightMiddle.SetFont(fontnormalbold);
+                cellStyleNormalYellowRightMiddle.BorderLeft = BorderStyle.None;
+                cellStyleNormalYellowRightMiddle.BorderTop = BorderStyle.Thin;
+                cellStyleNormalYellowRightMiddle.BorderRight = BorderStyle.None;
+                cellStyleNormalYellowRightMiddle.BorderBottom = BorderStyle.Thin;
+                cellStyleNormalYellowRightMiddle.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleNormalYellowRightMiddle.Alignment =HorizontalAlignment.Right;
+                cellStyleNormalYellowRightMiddle.WrapText=true;
+                cellStyleNormalYellowRightMiddle.FillForegroundColor=13;
+                cellStyleNormalYellowRightMiddle.FillPattern=FillPattern.SolidForeground; 
+
+
+                ICellStyle cellStyleNormalGRAY = workbook.CreateCellStyle();
+                cellStyleNormalGRAY.SetFont(fontnormal);
+                cellStyleNormalGRAY.BorderLeft = BorderStyle.Thin;
+                cellStyleNormalGRAY.BorderTop = BorderStyle.Thin;
+                cellStyleNormalGRAY.BorderRight = BorderStyle.Thin;
+                cellStyleNormalGRAY.BorderBottom = BorderStyle.Thin;
+                cellStyleNormalGRAY.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleNormalGRAY.Alignment =HorizontalAlignment.Left;
+                cellStyleNormalGRAY.WrapText=true;
+                cellStyleNormalGRAY.FillForegroundColor=22;
+                cellStyleNormalGRAY.FillPattern=FillPattern.SolidForeground; 
+
+                
+
+                ICellStyle cellStyleNumber = workbook.CreateCellStyle();
+                cellStyleNumber.SetFont(fontnormal);
+                cellStyleNumber.BorderLeft = BorderStyle.Thin;
+                cellStyleNumber.BorderTop = BorderStyle.Thin;
+                cellStyleNumber.BorderRight = BorderStyle.Thin;
+                cellStyleNumber.BorderBottom = BorderStyle.Thin;
+                cellStyleNumber.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleNumber.Alignment =HorizontalAlignment.Right;
+                cellStyleNumber.WrapText=true;
+                cellStyleNumber.FillForegroundColor=26;
+                cellStyleNumber.FillPattern=FillPattern.SolidForeground; 
+                
+
+
+                ISheet worksheet = workbook.GetSheetAt(1);
+
+                int i=1;
+                int _countrecords=0;
+
+                double q1total=0;
+                double q2total=0;
+                double q3total=0;
+                double q4total=0;
+                double annualtotal=0;
+               
+                foreach(var record in collection_recs)
+                {
+
+                    if(record.WPOutputCostGVM>0)
+                    {
+                        i=i+1;
+                        _countrecords=_countrecords+1;
+                        IRow row = worksheet.CreateRow(i);
+
+                        q1total=q1total+record.WPOutputQ1CostGVM;
+                        q2total=q2total+record.WPOutputQ2CostGVM;
+                        q3total=q3total+record.WPOutputQ3CostGVM;
+                        q4total=q4total+record.WPOutputQ4CostGVM;
+                        annualtotal=annualtotal+record.WPOutputCostGVM;
+
+                    // CreateCell(row, 0, "Recruit Junior Programming consultant to support in the finalisation of the integrated work plan application", borderedCellStylenormal);
+                    
+
+                
+
+                        ICell Cell0 = row.CreateCell(0);
+                        Cell0.SetCellValue("");
+                        Cell0.CellStyle = cellStyleNormalGRAY;
+
+
+                        
+                        ICell Cell1 = row.CreateCell(1);
+                        Cell1.SetCellValue(record.FiscalYear_NameGVM);
+                        Cell1.CellStyle = cellStyleNumber;
+
+                        ICell Cell2 = row.CreateCell(2);
+                        Cell2.SetCellValue(record.Strategic_PrioritiesGVM);
+                        Cell2.CellStyle = cellStyleNormal;
+
+                        ICell Cell3 = row.CreateCell(3);
+                        Cell3.SetCellValue(record.Directorate_NameGVM);
+                        Cell3.CellStyle = cellStyleNormal;
+
+                        ICell Cell4 = row.CreateCell(4);
+                        Cell4.SetCellValue(record.Division_NameGVM);
+                        Cell4.CellStyle = cellStyleNormal;
+
+                        ICell Cell5 = row.CreateCell(5);
+                        Cell5.SetCellValue(record.Project_NameGVM);
+                        Cell5.CellStyle = cellStyleNormal;
+
+                        ICell Cell6 = row.CreateCell(6);
+                        Cell6.SetCellValue(record.WPFundingSourceGVM);
+                        Cell6.CellStyle = cellStyleNormal;
+
+                        ICell Cell7 = row.CreateCell(7);
+                        Cell7.SetCellValue(record.OutputGVM);
+                        Cell7.CellStyle = cellStyleNormal;
+
+                        ICell Cell8 = row.CreateCell(8);
+                        Cell8.SetCellValue("");
+                        Cell8.CellStyle = cellStyleNormal;
+
+                    
+
+                        //Q1
+                        ICell Cell9 = row.CreateCell(9);
+                        Cell9.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ1CostGVM));
+                        Cell9.CellStyle = cellStyleNumber;
+
+                        ICell Cell10 = row.CreateCell(10);
+                        Cell10.SetCellValue("");
+                        Cell10.CellStyle = cellStyleNormalRight;
+
+                        //Q2
+                        ICell Cell11 = row.CreateCell(11);
+                        Cell11.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ2CostGVM));
+                        Cell11.CellStyle = cellStyleNumber;
+
+                        ICell Cell12 = row.CreateCell(12);
+                        Cell12.SetCellValue("");
+                        Cell12.CellStyle = cellStyleNormalRight;
+
+                        //Q3
+                        ICell Cell13 = row.CreateCell(13);
+                        Cell13.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ3CostGVM));
+                        Cell13.CellStyle = cellStyleNumber;
+
+                        ICell Cell14 = row.CreateCell(14);
+                        Cell14.SetCellValue("");
+                        Cell14.CellStyle = cellStyleNormalRight;
+
+                        //Q4
+                        ICell Cell15 = row.CreateCell(15);
+                        Cell15.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ4CostGVM));
+                        Cell15.CellStyle = cellStyleNumber;
+
+                        ICell Cell16 = row.CreateCell(16);
+                        Cell16.SetCellValue("");
+                        Cell16.CellStyle = cellStyleNormalRight;
+
+                        //Annual
+                        ICell Cell17 = row.CreateCell(17);
+                        Cell17.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputCostGVM));
+                        Cell17.CellStyle = cellStyleNumber;
+
+                        ICell Cell18 = row.CreateCell(18);
+                        Cell18.SetCellValue("");
+                        Cell18.CellStyle = cellStyleNormalRight;
+
+                        //GRAY AREA
+                        ICell Cell19 = row.CreateCell(19);
+                        Cell19.SetCellValue("");
+                        Cell19.CellStyle = cellStyleNormalGRAY;
+
+                        ICell Cell20 = row.CreateCell(20);
+                        Cell20.SetCellValue("");
+                        Cell20.CellStyle = cellStyleNormalGRAY;
+
+                        
+
+                    }
+                }
+
+                IRow rowtot = worksheet.CreateRow(_countrecords+2);
+
+                ICell Celltot0 = rowtot.CreateCell(0);
+                Celltot0.SetCellValue("");
+                Celltot0.CellStyle = cellStyleNormalGRAY;
+
+                ICell Celltot1 = rowtot.CreateCell(1);
+                Celltot1.SetCellValue("");
+                Celltot1.CellStyle = cellStyleYellowNormalSTART;
+
+                ICell Celltot2 = rowtot.CreateCell(2);
+                Celltot2.SetCellValue("");
+                Celltot2.CellStyle = cellStyleYellowNormalMiddle;
+
+                ICell Celltot3 = rowtot.CreateCell(3);
+                Celltot3.SetCellValue("");
+                Celltot3.CellStyle = cellStyleYellowNormalMiddle;
+
+                ICell Celltot4 = rowtot.CreateCell(4);
+                Celltot4.SetCellValue("");
+                Celltot4.CellStyle = cellStyleYellowNormalMiddle;
+
+                ICell Celltot5 = rowtot.CreateCell(5);
+                Celltot5.SetCellValue("");
+                Celltot5.CellStyle = cellStyleYellowNormalMiddle;
+
+                ICell Celltot6 = rowtot.CreateCell(6);
+                Celltot6.SetCellValue("");
+                Celltot6.CellStyle = cellStyleYellowNormalMiddle;
+
+                ICell Celltot7 = rowtot.CreateCell(7);
+                Celltot7.SetCellValue("");
+                Celltot7.CellStyle = cellStyleYellowNormalMiddle;
+
+                ICell Celltot8 = rowtot.CreateCell(8);
+                Celltot8.SetCellValue("TOTALS");
+                Celltot8.CellStyle = cellStyleYellowNormalEND;
+
+
+                //Q1
+                ICell Celltot9 = rowtot.CreateCell(9);
+                Celltot9.SetCellValue(ExcelDoubleToStringFormat(q1total));
+                Celltot9.CellStyle = cellStyleNormalYellowRight;
+
+                ICell Celltot10 = rowtot.CreateCell(10);
+                Celltot10.SetCellValue("");
+                Celltot10.CellStyle = cellStyleNormalYellowRight;
+
+                //Q2
+                ICell Celltot11 = rowtot.CreateCell(11);
+                Celltot11.SetCellValue(ExcelDoubleToStringFormat(q2total));
+                Celltot11.CellStyle = cellStyleNormalYellowRight;
+
+                ICell Celltot12 = rowtot.CreateCell(12);
+                Celltot12.SetCellValue("");
+                Celltot12.CellStyle = cellStyleNormalYellowRight;
+
+                //Q3
+                ICell Celltot13 = rowtot.CreateCell(13);
+                Celltot13.SetCellValue(ExcelDoubleToStringFormat(q3total));
+                Celltot13.CellStyle = cellStyleNormalYellowRight;
+
+                ICell Celltot14 = rowtot.CreateCell(14);
+                Celltot14.SetCellValue("");
+                Celltot14.CellStyle = cellStyleNormalYellowRight;
+
+                //Q4
+                ICell Celltot15 = rowtot.CreateCell(15);
+                Celltot15.SetCellValue(ExcelDoubleToStringFormat(q4total));
+                Celltot15.CellStyle = cellStyleNormalYellowRight;
+
+                ICell Celltot16 = rowtot.CreateCell(16);
+                Celltot16.SetCellValue("");
+                Celltot16.CellStyle = cellStyleNormalYellowRight;
+
+                //Annual
+                ICell Celltot17 = rowtot.CreateCell(17);
+                Celltot17.SetCellValue(ExcelDoubleToStringFormat(annualtotal));
+                Celltot17.CellStyle = cellStyleNormalYellowRight;
+
+                ICell Celltot18 = rowtot.CreateCell(18);
+                Celltot18.SetCellValue("");
+                Celltot18.CellStyle = cellStyleNormalYellowRight;
+
+                
+
+                //GRAY AREA
+                ICell Celltot19 = rowtot.CreateCell(19);
+                Celltot19.SetCellValue("");
+                Celltot19.CellStyle = cellStyleNormalGRAY;
+
+                ICell Celltot20 = rowtot.CreateCell(20);
+                Celltot20.SetCellValue("");
+                Celltot20.CellStyle = cellStyleNormalGRAY;
+
+       
+       
+       
+
+
+                //EDITING T TEMPLATE ENDS HERE....
+
+
+
+
+
+
+
+
+                //SAVING TEMPLATE STARTS HERE....
+
+                using (FileStream stream = new FileStream(pathtofile_save, FileMode.Create, FileAccess.Write))
+                {
+                    workbook.Write(stream);
+                } 
+
+
+                //SAVING TEMPLATE ENDS HERE....
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+            }
+           
+           
+           
+           
+           
+           
+            
+
+            
+
+
+
+            //Save File Ends Here...
+
+
+            
+
+
+
+
+
+
+            string contentType =  "application/vnd.ms-excel";//"application/pdf"
+           // string pathtofile=@"wwwroot/appdirectory/excelreports/institutional/Procurement_Plan_2021.xlsx";
+            
+            string pathtofile="/appdirectory/excelreports/institutional/finance/Institutional_Workplan_Budget_Lines_" +_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name +"_" +periodname+".xlsx";
+           
+            
+
+
+
+
+            return File(pathtofile, contentType, "Institutional_Workplan_Budget_Lines_" +_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name +"_" +periodname+".xlsx");
+
+        }
+
+        private string ExcelDoubleToStringFormat(double value)
+        {
+            string rtnval="";
+
+             var f = new NumberFormatInfo {NumberGroupSeparator = " "};
+              
+            rtnval=value.ToString("N0", f);
+
+
+            return rtnval;
+        }
+
+
+
+
         private void CreateCell(IRow CurrentRow, int CellIndex, string Value, HSSFCellStyle Style)
         {
             ICell Cell = CurrentRow.CreateCell(CellIndex);
