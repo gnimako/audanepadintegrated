@@ -30,6 +30,7 @@ namespace AUDANEPAD_Integrated.ViewModels
         public string Division_NameGVM { get; set; }
 
         public string Strategic_PrioritiesGVM { get; set; }
+        public int Strategic_PriorityIdGVM { get; set; }
         public double  WPOutputCostGVM  { get; set; }
         public double  WPOutputQ1CostGVM  { get; set; }
         public double  WPOutputQ2CostGVM  { get; set; }

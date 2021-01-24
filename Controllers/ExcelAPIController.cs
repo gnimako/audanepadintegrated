@@ -606,6 +606,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 //EDITING TEMPLATE STARTS HERE....
                 List<WP_OutputsGridVM> collection_recs = new List<WP_OutputsGridVM>();
+                List<WP_OutputsGridVM> collection_recs_details = new List<WP_OutputsGridVM>();
 
             
 
@@ -1202,6 +1203,63 @@ namespace AUDANEPAD_Integrated.Controllers
                                         };
                                         collection_recs.Add(srec);
 
+
+
+
+                                        var DB_MainProjsPriorities_Det=_wpAUDAPriorityRepository.GetRecordsByMainRecordId(mainrec.Transaction_Id);
+                                        double denominator=Convert.ToDouble(DB_MainProjsPriorities_Det.Count());
+
+                                        double output_total_budget_det=0;
+                                        double q1_output_budget_det=0;
+                                        double q2_output_budget_det=0;
+                                        double q3_output_budget_det=0;
+                                        double q4_output_budget_det=0;
+                                       
+                                        foreach(var recordset in DB_MainProjsPriorities_Det)
+                                        {
+                                            if(denominator!=0)
+                                            {
+                                                output_total_budget_det=output_total_budget/denominator;
+                                                q1_output_budget_det=q1_output_budget/denominator;
+                                                q2_output_budget_det=q2_output_budget/denominator;
+                                                q3_output_budget_det=q3_output_budget/denominator;
+                                                q4_output_budget_det=q4_output_budget/denominator;
+                                            }
+
+
+
+
+
+                                            WP_OutputsGridVM srec_detail = new WP_OutputsGridVM
+                                            {
+                                                Transaction_IdGVM = record.Transaction_Id,
+                                                WPMainRecord_idGVM = record.WPMainRecord_id,
+                                                Project_IdGVM  = record.Project_Id,
+                                                Project_NameGVM=_lkupProjectRepository.GetRecord(record.Project_Id).Record_Name,
+                                                FiscalYear_IdGVM  = record.FiscalYear_Id,
+                                                FiscalYear_NameGVM=_lkupFiscalYearRepository.GetRecord(record.FiscalYear_Id).Record_Name,
+                                                Period_IdGVM = record.Period_Id,
+                                                OutputGVM = record.Output,
+                                                WPOutputCostGVM=output_total_budget_det,
+                                                WPOutputQ1CostGVM=q1_output_budget_det,
+                                                WPOutputQ2CostGVM=q2_output_budget_det,
+                                                WPOutputQ3CostGVM=q3_output_budget_det,
+                                                WPOutputQ4CostGVM=q4_output_budget_det,
+                                                WPFundingSourceGVM=fundssource,
+                                                Strategic_PriorityIdGVM=recordset.Priority_Id,
+                                                Strategic_PrioritiesGVM=_strategyPriorityRepository.GetRecord(recordset.Priority_Id).Record_Name,
+                                                Directorate_IdGVM = mainrec.Directorate_Id,
+                                                Directorate_NameGVM = _strucDirectorateRepository.GetRecord(mainrec.Directorate_Id).AcronymName,
+                                                Division_IdGVM =  mainrec.Division_Id,
+                                                Division_NameGVM = _strucDivisionRepository.GetRecord(mainrec.Division_Id).Record_Name,
+                                                Cycle_IdGVM = id,
+                                                InstitutionalSelectdedPeriodIdentGVM = periodid
+
+                                            };
+                                            collection_recs_details.Add(srec_detail);
+
+                                        }
+
                                     }
 
                                 }
@@ -1213,9 +1271,9 @@ namespace AUDANEPAD_Integrated.Controllers
 
                     }
 
-                    //Sorting
+                    //Sorting Directorate_IdGVM
                     collection_recs=collection_recs.OrderBy(d => d.Directorate_IdGVM).ThenBy(d => d.Division_IdGVM).ThenBy(d => d.Project_NameGVM).ToList();
-    
+                    collection_recs_details=collection_recs_details.OrderBy(d => d.Strategic_PriorityIdGVM).ThenBy(d => d.Directorate_IdGVM).ThenBy(d => d.Division_IdGVM).ThenBy(d => d.Project_NameGVM).ToList();
 
 
                     
@@ -1600,6 +1658,233 @@ namespace AUDANEPAD_Integrated.Controllers
 
        
        
+
+                //FIRST WORKSHEET
+
+                ISheet worksheet0 = workbook.GetSheetAt(0);
+
+                i=1;
+                _countrecords=0;
+
+                q1total=0;
+                q2total=0;
+                q3total=0;
+                q4total=0;
+                annualtotal=0;
+               
+                foreach(var record in collection_recs_details)
+                {
+
+                    if(record.WPOutputCostGVM>0)
+                    {
+                        i=i+1;
+                        _countrecords=_countrecords+1;
+                        IRow row = worksheet0.CreateRow(i);
+
+                        q1total=q1total+record.WPOutputQ1CostGVM;
+                        q2total=q2total+record.WPOutputQ2CostGVM;
+                        q3total=q3total+record.WPOutputQ3CostGVM;
+                        q4total=q4total+record.WPOutputQ4CostGVM;
+                        annualtotal=annualtotal+record.WPOutputCostGVM;
+
+                    // CreateCell(row, 0, "Recruit Junior Programming consultant to support in the finalisation of the integrated work plan application", borderedCellStylenormal);
+                    
+
+                
+
+                        ICell Cell0 = row.CreateCell(0);
+                        Cell0.SetCellValue("");
+                        Cell0.CellStyle = cellStyleNormalGRAY;
+
+
+                        
+                        ICell Cell1 = row.CreateCell(1);
+                        Cell1.SetCellValue(record.FiscalYear_NameGVM);
+                        Cell1.CellStyle = cellStyleNumber;
+
+                        ICell Cell2 = row.CreateCell(2);
+                        Cell2.SetCellValue(record.Strategic_PrioritiesGVM);
+                        Cell2.CellStyle = cellStyleNormal;
+
+                        ICell Cell3 = row.CreateCell(3);
+                        Cell3.SetCellValue(record.Directorate_NameGVM);
+                        Cell3.CellStyle = cellStyleNormal;
+
+                        ICell Cell4 = row.CreateCell(4);
+                        Cell4.SetCellValue(record.Division_NameGVM);
+                        Cell4.CellStyle = cellStyleNormal;
+
+                        ICell Cell5 = row.CreateCell(5);
+                        Cell5.SetCellValue(record.Project_NameGVM);
+                        Cell5.CellStyle = cellStyleNormal;
+
+                        ICell Cell6 = row.CreateCell(6);
+                        Cell6.SetCellValue(record.WPFundingSourceGVM);
+                        Cell6.CellStyle = cellStyleNormal;
+
+                        ICell Cell7 = row.CreateCell(7);
+                        Cell7.SetCellValue(record.OutputGVM);
+                        Cell7.CellStyle = cellStyleNormal;
+
+                        ICell Cell8 = row.CreateCell(8);
+                        Cell8.SetCellValue("");
+                        Cell8.CellStyle = cellStyleNormal;
+
+                    
+
+                        //Q1
+                        ICell Cell9 = row.CreateCell(9);
+                        Cell9.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ1CostGVM));
+                        Cell9.CellStyle = cellStyleNumber;
+
+                        ICell Cell10 = row.CreateCell(10);
+                        Cell10.SetCellValue("");
+                        Cell10.CellStyle = cellStyleNormalRight;
+
+                        //Q2
+                        ICell Cell11 = row.CreateCell(11);
+                        Cell11.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ2CostGVM));
+                        Cell11.CellStyle = cellStyleNumber;
+
+                        ICell Cell12 = row.CreateCell(12);
+                        Cell12.SetCellValue("");
+                        Cell12.CellStyle = cellStyleNormalRight;
+
+                        //Q3
+                        ICell Cell13 = row.CreateCell(13);
+                        Cell13.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ3CostGVM));
+                        Cell13.CellStyle = cellStyleNumber;
+
+                        ICell Cell14 = row.CreateCell(14);
+                        Cell14.SetCellValue("");
+                        Cell14.CellStyle = cellStyleNormalRight;
+
+                        //Q4
+                        ICell Cell15 = row.CreateCell(15);
+                        Cell15.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ4CostGVM));
+                        Cell15.CellStyle = cellStyleNumber;
+
+                        ICell Cell16 = row.CreateCell(16);
+                        Cell16.SetCellValue("");
+                        Cell16.CellStyle = cellStyleNormalRight;
+
+                        //Annual
+                        ICell Cell17 = row.CreateCell(17);
+                        Cell17.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputCostGVM));
+                        Cell17.CellStyle = cellStyleNumber;
+
+                        ICell Cell18 = row.CreateCell(18);
+                        Cell18.SetCellValue("");
+                        Cell18.CellStyle = cellStyleNormalRight;
+
+                        //GRAY AREA
+                        ICell Cell19 = row.CreateCell(19);
+                        Cell19.SetCellValue("");
+                        Cell19.CellStyle = cellStyleNormalGRAY;
+
+                        ICell Cell20 = row.CreateCell(20);
+                        Cell20.SetCellValue("");
+                        Cell20.CellStyle = cellStyleNormalGRAY;
+
+                        
+
+                    }
+                }
+
+                IRow rowtot0 = worksheet0.CreateRow(_countrecords+2);
+
+                ICell Celltot00 = rowtot0.CreateCell(0);
+                Celltot00.SetCellValue("");
+                Celltot00.CellStyle = cellStyleNormalGRAY;
+
+                ICell Celltot100 = rowtot0.CreateCell(1);
+                Celltot100.SetCellValue("");
+                Celltot100.CellStyle = cellStyleYellowNormalSTART;
+
+                ICell Celltot200 = rowtot0.CreateCell(2);
+                Celltot200.SetCellValue("");
+                Celltot200.CellStyle = cellStyleYellowNormalMiddle;
+
+                ICell Celltot30 = rowtot0.CreateCell(3);
+                Celltot30.SetCellValue("");
+                Celltot30.CellStyle = cellStyleYellowNormalMiddle;
+
+                ICell Celltot40 = rowtot0.CreateCell(4);
+                Celltot40.SetCellValue("");
+                Celltot40.CellStyle = cellStyleYellowNormalMiddle;
+
+                ICell Celltot50 = rowtot0.CreateCell(5);
+                Celltot50.SetCellValue("");
+                Celltot50.CellStyle = cellStyleYellowNormalMiddle;
+
+                ICell Celltot60 = rowtot0.CreateCell(6);
+                Celltot60.SetCellValue("");
+                Celltot60.CellStyle = cellStyleYellowNormalMiddle;
+
+                ICell Celltot70 = rowtot0.CreateCell(7);
+                Celltot70.SetCellValue("");
+                Celltot70.CellStyle = cellStyleYellowNormalMiddle;
+
+                ICell Celltot80 = rowtot0.CreateCell(8);
+                Celltot80.SetCellValue("TOTALS");
+                Celltot80.CellStyle = cellStyleYellowNormalEND;
+
+
+                //Q1
+                ICell Celltot90 = rowtot0.CreateCell(9);
+                Celltot90.SetCellValue(ExcelDoubleToStringFormat(q1total));
+                Celltot90.CellStyle = cellStyleNormalYellowRight;
+
+                ICell Celltot1000 = rowtot0.CreateCell(10);
+                Celltot1000.SetCellValue("");
+                Celltot1000.CellStyle = cellStyleNormalYellowRight;
+
+                //Q2
+                ICell Celltot110 = rowtot0.CreateCell(11);
+                Celltot110.SetCellValue(ExcelDoubleToStringFormat(q2total));
+                Celltot110.CellStyle = cellStyleNormalYellowRight;
+
+                ICell Celltot120 = rowtot0.CreateCell(12);
+                Celltot120.SetCellValue("");
+                Celltot120.CellStyle = cellStyleNormalYellowRight;
+
+                //Q3
+                ICell Celltot130 = rowtot0.CreateCell(13);
+                Celltot130.SetCellValue(ExcelDoubleToStringFormat(q3total));
+                Celltot130.CellStyle = cellStyleNormalYellowRight;
+
+                ICell Celltot140 = rowtot0.CreateCell(14);
+                Celltot140.SetCellValue("");
+                Celltot140.CellStyle = cellStyleNormalYellowRight;
+
+                //Q4
+                ICell Celltot150 = rowtot0.CreateCell(15);
+                Celltot150.SetCellValue(ExcelDoubleToStringFormat(q4total));
+                Celltot150.CellStyle = cellStyleNormalYellowRight;
+
+                ICell Celltot160 = rowtot0.CreateCell(16);
+                Celltot160.SetCellValue("");
+                Celltot160.CellStyle = cellStyleNormalYellowRight;
+
+                //Annual
+                ICell Celltot170 = rowtot0.CreateCell(17);
+                Celltot170.SetCellValue(ExcelDoubleToStringFormat(annualtotal));
+                Celltot170.CellStyle = cellStyleNormalYellowRight;
+
+                ICell Celltot180 = rowtot0.CreateCell(18);
+                Celltot180.SetCellValue("");
+                Celltot180.CellStyle = cellStyleNormalYellowRight;
+
+                
+
+                //GRAY AREA
+                ICell Celltot190 = rowtot0.CreateCell(19);
+                Celltot190.SetCellValue("");
+                Celltot190.CellStyle = cellStyleNormalGRAY;
+
+                ICell Celltot2000 = rowtot0.CreateCell(20);
+                Celltot2000.SetCellValue("");
+                Celltot2000.CellStyle = cellStyleNormalGRAY;
        
 
 
