@@ -695,6 +695,465 @@ namespace AUDANEPAD_Integrated.Controllers
                                             }
                                         }
 
+                                        //Q1 Computation
+                                        double q1_output_budget=0;
+
+                                        var DB_Mobilities_Recs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(record.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 1, 1),
+                                                                                                                                                    new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 3, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 3))).ToList();
+                                        var DB_Mobilities_Recs_All=_wpMobilityRepository.GetRecordsByOutputId(record.Transaction_Id).ToList(); 
+
+
+                                        var DB_Procurement_Recs_All=_wpProcurementRepository.GetRecordsByOutputId(record.Transaction_Id).ToList();
+                                        var DB_Procurement_Recs=_wpProcurementRepository.GetRecordsByOutputIdStartEndRange(record.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 1, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 3, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 3))).ToList();                                                                                                          
+                                        
+                                        var DB_Communication_Recs_All=_wpCommunicationRepository.GetRecordsByOutputId(record.Transaction_Id).ToList();
+                                        var DB_Communication_Recs=_wpCommunicationRepository.GetRecordsByOutputIdStartEndRange(record.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 1, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 3, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 3))).ToList();
+
+                                        //inner totals
+                                        double output_dp_budget=0;
+                                        double output_ms_budget=0;
+                                        double output_budget_all=0;  
+
+                                        //Sum as DP
+                                        if(dp_count>ms_count)
+                                        {
+                                            foreach (var _innerrec in DB_Mobilities_Recs)
+                                            {
+                                                output_dp_budget=output_dp_budget+_innerrec.MobilityCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Procurement_Recs)
+                                            {
+                                                output_dp_budget=output_dp_budget+_innerrec.WPProcurementCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Communication_Recs)
+                                            {
+                                                output_dp_budget=output_dp_budget+_innerrec.WPCommsCost;
+                                            }
+
+                                            //Get the Overall Total for Mobility, Procurement and Communication 
+                                            
+                                            foreach (var _innerrec in DB_Mobilities_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.MobilityCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Procurement_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.WPProcurementCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Communication_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.WPCommsCost;
+                                            }
+
+                                            double remainingfunds=output_total_budget-output_budget_all;
+
+                                            //Add Adjust Cost to DP
+                                            
+                                            if(remainingfunds!=0)
+                                                output_dp_budget=output_dp_budget+(remainingfunds/4.0);
+                                           
+                                            
+
+                                            q1_output_budget=q1_output_budget+output_dp_budget;
+                                                
+                                        }
+                                        else //Sum as MS
+                                        {
+                                            foreach (var _innerrec in DB_Mobilities_Recs)
+                                            {
+                                                output_ms_budget=output_ms_budget+_innerrec.MobilityCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Procurement_Recs)
+                                            {
+                                                output_ms_budget=output_ms_budget+_innerrec.WPProcurementCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Communication_Recs)
+                                            {
+                                                output_ms_budget=output_ms_budget+_innerrec.WPCommsCost;
+                                            }
+
+                                            //Get the Overall Total for Mobility, Procurement and Communication 
+                                            
+                                            foreach (var _innerrec in DB_Mobilities_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.MobilityCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Procurement_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.WPProcurementCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Communication_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.WPCommsCost;
+                                            }
+                                            double remainingfunds=output_total_budget-output_budget_all;
+
+                                            //Add Adjust Cost to DP
+                                            
+                                            if(remainingfunds!=0)
+                                                output_ms_budget=output_ms_budget+(remainingfunds/4.0);
+                                            
+                                            
+
+                                            q1_output_budget=q1_output_budget+output_ms_budget;
+
+                                        } 
+
+
+                                        //Q2 Computation
+                                        double q2_output_budget=0;
+
+                                        DB_Mobilities_Recs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(record.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 4, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6))).ToList();
+             
+
+                   
+                                        DB_Procurement_Recs=_wpProcurementRepository.GetRecordsByOutputIdStartEndRange(record.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 4, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6))).ToList();                                                                                                         
+                                        
+                               
+                                        DB_Communication_Recs=_wpCommunicationRepository.GetRecordsByOutputIdStartEndRange(record.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 4, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 6))).ToList();
+
+                                        //inner totals
+                                        output_dp_budget=0;
+                                        output_ms_budget=0;
+                                        output_budget_all=0; 
+
+
+                                        //Sum as DP
+                                        if(dp_count>ms_count)
+                                        {
+                                            foreach (var _innerrec in DB_Mobilities_Recs)
+                                            {
+                                                output_dp_budget=output_dp_budget+_innerrec.MobilityCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Procurement_Recs)
+                                            {
+                                                output_dp_budget=output_dp_budget+_innerrec.WPProcurementCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Communication_Recs)
+                                            {
+                                                output_dp_budget=output_dp_budget+_innerrec.WPCommsCost;
+                                            }
+
+                                            //Get the Overall Total for Mobility, Procurement and Communication 
+                                            
+                                            foreach (var _innerrec in DB_Mobilities_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.MobilityCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Procurement_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.WPProcurementCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Communication_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.WPCommsCost;
+                                            }
+
+                                            double remainingfunds=output_total_budget-output_budget_all;
+
+                                            //Add Adjust Cost to DP
+                                           
+                                            if(remainingfunds!=0)
+                                                output_dp_budget=output_dp_budget+(remainingfunds/4.0);
+                                           
+
+                                            q2_output_budget=q2_output_budget+output_dp_budget;
+                                                
+                                        }
+                                        else //Sum as MS
+                                        {
+                                            foreach (var _innerrec in DB_Mobilities_Recs)
+                                            {
+                                                output_ms_budget=output_ms_budget+_innerrec.MobilityCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Procurement_Recs)
+                                            {
+                                                output_ms_budget=output_ms_budget+_innerrec.WPProcurementCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Communication_Recs)
+                                            {
+                                                output_ms_budget=output_ms_budget+_innerrec.WPCommsCost;
+                                            }
+
+                                            //Get the Overall Total for Mobility, Procurement and Communication 
+                                            
+                                            foreach (var _innerrec in DB_Mobilities_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.MobilityCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Procurement_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.WPProcurementCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Communication_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.WPCommsCost;
+                                            }
+                                            double remainingfunds=output_total_budget-output_budget_all;
+
+                                            //Add Adjust Cost to DP
+                                            
+                                            if(remainingfunds!=0)
+                                                output_ms_budget=output_ms_budget+(remainingfunds/4.0);
+                                            
+
+                                            q2_output_budget=q2_output_budget+output_ms_budget;
+
+                                        }
+
+
+
+                                        //Q3 Computation
+                                        double q3_output_budget=0;
+
+                                        DB_Mobilities_Recs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(record.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 7, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 9, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 9))).ToList();
+                                    
+
+                   
+                                        DB_Procurement_Recs=_wpProcurementRepository.GetRecordsByOutputIdStartEndRange(record.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 7, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 9, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 9))).ToList();
+                                    
+                               
+                                        DB_Communication_Recs=_wpCommunicationRepository.GetRecordsByOutputIdStartEndRange(record.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 7, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 9, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 9))).ToList();
+                                    
+                                        //inner totals
+                                        output_dp_budget=0;
+                                        output_ms_budget=0;
+                                        output_budget_all=0; 
+
+
+                                        //Sum as DP
+                                        if(dp_count>ms_count)
+                                        {
+                                            foreach (var _innerrec in DB_Mobilities_Recs)
+                                            {
+                                                output_dp_budget=output_dp_budget+_innerrec.MobilityCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Procurement_Recs)
+                                            {
+                                                output_dp_budget=output_dp_budget+_innerrec.WPProcurementCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Communication_Recs)
+                                            {
+                                                output_dp_budget=output_dp_budget+_innerrec.WPCommsCost;
+                                            }
+
+                                            //Get the Overall Total for Mobility, Procurement and Communication 
+                                            
+                                            foreach (var _innerrec in DB_Mobilities_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.MobilityCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Procurement_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.WPProcurementCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Communication_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.WPCommsCost;
+                                            }
+
+                                            double remainingfunds=output_total_budget-output_budget_all;
+
+                                            //Add Adjust Cost to DP
+                                           
+                                            if(remainingfunds!=0)
+                                                output_dp_budget=output_dp_budget+(remainingfunds/4.0);
+                                           
+
+                                            q3_output_budget=q3_output_budget+output_dp_budget;
+                                                
+                                        }
+                                        else //Sum as MS
+                                        {
+                                            foreach (var _innerrec in DB_Mobilities_Recs)
+                                            {
+                                                output_ms_budget=output_ms_budget+_innerrec.MobilityCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Procurement_Recs)
+                                            {
+                                                output_ms_budget=output_ms_budget+_innerrec.WPProcurementCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Communication_Recs)
+                                            {
+                                                output_ms_budget=output_ms_budget+_innerrec.WPCommsCost;
+                                            }
+
+                                            //Get the Overall Total for Mobility, Procurement and Communication 
+                                            
+                                            foreach (var _innerrec in DB_Mobilities_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.MobilityCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Procurement_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.WPProcurementCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Communication_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.WPCommsCost;
+                                            }
+                                            double remainingfunds=output_total_budget-output_budget_all;
+
+                                            //Add Adjust Cost to DP
+                                            
+                                            if(remainingfunds!=0)
+                                                output_ms_budget=output_ms_budget+(remainingfunds/4.0);
+                                            
+
+                                            q3_output_budget=q3_output_budget+output_ms_budget;
+
+                                        }
+
+                                        //Q4 Computation
+                                        double q4_output_budget=0;
+
+                                        DB_Mobilities_Recs=_wpMobilityRepository.GetRecordsByOutputIdStartEndRange(record.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 10, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12))).ToList();
+                                    
+
+                   
+                                        DB_Procurement_Recs=_wpProcurementRepository.GetRecordsByOutputIdStartEndRange(record.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 10, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12))).ToList();
+                                    
+                               
+                                        DB_Communication_Recs=_wpCommunicationRepository.GetRecordsByOutputIdStartEndRange(record.Transaction_Id, new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 10, 1),
+                                                                                                                                                new LocalDate(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12, DateTime.DaysInMonth(Int32.Parse(_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name), 12))).ToList();
+                                    
+                                        //inner totals
+                                        output_dp_budget=0;
+                                        output_ms_budget=0;
+                                        output_budget_all=0; 
+
+
+                                        //Sum as DP
+                                        if(dp_count>ms_count)
+                                        {
+                                            foreach (var _innerrec in DB_Mobilities_Recs)
+                                            {
+                                                output_dp_budget=output_dp_budget+_innerrec.MobilityCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Procurement_Recs)
+                                            {
+                                                output_dp_budget=output_dp_budget+_innerrec.WPProcurementCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Communication_Recs)
+                                            {
+                                                output_dp_budget=output_dp_budget+_innerrec.WPCommsCost;
+                                            }
+
+                                            //Get the Overall Total for Mobility, Procurement and Communication 
+                                            
+                                            foreach (var _innerrec in DB_Mobilities_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.MobilityCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Procurement_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.WPProcurementCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Communication_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.WPCommsCost;
+                                            }
+
+                                            double remainingfunds=output_total_budget-output_budget_all;
+
+                                            //Add Adjust Cost to DP
+                                           
+                                            if(remainingfunds!=0)
+                                                output_dp_budget=output_dp_budget+(remainingfunds/4.0);
+                                           
+
+                                            q4_output_budget=q4_output_budget+output_dp_budget;
+                                                
+                                        }
+                                        else //Sum as MS
+                                        {
+                                            foreach (var _innerrec in DB_Mobilities_Recs)
+                                            {
+                                                output_ms_budget=output_ms_budget+_innerrec.MobilityCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Procurement_Recs)
+                                            {
+                                                output_ms_budget=output_ms_budget+_innerrec.WPProcurementCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Communication_Recs)
+                                            {
+                                                output_ms_budget=output_ms_budget+_innerrec.WPCommsCost;
+                                            }
+
+                                            //Get the Overall Total for Mobility, Procurement and Communication 
+                                            
+                                            foreach (var _innerrec in DB_Mobilities_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.MobilityCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Procurement_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.WPProcurementCost;
+                                            }
+
+                                            foreach (var _innerrec in DB_Communication_Recs_All)
+                                            {
+                                                output_budget_all=output_budget_all+_innerrec.WPCommsCost;
+                                            }
+                                            double remainingfunds=output_total_budget-output_budget_all;
+
+                                            //Add Adjust Cost to DP
+                                            
+                                            if(remainingfunds!=0)
+                                                output_ms_budget=output_ms_budget+(remainingfunds/4.0);
+                                            
+
+                                            q4_output_budget=q4_output_budget+output_ms_budget;
+
+                                        }                                                                                                     
+
+
+
+
+
+
+
                                         if(dp_count>ms_count)
                                         {
                                             WP_OutputActivities refactivity=_wpOutputActivitiesRepository.GetRecordsByMainRecordOutputIdDPStatusRecord(mainrec.Transaction_Id, record.Transaction_Id, true);
@@ -727,10 +1186,10 @@ namespace AUDANEPAD_Integrated.Controllers
                                             Period_IdGVM = record.Period_Id,
                                             OutputGVM = record.Output,
                                             WPOutputCostGVM=output_total_budget,
-                                            WPOutputQ1CostGVM=0,
-                                            WPOutputQ2CostGVM=0,
-                                            WPOutputQ3CostGVM=0,
-                                            WPOutputQ4CostGVM=0,
+                                            WPOutputQ1CostGVM=q1_output_budget,
+                                            WPOutputQ2CostGVM=q2_output_budget,
+                                            WPOutputQ3CostGVM=q3_output_budget,
+                                            WPOutputQ4CostGVM=q4_output_budget,
                                             WPFundingSourceGVM=fundssource,
                                             Strategic_PrioritiesGVM=rtnstringPriorities,
                                             Directorate_IdGVM = mainrec.Directorate_Id,
