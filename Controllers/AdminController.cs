@@ -15753,6 +15753,48 @@ namespace AUDANEPAD_Integrated.Controllers
 
         }
 
+
+
+         [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetTransFiscalPeriodsInstiutionalReportsTest(string cycleid)
+        {
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+            WP_DispatchCycle cyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
+
+            if(cyclerec.Period_Id==7)
+            {
+                var recs=_transPeriodRepository.GetAllRecords().ToList();
+                int _count = recs.Count();
+                if (_count > 0)
+                {
+                    foreach (var rec in recs)
+                    {
+                        if(rec.Record_Id!=8)
+                        {
+                            if(rec.Record_Id==7)
+                            {
+                    
+                                DropDownListViewModel srec = new DropDownListViewModel
+                                {
+                                        DropDown_IntId = rec.Record_Id,
+                                        DropDown_Name = _lkupPeriodRepository.GetRecord(rec.Record_Id).Record_Name
+                                };
+                                // EmployeeDropDownViewModel me = DB_Employees[_count];
+                                collection_recs.Add(srec);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return Json(collection_recs.ToList());
+
+        }
+
+
+
         [HttpGet]
         [AllowAnonymous]
         public JsonResult GetCycleActivePeriodsByYear(int fyear)
