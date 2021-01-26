@@ -2166,7 +2166,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 {
                     var DB_StrategicMainProjs=_wpAUDAPriorityRepository.GetRecordsByYearPeriodAndPriority(cyclerec.FiscalYear_Id, cyclerec.Period_Id, rec_set.Record_Id).GroupBy(x => x.WPMainRecord_id).Select(x => x.First()).ToList();
                     _iter=_iter+1;
-                    ISheet current_worksheet = workbook.GetSheetAt(_iter);
+                    ISheet current_worksheet = workbook.GetSheetAt(_iter-1);
                     int _rowInter=1;
                     
                     
