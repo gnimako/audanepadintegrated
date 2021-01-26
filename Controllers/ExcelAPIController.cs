@@ -1952,6 +1952,348 @@ namespace AUDANEPAD_Integrated.Controllers
 
         }
 
+
+
+
+
+        public FileResult InstitutionalStrategicProjectMappingExcel(string id)
+        {
+            IWorkbook workbook;
+            string path=@"wwwroot/appdirectory/excelreports/institutional/pipd/Strategic_Priorities_Projects_Mapping_Template_Annual.xlsx";
+
+
+            string periodid="7";
+            WP_DispatchCycle cyclerec=_wpDispatchCycleRepository.GetRecord(id);
+            string pathtofile_save="";
+
+           
+      
+            string periodname="";
+            if(periodid=="1")
+                periodname="Q1";
+            else if (periodid=="2")
+                periodname="Q2";
+            else if (periodid=="3")
+                periodname="Q3";
+            else if (periodid=="4")
+                periodname="Q4"; 
+            else if (periodid=="5")
+                periodname="Semester_1"; 
+            else if (periodid=="6")
+                periodname="Semester_2";
+            else if (periodid=="7")
+                periodname="Annual";
+            else
+            {
+                DateTime pstart=new DateTime(cyclerec.PeriodStartDate.Year, cyclerec.PeriodStartDate.Month, cyclerec.PeriodStartDate.Day);
+                DateTime pend=new DateTime(cyclerec.PeriodEndDate.Year, cyclerec.PeriodEndDate.Month, cyclerec.PeriodEndDate.Day);
+                periodname=pstart.Date.ToString("MMM d, yyyy") + " - "+ pend.Date.ToString("MMM d, yyyy"); 
+                
+            }
+
+            pathtofile_save=@"wwwroot/appdirectory/excelreports/institutional/pipd/Strategic_Priorities_Projects_Mapping_" +_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name +"_" +periodname+".xlsx";
+           
+
+
+            try
+            {
+                //OPENING TEMPLATE STARTS HERE....
+                    FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+                    // Try to read workbook as XLSX:
+                    try
+                    {
+                        workbook = new XSSFWorkbook(fs);
+                    }
+                    catch
+                    {
+                        workbook = null;
+                    }
+
+                    // If reading fails, try to read workbook as XLS:
+                    if (workbook == null)
+                    {
+                        workbook = new HSSFWorkbook(fs);
+                    }
+                //OPENING TEMPLATE ENDS HERE....
+
+
+                //EDITING TEMPLATE STARTS HERE....
+   
+                IFont fontnormal = workbook.CreateFont();
+                fontnormal.IsBold = false;
+                fontnormal.FontHeightInPoints = 11;
+                fontnormal.FontName="Arial";
+
+                IFont fontnormalbold = workbook.CreateFont();
+                fontnormalbold.IsBold = true;
+                fontnormalbold.FontHeightInPoints = 11;
+                fontnormalbold.FontName="Arial";
+
+                ICellStyle cellStyleNormal = workbook.CreateCellStyle();
+                cellStyleNormal.SetFont(fontnormal);
+                cellStyleNormal.BorderLeft = BorderStyle.Thin;
+                cellStyleNormal.BorderTop = BorderStyle.Thin;
+                cellStyleNormal.BorderRight = BorderStyle.Thin;
+                cellStyleNormal.BorderBottom = BorderStyle.Thin;
+                cellStyleNormal.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleNormal.Alignment =HorizontalAlignment.Left;
+                cellStyleNormal.WrapText=true;
+                cellStyleNormal.FillForegroundColor=26;
+                cellStyleNormal.FillPattern=FillPattern.SolidForeground; 
+
+                ICellStyle cellStyleNormalRight = workbook.CreateCellStyle();
+                cellStyleNormalRight.SetFont(fontnormal);
+                cellStyleNormalRight.BorderLeft = BorderStyle.Thin;
+                cellStyleNormalRight.BorderTop = BorderStyle.Thin;
+                cellStyleNormalRight.BorderRight = BorderStyle.Thin;
+                cellStyleNormalRight.BorderBottom = BorderStyle.Thin;
+                cellStyleNormalRight.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleNormalRight.Alignment =HorizontalAlignment.Right;
+                cellStyleNormalRight.WrapText=true;
+                cellStyleNormalRight.FillForegroundColor=26;
+                cellStyleNormalRight.FillPattern=FillPattern.SolidForeground; 
+
+                ICellStyle cellStyleYellowNormalSTART = workbook.CreateCellStyle();
+                cellStyleYellowNormalSTART.SetFont(fontnormal);
+                cellStyleYellowNormalSTART.BorderLeft = BorderStyle.Thin;
+                cellStyleYellowNormalSTART.BorderTop = BorderStyle.Thin;
+                cellStyleYellowNormalSTART.BorderRight = BorderStyle.None;
+                cellStyleYellowNormalSTART.BorderBottom = BorderStyle.Thin;
+                cellStyleYellowNormalSTART.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleYellowNormalSTART.Alignment =HorizontalAlignment.Left;
+                cellStyleYellowNormalSTART.WrapText=true;
+                cellStyleYellowNormalSTART.FillForegroundColor=13;
+                cellStyleYellowNormalSTART.FillPattern=FillPattern.SolidForeground; 
+
+                ICellStyle cellStyleYellowNormalEND = workbook.CreateCellStyle();
+                cellStyleYellowNormalEND.SetFont(fontnormalbold);
+                cellStyleYellowNormalEND.BorderLeft = BorderStyle.None;
+                cellStyleYellowNormalEND.BorderTop = BorderStyle.Thin;
+                cellStyleYellowNormalEND.BorderRight = BorderStyle.Thin;
+                cellStyleYellowNormalEND.BorderBottom = BorderStyle.Thin;
+                cellStyleYellowNormalEND.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleYellowNormalEND.Alignment =HorizontalAlignment.Right;
+                cellStyleYellowNormalEND.WrapText=true;
+                cellStyleYellowNormalEND.FillForegroundColor=13;
+                cellStyleYellowNormalEND.FillPattern=FillPattern.SolidForeground; 
+
+                ICellStyle cellStyleYellowNormal = workbook.CreateCellStyle();
+                cellStyleYellowNormal.SetFont(fontnormalbold);
+                cellStyleYellowNormal.BorderLeft = BorderStyle.Thin;
+                cellStyleYellowNormal.BorderTop = BorderStyle.Thin;
+                cellStyleYellowNormal.BorderRight = BorderStyle.Thin;
+                cellStyleYellowNormal.BorderBottom = BorderStyle.Thin;
+                cellStyleYellowNormal.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleYellowNormal.Alignment =HorizontalAlignment.Left;
+                cellStyleYellowNormal.WrapText=true;
+                cellStyleYellowNormal.FillForegroundColor=13;
+                cellStyleYellowNormal.FillPattern=FillPattern.SolidForeground; 
+
+                ICellStyle cellStyleNormalYellowRight = workbook.CreateCellStyle();
+                cellStyleNormalYellowRight.SetFont(fontnormalbold);
+                cellStyleNormalYellowRight.BorderLeft = BorderStyle.Thin;
+                cellStyleNormalYellowRight.BorderTop = BorderStyle.Thin;
+                cellStyleNormalYellowRight.BorderRight = BorderStyle.Thin;
+                cellStyleNormalYellowRight.BorderBottom = BorderStyle.Thin;
+                cellStyleNormalYellowRight.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleNormalYellowRight.Alignment =HorizontalAlignment.Right;
+                cellStyleNormalYellowRight.WrapText=true;
+                cellStyleNormalYellowRight.FillForegroundColor=13;
+                cellStyleNormalYellowRight.FillPattern=FillPattern.SolidForeground; 
+
+
+
+
+
+                ICellStyle cellStyleYellowNormalMiddle = workbook.CreateCellStyle();
+                cellStyleYellowNormalMiddle.SetFont(fontnormalbold);
+                cellStyleYellowNormalMiddle.BorderLeft = BorderStyle.None;
+                cellStyleYellowNormalMiddle.BorderTop = BorderStyle.Thin;
+                cellStyleYellowNormalMiddle.BorderRight = BorderStyle.None;
+                cellStyleYellowNormalMiddle.BorderBottom = BorderStyle.Thin;
+                cellStyleYellowNormalMiddle.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleYellowNormalMiddle.Alignment =HorizontalAlignment.Left;
+                cellStyleYellowNormalMiddle.WrapText=true;
+                cellStyleYellowNormalMiddle.FillForegroundColor=13;
+                cellStyleYellowNormalMiddle.FillPattern=FillPattern.SolidForeground; 
+
+                ICellStyle cellStyleNormalYellowRightMiddle = workbook.CreateCellStyle();
+                cellStyleNormalYellowRightMiddle.SetFont(fontnormalbold);
+                cellStyleNormalYellowRightMiddle.BorderLeft = BorderStyle.None;
+                cellStyleNormalYellowRightMiddle.BorderTop = BorderStyle.Thin;
+                cellStyleNormalYellowRightMiddle.BorderRight = BorderStyle.None;
+                cellStyleNormalYellowRightMiddle.BorderBottom = BorderStyle.Thin;
+                cellStyleNormalYellowRightMiddle.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleNormalYellowRightMiddle.Alignment =HorizontalAlignment.Right;
+                cellStyleNormalYellowRightMiddle.WrapText=true;
+                cellStyleNormalYellowRightMiddle.FillForegroundColor=13;
+                cellStyleNormalYellowRightMiddle.FillPattern=FillPattern.SolidForeground; 
+
+
+                ICellStyle cellStyleNormalGRAY = workbook.CreateCellStyle();
+                cellStyleNormalGRAY.SetFont(fontnormal);
+                cellStyleNormalGRAY.BorderLeft = BorderStyle.Thin;
+                cellStyleNormalGRAY.BorderTop = BorderStyle.Thin;
+                cellStyleNormalGRAY.BorderRight = BorderStyle.Thin;
+                cellStyleNormalGRAY.BorderBottom = BorderStyle.Thin;
+                cellStyleNormalGRAY.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleNormalGRAY.Alignment =HorizontalAlignment.Left;
+                cellStyleNormalGRAY.WrapText=true;
+                cellStyleNormalGRAY.FillForegroundColor=22;
+                cellStyleNormalGRAY.FillPattern=FillPattern.SolidForeground; 
+
+                
+
+                ICellStyle cellStyleNumber = workbook.CreateCellStyle();
+                cellStyleNumber.SetFont(fontnormal);
+                cellStyleNumber.BorderLeft = BorderStyle.Thin;
+                cellStyleNumber.BorderTop = BorderStyle.Thin;
+                cellStyleNumber.BorderRight = BorderStyle.Thin;
+                cellStyleNumber.BorderBottom = BorderStyle.Thin;
+                cellStyleNumber.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleNumber.Alignment =HorizontalAlignment.Right;
+                cellStyleNumber.WrapText=true;
+                cellStyleNumber.FillForegroundColor=26;
+                cellStyleNumber.FillPattern=FillPattern.SolidForeground; 
+
+
+                var DB_RecordsStra = _transStrategyPriorityRepository.GetAllRecords().ToList();
+
+                int _iter=0;
+
+                foreach (var rec_set in DB_RecordsStra)
+                {
+                    var DB_StrategicMainProjs=_wpAUDAPriorityRepository.GetRecordsByYearPeriodAndPriority(cyclerec.FiscalYear_Id, cyclerec.Period_Id, rec_set.Record_Id).GroupBy(x => x.WPMainRecord_id).Select(x => x.First()).ToList();
+                    _iter=_iter+1;
+                    ISheet current_worksheet = workbook.GetSheetAt(_iter);
+                    int _rowInter=1;
+                    
+                    
+                    if(cyclerec.Period_Id==8)
+                    {
+
+                    }
+                    else
+                    {
+
+                        var dirlist = new List<string>();
+
+                        
+                        foreach(var stramainproj in DB_StrategicMainProjs)
+                        {
+                            _rowInter=_rowInter+1;
+                            IRow row = current_worksheet.CreateRow(_rowInter);
+
+                            WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(stramainproj.WPMainRecord_id);
+
+                            string fiscalyear=_lkupFiscalYearRepository.GetRecord(mainrec.FiscalYear_Id).Record_Name;
+                            string priorityname=_strategyPriorityRepository.GetRecord(rec_set.Record_Id).Record_Name;
+                            string directoratename=_strucDirectorateRepository.GetRecord(mainrec.Directorate_Id).AcronymName;
+                            string divisionname=_strucDivisionRepository.GetRecord(mainrec.Division_Id).Record_Name;
+                            string projectname=_lkupProjectRepository.GetRecord(mainrec.Project_Id).Record_Name;
+
+
+                            ICell Cell0 = row.CreateCell(0);
+                            Cell0.SetCellValue(fiscalyear);
+                            Cell0.CellStyle = cellStyleNormalRight;
+
+                            ICell Cell1 = row.CreateCell(1);
+                            Cell1.SetCellValue(priorityname);
+                            Cell1.CellStyle = cellStyleNormal;
+
+                            ICell Cell2 = row.CreateCell(2);
+                            Cell2.SetCellValue(directoratename);
+                            Cell2.CellStyle = cellStyleNormal;
+
+                            ICell Cell3 = row.CreateCell(3);
+                            Cell3.SetCellValue(divisionname);
+                            Cell3.CellStyle = cellStyleNormal;
+
+                            ICell Cell4 = row.CreateCell(4);
+                            Cell4.SetCellValue(projectname);
+                            Cell4.CellStyle = cellStyleNormal;
+
+                           
+
+                        }
+
+                    }
+
+
+                }
+
+
+                
+
+       
+
+
+                //EDITING T TEMPLATE ENDS HERE....
+
+
+
+
+
+
+
+
+                //SAVING TEMPLATE STARTS HERE....
+
+                using (FileStream stream = new FileStream(pathtofile_save, FileMode.Create, FileAccess.Write))
+                {
+                    workbook.Write(stream);
+                } 
+
+
+                //SAVING TEMPLATE ENDS HERE....
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+            }
+           
+           
+           
+           
+           
+           
+            
+
+            
+
+
+
+            //Save File Ends Here...
+
+
+            
+
+
+
+
+
+
+            string contentType =  "application/vnd.ms-excel";//"application/pdf"
+           // string pathtofile=@"wwwroot/appdirectory/excelreports/institutional/Procurement_Plan_2021.xlsx";
+            
+            string pathtofile="/appdirectory/excelreports/institutional/pipd/Strategic_Priorities_Projects_Mapping_" +_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name +"_" +periodname+".xlsx";
+           
+            
+
+
+
+
+            return File(pathtofile, contentType, "Strategic_Priorities_Projects_Mapping_" +_lkupFiscalYearRepository.GetRecord(cyclerec.FiscalYear_Id).Record_Name +"_" +periodname+".xlsx");
+
+        }
+
+
         private string ExcelDoubleToStringFormat(double value)
         {
             string rtnval="";
