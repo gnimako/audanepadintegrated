@@ -83,6 +83,12 @@ namespace AUDANEPAD_Integrated.ViewModels
         [UIHint("ClientPeriodType")]
         public CategoryViewModel PeriodType { get; set; }
 
+        [UIHint("ClientOutputLinkType")]
+        public CategoryViewModel OutputLinkType { get; set; }
+
+
+
+
         public string PeriodTypeSingle  { get; set; }
 
         

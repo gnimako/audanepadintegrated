@@ -406,9 +406,7 @@
                                                         columns.Bound(c => c.FYearIdent).Hidden();
                                                         columns.Bound(c => c.FPeriodIdent).Hidden();
                                                         columns.Bound(c => c.ViewNumbering).Title("No").Width(20).Hidden(); 
-                                                        columns.Bound(c => c.Output).Title("Output");  
-                                                        columns.Bound(c => c.OutputLinkType).ClientTemplate("#=OutputLinkType.CategoryName#").Title("Type").Width(300);
-
+                                                        columns.Bound(c => c.Output).Title("Output");                                           
 
                                                         columns.Command(command => { command.Edit().Text(" Edit").IconClass("k-icon k-i-track-changes"); });
                                                         // columns.Command(command => command.Custom(" Manage Indicators").IconClass("k-icon k-i-track-changes").Click(""));
@@ -420,14 +418,6 @@
                                                     .Resizable(r=>r.Columns(true))
                                                     .DataSource(dataSource => dataSource
                                                         .Ajax()
-                                                        .Model(model =>
-                                                            {
-                                                                model.Id(p => p.Transaction_Id);
-                                                                model.Field(p => p.Transaction_Id).Editable(false);
-                                                                model.Field(p => p.OutputLinkType).DefaultValue(
-                                                                    ViewData["defaultOutputLinkType"] as CategoryViewModel);
-                                                            })
-
                                                         .Read(read => read.Action("WP_Outputs_Read", "Admin", new {projid=Model.Project_Id, fyear=Model.FYear, fperiod=Model.FPeriod, periodtxt=Model.FisPeriod}))
                                                         .Model(model => 
                                                             {

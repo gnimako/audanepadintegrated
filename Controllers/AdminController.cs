@@ -3412,6 +3412,8 @@ namespace AUDANEPAD_Integrated.Controllers
                                 Period_Id=Int32.Parse(fperiod),
                                 Output=record.Output,
                                 Employee_Id=Int32.Parse(empid),
+                                WPOutputLinkType_Id=record.OutputLinkType.CategoryID,
+
                                 TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
                             };
 
@@ -3698,6 +3700,7 @@ namespace AUDANEPAD_Integrated.Controllers
                         {
                             wp_rec_fetch.Output=record.Output;
                             wp_rec_fetch.Employee_Id=Int32.Parse(empid);
+                            wp_rec_fetch.WPOutputLinkType_Id=record.OutputLinkType.CategoryID;
                             wp_rec_fetch.TransactionDate=new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
 
 
@@ -4759,12 +4762,26 @@ namespace AUDANEPAD_Integrated.Controllers
             {
                 foreach (var rec in DB_Recs)
                 {
+                    CategoryViewModel outputlinktype = new CategoryViewModel();
+
+                    if(rec.WPOutputLinkType_Id==1)
+                    {
+                        outputlinktype.CategoryID=1;
+                        outputlinktype.CategoryName = "Programmatic Output";
+                    }
+                    else
+                    {
+                        outputlinktype.CategoryID=2;
+                        outputlinktype.CategoryName = "Technical Support Output";
+
+                    }
    
                     WorkplansViewModel srec = new WorkplansViewModel
                     {
                         Transaction_Id = rec.Transaction_Id,
                         WPMainRecord_Ident=rec.WPMainRecord_id,
                         Output=rec.Output,
+                        OutputLinkType=outputlinktype,
                        // Output_BudgetAmount= _wpOutputBudgetRepository.GetRecordsByProjectYearPeriodAndOutputId(rec.Project_Id, rec.FiscalYear_Id, rec.Period_Id, rec.Transaction_Id).Output_BudgetAmount,
                         TransactionDate = new DateTime(rec.TransactionDate.Year, rec.TransactionDate.Month, rec.TransactionDate.Day)
                     };

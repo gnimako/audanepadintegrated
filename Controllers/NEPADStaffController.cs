@@ -446,6 +446,18 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+
+            //Populate Output Link Types Default Values (Delete When Done!)
+            var DB_Records = _wpOutputsRepository.GetAllRecords().ToList();
+            foreach (var rec_set in DB_Records)
+            {
+                if(rec_set.WPOutputLinkType_Id==0)
+                {
+                    rec_set.WPOutputLinkType_Id=1;
+                    _wpOutputsRepository.Update(rec_set);
+                }
+            }
             
 
             return View(emp_view);
@@ -60600,6 +60612,10 @@ namespace AUDANEPAD_Integrated.Controllers
 
             emp_view.SelectedRECs=collection_records;
 
+            PopulateOutputLinkType();
+
+
+
 
             return View(emp_view);
 
@@ -62405,6 +62421,38 @@ namespace AUDANEPAD_Integrated.Controllers
             }
             ViewData["periodtypes"] = categories.OrderBy(e => e.CategoryName).ToList();
             ViewData["defaultPeriodType"] = categories.OrderBy(e => e.CategoryName).First();
+
+        }
+
+        private void PopulateOutputLinkType()
+        {
+
+
+       
+
+            List<CategoryViewModel> categories = new List<CategoryViewModel>();
+
+         
+            
+            CategoryViewModel srec1 = new CategoryViewModel
+            {
+                    CategoryID = 1,
+                    CategoryName = "Programmatic Output"
+            };
+            categories.Add(srec1);
+
+
+            CategoryViewModel srec2 = new CategoryViewModel
+            {
+                    CategoryID = 2,
+                    CategoryName = "Technical Support Output"
+            };
+            categories.Add(srec2);
+             
+  
+            
+            ViewData["outputlinktypes"] = categories.OrderBy(e => e.CategoryName).ToList();
+            ViewData["defaultOutputLinkType"] = categories.OrderBy(e => e.CategoryName).First();
 
         }
 
