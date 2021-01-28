@@ -449,6 +449,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
             //Populate Output Link Types Default Values (Delete When Done!)
+            /*
             var DB_Records = _wpOutputsRepository.GetAllRecords().ToList();
             foreach (var rec_set in DB_Records)
             {
@@ -457,7 +458,7 @@ namespace AUDANEPAD_Integrated.Controllers
                     rec_set.WPOutputLinkType_Id=1;
                     _wpOutputsRepository.Update(rec_set);
                 }
-            }
+            }*/
             
 
             return View(emp_view);

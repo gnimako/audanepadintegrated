@@ -676,6 +676,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                         int ms_count=0;
                                         int dp_count=0;
                                         string fundssource="";
+                                        string outputlinktype="";
 
                                         WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(record.WPMainRecord_id);
 
@@ -1175,6 +1176,17 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
 
+                                        if(record.WPOutputLinkType_Id==1)
+                                        {
+                                            outputlinktype="Programme Costs";
+                                        }
+                                        else
+                                        {
+                                            outputlinktype="Staff Related Costs";
+                                        }
+
+
+
 
                                         WP_OutputsGridVM srec = new WP_OutputsGridVM
                                         {
@@ -1192,6 +1204,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                             WPOutputQ3CostGVM=q3_output_budget,
                                             WPOutputQ4CostGVM=q4_output_budget,
                                             WPFundingSourceGVM=fundssource,
+                                            WPOutputLinkTypeGVM=outputlinktype,
                                             Strategic_PrioritiesGVM=rtnstringPriorities,
                                             Directorate_IdGVM = mainrec.Directorate_Id,
                                             Directorate_NameGVM = _strucDirectorateRepository.GetRecord(mainrec.Directorate_Id).AcronymName,
@@ -1246,6 +1259,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                                 WPOutputQ3CostGVM=q3_output_budget_det,
                                                 WPOutputQ4CostGVM=q4_output_budget_det,
                                                 WPFundingSourceGVM=fundssource,
+                                                WPOutputLinkTypeGVM=outputlinktype,
                                                 Strategic_PriorityIdGVM=recordset.Priority_Id,
                                                 Strategic_PrioritiesGVM=_strategyPriorityRepository.GetRecord(recordset.Priority_Id).Record_Name,
                                                 Directorate_IdGVM = mainrec.Directorate_Id,
@@ -1325,6 +1339,31 @@ namespace AUDANEPAD_Integrated.Controllers
                 cellStyleNormalRight.WrapText=true;
                 cellStyleNormalRight.FillForegroundColor=26;
                 cellStyleNormalRight.FillPattern=FillPattern.SolidForeground; 
+
+
+                ICellStyle cellStyleNormalLIGHTGREEN = workbook.CreateCellStyle();
+                cellStyleNormalLIGHTGREEN.SetFont(fontnormal);
+                cellStyleNormalLIGHTGREEN.BorderLeft = BorderStyle.Thin;
+                cellStyleNormalLIGHTGREEN.BorderTop = BorderStyle.Thin;
+                cellStyleNormalLIGHTGREEN.BorderRight = BorderStyle.Thin;
+                cellStyleNormalLIGHTGREEN.BorderBottom = BorderStyle.Thin;
+                cellStyleNormalLIGHTGREEN.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleNormalLIGHTGREEN.Alignment =HorizontalAlignment.Left;
+                cellStyleNormalLIGHTGREEN.WrapText=true;
+                cellStyleNormalLIGHTGREEN.FillForegroundColor=42;
+                cellStyleNormalLIGHTGREEN.FillPattern=FillPattern.SolidForeground; 
+
+                ICellStyle cellStyleNormalRightLIGHTGREEN = workbook.CreateCellStyle();
+                cellStyleNormalRightLIGHTGREEN.SetFont(fontnormal);
+                cellStyleNormalRightLIGHTGREEN.BorderLeft = BorderStyle.Thin;
+                cellStyleNormalRightLIGHTGREEN.BorderTop = BorderStyle.Thin;
+                cellStyleNormalRightLIGHTGREEN.BorderRight = BorderStyle.Thin;
+                cellStyleNormalRightLIGHTGREEN.BorderBottom = BorderStyle.Thin;
+                cellStyleNormalRightLIGHTGREEN.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleNormalRightLIGHTGREEN.Alignment =HorizontalAlignment.Right;
+                cellStyleNormalRightLIGHTGREEN.WrapText=true;
+                cellStyleNormalRightLIGHTGREEN.FillForegroundColor=42;
+                cellStyleNormalRightLIGHTGREEN.FillPattern=FillPattern.SolidForeground; 
 
                 ICellStyle cellStyleYellowNormalSTART = workbook.CreateCellStyle();
                 cellStyleYellowNormalSTART.SetFont(fontnormal);
@@ -1428,6 +1467,18 @@ namespace AUDANEPAD_Integrated.Controllers
                 cellStyleNumber.WrapText=true;
                 cellStyleNumber.FillForegroundColor=26;
                 cellStyleNumber.FillPattern=FillPattern.SolidForeground; 
+
+                ICellStyle cellStyleNumberLIGHTGREEN = workbook.CreateCellStyle();
+                cellStyleNumberLIGHTGREEN.SetFont(fontnormal);
+                cellStyleNumberLIGHTGREEN.BorderLeft = BorderStyle.Thin;
+                cellStyleNumberLIGHTGREEN.BorderTop = BorderStyle.Thin;
+                cellStyleNumberLIGHTGREEN.BorderRight = BorderStyle.Thin;
+                cellStyleNumberLIGHTGREEN.BorderBottom = BorderStyle.Thin;
+                cellStyleNumberLIGHTGREEN.VerticalAlignment = VerticalAlignment.Top;
+                cellStyleNumberLIGHTGREEN.Alignment =HorizontalAlignment.Right;
+                cellStyleNumberLIGHTGREEN.WrapText=true;
+                cellStyleNumberLIGHTGREEN.FillForegroundColor=42;
+                cellStyleNumberLIGHTGREEN.FillPattern=FillPattern.SolidForeground; 
                 
 
 
@@ -1461,100 +1512,195 @@ namespace AUDANEPAD_Integrated.Controllers
                     
 
                 
+                        if(record.WPOutputLinkTypeGVM=="Programme Costs")
+                        {
+                            ICell Cell0 = row.CreateCell(0);
+                            Cell0.SetCellValue("");
+                            Cell0.CellStyle = cellStyleNormalGRAY;
 
-                        ICell Cell0 = row.CreateCell(0);
-                        Cell0.SetCellValue("");
-                        Cell0.CellStyle = cellStyleNormalGRAY;
+                            ICell Cell1 = row.CreateCell(1);
+                            Cell1.SetCellValue(record.FiscalYear_NameGVM);
+                            Cell1.CellStyle = cellStyleNumber;
 
+                            ICell Cell2 = row.CreateCell(2);
+                            Cell2.SetCellValue(record.Strategic_PrioritiesGVM);
+                            Cell2.CellStyle = cellStyleNormal;
+
+                            ICell Cell3 = row.CreateCell(3);
+                            Cell3.SetCellValue(record.Directorate_NameGVM);
+                            Cell3.CellStyle = cellStyleNormal;
+
+                            ICell Cell4 = row.CreateCell(4);
+                            Cell4.SetCellValue(record.Division_NameGVM);
+                            Cell4.CellStyle = cellStyleNormal;
+
+                            ICell Cell5 = row.CreateCell(5);
+                            Cell5.SetCellValue(record.Project_NameGVM);
+                            Cell5.CellStyle = cellStyleNormal;
+
+                            ICell Cell6 = row.CreateCell(6);
+                            Cell6.SetCellValue(record.WPFundingSourceGVM);
+                            Cell6.CellStyle = cellStyleNormal;
+
+                            ICell Cell7 = row.CreateCell(7);
+                            Cell7.SetCellValue(record.OutputGVM);
+                            Cell7.CellStyle = cellStyleNormal;
+
+                            ICell Cell8 = row.CreateCell(8);
+                            Cell8.SetCellValue(record.WPOutputLinkTypeGVM);
+                            Cell8.CellStyle = cellStyleNormal;
 
                         
-                        ICell Cell1 = row.CreateCell(1);
-                        Cell1.SetCellValue(record.FiscalYear_NameGVM);
-                        Cell1.CellStyle = cellStyleNumber;
 
-                        ICell Cell2 = row.CreateCell(2);
-                        Cell2.SetCellValue(record.Strategic_PrioritiesGVM);
-                        Cell2.CellStyle = cellStyleNormal;
+                            //Q1
+                            ICell Cell9 = row.CreateCell(9);
+                            Cell9.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ1CostGVM));
+                            Cell9.CellStyle = cellStyleNumber;
 
-                        ICell Cell3 = row.CreateCell(3);
-                        Cell3.SetCellValue(record.Directorate_NameGVM);
-                        Cell3.CellStyle = cellStyleNormal;
+                            ICell Cell10 = row.CreateCell(10);
+                            Cell10.SetCellValue("");
+                            Cell10.CellStyle = cellStyleNormalRight;
 
-                        ICell Cell4 = row.CreateCell(4);
-                        Cell4.SetCellValue(record.Division_NameGVM);
-                        Cell4.CellStyle = cellStyleNormal;
+                            //Q2
+                            ICell Cell11 = row.CreateCell(11);
+                            Cell11.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ2CostGVM));
+                            Cell11.CellStyle = cellStyleNumber;
 
-                        ICell Cell5 = row.CreateCell(5);
-                        Cell5.SetCellValue(record.Project_NameGVM);
-                        Cell5.CellStyle = cellStyleNormal;
+                            ICell Cell12 = row.CreateCell(12);
+                            Cell12.SetCellValue("");
+                            Cell12.CellStyle = cellStyleNormalRight;
 
-                        ICell Cell6 = row.CreateCell(6);
-                        Cell6.SetCellValue(record.WPFundingSourceGVM);
-                        Cell6.CellStyle = cellStyleNormal;
+                            //Q3
+                            ICell Cell13 = row.CreateCell(13);
+                            Cell13.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ3CostGVM));
+                            Cell13.CellStyle = cellStyleNumber;
 
-                        ICell Cell7 = row.CreateCell(7);
-                        Cell7.SetCellValue(record.OutputGVM);
-                        Cell7.CellStyle = cellStyleNormal;
+                            ICell Cell14 = row.CreateCell(14);
+                            Cell14.SetCellValue("");
+                            Cell14.CellStyle = cellStyleNormalRight;
 
-                        ICell Cell8 = row.CreateCell(8);
-                        Cell8.SetCellValue("");
-                        Cell8.CellStyle = cellStyleNormal;
+                            //Q4
+                            ICell Cell15 = row.CreateCell(15);
+                            Cell15.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ4CostGVM));
+                            Cell15.CellStyle = cellStyleNumber;
 
-                    
+                            ICell Cell16 = row.CreateCell(16);
+                            Cell16.SetCellValue("");
+                            Cell16.CellStyle = cellStyleNormalRight;
 
-                        //Q1
-                        ICell Cell9 = row.CreateCell(9);
-                        Cell9.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ1CostGVM));
-                        Cell9.CellStyle = cellStyleNumber;
+                            //Annual
+                            ICell Cell17 = row.CreateCell(17);
+                            Cell17.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputCostGVM));
+                            Cell17.CellStyle = cellStyleNumber;
 
-                        ICell Cell10 = row.CreateCell(10);
-                        Cell10.SetCellValue("");
-                        Cell10.CellStyle = cellStyleNormalRight;
+                            ICell Cell18 = row.CreateCell(18);
+                            Cell18.SetCellValue("");
+                            Cell18.CellStyle = cellStyleNormalRight;
 
-                        //Q2
-                        ICell Cell11 = row.CreateCell(11);
-                        Cell11.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ2CostGVM));
-                        Cell11.CellStyle = cellStyleNumber;
+                            //GRAY AREA
+                            ICell Cell19 = row.CreateCell(19);
+                            Cell19.SetCellValue("");
+                            Cell19.CellStyle = cellStyleNormalGRAY;
 
-                        ICell Cell12 = row.CreateCell(12);
-                        Cell12.SetCellValue("");
-                        Cell12.CellStyle = cellStyleNormalRight;
+                            ICell Cell20 = row.CreateCell(20);
+                            Cell20.SetCellValue("");
+                            Cell20.CellStyle = cellStyleNormalGRAY;
+                        }
+                        else
+                        {
+                            ICell Cell0 = row.CreateCell(0);
+                            Cell0.SetCellValue("");
+                            Cell0.CellStyle = cellStyleNormalGRAY;
 
-                        //Q3
-                        ICell Cell13 = row.CreateCell(13);
-                        Cell13.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ3CostGVM));
-                        Cell13.CellStyle = cellStyleNumber;
+                            ICell Cell1 = row.CreateCell(1);
+                            Cell1.SetCellValue(record.FiscalYear_NameGVM);
+                            Cell1.CellStyle = cellStyleNumberLIGHTGREEN;
 
-                        ICell Cell14 = row.CreateCell(14);
-                        Cell14.SetCellValue("");
-                        Cell14.CellStyle = cellStyleNormalRight;
+                            ICell Cell2 = row.CreateCell(2);
+                            Cell2.SetCellValue(record.Strategic_PrioritiesGVM);
+                            Cell2.CellStyle = cellStyleNormalLIGHTGREEN;
 
-                        //Q4
-                        ICell Cell15 = row.CreateCell(15);
-                        Cell15.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ4CostGVM));
-                        Cell15.CellStyle = cellStyleNumber;
+                            ICell Cell3 = row.CreateCell(3);
+                            Cell3.SetCellValue(record.Directorate_NameGVM);
+                            Cell3.CellStyle = cellStyleNormalLIGHTGREEN;
 
-                        ICell Cell16 = row.CreateCell(16);
-                        Cell16.SetCellValue("");
-                        Cell16.CellStyle = cellStyleNormalRight;
+                            ICell Cell4 = row.CreateCell(4);
+                            Cell4.SetCellValue(record.Division_NameGVM);
+                            Cell4.CellStyle = cellStyleNormalLIGHTGREEN;
 
-                        //Annual
-                        ICell Cell17 = row.CreateCell(17);
-                        Cell17.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputCostGVM));
-                        Cell17.CellStyle = cellStyleNumber;
+                            ICell Cell5 = row.CreateCell(5);
+                            Cell5.SetCellValue(record.Project_NameGVM);
+                            Cell5.CellStyle = cellStyleNormalLIGHTGREEN;
 
-                        ICell Cell18 = row.CreateCell(18);
-                        Cell18.SetCellValue("");
-                        Cell18.CellStyle = cellStyleNormalRight;
+                            ICell Cell6 = row.CreateCell(6);
+                            Cell6.SetCellValue(record.WPFundingSourceGVM);
+                            Cell6.CellStyle = cellStyleNormalLIGHTGREEN;
 
-                        //GRAY AREA
-                        ICell Cell19 = row.CreateCell(19);
-                        Cell19.SetCellValue("");
-                        Cell19.CellStyle = cellStyleNormalGRAY;
+                            ICell Cell7 = row.CreateCell(7);
+                            Cell7.SetCellValue(record.OutputGVM);
+                            Cell7.CellStyle = cellStyleNormalLIGHTGREEN;
 
-                        ICell Cell20 = row.CreateCell(20);
-                        Cell20.SetCellValue("");
-                        Cell20.CellStyle = cellStyleNormalGRAY;
+                            ICell Cell8 = row.CreateCell(8);
+                            Cell8.SetCellValue(record.WPOutputLinkTypeGVM);
+                            Cell8.CellStyle = cellStyleNormalLIGHTGREEN;
+
+                        
+
+                            //Q1
+                            ICell Cell9 = row.CreateCell(9);
+                            Cell9.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ1CostGVM));
+                            Cell9.CellStyle = cellStyleNumberLIGHTGREEN;
+
+                            ICell Cell10 = row.CreateCell(10);
+                            Cell10.SetCellValue("");
+                            Cell10.CellStyle = cellStyleNormalRightLIGHTGREEN;
+
+                            //Q2
+                            ICell Cell11 = row.CreateCell(11);
+                            Cell11.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ2CostGVM));
+                            Cell11.CellStyle = cellStyleNumberLIGHTGREEN;
+
+                            ICell Cell12 = row.CreateCell(12);
+                            Cell12.SetCellValue("");
+                            Cell12.CellStyle = cellStyleNormalRightLIGHTGREEN;
+
+                            //Q3
+                            ICell Cell13 = row.CreateCell(13);
+                            Cell13.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ3CostGVM));
+                            Cell13.CellStyle = cellStyleNumberLIGHTGREEN;
+
+                            ICell Cell14 = row.CreateCell(14);
+                            Cell14.SetCellValue("");
+                            Cell14.CellStyle = cellStyleNormalRightLIGHTGREEN;
+
+                            //Q4
+                            ICell Cell15 = row.CreateCell(15);
+                            Cell15.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ4CostGVM));
+                            Cell15.CellStyle = cellStyleNumberLIGHTGREEN;
+
+                            ICell Cell16 = row.CreateCell(16);
+                            Cell16.SetCellValue("");
+                            Cell16.CellStyle = cellStyleNormalRightLIGHTGREEN;
+
+                            //Annual
+                            ICell Cell17 = row.CreateCell(17);
+                            Cell17.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputCostGVM));
+                            Cell17.CellStyle = cellStyleNumberLIGHTGREEN;
+
+                            ICell Cell18 = row.CreateCell(18);
+                            Cell18.SetCellValue("");
+                            Cell18.CellStyle = cellStyleNormalRightLIGHTGREEN;
+
+                            //GRAY AREA
+                            ICell Cell19 = row.CreateCell(19);
+                            Cell19.SetCellValue("");
+                            Cell19.CellStyle = cellStyleNormalGRAY;
+
+                            ICell Cell20 = row.CreateCell(20);
+                            Cell20.SetCellValue("");
+                            Cell20.CellStyle = cellStyleNormalGRAY;
+
+                        }
 
                         
 
@@ -1690,101 +1836,198 @@ namespace AUDANEPAD_Integrated.Controllers
                     // CreateCell(row, 0, "Recruit Junior Programming consultant to support in the finalisation of the integrated work plan application", borderedCellStylenormal);
                     
 
-                
+                        if(record.WPOutputLinkTypeGVM=="Programme Costs")
+                        {
 
-                        ICell Cell0 = row.CreateCell(0);
-                        Cell0.SetCellValue("");
-                        Cell0.CellStyle = cellStyleNormalGRAY;
+                            ICell Cell0 = row.CreateCell(0);
+                            Cell0.SetCellValue("");
+                            Cell0.CellStyle = cellStyleNormalGRAY;
 
+
+                            
+                            ICell Cell1 = row.CreateCell(1);
+                            Cell1.SetCellValue(record.FiscalYear_NameGVM);
+                            Cell1.CellStyle = cellStyleNumber;
+
+                            ICell Cell2 = row.CreateCell(2);
+                            Cell2.SetCellValue(record.Strategic_PrioritiesGVM);
+                            Cell2.CellStyle = cellStyleNormal;
+
+                            ICell Cell3 = row.CreateCell(3);
+                            Cell3.SetCellValue(record.Directorate_NameGVM);
+                            Cell3.CellStyle = cellStyleNormal;
+
+                            ICell Cell4 = row.CreateCell(4);
+                            Cell4.SetCellValue(record.Division_NameGVM);
+                            Cell4.CellStyle = cellStyleNormal;
+
+                            ICell Cell5 = row.CreateCell(5);
+                            Cell5.SetCellValue(record.Project_NameGVM);
+                            Cell5.CellStyle = cellStyleNormal;
+
+                            ICell Cell6 = row.CreateCell(6);
+                            Cell6.SetCellValue(record.WPFundingSourceGVM);
+                            Cell6.CellStyle = cellStyleNormal;
+
+                            ICell Cell7 = row.CreateCell(7);
+                            Cell7.SetCellValue(record.OutputGVM);
+                            Cell7.CellStyle = cellStyleNormal;
+
+                            ICell Cell8 = row.CreateCell(8);
+                            Cell8.SetCellValue(record.WPOutputLinkTypeGVM);
+                            Cell8.CellStyle = cellStyleNormal;
 
                         
-                        ICell Cell1 = row.CreateCell(1);
-                        Cell1.SetCellValue(record.FiscalYear_NameGVM);
-                        Cell1.CellStyle = cellStyleNumber;
 
-                        ICell Cell2 = row.CreateCell(2);
-                        Cell2.SetCellValue(record.Strategic_PrioritiesGVM);
-                        Cell2.CellStyle = cellStyleNormal;
+                            //Q1
+                            ICell Cell9 = row.CreateCell(9);
+                            Cell9.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ1CostGVM));
+                            Cell9.CellStyle = cellStyleNumber;
 
-                        ICell Cell3 = row.CreateCell(3);
-                        Cell3.SetCellValue(record.Directorate_NameGVM);
-                        Cell3.CellStyle = cellStyleNormal;
+                            ICell Cell10 = row.CreateCell(10);
+                            Cell10.SetCellValue("");
+                            Cell10.CellStyle = cellStyleNormalRight;
 
-                        ICell Cell4 = row.CreateCell(4);
-                        Cell4.SetCellValue(record.Division_NameGVM);
-                        Cell4.CellStyle = cellStyleNormal;
+                            //Q2
+                            ICell Cell11 = row.CreateCell(11);
+                            Cell11.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ2CostGVM));
+                            Cell11.CellStyle = cellStyleNumber;
 
-                        ICell Cell5 = row.CreateCell(5);
-                        Cell5.SetCellValue(record.Project_NameGVM);
-                        Cell5.CellStyle = cellStyleNormal;
+                            ICell Cell12 = row.CreateCell(12);
+                            Cell12.SetCellValue("");
+                            Cell12.CellStyle = cellStyleNormalRight;
 
-                        ICell Cell6 = row.CreateCell(6);
-                        Cell6.SetCellValue(record.WPFundingSourceGVM);
-                        Cell6.CellStyle = cellStyleNormal;
+                            //Q3
+                            ICell Cell13 = row.CreateCell(13);
+                            Cell13.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ3CostGVM));
+                            Cell13.CellStyle = cellStyleNumber;
 
-                        ICell Cell7 = row.CreateCell(7);
-                        Cell7.SetCellValue(record.OutputGVM);
-                        Cell7.CellStyle = cellStyleNormal;
+                            ICell Cell14 = row.CreateCell(14);
+                            Cell14.SetCellValue("");
+                            Cell14.CellStyle = cellStyleNormalRight;
 
-                        ICell Cell8 = row.CreateCell(8);
-                        Cell8.SetCellValue("");
-                        Cell8.CellStyle = cellStyleNormal;
+                            //Q4
+                            ICell Cell15 = row.CreateCell(15);
+                            Cell15.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ4CostGVM));
+                            Cell15.CellStyle = cellStyleNumber;
 
-                    
+                            ICell Cell16 = row.CreateCell(16);
+                            Cell16.SetCellValue("");
+                            Cell16.CellStyle = cellStyleNormalRight;
 
-                        //Q1
-                        ICell Cell9 = row.CreateCell(9);
-                        Cell9.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ1CostGVM));
-                        Cell9.CellStyle = cellStyleNumber;
+                            //Annual
+                            ICell Cell17 = row.CreateCell(17);
+                            Cell17.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputCostGVM));
+                            Cell17.CellStyle = cellStyleNumber;
 
-                        ICell Cell10 = row.CreateCell(10);
-                        Cell10.SetCellValue("");
-                        Cell10.CellStyle = cellStyleNormalRight;
+                            ICell Cell18 = row.CreateCell(18);
+                            Cell18.SetCellValue("");
+                            Cell18.CellStyle = cellStyleNormalRight;
 
-                        //Q2
-                        ICell Cell11 = row.CreateCell(11);
-                        Cell11.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ2CostGVM));
-                        Cell11.CellStyle = cellStyleNumber;
+                            //GRAY AREA
+                            ICell Cell19 = row.CreateCell(19);
+                            Cell19.SetCellValue("");
+                            Cell19.CellStyle = cellStyleNormalGRAY;
 
-                        ICell Cell12 = row.CreateCell(12);
-                        Cell12.SetCellValue("");
-                        Cell12.CellStyle = cellStyleNormalRight;
+                            ICell Cell20 = row.CreateCell(20);
+                            Cell20.SetCellValue("");
+                            Cell20.CellStyle = cellStyleNormalGRAY;
+                        }
+                        else
+                        {
+                            ICell Cell0 = row.CreateCell(0);
+                            Cell0.SetCellValue("");
+                            Cell0.CellStyle = cellStyleNormalGRAY;
 
-                        //Q3
-                        ICell Cell13 = row.CreateCell(13);
-                        Cell13.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ3CostGVM));
-                        Cell13.CellStyle = cellStyleNumber;
+                            ICell Cell1 = row.CreateCell(1);
+                            Cell1.SetCellValue(record.FiscalYear_NameGVM);
+                            Cell1.CellStyle = cellStyleNumberLIGHTGREEN;
 
-                        ICell Cell14 = row.CreateCell(14);
-                        Cell14.SetCellValue("");
-                        Cell14.CellStyle = cellStyleNormalRight;
+                            ICell Cell2 = row.CreateCell(2);
+                            Cell2.SetCellValue(record.Strategic_PrioritiesGVM);
+                            Cell2.CellStyle = cellStyleNormalLIGHTGREEN;
 
-                        //Q4
-                        ICell Cell15 = row.CreateCell(15);
-                        Cell15.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ4CostGVM));
-                        Cell15.CellStyle = cellStyleNumber;
+                            ICell Cell3 = row.CreateCell(3);
+                            Cell3.SetCellValue(record.Directorate_NameGVM);
+                            Cell3.CellStyle = cellStyleNormalLIGHTGREEN;
 
-                        ICell Cell16 = row.CreateCell(16);
-                        Cell16.SetCellValue("");
-                        Cell16.CellStyle = cellStyleNormalRight;
+                            ICell Cell4 = row.CreateCell(4);
+                            Cell4.SetCellValue(record.Division_NameGVM);
+                            Cell4.CellStyle = cellStyleNormalLIGHTGREEN;
 
-                        //Annual
-                        ICell Cell17 = row.CreateCell(17);
-                        Cell17.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputCostGVM));
-                        Cell17.CellStyle = cellStyleNumber;
+                            ICell Cell5 = row.CreateCell(5);
+                            Cell5.SetCellValue(record.Project_NameGVM);
+                            Cell5.CellStyle = cellStyleNormalLIGHTGREEN;
 
-                        ICell Cell18 = row.CreateCell(18);
-                        Cell18.SetCellValue("");
-                        Cell18.CellStyle = cellStyleNormalRight;
+                            ICell Cell6 = row.CreateCell(6);
+                            Cell6.SetCellValue(record.WPFundingSourceGVM);
+                            Cell6.CellStyle = cellStyleNormalLIGHTGREEN;
 
-                        //GRAY AREA
-                        ICell Cell19 = row.CreateCell(19);
-                        Cell19.SetCellValue("");
-                        Cell19.CellStyle = cellStyleNormalGRAY;
+                            ICell Cell7 = row.CreateCell(7);
+                            Cell7.SetCellValue(record.OutputGVM);
+                            Cell7.CellStyle = cellStyleNormalLIGHTGREEN;
 
-                        ICell Cell20 = row.CreateCell(20);
-                        Cell20.SetCellValue("");
-                        Cell20.CellStyle = cellStyleNormalGRAY;
+                            ICell Cell8 = row.CreateCell(8);
+                            Cell8.SetCellValue(record.WPOutputLinkTypeGVM);
+                            Cell8.CellStyle = cellStyleNormalLIGHTGREEN;
+
+                        
+
+                            //Q1
+                            ICell Cell9 = row.CreateCell(9);
+                            Cell9.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ1CostGVM));
+                            Cell9.CellStyle = cellStyleNumberLIGHTGREEN;
+
+                            ICell Cell10 = row.CreateCell(10);
+                            Cell10.SetCellValue("");
+                            Cell10.CellStyle = cellStyleNormalRightLIGHTGREEN;
+
+                            //Q2
+                            ICell Cell11 = row.CreateCell(11);
+                            Cell11.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ2CostGVM));
+                            Cell11.CellStyle = cellStyleNumberLIGHTGREEN;
+
+                            ICell Cell12 = row.CreateCell(12);
+                            Cell12.SetCellValue("");
+                            Cell12.CellStyle = cellStyleNormalRightLIGHTGREEN;
+
+                            //Q3
+                            ICell Cell13 = row.CreateCell(13);
+                            Cell13.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ3CostGVM));
+                            Cell13.CellStyle = cellStyleNumberLIGHTGREEN;
+
+                            ICell Cell14 = row.CreateCell(14);
+                            Cell14.SetCellValue("");
+                            Cell14.CellStyle = cellStyleNormalRightLIGHTGREEN;
+
+                            //Q4
+                            ICell Cell15 = row.CreateCell(15);
+                            Cell15.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputQ4CostGVM));
+                            Cell15.CellStyle = cellStyleNumberLIGHTGREEN;
+
+                            ICell Cell16 = row.CreateCell(16);
+                            Cell16.SetCellValue("");
+                            Cell16.CellStyle = cellStyleNormalRightLIGHTGREEN;
+
+                            //Annual
+                            ICell Cell17 = row.CreateCell(17);
+                            Cell17.SetCellValue(ExcelDoubleToStringFormat(record.WPOutputCostGVM));
+                            Cell17.CellStyle = cellStyleNumberLIGHTGREEN;
+
+                            ICell Cell18 = row.CreateCell(18);
+                            Cell18.SetCellValue("");
+                            Cell18.CellStyle = cellStyleNormalRightLIGHTGREEN;
+
+                            //GRAY AREA
+                            ICell Cell19 = row.CreateCell(19);
+                            Cell19.SetCellValue("");
+                            Cell19.CellStyle = cellStyleNormalGRAY;
+
+                            ICell Cell20 = row.CreateCell(20);
+                            Cell20.SetCellValue("");
+                            Cell20.CellStyle = cellStyleNormalGRAY;
+
+                        }
 
                         
 

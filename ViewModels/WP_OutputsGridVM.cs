@@ -38,6 +38,7 @@ namespace AUDANEPAD_Integrated.ViewModels
         public double  WPOutputQ4CostGVM  { get; set; }
 
         public string  WPFundingSourceGVM  { get; set; }
+        public string  WPOutputLinkTypeGVM  { get; set; }
 
         public string Cycle_IdGVM { get; set; }
         public string InstitutionalSelectdedPeriodGVM  { get; set; }
