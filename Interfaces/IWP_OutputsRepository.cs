@@ -11,6 +11,7 @@ namespace AUDANEPAD_Integrated.Interfaces
         IEnumerable<WP_Outputs> GetRecordsByMainRecordId (string recid);
 
         WP_Outputs GetRecordByOutputStatement (string output);
+        WP_Outputs GetRecordByOutputStatementAndOutputLinkId (string output, int outputlinkid);
 
 		IEnumerable<WP_Outputs> GetAllRecords();
 

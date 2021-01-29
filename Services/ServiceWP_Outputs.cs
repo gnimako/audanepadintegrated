@@ -69,6 +69,14 @@ namespace AUDANEPAD_Integrated.Services
             return rec;
         }
 
+		public WP_Outputs GetRecordByOutputStatementAndOutputLinkId (string output, int outputlinkid)
+        {
+            var rec = context.WP_Outputs
+						.Where(s => s.Output == output && s.WPOutputLinkType_Id==outputlinkid)
+						.FirstOrDefault();
+            return rec;
+        }
+
         public WP_Outputs Update(WP_Outputs recChanges)
 		{
 		    var satype = context.WP_Outputs.Attach(recChanges);

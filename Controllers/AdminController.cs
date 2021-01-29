@@ -3694,7 +3694,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 {
 
 
-                        WP_Outputs rec_already_exist = _wpOutputsRepository.GetRecordByOutputStatement(record.Output);
+                        WP_Outputs rec_already_exist = _wpOutputsRepository.GetRecordByOutputStatementAndOutputLinkId(record.Output, record.OutputLinkType.CategoryID);
 
                         if(rec_already_exist==null)
                         {
