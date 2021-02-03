@@ -1866,8 +1866,14 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.Property<string>("Transaction_Id")
                         .HasColumnType("text");
 
+                    b.Property<int>("ActivityType_Id")
+                        .HasColumnType("integer");
+
                     b.Property<int>("FiscalYear_Id")
                         .HasColumnType("integer");
+
+                    b.Property<string>("OutputActivity_Id")
+                        .HasColumnType("text");
 
                     b.Property<int>("Period_Id")
                         .HasColumnType("integer");
@@ -2063,6 +2069,9 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.Property<string>("Transaction_Id")
                         .HasColumnType("text");
 
+                    b.Property<int>("ActivityType_Id")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Country_Id")
                         .HasColumnType("integer");
 
@@ -2077,6 +2086,9 @@ namespace AUDANEPAD_Integrated.Migrations
 
                     b.Property<DateTime>("MobilityStartDate")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("OutputActivity_Id")
+                        .HasColumnType("text");
 
                     b.Property<int>("Period_Id")
                         .HasColumnType("integer");
@@ -2354,6 +2366,9 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.Property<double>("BaselineTechnical")
                         .HasColumnType("double precision");
 
+                    b.Property<bool>("CommunicationLink")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("Employee_Id")
                         .HasColumnType("integer");
 
@@ -2363,6 +2378,9 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.Property<int>("ImplementationType_Id")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("MobilityLink")
+                        .HasColumnType("boolean");
+
                     b.Property<bool?>("PartnerFunding")
                         .HasColumnType("boolean");
 
@@ -2371,6 +2389,9 @@ namespace AUDANEPAD_Integrated.Migrations
 
                     b.Property<int>("Period_Id")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("ProcurementLink")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("Project_Id")
                         .HasColumnType("integer");
@@ -2611,6 +2632,9 @@ namespace AUDANEPAD_Integrated.Migrations
 
                     b.Property<int>("FiscalYear_Id")
                         .HasColumnType("integer");
+
+                    b.Property<string>("OutputActivity_Id")
+                        .HasColumnType("text");
 
                     b.Property<int>("Period_Id")
                         .HasColumnType("integer");

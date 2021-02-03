@@ -26,6 +26,11 @@ namespace AUDANEPAD_Integrated.Models
         public double  BaselineTechnical { get; set; }
         public int  Employee_Id { get; set; }
         public string WPSAPLink_Id  { get; set; }
+
+        //Link to Mobility, Procurement and Communication
+        public bool MobilityLink { get; set; }
+        public bool ProcurementLink { get; set; }
+        public bool CommunicationLink { get; set; }
         public LocalDate TransactionDate { get; set; }
         
     }

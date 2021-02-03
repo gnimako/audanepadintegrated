@@ -29,7 +29,12 @@
                                         </a>
                                         &nbsp;&nbsp;
                                         <a asp-controller="ExcelAPI" asp-action="InstitutionalOutputsFullExcel" asp-route-id="@Model.DispatchCycle_Id" asp-route-periodid="@Model.InstitutionalRepPeriodIdent" class="k-button " id="btnExportInstProc" style="color: #003f59;">
-                                         <span class="k-icon k-i-file-excel"></span> Export
+                                         <span class="k-icon k-i-file-excel"></span> Export Outputs
+                                        </a>
+
+                                         &nbsp;&nbsp;
+                                        <a asp-controller="ExcelAPI" asp-action="InstitutionalOutputsFullExcel" asp-route-id="@Model.DispatchCycle_Id" asp-route-periodid="@Model.InstitutionalRepPeriodIdent" class="k-button " id="btnExportInstProc" style="color: #003f59;">
+                                         <span class="k-icon k-i-file-excel"></span> Export Outputs and Activities
                                         </a>
 
 

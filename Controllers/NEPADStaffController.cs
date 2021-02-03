@@ -459,6 +459,35 @@ namespace AUDANEPAD_Integrated.Controllers
                     _wpOutputsRepository.Update(rec_set);
                 }
             }*/
+
+            var DB_Records_1 = _wpOutputActivitiesRepository.GetAllRecords().ToList();
+            foreach (var rec_set in DB_Records_1)
+            {
+
+                rec_set.MobilityLink=false;
+                rec_set.ProcurementLink=false;
+                rec_set.CommunicationLink=false;
+                _wpOutputActivitiesRepository.Update(rec_set);
+                
+            }
+
+            var DB_Records_2 = _wpMobilityRepository.GetAllRecords().ToList();
+            foreach (var rec_set in DB_Records_2)
+            {
+
+                rec_set.ActivityType_Id=6;
+                _wpMobilityRepository.Update(rec_set);
+                
+            }
+
+            var DB_Records_3 = _wpCommunicationRepository.GetAllRecords().ToList();
+            foreach (var rec_set in DB_Records_3)
+            {
+
+                rec_set.ActivityType_Id=14;
+                _wpCommunicationRepository.Update(rec_set);
+                
+            }
             
 
             return View(emp_view);

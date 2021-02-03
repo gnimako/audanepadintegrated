@@ -10,6 +10,7 @@ namespace AUDANEPAD_Integrated.Models
         [Key]
         public string Transaction_Id { get; set; }
         public string WPMainRecord_id { get; set; }
+        public string OutputActivity_Id  { get; set; }
         public int  Project_Id { get; set; }
         public int  FiscalYear_Id { get; set; }
         public int  Period_Id { get; set; }
