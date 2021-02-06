@@ -262,6 +262,8 @@
 
                 <ul class="childNav" data-parent="widgets">
                     <li class="nav-item"><a href="#"><i class="nav-icon i-Receipt-4"></i><span class="item-name">Workplan<span class="ml-2 badge badge-pill badge-danger">1</span></span></a></li>
+                    <li class="nav-item"><a href="#"><i class="nav-icon i-Receipt-4"></i><span class="item-name">Procurement<span class="ml-2 badge badge-pill badge-danger">1</span></span></a></li>
+                    <li class="nav-item"><a href="#"><i class="nav-icon i-Receipt-4"></i><span class="item-name">Mobility<span class="ml-2 badge badge-pill badge-danger">1</span></span></a></li>
                     <li class="nav-item"><a href="#"><i class="nav-icon i-Receipt-4"></i><span class="item-name">Reporting<span class="ml-2 badge badge-pill badge-danger"> 1</span></span></a></li>
                     <li class="nav-item"><a href="#"><i class="nav-icon i-Receipt-4"></i><span class="item-name">KPIs <span class="ml-2 badge badge-pill badge-danger">1</span></span></a></li>
                 </ul>
@@ -280,11 +282,32 @@
                 </ul>
 
                 <ul class="childNav" data-parent="procurement">
-                    <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-File-Clipboard-Text--Image"></i><span class="item-name" style="color: #003473;">Procurement Plans</span><i class="dd-arrow i-Arrow-Down"></i></a>
+                    <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-Folders"></i><span class="item-name" style="color: #003473;">Procurement Plans</span><i class="dd-arrow i-Arrow-Down"></i></a>
                         <ul class="submenu">
                             <li><a asp-controller="nepadstaff" asp-action="institutionalprocurementplandraftlist"><span style="color: #003473;">All Plans</span></a></li>
+                            <li><a href="#"><span style="color: #003473;">Assigned Plans</span></a></li>
                             <li><a href="#"><span style="color: #003473;">Approved Plans</span></a></li>
                             <li><a href="#"><span style="color: #003473;">Closed Plans</span></a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-Repeat-3"></i><span class="item-name" style="color: #003473;">Procurement Processing</span><i class="dd-arrow i-Arrow-Down"></i></a>
+                        <ul class="submenu">
+                            <li><a asp-controller="nepadstaff" asp-action="institutionalprocurementplandraftlist"><span style="color: #003473;">All Procurements</span></a></li>
+                            <li><a href="#"><span style="color: #003473;">Assigned Procurements</span></a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-Duplicate-Layer"></i><span class="item-name" style="color: #003473;">Procurement Contracting</span><i class="dd-arrow i-Arrow-Down"></i></a>
+                        <ul class="submenu">
+                            <li><a asp-controller="nepadstaff" asp-action="institutionalprocurementplandraftlist"><span style="color: #003473;">All Procurements</span></a></li>
+                            <li><a href="#"><span style="color: #003473;">Assigned Procurements</span></a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-Bar-Chart-4"></i><span class="item-name" style="color: #003473;">Procurement Evaluation</span><i class="dd-arrow i-Arrow-Down"></i></a>
+                        <ul class="submenu">
+                            <li><a asp-controller="nepadstaff" asp-action="institutionalprocurementplandraftlist"><span style="color: #003473;">All Procurements</span></a></li>
+                            <li><a href="#"><span style="color: #003473;">Assigned Procurements</span></a></li>
                         </ul>
                     </li>
                      

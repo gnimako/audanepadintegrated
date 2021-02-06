@@ -458,7 +458,7 @@ namespace AUDANEPAD_Integrated.Controllers
                     rec_set.WPOutputLinkType_Id=1;
                     _wpOutputsRepository.Update(rec_set);
                 }
-            }*/
+            }
 
             var DB_Records_1 = _wpOutputActivitiesRepository.GetAllRecords().ToList();
             foreach (var rec_set in DB_Records_1)
@@ -487,7 +487,7 @@ namespace AUDANEPAD_Integrated.Controllers
                 rec_set.ActivityType_Id=14;
                 _wpCommunicationRepository.Update(rec_set);
                 
-            }
+            }*/
             
 
             return View(emp_view);
