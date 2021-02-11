@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,400i,600,700,800,900" rel="stylesheet" />
     <link href="~/nepadstaff2/dist-assets/css/themes/lite-blue.css" rel="stylesheet" />
     <link href="~/nepadstaff2/dist-assets/css/plugins/perfect-scrollbar.min.css" rel="stylesheet" />
-       <link href="~/nepadstaff2/dist-assets/css/bulma-steps.css" rel="stylesheet" />
+    <link href="~/nepadstaff2/dist-assets/css/bulma-steps.css" rel="stylesheet" />
 
     
 
@@ -147,7 +147,7 @@
                 <!-- Notificaiton -->
                 <div class="dropdown">
                     <div class="badge-top-container" role="button" id="dropdownNotification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="badge badge-primary">1</span>
+                        <span id="mainnotification_ident" class="badge badge-primary"></span>
                         <i class="i-Bell text-muted header-icon"></i>
                     </div>
                     <!-- Notification dropdown -->
@@ -221,7 +221,13 @@
 
                  @if(Model.Procurement==true)
                  {
-                    <li class="nav-item" data-item="procurement"><a class="nav-item-hold" href="#"><i class="nav-icon i-Management"></i><span class="nav-text">Institutional Procurement</span></a>
+          
+                    <li class="nav-item" data-item="procurement">
+                        <a class="nav-item-hold" href="#">
+                            <span class="badge badge-primary" style="position: absolute; border-radius: 10px;">@Model.ProcurementCategoryMain</span>
+                            <i class="nav-icon i-Management"></i>
+                            <span class="nav-text">Institutional Procurement</span>
+                        </a>
                         <div class="triangle"></div>
                     </li>
                  }
@@ -291,19 +297,18 @@
                         </ul>
                     </li>
 
-                    <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-Repeat-3"></i><span class="item-name" style="color: #003473;">Procurement Processing</span><i class="dd-arrow i-Arrow-Down"></i></a>
+                    <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-Repeat-3"></i><span class="item-name" style="color: #003473;">Procurement Processing <span class="ml-2 badge badge-pill badge-danger">@Model.ProcurementProcessing</span></span><i class="dd-arrow i-Arrow-Down"></i></a>
                         <ul class="submenu">
                             <li><a asp-controller="nepadstaff" asp-action="institutionalprocurementplandraftlist"><span style="color: #003473;">All Procurements</span></a></li>
                             <li><a href="#"><span style="color: #003473;">Assigned Procurements</span></a></li>
+
+
+
+                             <li><a asp-controller="nepadstaff" asp-action="procurementprocesstasklist"><span style="color: #003473;">Tasks <span class="ml-2 badge badge-pill badge-danger">@Model.ProcurementProcessing</span></span></a></li>
                         </ul>
                     </li>
 
-                    <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-Duplicate-Layer"></i><span class="item-name" style="color: #003473;">Procurement Contracting</span><i class="dd-arrow i-Arrow-Down"></i></a>
-                        <ul class="submenu">
-                            <li><a asp-controller="nepadstaff" asp-action="institutionalprocurementplandraftlist"><span style="color: #003473;">All Procurements</span></a></li>
-                            <li><a href="#"><span style="color: #003473;">Assigned Procurements</span></a></li>
-                        </ul>
-                    </li>
+                   
                     <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-Bar-Chart-4"></i><span class="item-name" style="color: #003473;">Procurement Evaluation</span><i class="dd-arrow i-Arrow-Down"></i></a>
                         <ul class="submenu">
                             <li><a asp-controller="nepadstaff" asp-action="institutionalprocurementplandraftlist"><span style="color: #003473;">All Procurements</span></a></li>
@@ -478,6 +483,10 @@
     <script src="~/nepadstaff2/dist-assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="~/nepadstaff2/dist-assets/js/scripts/script.min.js"></script>
     <script src="~/nepadstaff2/dist-assets/js/scripts/sidebar.large.script.min.js"></script>
+    @* <script src="~/lib/signalr/dist/browser/signalr.js"></script> *@
+   
+
+    @* <link rel="stylesheet" href="~/lib/kendo-ui/css/web/kendo.blueopal.min.css" /> *@
 
 
     <script type="text/javascript">

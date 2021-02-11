@@ -20,10 +20,16 @@ namespace AUDANEPAD_Integrated.ViewModels
         public int  FiscalYear_IdGVM  { get; set; }
         public int  Period_IdGVM { get; set; }
         public string WPOutput_IdGVM { get; set; }
+        public string WPOutput_StatementGVM { get; set; }
 
         public string WPProcurement_DescriptionGVM  { get; set; }
         public int  WPProcurementType_IdGVM  { get; set; }
         public string  WPProcurementType_NameGVM  { get; set; }
+
+        public string  WPProcurement_AssignedGVM  { get; set; }
+        public string  WPProcurement_CompletedGVM  { get; set; }
+
+
         public int  WPProcurementLeadTime_IdGVM  { get; set; }
         public LocalDate WPProcurementStartDateGVM  { get; set; }
         public LocalDate WPProcurementEndDateGVM  { get; set; }
@@ -45,6 +51,13 @@ namespace AUDANEPAD_Integrated.ViewModels
         public string Cycle_IdGVM { get; set; }
         public string InstitutionalSelectdedPeriodGVM  { get; set; }
         public string InstitutionalSelectdedPeriodIdentGVM  { get; set; }
+
+        public string WPWorkLoadDistributionRole_String  { get; set; }
+
+        //Procurement Task
+        public string WPProcurementTask_Id  { get; set; }
+        public string WPProcurementTask_Action  { get; set; }
+
 
         
     }

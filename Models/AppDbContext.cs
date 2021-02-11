@@ -35,6 +35,10 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<LkUp_ProjectScope> LkUp_ProjectScope { get; set; }
         public DbSet<LkUp_RegionScope> LkUp_RegionScope { get; set; }
         public DbSet<LkUp_PeopleType> LkUp_PeopleType { get; set; }
+        public DbSet<LkUp_ProcurementApprovalAuthority> LkUp_ProcurementApprovalAuthority { get; set; }
+        public DbSet<LkUp_ProcurementSelectionMethod> LkUp_ProcurementSelectionMethod { get; set; }
+        public DbSet<LkUp_ProcurementPaymentType> LkUp_ProcurementPaymentType { get; set; }
+        public DbSet<LkUp_ProcurementProcessSteps> LkUp_ProcurementProcessSteps { get; set; }
         public DbSet<Strategy_Priority> Strategy_Priority { get; set; }
         public DbSet<Strategy_MTP> Strategy_MTP { get; set; }
         public DbSet<Strategy_MTPPriorityMapping> Strategy_MTPPriorityMapping { get; set; }
@@ -81,6 +85,10 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<Trans_StrucDirectorate> Trans_StrucDirectorate { get; set; }
         public DbSet<Trans_StrucDivision> Trans_StrucDivision { get; set; }
         public DbSet<Trans_MobilityLimits> Trans_MobilityLimits { get; set; }
+        public DbSet<Trans_ProcurementApprovalAuthority> Trans_ProcurementApprovalAuthority { get; set; }
+        public DbSet<Trans_ProcurementSelectionMethod> Trans_ProcurementSelectionMethod { get; set; }
+        public DbSet<Trans_ProcurementPaymentType> Trans_ProcurementPaymentType { get; set; }
+        public DbSet<Trans_ProcurementProcessSteps> Trans_ProcurementProcessSteps { get; set; }
 
         public DbSet<Struc_DirStaffMapping> Struc_DirStaffMapping { get; set; }
         public DbSet<Struc_DivStaffMapping> Struc_DivStaffMapping { get; set; }
@@ -126,6 +134,18 @@ namespace AUDANEPAD_Integrated.Models
         public DbSet<WP_Procurement> WP_Procurement { get; set; }
         public DbSet<WP_RiskProfile> WP_RiskProfile { get; set; }
         public DbSet<WP_RiskProfileCountries> WP_RiskProfileCountries { get; set; }
+
+        
+
+        //Procurement Automation
+        public DbSet<WP_ProcurementWorkLoadAssignment> WP_ProcurementWorkLoadAssignment { get; set; }
+        public DbSet<WP_ProcurementProcess> WP_ProcurementProcess { get; set; }
+        public DbSet<WP_Tasks> WP_Tasks { get; set; }
+        public DbSet<WP_ProcurementProcessSteps> WP_ProcurementProcessSteps { get; set; }
+        public DbSet<WP_ProcurementTORDocs> WP_ProcurementTORDocs { get; set; }
+
+
+
 
 
         
@@ -234,6 +254,23 @@ namespace AUDANEPAD_Integrated.Models
             .HasConversion(localDateConverter);
 
             modelBuilder.Entity<LkUp_MobilityLimits>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            
+            modelBuilder.Entity<LkUp_ProcurementApprovalAuthority>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<LkUp_ProcurementSelectionMethod>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<LkUp_ProcurementPaymentType>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<LkUp_ProcurementProcessSteps>()
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
 
@@ -405,6 +442,23 @@ namespace AUDANEPAD_Integrated.Models
             modelBuilder.Entity<Trans_MobilityLimits>()
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Trans_ProcurementApprovalAuthority>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Trans_ProcurementSelectionMethod>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Trans_ProcurementPaymentType>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<Trans_ProcurementProcessSteps>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
 
 
             modelBuilder.Entity<Struc_DirStaffMapping>()
@@ -696,6 +750,167 @@ namespace AUDANEPAD_Integrated.Models
             modelBuilder.Entity<WP_RiskProfileCountries>()
             .Property(e => e.TransactionDate)
             .HasConversion(localDateConverter);
+
+            //Procurement Automation
+            modelBuilder.Entity<WP_ProcurementWorkLoadAssignment>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPDocTORSubmissionDate_Plan)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPDocTORSubmissionDate_Actual)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPDocTORApprovalDate_Plan)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPDocTORApprovalDate_Actual)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPAdvertiseREOIDate_Plan)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPAdvertiseREOIDate_Actual)
+            .HasConversion(localDateConverter);
+           
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPShortlistSubmissionDate_Plan)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPShortlistSubmissionDate_Actual)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPNoObjectionShortlistDate_Plan)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPNoObjectionShortlistDate_Actual)
+            .HasConversion(localDateConverter);
+           
+
+
+            
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPInvitationRFPQDate_Plan)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPInvitationRFPQDate_Actual)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPSubmissionOpeningDate_Plan)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPSubmissionOpeningDate_Actual)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPSubmissionEvaluationDate_Plan)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPSubmissionEvaluationDate_Actual)
+            .HasConversion(localDateConverter);
+            
+
+
+            
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPNoObjectionSubmissionEvaluationDate_Plan)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPNoObjectionSubmissionEvaluationDate_Actual)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPOpeningFinancialProposalsDate_Plan)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPOpeningFinancialProposalsDate_Actual)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPPreparationApprovalIPCDate_Plan)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPPreparationApprovalIPCDate_Actual)
+            .HasConversion(localDateConverter);
+            
+
+
+            
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPNegotiationDate_Plan)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPNegotiationDate_Actual)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPDraftContractVettingSubmissionDate_Plan)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPDraftContractVettingSubmissionDate_Actual)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPDraftContractVettingNoObjectionDate_Plan)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.WPDraftContractVettingNoObjectionDate_Actual)
+            .HasConversion(localDateConverter);
+
+
+            modelBuilder.Entity<WP_ProcurementProcess>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+
+
+
+            modelBuilder.Entity<WP_Tasks>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcessSteps>()
+            .Property(e => e.WPPlannedDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcessSteps>()
+            .Property(e => e.WPActualDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementProcessSteps>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+
+            modelBuilder.Entity<WP_ProcurementTORDocs>()
+            .Property(e => e.TransactionDate)
+            .HasConversion(localDateConverter);
+          
+
+
+
+            //Procurement Automation
 
 
             

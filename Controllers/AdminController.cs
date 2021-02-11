@@ -159,6 +159,22 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly IWP_RiskProfileRepository _wpRiskProfileRepository;
         private readonly IWP_RiskProfileCountriesRepository _wpRiskProfileCountriesRepository;
 
+        //Procurement Automation
+        private readonly ILkUp_ProcurementApprovalAuthorityRepository _lkupProcurementApprovalAuthorityRepository ;
+        private readonly ILkUp_ProcurementSelectionMethodRepository _lkupProcurementSelectionMethodRepository ;
+        private readonly ILkUp_ProcurementPaymentTypeRepository _lkupProcurementPaymentTypeRepository ;
+        private readonly ITrans_ProcurementApprovalAuthorityRepository _transProcurementApprovalAuthorityRepository;
+        private readonly ITrans_ProcurementSelectionMethodRepository _transProcurementSelectionMethodRepository;
+        private readonly ITrans_ProcurementPaymentTypeRepository _transProcurementPaymentTypeRepository;
+        private readonly IWP_ProcurementWorkLoadAssignmentRepository _wpProcurementWorkLoadAssignmentRepository;
+        private readonly IWP_ProcurementProcessRepository _wpProcurementProcessRepository;
+        private readonly IWP_TasksRepository _wpTasksRepository;
+        private readonly ILkUp_ProcurementProcessStepsRepository _lkupProcurementProcessStepsRepository;
+        private readonly ITrans_ProcurementProcessStepsRepository _transProcurementProcessStepsReposity;
+        private readonly IWP_ProcurementProcessStepsRepository _wpProcurementProcessStepsRepository;
+        private readonly IWP_ProcurementTORDocsRepository _wpProcurementTORDocsRepository;
+
+
 
 
         private readonly AppDbContext _context;
@@ -269,7 +285,22 @@ namespace AUDANEPAD_Integrated.Controllers
                                 IWP_PRCBudgetLimitsRepository wpPRCBudgetLimitsRepository,
                                 IWP_ProcurementRepository wpProcurementRepository,
                                 IWP_RiskProfileRepository wpRiskProfileRepository,
-                                IWP_RiskProfileCountriesRepository wpRiskProfileCountriesRepository)
+                                IWP_RiskProfileCountriesRepository wpRiskProfileCountriesRepository,
+                                
+                                //Procurement Automation
+                                ILkUp_ProcurementApprovalAuthorityRepository lkupProcurementApprovalAuthorityRepository,
+                                ILkUp_ProcurementSelectionMethodRepository lkupProcurementSelectionMethodRepository,
+                                ILkUp_ProcurementPaymentTypeRepository lkupProcurementPaymentTypeRepository,
+                                ITrans_ProcurementApprovalAuthorityRepository transProcurementApprovalAuthorityRepository,
+                                ITrans_ProcurementSelectionMethodRepository transProcurementSelectionMethodRepository,
+                                ITrans_ProcurementPaymentTypeRepository transProcurementPaymentTypeRepository,
+                                IWP_ProcurementWorkLoadAssignmentRepository wpProcurementWorkLoadAssignmentRepository,
+                                IWP_ProcurementProcessRepository wpProcurementProcessRepository,
+                                IWP_TasksRepository wpTasksRepository,
+                                ILkUp_ProcurementProcessStepsRepository lkupProcurementProcessStepsRepository,
+                                ITrans_ProcurementProcessStepsRepository transProcurementProcessStepsReposity,
+                                IWP_ProcurementProcessStepsRepository wpProcurementProcessStepsRepository,
+                                IWP_ProcurementTORDocsRepository wpProcurementTORDocsRepository)
         {
             this._employeeRepository = employeeRepository;
             this.userManager = userManager;
@@ -378,6 +409,21 @@ namespace AUDANEPAD_Integrated.Controllers
             _wpProcurementRepository=wpProcurementRepository;
             _wpRiskProfileRepository=wpRiskProfileRepository;
             _wpRiskProfileCountriesRepository=wpRiskProfileCountriesRepository;
+
+            //Procurement Automation
+            _lkupProcurementApprovalAuthorityRepository =lkupProcurementApprovalAuthorityRepository;
+            _lkupProcurementSelectionMethodRepository =lkupProcurementSelectionMethodRepository;
+            _lkupProcurementPaymentTypeRepository =lkupProcurementPaymentTypeRepository;
+            _transProcurementApprovalAuthorityRepository=transProcurementApprovalAuthorityRepository;
+            _transProcurementSelectionMethodRepository=transProcurementSelectionMethodRepository;
+            _transProcurementPaymentTypeRepository=transProcurementPaymentTypeRepository;
+            _wpProcurementWorkLoadAssignmentRepository=wpProcurementWorkLoadAssignmentRepository;
+            _wpProcurementProcessRepository=wpProcurementProcessRepository;
+            _wpTasksRepository=wpTasksRepository;
+            _lkupProcurementProcessStepsRepository=lkupProcurementProcessStepsRepository;
+            _transProcurementProcessStepsReposity=transProcurementProcessStepsReposity;
+            _wpProcurementProcessStepsRepository=wpProcurementProcessStepsRepository;
+            _wpProcurementTORDocsRepository=wpProcurementTORDocsRepository;
         
 
 
@@ -1282,6 +1328,12 @@ namespace AUDANEPAD_Integrated.Controllers
             Chilkat.Csv csv_roles =new Chilkat.Csv();
             Chilkat.Csv csv_mobilitylimit =new Chilkat.Csv();
 
+            //Procurement Automation
+            Chilkat.Csv csv_procurementapprovalauthority =new Chilkat.Csv();
+            Chilkat.Csv csv_procurementselectionmethod =new Chilkat.Csv();
+            Chilkat.Csv csv_procurementpaymenttype =new Chilkat.Csv();
+            Chilkat.Csv csv_procuremenprocessstep =new Chilkat.Csv();
+
 
 
             string activitytype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ActivityType.csv");
@@ -1316,6 +1368,11 @@ namespace AUDANEPAD_Integrated.Controllers
             string indicatortype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/IndicatorType.csv");
             string roles_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/Roles.csv");
             string mobilitylimit_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/MobilityLimits.csv");
+
+            string procurementapprovalauthority_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ProcurementApprovalAuthority.csv");
+            string procurementselectionmethod_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ProcurementSelectionMethod.csv");
+            string procurementpaymenttype_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ProcurementPaymentType.csv");
+            string procuremenprocessstep_path = Path.Combine(hostingEnvironment.WebRootPath, "appdirectory/lookupcsvs/ProcurementProcessStep.csv");
             
 
 
@@ -1353,6 +1410,11 @@ namespace AUDANEPAD_Integrated.Controllers
                 bool success_indicatortype= csv_indicatortype.LoadFile(indicatortype_path);
                 bool success_roles= csv_roles.LoadFile(roles_path);
                 bool success_mobilitylimit= csv_mobilitylimit.LoadFile(mobilitylimit_path);
+
+                bool success_procurementapprovalauthority= csv_procurementapprovalauthority.LoadFile(procurementapprovalauthority_path);
+                bool success_procurementselectionmethod= csv_procurementselectionmethod.LoadFile(procurementselectionmethod_path);
+                bool success_procurementpaymenttype= csv_procurementpaymenttype.LoadFile(procurementpaymenttype_path);
+                bool success_procuremenprocessstep= csv_procuremenprocessstep.LoadFile(procuremenprocessstep_path);
 
 
                 if (success_activitytype == true)
@@ -2540,6 +2602,155 @@ namespace AUDANEPAD_Integrated.Controllers
                     }
                 }
 
+                //Procurement Authomation
+
+                if (success_procurementapprovalauthority== true)
+                {
+                    int _count= _lkupProcurementApprovalAuthorityRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_procurementapprovalauthority.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_ProcurementApprovalAuthority rec = new LkUp_ProcurementApprovalAuthority
+                            {
+
+                                Record_Id = Int32.Parse(csv_procurementapprovalauthority.GetCell(row, 0)),
+                                Record_Name = csv_procurementapprovalauthority.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupProcurementApprovalAuthorityRepository.Add(rec);
+
+                            Trans_ProcurementApprovalAuthority rec_trans = new Trans_ProcurementApprovalAuthority
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_procurementapprovalauthority.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transProcurementApprovalAuthorityRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_procurementselectionmethod== true)
+                {
+                    int _count= _lkupProcurementSelectionMethodRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_procurementselectionmethod.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_ProcurementSelectionMethod rec = new LkUp_ProcurementSelectionMethod
+                            {
+
+                                Record_Id = Int32.Parse(csv_procurementselectionmethod.GetCell(row, 0)),
+                                Record_Name = csv_procurementselectionmethod.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupProcurementSelectionMethodRepository.Add(rec);
+
+                            Trans_ProcurementSelectionMethod rec_trans = new Trans_ProcurementSelectionMethod
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_procurementselectionmethod.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transProcurementSelectionMethodRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+
+                if (success_procurementpaymenttype== true)
+                {
+                    int _count= _lkupProcurementPaymentTypeRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_procurementpaymenttype.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_ProcurementPaymentType rec = new LkUp_ProcurementPaymentType
+                            {
+
+                                Record_Id = Int32.Parse(csv_procurementpaymenttype.GetCell(row, 0)),
+                                Record_Name = csv_procurementpaymenttype.GetCell(row, 1),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupProcurementPaymentTypeRepository.Add(rec);
+
+                            Trans_ProcurementPaymentType rec_trans = new Trans_ProcurementPaymentType
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_procurementpaymenttype.GetCell(row, 0)),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transProcurementPaymentTypeRepository.Add(rec_trans);
+
+                        }
+                    }
+                }
+
+                if (success_procuremenprocessstep== true)
+                {
+                    int _count= _lkupProcurementProcessStepsRepository.GetAllRecords().Count();
+                    if (_count <= 0)
+                    {
+                        int row;
+                        int n = csv_procuremenprocessstep.NumRows;
+
+
+                        for (row = 0; row <= n - 1; row++)
+                        {
+
+                            LkUp_ProcurementProcessSteps rec = new LkUp_ProcurementProcessSteps
+                            {
+
+                                Record_Id = Int32.Parse(csv_procuremenprocessstep.GetCell(row, 0)),
+                                Record_Name = csv_procuremenprocessstep.GetCell(row, 1),
+                                Record_Type = csv_procuremenprocessstep.GetCell(row, 2),
+                                Record_Status = true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _lkupProcurementProcessStepsRepository.Add(rec);
+
+                            Trans_ProcurementProcessSteps rec_trans = new Trans_ProcurementProcessSteps
+                            {
+                                Transaction_Id = Guid.NewGuid().ToString(),
+                                Record_Id = Int32.Parse(csv_procuremenprocessstep.GetCell(row, 0)),
+                                Record_Type = csv_procuremenprocessstep.GetCell(row, 2),
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _transProcurementProcessStepsReposity.Add(rec_trans);
+
+                        }
+                    }
+                }
+
                 
 
                 return Json(new { rtnmsg = "success" });
@@ -3158,6 +3369,82 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
         [AcceptVerbs("Post")]
+		public async Task<ActionResult> WP_ProcurementWorkLoadEmployee_Create([DataSourceRequest] DataSourceRequest request, WP_ProcurementEmployeeVM record, string wprocurementid)
+        {
+            if (record != null && ModelState.IsValid)
+            { 
+                 if(wprocurementid!=null )
+                 {
+
+                    WP_ProcurementWorkLoadAssignment rec=_wpProcurementWorkLoadAssignmentRepository.GetRecordByProcurementIdAndEmployeeId(wprocurementid, record.EmployeeName.CategoryID);
+
+                    WP_Procurement procurementrec=_wpProcurementRepository.GetRecord(wprocurementid);
+                    int approveauthority=0;
+
+                    if(procurementrec.WPProcurementCost<=15000)
+                    {
+                        approveauthority=5;
+                    }
+                    else if(procurementrec.WPProcurementCost>=15001 && procurementrec.WPProcurementCost<=50000)
+                    {
+                        approveauthority=4;
+                    }
+                    else if(procurementrec.WPProcurementCost>=50001 && procurementrec.WPProcurementCost<=100000)
+                    {
+                        approveauthority=3;
+                    }
+                    else if(procurementrec.WPProcurementCost>10000 )
+                    {
+                        approveauthority=2;
+                    }
+
+             
+                    if(rec==null)
+                    {
+                        WP_ProcurementWorkLoadAssignment rec_to_add = new WP_ProcurementWorkLoadAssignment
+                        {
+                            Transaction_Id=Guid.NewGuid().ToString(),
+                            WPMainRecord_id=record.WPMainRecord_idExtPartVM,
+                            WPProcurement_Id=wprocurementid,
+                            Employee_Id=record.EmployeeName.CategoryID,
+                            ProcurementApprovalAuthority_Id=approveauthority,
+                            WPProcurement_Status="Active",
+                            
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+                        _wpProcurementWorkLoadAssignmentRepository.Add(rec_to_add);
+                    }
+
+
+                    WP_Tasks taskrec=_wpTasksRepository.GetRecordByCategoryReferenceIdSubcategory1AndTask("Procurement",wprocurementid,"Procurement Process","Initiate Procurement Process");
+                    var user = await userManager.GetUserAsync(HttpContext.User);
+
+                    if(taskrec==null)
+                    {
+                        WP_Tasks rec_to_add=new WP_Tasks
+                        {
+                            Transaction_Id=Guid.NewGuid().ToString(),
+                            WPCategoryMain="Procurement",
+                            WPReference_Id=wprocurementid,
+                            WPCategorySub1="Procurement Process",
+                            WPTaskDescription="Initiate Procurement Process",
+                            WPTaskStatus="Active",
+                            WPRequesterEmployee_Id=user.Employee_Id,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+                        _wpTasksRepository.Add(rec_to_add);
+
+                    }
+                 }
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+        [AcceptVerbs("Post")]
 		public ActionResult WP_Outcomes_Create([DataSourceRequest] DataSourceRequest request, WorkplansViewModel record, string progid, string projid, string fyear, string fperiod, string empid, string dirid, string divid, string periodtxt)
         {
             if (record != null && ModelState.IsValid)
@@ -3653,6 +3940,61 @@ namespace AUDANEPAD_Integrated.Controllers
             
             return Json(new [] { record }.ToDataSourceResult(request, ModelState));
         }
+
+
+        [AcceptVerbs("Post")]
+		public ActionResult WP_ProcurementWorkLoadEmploye_Update([DataSourceRequest] DataSourceRequest request, WP_ProcurementEmployeeVM record, string wprocurementid)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                
+                if(wprocurementid!=null )
+                {
+
+                    WP_ProcurementWorkLoadAssignment wp_rec_fetch=_wpProcurementWorkLoadAssignmentRepository.GetRecord(record.Transaction_IdExtPartVM);
+
+                    WP_ProcurementWorkLoadAssignment rec=_wpProcurementWorkLoadAssignmentRepository.GetRecordByProcurementIdAndEmployeeId(wprocurementid, record.EmployeeName.CategoryID);
+
+                    WP_Procurement procurementrec=_wpProcurementRepository.GetRecord(wprocurementid);
+                    int approveauthority=0;
+
+                    if(procurementrec.WPProcurementCost<=15000)
+                    {
+                        approveauthority=5;
+                    }
+                    else if(procurementrec.WPProcurementCost>=15001 && procurementrec.WPProcurementCost<=50000)
+                    {
+                        approveauthority=4;
+                    }
+                    else if(procurementrec.WPProcurementCost>=50001 && procurementrec.WPProcurementCost<=100000)
+                    {
+                        approveauthority=3;
+                    }
+                    else if(procurementrec.WPProcurementCost>10000 )
+                    {
+                        approveauthority=2;
+                    }
+
+                    if(rec==null)
+                    {
+                        if (wp_rec_fetch != null)
+                        {
+                            wp_rec_fetch.WPMainRecord_id=record.WPMainRecord_idExtPartVM;
+                            wp_rec_fetch.WPProcurement_Id=wprocurementid;
+                            wp_rec_fetch.Employee_Id=record.EmployeeName.CategoryID;
+                            wp_rec_fetch.ProcurementApprovalAuthority_Id=approveauthority;
+                            wp_rec_fetch.TransactionDate=new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+
+                            _wpProcurementWorkLoadAssignmentRepository.Update(wp_rec_fetch);
+                            
+                        }  
+                    }
+                }    
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
         [AcceptVerbs("Post")]
 		public ActionResult WP_Outcomes_Update([DataSourceRequest] DataSourceRequest request, WorkplansViewModel record, string empid)
         {
@@ -4013,6 +4355,32 @@ namespace AUDANEPAD_Integrated.Controllers
                     _wpMobilityExternalTeamRepository.Delete(rec.Transaction_Id);
 
                 }      
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+        [AcceptVerbs("Post")]
+		public ActionResult WP_ProcurementWorkLoadEmploye_Delete([DataSourceRequest] DataSourceRequest request, WP_ProcurementEmployeeVM record, string wprocurementid)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+
+                WP_ProcurementWorkLoadAssignment rec=_wpProcurementWorkLoadAssignmentRepository.GetRecord(record.Transaction_IdExtPartVM);
+
+                var DB_Recs =  _wpProcurementWorkLoadAssignmentRepository.GetRecordsByProcurementId(wprocurementid).ToList();
+
+                int _count = DB_Recs.Count();
+                
+                if(_count>=2)
+                {
+                    if (rec != null)
+                    {
+                        _wpProcurementWorkLoadAssignmentRepository.Delete(rec.Transaction_Id);
+
+                    }    
+                }  
                            
             }
             
@@ -4701,6 +5069,59 @@ namespace AUDANEPAD_Integrated.Controllers
                         {
                             CategoryID = exttype.Record_Id,
                             CategoryName = exttype.Record_Name
+                        },
+
+
+                    };
+
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+
+        public ActionResult WP_ProcurementWorkLoadEmployee_Read([DataSourceRequest]DataSourceRequest request, string wprocurementid)
+        {
+
+
+            List<WP_ProcurementEmployeeVM> collection_recs = new List<WP_ProcurementEmployeeVM>();
+
+           // WP_MainRecord wp_mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
+       
+           // var DB_Recs =  _wpMobilityExternalTeamRepository.GetRecordsByMobilityId(wpmobilityid).ToList();
+            var DB_Recs =  _wpProcurementWorkLoadAssignmentRepository.GetRecordsByProcurementId(wprocurementid);
+
+          //  var emp_recs =  _employeeRepository.GetAllEmployee().ToList();
+
+           
+
+
+
+            int _count =  DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+                    
+                    Employee emp=_employeeRepository.GetEmployee(rec.Employee_Id);
+                    WP_Procurement procurement=_wpProcurementRepository.GetRecord(rec.WPProcurement_Id);
+   
+                    WP_ProcurementEmployeeVM srec = new WP_ProcurementEmployeeVM
+                    {
+                        Transaction_IdExtPartVM = rec.Transaction_Id,
+                        WPMainRecord_idExtPartVM=rec.WPMainRecord_id,
+                        WPOutput_IdExtPartVM=procurement.WPOutput_Id,
+                       
+                        EmployeeName = new CategoryViewModel()
+                        {
+                            CategoryID = rec.Employee_Id,
+                            CategoryName = emp.First_Name+" "+emp.Last_Name
                         },
 
 
@@ -8862,11 +9283,24 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
 
-        public ActionResult AllProcurementPlans_Read ([DataSourceRequest]DataSourceRequest request, string cycleid, string periodid)
+        public async Task<ActionResult>  AllProcurementPlans_Read ([DataSourceRequest]DataSourceRequest request, string cycleid, string periodid)
         {
 
 
             List<WP_ProcurementGridVM> collection_recs = new List<WP_ProcurementGridVM>();
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            string wkloaddiststring="";
+
+            if (await userManager.IsInRoleAsync(user, "Division Head"))
+            {
+                wkloaddiststring="Approve";
+
+            }
+            else
+            {
+                wkloaddiststring="Cannot Approve";
+            }
 
             
 
@@ -8912,6 +9346,37 @@ namespace AUDANEPAD_Integrated.Controllers
                                 {
                                     WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(record.WPMainRecord_id);
 
+                                    var DB_WPProcurementAssigned =_wpProcurementWorkLoadAssignmentRepository.GetRecordsByProcurementId(record.Transaction_Id).ToList();
+
+                                    string assigned="";
+                                    string proccompleted="";
+
+                                    if(DB_WPProcurementAssigned.Count()>=1)
+                                    {
+                                        assigned="YES";
+                                    } 
+                                    else
+                                    {
+                                        assigned="NO";
+                                    } 
+                                    // WP_ProcurementWorkLoadAssignment GetRecordByProcurementIdAndEmployeeId
+                                    WP_ProcurementWorkLoadAssignment assignedproc=_wpProcurementWorkLoadAssignmentRepository.GetRecordByProcurementIdAndEmployeeId(record.Transaction_Id, user.Employee_Id);
+
+                                    if(assignedproc!=null)
+                                    {
+                                        if(assignedproc.WPProcurement_Status=="Completed")
+                                        {
+
+                                            proccompleted="YES";
+
+                                        }
+                                        else
+                                        {
+                                            proccompleted="NO";
+                                        }
+
+                                    }
+
                                     WP_ProcurementGridVM srec = new WP_ProcurementGridVM
                                     {
                                         Transaction_IdGVM = record.Transaction_Id,
@@ -8920,6 +9385,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                         FiscalYear_IdGVM  = record.FiscalYear_Id,
                                         Period_IdGVM = record.Period_Id,
                                         WPOutput_IdGVM = record.WPOutput_Id,
+                                        WPOutput_StatementGVM=_wpOutputsRepository.GetRecord(record.WPOutput_Id).Output,
                                         WPProcurement_DescriptionGVM = record.WPProcurement_Description,
                                         WPProcurementType_IdGVM = record.WPProcurementType_Id,
                                         WPProcurementType_NameGVM = _lkupProcurementTypeRepository.GetRecord(record.WPProcurementType_Id).Record_Name,
@@ -8931,7 +9397,10 @@ namespace AUDANEPAD_Integrated.Controllers
                                         Division_IdGVM =  mainrec.Division_Id,
                                         Division_NameGVM = _strucDivisionRepository.GetRecord(mainrec.Division_Id).Record_Name,
                                         Cycle_IdGVM = cycleid,
-                                        InstitutionalSelectdedPeriodIdentGVM = periodid
+                                        InstitutionalSelectdedPeriodIdentGVM = periodid,
+                                        WPWorkLoadDistributionRole_String=wkloaddiststring,
+                                        WPProcurement_AssignedGVM=assigned,
+                                        WPProcurement_CompletedGVM=proccompleted
 
                                     };
                                      collection_recs.Add(srec);
@@ -8958,6 +9427,79 @@ namespace AUDANEPAD_Integrated.Controllers
 
             return Json(collection_recs.ToDataSourceResult(request));
         }
+
+
+
+
+
+
+        public async Task<ActionResult>  PendingProcurementProcessTaskforEmployee_Read ([DataSourceRequest]DataSourceRequest request)
+        {
+
+
+            List<WP_ProcurementGridVM> collection_recs = new List<WP_ProcurementGridVM>();
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            var DB_ProcurementActive=_wpProcurementWorkLoadAssignmentRepository.GetRecordsByEmployeeIdAndStatus(user.Employee_Id, "Active").ToList();
+         
+            foreach(var recordset in DB_ProcurementActive)
+            {
+                WP_Tasks procurementprocessingrec=_wpTasksRepository.GetRecordBySubcategory1ReferenceIdAndStatus("Procurement Process",recordset.WPProcurement_Id, "Active");
+
+                if(procurementprocessingrec!=null)
+                {
+                    WP_Procurement record=_wpProcurementRepository.GetRecord(procurementprocessingrec.WPReference_Id);
+                    WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(record.WPMainRecord_id);
+
+                    WP_ProcurementGridVM srec = new WP_ProcurementGridVM
+                    {
+                        Transaction_IdGVM = record.Transaction_Id,
+                        WPMainRecord_idGVM = record.WPMainRecord_id,
+                        Project_IdGVM  = record.Project_Id,
+                        FiscalYear_IdGVM  = record.FiscalYear_Id,
+                        Period_IdGVM = record.Period_Id,
+                        WPOutput_IdGVM = record.WPOutput_Id,
+                        WPOutput_StatementGVM=_wpOutputsRepository.GetRecord(record.WPOutput_Id).Output,
+                        WPProcurement_DescriptionGVM = record.WPProcurement_Description,
+                        WPProcurementType_IdGVM = record.WPProcurementType_Id,
+                        WPProcurementType_NameGVM = _lkupProcurementTypeRepository.GetRecord(record.WPProcurementType_Id).Record_Name,
+                        WPProcurementLeadTime_IdGVM = record.WPProcurementLeadTime_Id,
+                        WPProcurementCostGVM = record.WPProcurementCost,
+                        WPProcurement_SourceOfFundsDescrGVM  = record.WPProcurement_SourceOfFundsDescr,
+                        Directorate_IdGVM = mainrec.Directorate_Id,
+                        Directorate_NameGVM = _strucDirectorateRepository.GetRecord(mainrec.Directorate_Id).AcronymName,
+                        Division_IdGVM =  mainrec.Division_Id,
+                        Division_NameGVM = _strucDivisionRepository.GetRecord(mainrec.Division_Id).Record_Name,
+                        WPProcurementTask_Action=procurementprocessingrec.WPTaskDescription,
+                        WPProcurementTask_Id=procurementprocessingrec.Transaction_Id
+                        
+                    };
+                    collection_recs.Add(srec);
+
+                }
+                   
+
+            }
+            
+
+            
+
+            
+
+            //Sorting
+            collection_recs=collection_recs.OrderBy(d => d.Directorate_IdGVM).ThenBy(d => d.Division_IdGVM).ToList();
+
+
+
+                
+            
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+
 
         public ActionResult AllOutputsPlans_Read ([DataSourceRequest]DataSourceRequest request, string cycleid, string periodid)
         {
@@ -10733,6 +11275,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 //WP_OutputBudget recbudget=_wpOutputBudgetRepository.GetRecordsByProjectYearPeriodAndOutputId(model.Project_IdOAVMMain, model.FiscalYear_IdOAVMMain, model.Period_IdOAVMMain, model.Transaction_IdOAVMMain);
                 WP_Outputs recoutputrecord=_wpOutputsRepository.GetRecord(model.Transaction_IdOAVMMain);
 
+
+
                 if(recoutputrecord.WPSAPLink_Id==null )
                 {
                     WP_OutputActivities rec_to_add_1 = new WP_OutputActivities
@@ -10812,8 +11356,10 @@ namespace AUDANEPAD_Integrated.Controllers
 
                 }
 
+               // var DB_Output_Activities =  _wpOutputActivitiesRepository.GetRecordsByMainRecordId(recoutputrecord.WPMainRecord_id);
 
-                return Json(new { rtnmsg = "success" });
+
+                return Json(new { rtnmsg = "success"});
             }
             catch (Exception)
             {
@@ -13742,6 +14288,85 @@ namespace AUDANEPAD_Integrated.Controllers
 
         }
 
+/*
+        [HttpPost]
+        public ActionResult AddWPProcurementWorkLoadAssignmentMultiSelect(string transid, string wpmainrecid, string wpoutputid, string selectkeys)
+        {
+
+           // WP_MainRecord mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod)); _wpMobilityRepository.Add
+
+
+            string returnstring="";
+            string returnemployee="";
+            WP_Mobility wp_mobility_rec=_wpMobilityRepository.GetRecord(transid);
+            WP_MainRecord wpmainrecord=_wpMainRecordRepository.GetRecord(wpmainrecid);
+
+
+
+
+
+            if(wp_mobility_rec!=null)
+            {
+                if(selectkeys!=null)
+                {
+                    string[] selectedkeys = selectkeys.Split(',');
+
+
+
+                    //delete all related records GetRecordsByMobilityId
+                    var records =  _wpMobilityInternalTeamRepository.GetRecordsByMobilityId(transid);
+                    foreach (var record in records)
+                    {
+                        _wpMobilityInternalTeamRepository.Delete(record.Transaction_Id);
+                    }
+
+
+                    foreach (string recid in selectedkeys)
+                    {
+
+                        WP_MobilityInternalTeam rec_to_add = new WP_MobilityInternalTeam
+                        {
+                            Transaction_Id= Guid.NewGuid().ToString(),
+                            WPMainRecord_id=wpmainrecid,
+                            Project_Id=wpmainrecord.Project_Id,
+                            FiscalYear_Id=wpmainrecord.FiscalYear_Id,
+                            Period_Id=wpmainrecord.Period_Id,
+                            WPOutput_Id=wpoutputid,
+                            WPMobility_id=transid,
+                            Employee_Id=Int32.Parse(recid),
+                            PeriodStartDate=wpmainrecord.PeriodStartDate,
+                            PeriodEndDate=wpmainrecord.PeriodEndDate,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+                        _wpMobilityInternalTeamRepository.Add(rec_to_add);
+                
+
+                
+                    }
+                    returnstring="success";
+
+                    
+                }
+                else
+                {
+                    //delete all related records
+                    var records =  _wpMobilityInternalTeamRepository.GetRecordsByMobilityId(transid);
+                    foreach (var record in records)
+                    {
+                        _wpMobilityInternalTeamRepository.Delete(record.Transaction_Id);
+                    }
+
+                    returnstring="empty";
+                }
+                
+            }
+
+
+            return Json(new { rtnmsg = returnstring, rtnemp= returnemployee});
+
+        }
+    */
+
 
         [HttpPost]
         public ActionResult AddWPRiskCountryMultiSelect(string transid, string wpmainrecid, string wpoutputid, string selectkeys)
@@ -15911,6 +16536,67 @@ namespace AUDANEPAD_Integrated.Controllers
 
         [HttpGet]
         [AllowAnonymous]
+        public JsonResult GetAllProcurementSelectionMethod()
+        {
+          
+            var recs=_transProcurementSelectionMethodRepository.GetAllRecords().ToList();
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                   
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = rec.Record_Id,
+                            DropDown_Name = _lkupProcurementSelectionMethodRepository.GetRecord(rec.Record_Id).Record_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+                }
+            }
+
+            return Json(collection_recs.ToList());
+
+        }
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetAllProcurementShortlistLeadTime()
+        {
+          
+            var recs=_transProcurementLTimeRepository.GetAllRecords().ToList();
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                   
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = rec.Record_Id,
+                            DropDown_Name = _lkupProcurementLTimeRepository.GetRecord(rec.Record_Id).Record_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+                }
+            }
+
+            return Json(collection_recs.ToList());
+
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
         public JsonResult GetAllImplementationTypes()
         {
           
@@ -16547,6 +17233,43 @@ namespace AUDANEPAD_Integrated.Controllers
                     {
                             DropDown_IntId = rec.Id,
                             DropDown_Name = rec.First_Name+" "+rec.Last_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+            return Json(collection_recs.ToList());
+
+        }
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetAllEmployeeProcurement()
+        {
+            // IEnumerable<Employee> DB_Employees = new List<Employee>();
+            
+
+            var recs =  _strucDivStaffMappingRepository.GetAllRecordsByDivision(22).ToList();
+
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                    Employee employee=_employeeRepository.GetEmployee(rec.EmployeePK);
+                   
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = employee.Id,
+                            DropDown_Name = employee.First_Name+" "+employee.Last_Name
                     };
                     // EmployeeDropDownViewModel me = DB_Employees[_count];
                     collection_recs.Add(srec);

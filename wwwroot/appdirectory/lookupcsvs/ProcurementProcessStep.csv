@@ -1,0 +1,19 @@
+﻿1;Submission of Procurement Documents;Procurement Processing
+2;Submission of Procurement TORs;Procurement Processing
+3;Approval of Procurement Documents;Procurement Processing
+4;Approval of Procurement TORs;Procurement Processing
+5;Advertise Request for EOI;Procurement Processing
+6;Shortlist Request for EOI;Procurement Processing
+7;Request for Proposals (RFP);Procurement Processing
+8;Request for Quotations (RFQ);Procurement Processing
+9;Evaluation of Proposals;Procurement Processing
+10;Evaluation of Quotations ;Procurement Processing
+11;IPC Approval;Procurement Processing
+12;Negotiation of Contract;Procurement Processing
+13;Vetting of Draft Contract;Procurement Processing
+14;Award Contract;Procurement Processing
+15;Advance Payment;Procurement Processing
+16;Submission of Draft Report;Procurement Processing
+17;Submission of Final Report;Procurement Processing
+18;Evaluation of Final Report;Procurement Evaluation
+19;Approval of Evaluation Report;Procurement Evaluation

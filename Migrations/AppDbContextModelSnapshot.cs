@@ -511,6 +511,29 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.ToTable("LkUp_Period");
                 });
 
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_ProcurementApprovalAuthority", b =>
+                {
+                    b.Property<int>("Record_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Record_Name")
+                        .IsRequired()
+                        .HasColumnType("character varying(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<bool>("Record_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Record_Id");
+
+                    b.ToTable("LkUp_ProcurementApprovalAuthority");
+                });
+
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_ProcurementLTime", b =>
                 {
                     b.Property<int>("Record_Id")
@@ -532,6 +555,78 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.HasKey("Record_Id");
 
                     b.ToTable("LkUp_ProcurementLTime");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_ProcurementPaymentType", b =>
+                {
+                    b.Property<int>("Record_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Record_Name")
+                        .IsRequired()
+                        .HasColumnType("character varying(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<bool>("Record_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Record_Id");
+
+                    b.ToTable("LkUp_ProcurementPaymentType");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_ProcurementProcessSteps", b =>
+                {
+                    b.Property<int>("Record_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Record_Name")
+                        .IsRequired()
+                        .HasColumnType("character varying(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<bool>("Record_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Record_Type")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Record_Id");
+
+                    b.ToTable("LkUp_ProcurementProcessSteps");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_ProcurementSelectionMethod", b =>
+                {
+                    b.Property<int>("Record_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Record_Name")
+                        .IsRequired()
+                        .HasColumnType("character varying(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<bool>("Record_Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Record_Id");
+
+                    b.ToTable("LkUp_ProcurementSelectionMethod");
                 });
 
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.LkUp_ProcurementType", b =>
@@ -1445,6 +1540,22 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.ToTable("Trans_Period");
                 });
 
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_ProcurementApprovalAuthority", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Record_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_ProcurementApprovalAuthority");
+                });
+
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_ProcurementLTime", b =>
                 {
                     b.Property<string>("Transaction_Id")
@@ -1459,6 +1570,57 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.HasKey("Transaction_Id");
 
                     b.ToTable("Trans_ProcurementLTime");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_ProcurementPaymentType", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Record_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_ProcurementPaymentType");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_ProcurementProcessSteps", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Record_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Record_Type")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_ProcurementProcessSteps");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_ProcurementSelectionMethod", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Record_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("Trans_ProcurementSelectionMethod");
                 });
 
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.Trans_ProcurementType", b =>
@@ -2633,6 +2795,9 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.Property<int>("FiscalYear_Id")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("MicroProcurement")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("OutputActivity_Id")
                         .HasColumnType("text");
 
@@ -2684,6 +2849,234 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.HasKey("Transaction_Id");
 
                     b.ToTable("WP_Procurement");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.WP_ProcurementProcess", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProcurementApprovalAuthority_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProcurementEmployee_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProcurementPaymentType_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProcurementSelectionMethod_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProgrammeEmployee_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPAdvertiseREOIDate_Actual")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPAdvertiseREOIDate_Plan")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPDocTORApprovalDate_Actual")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPDocTORApprovalDate_Plan")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPDocTORSubmissionDate_Actual")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPDocTORSubmissionDate_Plan")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPDraftContractVettingNoObjectionDate_Actual")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPDraftContractVettingNoObjectionDate_Plan")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPDraftContractVettingSubmissionDate_Actual")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPDraftContractVettingSubmissionDate_Plan")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPInvitationRFPQDate_Actual")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPInvitationRFPQDate_Plan")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("WPLeadTimeBeforeShortlist_IdActual")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("WPLeadTimeBeforeShortlist_IdPlan")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("WPMainRecord_id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("WPNegotiationDate_Actual")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPNegotiationDate_Plan")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPNoObjectionShortlistDate_Actual")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPNoObjectionShortlistDate_Plan")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPNoObjectionSubmissionEvaluationDate_Actual")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPNoObjectionSubmissionEvaluationDate_Plan")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPOpeningFinancialProposalsDate_Actual")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPOpeningFinancialProposalsDate_Plan")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPPreparationApprovalIPCDate_Actual")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPPreparationApprovalIPCDate_Plan")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("WPProcurementProcess_Status")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPProcurement_Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("WPShortlistSubmissionDate_Actual")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPShortlistSubmissionDate_Plan")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPSubmissionEvaluationDate_Actual")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPSubmissionEvaluationDate_Plan")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPSubmissionOpeningDate_Actual")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPSubmissionOpeningDate_Plan")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("WP_ProcurementProcess");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.WP_ProcurementProcessSteps", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Employee_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("WPActualDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("WPMainRecord_id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPNotes")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("WPPlannedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("WPProcurement_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("WPStepNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("WPStepType_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("WPStep_Status")
+                        .HasColumnType("text");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("WP_ProcurementProcessSteps");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.WP_ProcurementTORDocs", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Employee_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("WPDocDesciptionTitle")
+                        .IsRequired()
+                        .HasColumnType("character varying(300)")
+                        .HasMaxLength(300);
+
+                    b.Property<string>("WPDocPath")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPDoc_Status")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPMainRecord_id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPProcurement_Id")
+                        .HasColumnType("text");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("WP_ProcurementTORDocs");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.WP_ProcurementWorkLoadAssignment", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Employee_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProcurementApprovalAuthority_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("WPMainRecord_id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPProcurement_Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPProcurement_Status")
+                        .HasColumnType("text");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("WP_ProcurementWorkLoadAssignment");
                 });
 
             modelBuilder.Entity("AUDANEPAD_Integrated.Models.WP_RegionScope", b =>
@@ -2835,6 +3228,58 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.HasKey("Transaction_Id");
 
                     b.ToTable("WP_SAPLink");
+                });
+
+            modelBuilder.Entity("AUDANEPAD_Integrated.Models.WP_Tasks", b =>
+                {
+                    b.Property<string>("Transaction_Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("WPCategoryMain")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPCategorySub1")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPCategorySub2")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPCategorySub3")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPCategorySub4")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPCategorySub5")
+                        .HasColumnType("text");
+
+                    b.Property<int>("WPDirectorate_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("WPDivision_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("WPReference_Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("WPRepondentEmployee_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("WPRequesterEmployee_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("WPTaskDescription")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPTaskStatus")
+                        .HasColumnType("text");
+
+                    b.HasKey("Transaction_Id");
+
+                    b.ToTable("WP_Tasks");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

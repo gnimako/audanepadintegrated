@@ -208,6 +208,9 @@
 
 
 $("#btnSubmita_act").click(function (e) {
+///"use strict";
+//var connection = new signalR.HubConnectionBuilder().withUrl("/notificationhubserver").build();
+
 
     var gridid = $("#Transaction_IdOAVMMain").val(); 
 
@@ -267,6 +270,7 @@ $("#btnSubmita_act").click(function (e) {
                 dataType: 'json',
                 success: function (result) {
                     var response = result.rtnmsg;
+                   // var actcount=result.rtncount;
 
                     if (response == "success") {
                                 $('#targetDivStaffa_act').empty();
@@ -279,15 +283,36 @@ $("#btnSubmita_act").click(function (e) {
                                 childGrid.dataSource.read();
                                 //childGrid.refresh();
 
-
+                                /*
                                 var grid_outputsbudget = $("#grid_outputsbudget").data("kendoGrid"); 
                                 grid_outputsbudget.dataSource.transport.options.read.url = "/Admin/WP_OutputsBudget_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod;
                                 grid_outputsbudget.dataSource.read();
-                                grid_outputsbudget.refresh();
+                                grid_outputsbudget.refresh();*/
 
                                 var grid_outputsactivities = $("#grid_outputactivities").data("kendoGrid"); 
                                 grid_outputsactivities.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_Activities_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&periodtxt=" + periodtxt;
                                 grid_outputsactivities.dataSource.read();
+
+                                //Call Executing Function
+                                /*connection.on("ReceiveNotification", function (msgcount) {
+                                    var notificationspan = document.getElementById("mainnotification_ident"); 
+                                    notificationspan.textContent = msgcount; 
+                                });
+
+                                //Call Main Function in SignalR Hub
+
+                                connection.invoke("SendNotification", actcount).catch(function (err) {
+                                        return console.error(err.toString());
+                                });
+                                
+
+                                connection.start().catch(function (e) {
+                                });
+
+                                 connection.start().then(function () {
+                                }).catch(function (err) {
+                                    return console.error(err.toString());
+                                }); */
 
 
                     }
@@ -327,6 +352,9 @@ $("#btnSubmita_act").click(function (e) {
 
 
     }
+
+
+
 
 
 
@@ -513,6 +541,7 @@ $("#btnSubmita_act").click(function (e) {
 
 
 </style>
+
 
 
 

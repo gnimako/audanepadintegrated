@@ -22,6 +22,9 @@ namespace AUDANEPAD_Integrated.ViewModels
 
         [UIHint("ClientExternalType")]
         public CategoryViewModel ExternalType { get; set; }
+
+        [UIHint("ClientEmployeeName")]
+        public CategoryViewModel EmployeeName { get; set; }
         
     }
 }

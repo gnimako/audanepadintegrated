@@ -22,6 +22,7 @@ using AUDANEPAD_Integrated.Models;
 using AUDANEPAD_Integrated.Interfaces;
 using AUDANEPAD_Integrated.Services;
 using Newtonsoft.Json.Serialization;
+using AUDANEPAD_Integrated.HubSignalR;
 
 namespace AUDANEPAD_Integrated
 {
@@ -244,7 +245,20 @@ namespace AUDANEPAD_Integrated
             services.AddScoped<IWP_RiskProfileRepository, ServiceWP_RiskProfile>();
             services.AddScoped<IWP_RiskProfileCountriesRepository, ServiceWP_RiskProfileCountries>();
 
-            //services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
+            //Procurement Automation
+            services.AddScoped<ILkUp_ProcurementApprovalAuthorityRepository, ServiceLkUp_ProcurementApprovalAuthority>();
+            services.AddScoped<ILkUp_ProcurementSelectionMethodRepository, ServiceLkUp_ProcurementSelectionMethod>();
+            services.AddScoped<ILkUp_ProcurementPaymentTypeRepository, ServiceLkUp_ProcurementPaymentType>();
+            services.AddScoped<ITrans_ProcurementApprovalAuthorityRepository, ServiceTrans_ProcurementApprovalAuthority>();
+            services.AddScoped<ITrans_ProcurementSelectionMethodRepository, ServiceTrans_ProcurementSelectionMethod>();
+            services.AddScoped<ITrans_ProcurementPaymentTypeRepository, ServiceTrans_ProcurementPaymentType>();
+            services.AddScoped<IWP_ProcurementWorkLoadAssignmentRepository, ServiceWP_ProcurementWorkLoadAssignment>();
+            services.AddScoped<IWP_ProcurementProcessRepository, ServiceWP_ProcurementProcess>();
+            services.AddScoped<IWP_TasksRepository, ServiceWP_Tasks>();
+            services.AddScoped<ILkUp_ProcurementProcessStepsRepository, ServiceLkUp_ProcurementProcessSteps>();
+            services.AddScoped<ITrans_ProcurementProcessStepsRepository, ServiceTrans_ProcurementProcessSteps>();
+            services.AddScoped<IWP_ProcurementProcessStepsRepository, ServiceWP_ProcurementProcessSteps>();
+            services.AddScoped<IWP_ProcurementTORDocsRepository, ServiceWP_ProcurementTORDocs>();
 
 
             
@@ -265,6 +279,7 @@ namespace AUDANEPAD_Integrated
             // services.AddMvc().AddSessionStateTempDataProvider();
             services.AddSession();
             services.AddHttpContextAccessor();
+           // services.AddSignalR();
 
            // services.AddControllers();
             //services.AddRazorPages();
@@ -326,6 +341,7 @@ namespace AUDANEPAD_Integrated
 
 
                // endpoints.MapRazorPages();
+              // endpoints.MapHub<NotificationsHub>("/notificationshub");
                 
             });
         }

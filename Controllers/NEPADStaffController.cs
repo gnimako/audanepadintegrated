@@ -37,15 +37,13 @@ using iText.Layout.Properties;
 
 using iText.Barcodes;
 using GemBox.Spreadsheet;
-
-
-
+using System.Globalization;
 
 namespace AUDANEPAD_Integrated.Controllers
 {
     public class NEPADStaffController: Controller
     {
-         private readonly IEmployeeRepository _employeeRepository;
+        private readonly IEmployeeRepository _employeeRepository;
         
         private readonly UserManager<ApplicationUser> userManager;
 
@@ -159,6 +157,22 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly IWP_RiskProfileRepository _wpRiskProfileRepository;
         private readonly IWP_RiskProfileCountriesRepository _wpRiskProfileCountriesRepository;
 
+        //Procurement Automation
+        private readonly ILkUp_ProcurementApprovalAuthorityRepository _lkupProcurementApprovalAuthorityRepository ;
+        private readonly ILkUp_ProcurementSelectionMethodRepository _lkupProcurementSelectionMethodRepository ;
+        private readonly ILkUp_ProcurementPaymentTypeRepository _lkupProcurementPaymentTypeRepository ;
+        private readonly ITrans_ProcurementApprovalAuthorityRepository _transProcurementApprovalAuthorityRepository;
+        private readonly ITrans_ProcurementSelectionMethodRepository _transProcurementSelectionMethodRepository;
+        private readonly ITrans_ProcurementPaymentTypeRepository _transProcurementPaymentTypeRepository;
+        private readonly IWP_ProcurementWorkLoadAssignmentRepository _wpProcurementWorkLoadAssignmentRepository;
+        private readonly IWP_ProcurementProcessRepository _wpProcurementProcessRepository;
+        private readonly IWP_TasksRepository _wpTasksRepository;
+        private readonly ILkUp_ProcurementProcessStepsRepository _lkupProcurementProcessStepsRepository;
+        private readonly ITrans_ProcurementProcessStepsRepository _transProcurementProcessStepsReposity;
+        private readonly IWP_ProcurementProcessStepsRepository _wpProcurementProcessStepsRepository;
+        private readonly IWP_ProcurementTORDocsRepository _wpProcurementTORDocsRepository;
+
+
 
 
         private readonly AppDbContext _context;
@@ -269,7 +283,22 @@ namespace AUDANEPAD_Integrated.Controllers
                                 IWP_PRCBudgetLimitsRepository wpPRCBudgetLimitsRepository,
                                 IWP_ProcurementRepository wpProcurementRepository,
                                 IWP_RiskProfileRepository wpRiskProfileRepository,
-                                IWP_RiskProfileCountriesRepository wpRiskProfileCountriesRepository)
+                                IWP_RiskProfileCountriesRepository wpRiskProfileCountriesRepository,
+                                
+                                //Procurement Automation
+                                ILkUp_ProcurementApprovalAuthorityRepository lkupProcurementApprovalAuthorityRepository,
+                                ILkUp_ProcurementSelectionMethodRepository lkupProcurementSelectionMethodRepository,
+                                ILkUp_ProcurementPaymentTypeRepository lkupProcurementPaymentTypeRepository,
+                                ITrans_ProcurementApprovalAuthorityRepository transProcurementApprovalAuthorityRepository,
+                                ITrans_ProcurementSelectionMethodRepository transProcurementSelectionMethodRepository,
+                                ITrans_ProcurementPaymentTypeRepository transProcurementPaymentTypeRepository,
+                                IWP_ProcurementWorkLoadAssignmentRepository wpProcurementWorkLoadAssignmentRepository,
+                                IWP_ProcurementProcessRepository wpProcurementProcessRepository,
+                                IWP_TasksRepository wpTasksRepository,
+                                ILkUp_ProcurementProcessStepsRepository lkupProcurementProcessStepsRepository,
+                                ITrans_ProcurementProcessStepsRepository transProcurementProcessStepsReposity,
+                                IWP_ProcurementProcessStepsRepository wpProcurementProcessStepsRepository,
+                                IWP_ProcurementTORDocsRepository wpProcurementTORDocsRepository)
         {
             this._employeeRepository = employeeRepository;
             this.userManager = userManager;
@@ -378,6 +407,21 @@ namespace AUDANEPAD_Integrated.Controllers
             _wpProcurementRepository=wpProcurementRepository;
             _wpRiskProfileRepository=wpRiskProfileRepository;
             _wpRiskProfileCountriesRepository=wpRiskProfileCountriesRepository;
+
+            //Procurement Automation
+            _lkupProcurementApprovalAuthorityRepository =lkupProcurementApprovalAuthorityRepository;
+            _lkupProcurementSelectionMethodRepository =lkupProcurementSelectionMethodRepository;
+            _lkupProcurementPaymentTypeRepository =lkupProcurementPaymentTypeRepository;
+            _transProcurementApprovalAuthorityRepository=transProcurementApprovalAuthorityRepository;
+            _transProcurementSelectionMethodRepository=transProcurementSelectionMethodRepository;
+            _transProcurementPaymentTypeRepository=transProcurementPaymentTypeRepository;
+            _wpProcurementWorkLoadAssignmentRepository=wpProcurementWorkLoadAssignmentRepository;
+            _wpProcurementProcessRepository=wpProcurementProcessRepository;
+            _wpTasksRepository=wpTasksRepository;
+            _lkupProcurementProcessStepsRepository=lkupProcurementProcessStepsRepository;
+            _transProcurementProcessStepsReposity=transProcurementProcessStepsReposity;
+            _wpProcurementProcessStepsRepository=wpProcurementProcessStepsRepository;
+            _wpProcurementTORDocsRepository=wpProcurementTORDocsRepository;
         
 
 
@@ -447,6 +491,10 @@ namespace AUDANEPAD_Integrated.Controllers
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
 
+            
+            emp_view=await GetTaskIndicators(emp_view);
+            
+
 
             //Populate Output Link Types Default Values (Delete When Done!)
             /*
@@ -491,6 +539,60 @@ namespace AUDANEPAD_Integrated.Controllers
             
 
             return View(emp_view);
+        }
+
+        public async Task<EmployeeViewModel> GetTaskIndicators(EmployeeViewModel inputmodel)
+        {
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            //PROCUREMENT
+            int procurementcategorymain=0;
+            var DB_ProcurementActive=_wpProcurementWorkLoadAssignmentRepository.GetRecordsByEmployeeIdAndStatus(user.Employee_Id, "Active").ToList();
+
+            foreach(var record in DB_ProcurementActive)
+            {
+                WP_Tasks procurement=_wpTasksRepository.GetRecordByCategoryReferenceIdAndStatus("Procurement",record.WPProcurement_Id, "Active");
+
+                if(procurement!=null)
+                    procurementcategorymain=procurementcategorymain+1;
+
+            }
+
+            
+
+            //Procurement Planning
+
+
+            //Procurement Processing
+            int procurementprocessing=0;
+
+            foreach(var record in DB_ProcurementActive)
+            {
+                WP_Tasks procurementprocessingrec=_wpTasksRepository.GetRecordBySubcategory1ReferenceIdAndStatus("Procurement Process",record.WPProcurement_Id, "Active");
+
+                if(procurementprocessingrec!=null)
+                    procurementprocessing=procurementprocessing+1;
+
+            }
+
+            //Procurement Contracting
+
+            //Procurement Evaluation
+
+            
+            if(procurementcategorymain==0)
+                inputmodel.ProcurementCategoryMain="";
+            else
+                inputmodel.ProcurementCategoryMain=procurementcategorymain.ToString();
+
+            if(procurementprocessing==0)
+                inputmodel.ProcurementProcessing="";
+            else
+                inputmodel.ProcurementProcessing=procurementprocessing.ToString();
+
+
+            return inputmodel;
+
         }
 
         public async Task<ActionResult> Workplan()
@@ -567,6 +669,9 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+
+            emp_view=await GetTaskIndicators(emp_view);
 
             return View(emp_view);
 
@@ -649,6 +754,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
 
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(transid);
@@ -827,6 +934,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
 
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(transid);
@@ -1237,6 +1346,8 @@ namespace AUDANEPAD_Integrated.Controllers
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
 
+            emp_view=await GetTaskIndicators(emp_view);
+
 
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(transid);
 
@@ -1416,6 +1527,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
 
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(transid);
@@ -1827,6 +1940,8 @@ namespace AUDANEPAD_Integrated.Controllers
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
 
+            emp_view=await GetTaskIndicators(emp_view);
+
             return View(emp_view);
 
         }
@@ -1904,6 +2019,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
             return View(emp_view);
 
@@ -2016,6 +2133,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
             return View(emp_view);
 
@@ -2130,6 +2249,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
             return View(emp_view);
 
@@ -2247,6 +2368,8 @@ namespace AUDANEPAD_Integrated.Controllers
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
 
+            emp_view=await GetTaskIndicators(emp_view);
+
             return View(emp_view);
 
         }
@@ -2361,6 +2484,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
             return View(emp_view);
 
@@ -2479,6 +2604,8 @@ namespace AUDANEPAD_Integrated.Controllers
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
 
+            emp_view=await GetTaskIndicators(emp_view);
+
             return View(emp_view);
 
         }
@@ -2591,6 +2718,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
             return View(emp_view);
 
@@ -2705,6 +2834,8 @@ namespace AUDANEPAD_Integrated.Controllers
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
 
+            emp_view=await GetTaskIndicators(emp_view);
+
             return View(emp_view);
 
         }
@@ -2818,6 +2949,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
             return View(emp_view);
 
@@ -2934,6 +3067,8 @@ namespace AUDANEPAD_Integrated.Controllers
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
 
+            emp_view=await GetTaskIndicators(emp_view);
+
             return View(emp_view);
 
         }
@@ -3013,6 +3148,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
             return View(emp_view);
 
@@ -3095,6 +3232,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
 
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
@@ -3195,6 +3334,8 @@ namespace AUDANEPAD_Integrated.Controllers
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
 
+            emp_view=await GetTaskIndicators(emp_view);
+
             return View(emp_view);
 
         }
@@ -3278,6 +3419,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
 
@@ -3379,6 +3522,8 @@ namespace AUDANEPAD_Integrated.Controllers
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
 
+            emp_view=await GetTaskIndicators(emp_view);
+
             return View(emp_view);
 
         }
@@ -3457,6 +3602,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
 
@@ -3556,6 +3703,8 @@ namespace AUDANEPAD_Integrated.Controllers
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
 
+            emp_view=await GetTaskIndicators(emp_view);
+
             return View(emp_view);
 
         }
@@ -3639,6 +3788,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
 
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
@@ -3741,6 +3892,8 @@ namespace AUDANEPAD_Integrated.Controllers
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
 
+            emp_view=await GetTaskIndicators(emp_view);
+
 
             return View(emp_view);
 
@@ -3821,6 +3974,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
 
              WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
@@ -3923,6 +4078,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
 
              WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
@@ -4027,6 +4184,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
 
              WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
@@ -4173,6 +4332,8 @@ namespace AUDANEPAD_Integrated.Controllers
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
 
+            emp_view=await GetTaskIndicators(emp_view);
+
             WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
 
             emp_view.InstitutionalRepPeriodIdent=periodid;
@@ -4274,6 +4435,8 @@ namespace AUDANEPAD_Integrated.Controllers
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
 
+            emp_view=await GetTaskIndicators(emp_view);
+
             return View(emp_view);
 
         }
@@ -4354,6 +4517,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
              WP_DispatchCycle currentcyclerec=_wpDispatchCycleRepository.GetRecord(cycleid);
 
@@ -60419,6 +60584,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
                 
             return View(emp_view);
 
@@ -60547,6 +60714,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
 
           //  WP_MainRecord wp_mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(yearid), Int32.Parse(periodid));
 
@@ -60711,6 +60880,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
             
 
             return View(emp_view);
@@ -60776,6 +60947,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
             
             PopulatePeriodType();
 
@@ -60841,6 +61014,76 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
+            
+            PopulatePeriodType();
+
+            return View(emp_view);
+        }
+
+        public async Task<ActionResult> ProcurementProcessTaskList()
+        {
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            string profilepicpath = "";
+
+
+
+            Employee employee = _employeeRepository.GetEmployeeByLoginIdentAndStaffNumber(user.Id, user.Staff_Number);
+
+            if (employee.PhotoPath == null)
+            {
+                if (employee.Gender == 1)
+                    profilepicpath = "/appdirectory/profilepics/male_null_profile.jpg";
+                else
+                    profilepicpath = "/appdirectory/profilepics/female_null_profile.jpg";
+            }
+            else
+            {
+                profilepicpath = "/appdirectory/profilepics/" + employee.Staff_Number + "/" + employee.PhotoPath;
+
+            }
+
+            EmployeeViewModel emp_view = new EmployeeViewModel
+            {
+                Id = employee.Id,
+                IdentityUserId = employee.IdentityUserId,
+                Staff_Number = employee.Staff_Number,
+                Address_Street = employee.Address_Street,
+                Address_City = employee.Address_City,
+                Address_PostCode = employee.Address_PostCode,
+                Address_State = employee.Address_State,
+                RankStep = employee.RankStep,
+                Country = employee.Country,
+                Directorate_Id = employee.Directorate_Id,
+                Department_Id = employee.Department_Id,
+                //DOB=employee.DOB,
+                DOB = new DateTime(employee.DOB.Year, employee.DOB.Month, employee.DOB.Day),
+                Email = employee.Email,
+                First_Name = employee.First_Name,
+                Last_Name = employee.Last_Name,
+                Gender = employee.Gender,
+                PhotoPath = profilepicpath,
+                Rank = employee.Rank
+            };
+
+            if (await userManager.IsInRoleAsync(user, "PIPD"))
+                emp_view.PIPD=true;
+            if (await userManager.IsInRoleAsync(user, "Procurement"))
+                emp_view.Procurement=true;
+            if (await userManager.IsInRoleAsync(user, "Travel"))
+                emp_view.Travel=true;
+            if (await userManager.IsInRoleAsync(user, "Division Head"))
+                emp_view.Division_Head=true;
+            if (await userManager.IsInRoleAsync(user, "Director"))
+                emp_view.Director=true;
+            if (await userManager.IsInRoleAsync(user, "CEO"))
+                emp_view.CEO=true;
+            if (await userManager.IsInRoleAsync(user, "Finance"))
+                emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
             
             PopulatePeriodType();
 
@@ -60909,6 +61152,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
             
             PopulatePeriodType();
 
@@ -60975,6 +61220,8 @@ namespace AUDANEPAD_Integrated.Controllers
                 emp_view.CEO=true;
             if (await userManager.IsInRoleAsync(user, "Finance"))
                 emp_view.Finance=true;
+
+            emp_view=await GetTaskIndicators(emp_view);
             
 
             return View(emp_view);
@@ -62116,6 +62363,199 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
 
+        public async Task<ActionResult> AssignProcurementStaff(string procurementid)
+        {
+           // WP_Outputs rec = _wpOutputsRepository.GetRecord(transid);
+
+            WP_Procurement rec=_wpProcurementRepository.GetRecord(procurementid);
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            WP_MainRecord mainrecord=_wpMainRecordRepository.GetRecord(rec.WPMainRecord_id);
+            string periodinmain="";
+            if(mainrecord.Period_Id==8)
+            {
+                DateTime pstart=new DateTime(mainrecord.PeriodStartDate.Year, mainrecord.PeriodStartDate.Month, mainrecord.PeriodStartDate.Day);
+                DateTime pend=new DateTime(mainrecord.PeriodEndDate.Year, mainrecord.PeriodEndDate.Month, mainrecord.PeriodEndDate.Day);
+                periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+            }
+            else
+            {
+                periodinmain=_lkupPeriodRepository.GetRecord(mainrecord.Period_Id).Record_Name;
+
+            }  
+
+           
+            string approveauthority="";
+
+            if(rec.WPProcurementCost<=15000)
+            {
+                approveauthority=_lkupProcurementApprovalAuthorityRepository.GetRecord(5).Record_Name ;
+            }
+            else if(rec.WPProcurementCost>=15001 && rec.WPProcurementCost<=50000)
+            {
+                approveauthority=_lkupProcurementApprovalAuthorityRepository.GetRecord(4).Record_Name ;
+            }
+            else if(rec.WPProcurementCost>=50001 && rec.WPProcurementCost<=100000)
+            {
+                approveauthority=_lkupProcurementApprovalAuthorityRepository.GetRecord(3).Record_Name ;
+            }
+            else if(rec.WPProcurementCost>10000 )
+            {
+                approveauthority=_lkupProcurementApprovalAuthorityRepository.GetRecord(2).Record_Name ;
+            }
+
+            string rtnval="";
+
+            var f = new NumberFormatInfo {NumberGroupSeparator = " "};
+              
+            rtnval=rec.WPProcurementCost.ToString("N0", f);
+
+
+            
+            WP_OutputProcurementVMWindow model = new WP_OutputProcurementVMWindow
+            {
+                Transaction_IdOPVMMain=rec.Transaction_Id,
+                WPMainRecord_idOPVMMain=rec.WPMainRecord_id,
+                WPOutput_IdOPVMMain=rec.WPOutput_Id,
+                Employee_IdOPVMMain = user.Employee_Id,
+                FiscalYear_IdOPVMMain=rec.FiscalYear_Id,
+                Period_IdOPVMMain =rec.Period_Id,
+                Project_IdOPVMMain=rec.Project_Id,
+                WPProcurement_DescriptionOPVMMain=rec.WPProcurement_Description+ ". Procurement Cost = (USD "+rtnval+")",
+                WPProcurement_ApprovalAuthorityOPVMMain=approveauthority,
+                FisYearOPVMMain=_lkupFiscalYearRepository.GetRecord(rec.FiscalYear_Id).Record_Name
+
+            };
+
+            //Selected Employees
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+            var DB_Recs =  _wpProcurementWorkLoadAssignmentRepository.GetRecordsByProcurementId(procurementid);
+
+            int _count =  DB_Recs.Count();
+
+            if (_count > 0)
+            {
+                foreach (var recordset in DB_Recs)
+                {
+                    Employee emp=_employeeRepository.GetEmployee(recordset.Employee_Id);
+                   
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = recordset.Employee_Id,
+                            DropDown_Name = emp.First_Name+" "+emp.Last_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+                }
+            }
+
+            model.SelectedEmployees=collection_recs;
+
+            PopulateProcurementEmployees();
+
+
+            return PartialView("_AssignProcurementStaff", model);
+        }
+
+        public async Task<ActionResult> ProcurementProcessTaskInitiate(string procurementid, string transid)
+        {
+           // WP_Outputs rec = _wpOutputsRepository.GetRecord(transid);
+
+            WP_Procurement rec=_wpProcurementRepository.GetRecord(procurementid);
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            WP_MainRecord mainrecord=_wpMainRecordRepository.GetRecord(rec.WPMainRecord_id);
+            string periodinmain="";
+            if(mainrecord.Period_Id==8)
+            {
+                DateTime pstart=new DateTime(mainrecord.PeriodStartDate.Year, mainrecord.PeriodStartDate.Month, mainrecord.PeriodStartDate.Day);
+                DateTime pend=new DateTime(mainrecord.PeriodEndDate.Year, mainrecord.PeriodEndDate.Month, mainrecord.PeriodEndDate.Day);
+                periodinmain=pstart.Date.ToString("MMMM dd, yyyy") + " - "+ pend.Date.ToString("MMMM dd, yyyy"); 
+
+            }
+            else
+            {
+                periodinmain=_lkupPeriodRepository.GetRecord(mainrecord.Period_Id).Record_Name;
+
+            }  
+
+           
+            string approveauthority="";
+
+            if(rec.WPProcurementCost<=15000)
+            {
+                approveauthority=_lkupProcurementApprovalAuthorityRepository.GetRecord(5).Record_Name ;
+            }
+            else if(rec.WPProcurementCost>=15001 && rec.WPProcurementCost<=50000)
+            {
+                approveauthority=_lkupProcurementApprovalAuthorityRepository.GetRecord(4).Record_Name ;
+            }
+            else if(rec.WPProcurementCost>=50001 && rec.WPProcurementCost<=100000)
+            {
+                approveauthority=_lkupProcurementApprovalAuthorityRepository.GetRecord(3).Record_Name ;
+            }
+            else if(rec.WPProcurementCost>10000 )
+            {
+                approveauthority=_lkupProcurementApprovalAuthorityRepository.GetRecord(2).Record_Name ;
+            }
+
+            string rtnval="";
+
+            var f = new NumberFormatInfo {NumberGroupSeparator = " "};
+              
+            rtnval=rec.WPProcurementCost.ToString("N0", f);
+
+
+            
+            WP_OutputProcurementVMWindow model = new WP_OutputProcurementVMWindow
+            {
+                Transaction_IdOPVMMain=rec.Transaction_Id,
+                WPMainRecord_idOPVMMain=rec.WPMainRecord_id,
+                WPOutput_IdOPVMMain=rec.WPOutput_Id,
+                Employee_IdOPVMMain = user.Employee_Id,
+                FiscalYear_IdOPVMMain=rec.FiscalYear_Id,
+                Period_IdOPVMMain =rec.Period_Id,
+                Project_IdOPVMMain=rec.Project_Id,
+                WPProcurement_DescriptionOPVMMain=rec.WPProcurement_Description+ ". Procurement Cost = (USD "+rtnval+")",
+                WPProcurement_ApprovalAuthorityOPVMMain=approveauthority,
+                FisYearOPVMMain=_lkupFiscalYearRepository.GetRecord(rec.FiscalYear_Id).Record_Name
+
+            };
+
+            //Selected Employees
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+            var DB_Recs =  _wpProcurementWorkLoadAssignmentRepository.GetRecordsByProcurementId(procurementid);
+
+            int _count =  DB_Recs.Count();
+
+            if (_count > 0)
+            {
+                foreach (var recordset in DB_Recs)
+                {
+                    Employee emp=_employeeRepository.GetEmployee(recordset.Employee_Id);
+                   
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = recordset.Employee_Id,
+                            DropDown_Name = emp.First_Name+" "+emp.Last_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+                }
+            }
+
+            model.SelectedEmployees=collection_recs;
+
+            PopulateProcurementEmployees();
+
+
+            return PartialView("_ProcurementProcessTaskInitiate", model);
+        }
+
+
         public async Task<ActionResult> EditOutputRiskProfile(string transid)
         {
            // WP_Outputs rec = _wpOutputsRepository.GetRecord(transid);
@@ -62425,6 +62865,30 @@ namespace AUDANEPAD_Integrated.Controllers
             }
             ViewData["externaltypes"] = categories.OrderBy(e => e.CategoryName).ToList();
             ViewData["defaultExternalType"] = categories.OrderBy(e => e.CategoryName).First();
+
+        }
+
+        private void PopulateProcurementEmployees()
+        {
+
+
+            var emp_recs =  _strucDivStaffMappingRepository.GetAllRecordsByDivision(22).ToList();
+
+            List<CategoryViewModel> categories = new List<CategoryViewModel>();
+
+            foreach (var rec in emp_recs)
+            {
+                Employee employee=_employeeRepository.GetEmployee(rec.EmployeePK);
+                CategoryViewModel srec = new CategoryViewModel
+                {
+                        CategoryID = employee.Id,
+                        CategoryName = employee.First_Name+" "+employee.Last_Name
+                };
+                categories.Add(srec);
+  
+            }
+            ViewData["employeenameprocurement"] = categories.OrderBy(e => e.CategoryName).ToList();
+            ViewData["defaultEmployeeName"] = categories.OrderBy(e => e.CategoryName).First();
 
         }
 

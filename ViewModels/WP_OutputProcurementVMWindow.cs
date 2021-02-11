@@ -31,6 +31,7 @@ namespace AUDANEPAD_Integrated.ViewModels
         public string WPProcurementLeadTime_NameOPVMMain  { get; set; }
         public DateTime ProcurementStartDateOPVMMain { get; set; }
         public DateTime ProcurementEndDateOPVMMain { get; set; }
+        public string WPProcurement_ApprovalAuthorityOPVMMain { get; set; }
 
         public DateTime WPTORSubmissionDateOPVMMain { get; set; }
         public DateTime WPContractStartDateOPVMMain { get; set; }
@@ -57,6 +58,12 @@ namespace AUDANEPAD_Integrated.ViewModels
         public DateTime TransactionDateOPVMMain  { get; set; }
 
         public List<DropDownListViewModel> SelectedEmployees { get; set; }
+
+        //Procurement Automation
+        public bool MicroProcurement { get; set; }
+
+        public int SelectionMethod_Id { get; set; }
+        public int ShortlistLeadTime_Id { get; set; }
         
     }
 }

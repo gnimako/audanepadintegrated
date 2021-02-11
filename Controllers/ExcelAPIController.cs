@@ -27,6 +27,7 @@ using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 
 
+
 namespace AUDANEPAD_Integrated.Controllers
 {
     public class ExcelAPIController: Controller
@@ -145,6 +146,22 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly IWP_RiskProfileRepository _wpRiskProfileRepository;
         private readonly IWP_RiskProfileCountriesRepository _wpRiskProfileCountriesRepository;
 
+        //Procurement Automation
+        private readonly ILkUp_ProcurementApprovalAuthorityRepository _lkupProcurementApprovalAuthorityRepository ;
+        private readonly ILkUp_ProcurementSelectionMethodRepository _lkupProcurementSelectionMethodRepository ;
+        private readonly ILkUp_ProcurementPaymentTypeRepository _lkupProcurementPaymentTypeRepository ;
+        private readonly ITrans_ProcurementApprovalAuthorityRepository _transProcurementApprovalAuthorityRepository;
+        private readonly ITrans_ProcurementSelectionMethodRepository _transProcurementSelectionMethodRepository;
+        private readonly ITrans_ProcurementPaymentTypeRepository _transProcurementPaymentTypeRepository;
+        private readonly IWP_ProcurementWorkLoadAssignmentRepository _wpProcurementWorkLoadAssignmentRepository;
+        private readonly IWP_ProcurementProcessRepository _wpProcurementProcessRepository;
+        private readonly IWP_TasksRepository _wpTasksRepository;
+        private readonly ILkUp_ProcurementProcessStepsRepository _lkupProcurementProcessStepsRepository;
+        private readonly ITrans_ProcurementProcessStepsRepository _transProcurementProcessStepsReposity;
+        private readonly IWP_ProcurementProcessStepsRepository _wpProcurementProcessStepsRepository;
+        private readonly IWP_ProcurementTORDocsRepository _wpProcurementTORDocsRepository;
+
+
 
 
         private readonly AppDbContext _context;
@@ -255,7 +272,22 @@ namespace AUDANEPAD_Integrated.Controllers
                                 IWP_PRCBudgetLimitsRepository wpPRCBudgetLimitsRepository,
                                 IWP_ProcurementRepository wpProcurementRepository,
                                 IWP_RiskProfileRepository wpRiskProfileRepository,
-                                IWP_RiskProfileCountriesRepository wpRiskProfileCountriesRepository)
+                                IWP_RiskProfileCountriesRepository wpRiskProfileCountriesRepository,
+                                
+                                //Procurement Automation
+                                ILkUp_ProcurementApprovalAuthorityRepository lkupProcurementApprovalAuthorityRepository,
+                                ILkUp_ProcurementSelectionMethodRepository lkupProcurementSelectionMethodRepository,
+                                ILkUp_ProcurementPaymentTypeRepository lkupProcurementPaymentTypeRepository,
+                                ITrans_ProcurementApprovalAuthorityRepository transProcurementApprovalAuthorityRepository,
+                                ITrans_ProcurementSelectionMethodRepository transProcurementSelectionMethodRepository,
+                                ITrans_ProcurementPaymentTypeRepository transProcurementPaymentTypeRepository,
+                                IWP_ProcurementWorkLoadAssignmentRepository wpProcurementWorkLoadAssignmentRepository,
+                                IWP_ProcurementProcessRepository wpProcurementProcessRepository,
+                                IWP_TasksRepository wpTasksRepository,
+                                ILkUp_ProcurementProcessStepsRepository lkupProcurementProcessStepsRepository,
+                                ITrans_ProcurementProcessStepsRepository transProcurementProcessStepsReposity,
+                                IWP_ProcurementProcessStepsRepository wpProcurementProcessStepsRepository,
+                                IWP_ProcurementTORDocsRepository wpProcurementTORDocsRepository)
         {
             this._employeeRepository = employeeRepository;
             this.userManager = userManager;
@@ -364,6 +396,21 @@ namespace AUDANEPAD_Integrated.Controllers
             _wpProcurementRepository=wpProcurementRepository;
             _wpRiskProfileRepository=wpRiskProfileRepository;
             _wpRiskProfileCountriesRepository=wpRiskProfileCountriesRepository;
+
+            //Procurement Automation
+            _lkupProcurementApprovalAuthorityRepository =lkupProcurementApprovalAuthorityRepository;
+            _lkupProcurementSelectionMethodRepository =lkupProcurementSelectionMethodRepository;
+            _lkupProcurementPaymentTypeRepository =lkupProcurementPaymentTypeRepository;
+            _transProcurementApprovalAuthorityRepository=transProcurementApprovalAuthorityRepository;
+            _transProcurementSelectionMethodRepository=transProcurementSelectionMethodRepository;
+            _transProcurementPaymentTypeRepository=transProcurementPaymentTypeRepository;
+            _wpProcurementWorkLoadAssignmentRepository=wpProcurementWorkLoadAssignmentRepository;
+            _wpProcurementProcessRepository=wpProcurementProcessRepository;
+            _wpTasksRepository=wpTasksRepository;
+            _lkupProcurementProcessStepsRepository=lkupProcurementProcessStepsRepository;
+            _transProcurementProcessStepsReposity=transProcurementProcessStepsReposity;
+            _wpProcurementProcessStepsRepository=wpProcurementProcessStepsRepository;
+            _wpProcurementTORDocsRepository=wpProcurementTORDocsRepository;
         
 
 

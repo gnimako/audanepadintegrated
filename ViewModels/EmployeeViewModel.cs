@@ -121,6 +121,12 @@ namespace AUDANEPAD_Integrated.ViewModels
 
         public List<DropDownListViewModel> SelectedRECs { get; set; }
 
+        //Procurement Tasks
+        public string ProcurementCategoryMain { get; set; }
+        public string ProcurementProcessing { get; set; }
+
+
+
 
 
 

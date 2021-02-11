@@ -28,6 +28,7 @@ namespace AUDANEPAD_Integrated.Models
         public string WPProcurement_AdditionalNotes { get; set; }
 
         public string WPProcurement_SourceOfFundsDescr { get; set; }
+        public bool MicroProcurement { get; set; }
         public LocalDate TransactionDate { get; set; }
         
     }

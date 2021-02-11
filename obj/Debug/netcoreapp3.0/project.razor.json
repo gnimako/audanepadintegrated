@@ -75933,6 +75933,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_ProcurementProcessTaskInitiate.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\_ProcurementProcessTaskInitiate.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Shared/_NEPADStaffLayout2_Old.cshtml",
       "TargetPath": "Views\\Shared\\_NEPADStaffLayout2_Old.cshtml",
       "FileKind": "mvc"
@@ -75993,6 +75998,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/ProcurementProcessTaskList.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\ProcurementProcessTaskList.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/WorkplanCommunicationGanttChart.cshtml",
       "TargetPath": "Views\\NEPADStaff\\WorkplanCommunicationGanttChart.cshtml",
       "FileKind": "mvc"
@@ -76050,6 +76060,11 @@
     {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Account/Login3.cshtml",
       "TargetPath": "Views\\Account\\Login3.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/NEPADStaff/_AssignProcurementStaff.cshtml",
+      "TargetPath": "Views\\NEPADStaff\\_AssignProcurementStaff.cshtml",
       "FileKind": "mvc"
     },
     {
@@ -76210,6 +76225,11 @@
     {
       "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/_ViewStart.cshtml",
       "TargetPath": "Views\\_ViewStart.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/Views/Shared/EditorTemplates/ClientEmployeeName.cshtml",
+      "TargetPath": "Views\\Shared\\EditorTemplates\\ClientEmployeeName.cshtml",
       "FileKind": "mvc"
     },
     {
