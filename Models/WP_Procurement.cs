@@ -18,7 +18,7 @@ namespace AUDANEPAD_Integrated.Models
 
         public string WPProcurement_Description { get; set; }
         public int  WPProcurementType_Id { get; set; }
-         public int  WPProcurementLeadTime_Id { get; set; }
+        public int  WPProcurementLeadTime_Id { get; set; }
         public LocalDate WPProcurementStartDate { get; set; }
         public LocalDate WPProcurementEndDate { get; set; }
 
@@ -28,6 +28,8 @@ namespace AUDANEPAD_Integrated.Models
         public string WPProcurement_AdditionalNotes { get; set; }
 
         public string WPProcurement_SourceOfFundsDescr { get; set; }
+        public string WPSAP_PR { get; set; }
+        public string WPSAP_PO { get; set; }
         public bool MicroProcurement { get; set; }
         public LocalDate TransactionDate { get; set; }
         

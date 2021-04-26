@@ -11,6 +11,7 @@ namespace AUDANEPAD_Integrated.Interfaces
         Trans_StrucDirectorate GetRecordByMasterStrucDirectorateId (int Id);
 
 		IEnumerable<Trans_StrucDirectorate> GetAllRecords();
+        IEnumerable<Trans_StrucDirectorate> GetAllRecordsByDirectorateId (int Id);
 		Trans_StrucDirectorate Add(Trans_StrucDirectorate rec);
 		Trans_StrucDirectorate Update(Trans_StrucDirectorate recChanges);
 		Trans_StrucDirectorate Delete(string id);

@@ -3,6 +3,7 @@
 
 
 @model WP_OutputProcurementVMWindow
+@using  System.ComponentModel.DataAnnotations
 
 <form id="addform">
 
@@ -34,158 +35,176 @@
                 </div>
 
                 <br \>
-                 <h6 style="color:#807878"> Micro-procurement?
-                 &nbsp; &nbsp;
-                @(Html.Kendo().SwitchFor(m=>m.MicroProcurement)
-                    // .Name("PrimaryDirectorate")
-                        .Messages(c => c.Checked("YES").Unchecked("NO"))
-                      //  .Events(c => c.Change("onChangeContinental"))
-                )
-                 </h6> 
-                <br \>
-                <br \>
-
-                <span style="color:#807878"> Selection Method
-                &nbsp; &nbsp;
-                @(Html.Kendo().DropDownListFor(model => model.SelectionMethod_Id)
-                // .Name("Department_Id")
-                .HtmlAttributes(new { style = "width:78%", id = "SelectionMethod_Id" })
-                .OptionLabel("Select...")
-                .DataTextField("DropDown_Name")
-                .DataValueField("DropDown_IntId")
-                .DataSource(source =>
-                {
-                    source.Read(read =>
-                    {
-                            read.Action("GetAllProcurementSelectionMethod", "Admin");
+               
+                    
+             
                         
-                    })
-                    .ServerFiltering(true);
-                })
-            
-                //.SelectedIndex(Model.Department_Id)
-            )
 
 
-                </span>
-                <br \>
-                <br \>
-                <span style="color:#807878"> Shortlisting Lead-Time
-                &nbsp; &nbsp;
-                @(Html.Kendo().DropDownListFor(model => model.ShortlistLeadTime_Id)
-                // .Name("Department_Id")
-                .HtmlAttributes(new { style = "width:72%", id = "ShortlistLeadTime_Id" })
-                .OptionLabel("Select...")
-                .DataTextField("DropDown_Name")
-                .DataValueField("DropDown_IntId")
-                .DataSource(source =>
-                {
-                    source.Read(read =>
-                    {
-                            read.Action("GetAllProcurementShortlistLeadTime", "Admin");
-                        
-                    })
-                    .ServerFiltering(true);
-                })
-            
-                //.SelectedIndex(Model.Department_Id)
-            )
+                <table style="border-collapse: collapse; border: none; width: 100%">
+                    <tr style="border: none;">
+                        <td style="border: none; width: 50%">
+                            <span style="color:#807878"> Micro-procurement?
+                            &nbsp; &nbsp;
+                            @(Html.Kendo().SwitchFor(m=>m.MicroProcurement)
+                                // .Name("PrimaryDirectorate")
+                                    .Messages(c => c.Checked("YES").Unchecked("NO"))
+                                //  .Events(c => c.Change("onChangeContinental"))
+                            )
+                            </span> 
+                            <br \>
+                            <br \>
+                        </td>
+                        <td style="border: none; width: 50%">
+                            <span style="color:#807878"> Selection Method
+                                &nbsp; &nbsp;
+                                @(Html.Kendo().DropDownListFor(model => model.SelectionMethod_Id)
+                                // .Name("Department_Id")
+                                .HtmlAttributes(new { style = "width:62%", id = "SelectionMethod_Id" })
+                                .OptionLabel("Select...")
+                                .DataTextField("DropDown_Name")
+                                .DataValueField("DropDown_IntId")
+                                .DataSource(source =>
+                                {
+                                    source.Read(read =>
+                                    {
+                                            read.Action("GetAllProcurementSelectionMethod", "Admin");
+                                        
+                                    })
+                                    .ServerFiltering(true);
+                                })
+                            
+                                //.SelectedIndex(Model.Department_Id)
+                            )
 
 
-                </span>
-                <br \>
-                <br \>
-
-                 @(Html.Kendo().Grid<WP_ProcurementEmployeeVM>()
-                .Name("grid_wpemployee")
+                                </span>
+                                <br \>
+                                <br \>
+                        </td>
+                    </tr>
+                </table> 
+                
+              
+                @* <a href="#" class="k-button " id="btnAdd" style="color: #003f59;">
+                   <span class="k-icon k-i-plus-outline"></span> Add Procurement Process Step
+                </a> *@
+                
+               
+                 @(Html.Kendo().Grid<WP_ProcurementProcessStepsVM>()
+                .Name("grid_procurementprocessstep")
                 .Columns(columns =>
                 {
-                    columns.Bound(c => c.Transaction_IdExtPartVM).Hidden();
-                    columns.Bound(c => c.WPMainRecord_idExtPartVM).Hidden();
-                    columns.Bound(c => c.WPOutput_IdExtPartVM).Hidden();
-  
-                    columns.Bound(c => c.EmployeeName).ClientTemplate("#=EmployeeName.CategoryName#").Title("Staff Name").Width(300);
+                    columns.Bound(c => c.Transaction_IdVM).Hidden();
+                    columns.Bound(c => c.WPMainRecord_idVM).Hidden();
+                    columns.Bound(c => c.WPProcurement_IdVM).Hidden();
+
+                    columns.Bound(c => c.WPStepNumberLabelVM).Title("Step No.");
+                   // columns.Bound(c => c.ProcurementProcessStep).ClientTemplate("#=ProcurementProcessStep.CategoryName#").Title("Procurement Step Action").Width(300);
+                    //columns.Bound(c => c.ProcurementPlannedDate.WPPlannedDateVM).ClientTemplate("#=ProcurementPlannedDate.WPPlannedDateVM").Title("Planned Date").Format("{0:MM/dd/yyyy}");
+                   // columns.Bound(p => p.WPActualDateVM).Format("{0:MM/dd/yyyy}").EditorTemplateName("DatePickerTemplate").Title("Actual Date");
+                    columns.Bound(c => c.ProcurementProcessStepAction).Title("Procurement Step Action").Width(300);
+                    columns.Bound(c => c.WPPlannedDateVM).Format("{0:dd.MM.yyyy}").Title("Planned Date");
+                   
+
+                 
+
+                   
                                                              
 
                     columns.Command(command => { command.Edit().Text(" Edit").IconClass("k-icon k-i-track-changes"); });
                     columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
 
                 })
-                .ToolBar(toolbar => toolbar.Create().Text(" Add Procurement Process Step").IconClass("k-icon k-i-plus-outline"))
-                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                
+               // .ToolBar(toolbar => toolbar.Create().Text(" Add Procurement Process Step").IconClass("k-icon k-i-plus-outline"))
+               // .Editable(editable => editable.Mode(GridEditMode.InLine))
+               .ToolBar(toolbar =>
+                {
+                    toolbar.Custom().Text(" Add Procurement Process Step").HtmlAttributes(new { id = "btnAdd" }).IconClass("k-icon k-i-plus-outline");
+                })
+
                 .Resizable(r=>r.Columns(true))
                 .DataSource(dataSource => dataSource
                     .Ajax()
                     .Model(model =>
                     {
-                        model.Id(p => p.Transaction_IdExtPartVM);
-                        model.Field(p => p.Transaction_IdExtPartVM).Editable(false);
-                        model.Field(p => p.EmployeeName).DefaultValue(
-                            ViewData["defaultEmployeeName"] as CategoryViewModel);
+                        model.Id(p => p.Transaction_IdVM);
+                        model.Field(p => p.Transaction_IdVM).Editable(false);
+                        model.Field(p => p.WPStepNumberLabelVM).Editable(false);
+                       // model.Field(p => p.ProcurementProcessStep).DefaultValue(
+                            //ViewData["defaultProcurementProcessStep"] as CategoryViewModel);
                     })
-                    .Read(read => read.Action("WP_ProcurementWorkLoadEmployee_Read", "Admin", new {wprocurementid=Model.Transaction_IdOPVMMain}))
+                    .Read(read => read.Action("WP_ProcurementProcessSteps_Read", "Admin", new {wprocurementid=Model.Transaction_IdOPVMMain}))
                     .Model(model => 
                         {
-                            model.Id(p => p.Transaction_IdExtPartVM);
+                            model.Id(p => p.Transaction_IdVM);
                             //model.Field(field => field.LookUp_Status).Editable(false);
                         })
                     .Create(create => create.Action("WP_ProcurementWorkLoadEmployee_Create", "Admin", new {wprocurementid=Model.Transaction_IdOPVMMain}))
                     .Update(update => update.Action("WP_ProcurementWorkLoadEmploye_Update", "Admin", new {wprocurementid=Model.Transaction_IdOPVMMain}))
                     .Destroy(destroy => destroy.Action("WP_ProcurementWorkLoadEmploye_Delete", "Admin", new {wprocurementid=Model.Transaction_IdOPVMMain}))
                    // .PageSize(20)
-                    .Events(events => events.Error("error_handler")
-                                            .RequestEnd("onRequestWPEmployeeName"))
+                    .Events(events => events.Error("error_handler"))
+                                           // .RequestEnd("onRequestWPEmployeeName"))
                     
                 )
+              // .Events(ev=>ev.DataBound("dbdaterender2")) 
         )
 
 
+        <br />
+        <br />
+        <div id="targetDivStaffamain" class="rssedStaffamain">
+        </div>
+        <br />
+        <br />
+        <div style="align-content:center; text-align:center">
+            <a class="k-button" id="btnSubmitamain">
+                <span class="k-icon k-i-save"></span> Save As Draft
+            </a>
 
-
-                @* @(Html.Kendo().MultiSelect()
-                        .Name("internalselect")
-                        .HtmlAttributes(new { style = "width:100%" })
-                        .DataTextField("DropDown_Name")
-                        .DataValueField("DropDown_IntId")
-                        .Placeholder("Select Staff...")
-                        .AutoBind(false)
-                        .Value(Model.SelectedEmployees)
-                        .Events(e =>
-                        {
-                            e.Change("onChangeInternalParticipants");
-                        })
-                        .DataSource(source =>
-                        {
-                            source.Read(read =>
-                            {
-                                read.Action("GetAllEmployeeProcurement", "Admin");
-                            })
-                            .ServerFiltering(false);
-                        })
-                    ) *@
-                <br />
-                <br />
-                
-
-
-               
-
+            <a class="k-button" id="btnInitiateamain">
+                <span class="k-icon k-i-gear"></span> Initiate Procurement Process
+            </a>
+        </div>
 
     </div>
 
-
-
-
+                
 
 </form>
 
 
-
-
-
-
-
 <script>
+
+$("#btnAdd").click(function () {
+//"/NEPADStaff/ProcurementProcessTaskInitiate?procurementid=" + transid
+ var wprocurementid = $("#Transaction_IdOPVMMain").val(); 
+
+                  $("#windowstaff2").append("<div id='getstaffwindow2'></div>");
+
+                var wnd2 = $("#getstaffwindow2").kendoWindow({
+                    //actions: ["Close"],
+                    draggable: true,
+                    modal: true,
+                    animation: false,
+                    resizable: true,
+                    content: "/NEPADStaff/AddProcurementProcessStep?procurementid=" + wprocurementid,
+                    width: 500,
+                    height: 360,
+
+                    title: "Add Procurement Process Step",
+                    // close: onClose,
+                    deactivate: function () {
+                        this.destroy();
+                    }
+
+                }).data("kendoWindow");
+                wnd2.center().open();
+
+   });
+
     
     $("#btnCloseStaffa_act").click(function () {
         $(".k-window-content").each(function () {
@@ -197,6 +216,189 @@
 
 
 
+
+$("#btnInitiateamain").click(function (e) {
+
+    var procurementid= $("#Transaction_IdOPVMMain").val(); //
+    var selectionmethod= $("#SelectionMethod_Id").val(); 
+
+
+    
+
+
+
+
+    if(selectionmethod === "" && typeof selectionmethod === "string")
+    {
+        $('#targetDivStaffamain').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Entry : Please indicate the selection method for the procurement. </span>').appendTo('.rssedStaffamain');
+    }
+    else
+    {
+        //Work on this...
+        $.ajax({
+                type: "POST",
+                url: '/Admin/InitiateProcurement',     //your action
+                data: $('#addform').serialize(),   //your form name.it takes all the values of model
+                dataType: 'json',
+                success: function (result) {
+                    var response = result.rtnmsg;
+                    var remainfunds = result.remainfunds;
+
+
+                    if (response == "success") {
+                                $('#targetDivStaffamain').empty();
+                                $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Procurement Initiated Successfully. </span>').appendTo('.rssedStaffamain');
+
+
+                                var grid= $("#grid").data("kendoGrid"); 
+                                grid.dataSource.transport.options.read.url = "/Admin/PendingProcurementProcessTaskforEmployee_Read";
+                                grid.dataSource.read();
+
+
+                    }
+                    else if (response == "insufficientsteps") {
+                            $('#targetDivStaffamain').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Insufficient Procurement Steps: Please define at least two procurement steps. </span>').appendTo('.rssedStaffamain');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else if (response == "incorrectbeginendsteps") {
+                            $('#targetDivStaffamain').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Check the BEGINNING or ENDING Steps. BEGIN STEP should either be \’Submission of Procurement Documents\’ or \’Submission of Procurement TORs\’. END STEP should be \’Submission of Final Report\’. </span>').appendTo('.rssedStaffamain');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else if (response == "createerror") {
+                            $('#targetDivStaffamain').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to save mission</span>').appendTo('.rssedStaffamain');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else if (response == "doesnotexist") {
+                            $('#targetDivStaffamain').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">No Record: Mission does not exist</span>').appendTo('.rssedStaffamain');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else {
+                            $('#targetDivStaffamain').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffamain');
+                            //$('#targetDivStaffa').empty();
+                    }
+
+                },
+                error: function (data) {
+                        $('#targetDivStaffamain').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffamain');
+                        //$('#targetDivStaffa').empty();
+                }
+            });
+
+
+    }
+
+
+
+
+
+
+
+
+        
+    
+    
+    return false;
+});
+
+
+
+
+$("#btnSubmitamain").click(function (e) {
+
+    var procurementid= $("#Transaction_IdOPVMMain").val(); //
+    var selectionmethod= $("#SelectionMethod_Id").val(); 
+
+
+    
+
+
+
+
+    if(selectionmethod === "" && typeof selectionmethod === "string")
+    {
+        $('#targetDivStaffamain').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Entry : Please indicate the selection method for the procurement. </span>').appendTo('.rssedStaffamain');
+    }
+    else
+    {
+        //Work on this...
+        $.ajax({
+                type: "POST",
+                url: '/Admin/InitiateProcurementSave',     //your action
+                data: $('#addform').serialize(),   //your form name.it takes all the values of model
+                dataType: 'json',
+                success: function (result) {
+                    var response = result.rtnmsg;
+                    var remainfunds = result.remainfunds;
+
+
+                    if (response == "success") {
+                                $('#targetDivStaffamain').empty();
+                                $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Procurement Process Steps Saved Successfully. </span>').appendTo('.rssedStaffamain');
+
+
+                                var grid= $("#grid").data("kendoGrid"); 
+                                grid.dataSource.transport.options.read.url = "/Admin/PendingProcurementProcessTaskforEmployee_Read";
+                                grid.dataSource.read();
+
+
+                    }
+                    else if (response == "insufficientsteps") {
+                            $('#targetDivStaffamain').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Insufficient Procurement Steps: Please define at least two procurement steps. </span>').appendTo('.rssedStaffamain');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else if (response == "incorrectbeginendsteps") {
+                            $('#targetDivStaffamain').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Check the BEGINNING or ENDING Steps. BEGIN STEP should either be \’Submission of Procurement Documents\’ or \’Submission of Procurement TORs\’. END STEP should be \’Submission of Final Report\’. </span>').appendTo('.rssedStaffamain');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else if (response == "createerror") {
+                            $('#targetDivStaffamain').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to save mission</span>').appendTo('.rssedStaffamain');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else if (response == "doesnotexist") {
+                            $('#targetDivStaffamain').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">No Record: Mission does not exist</span>').appendTo('.rssedStaffamain');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else {
+                            $('#targetDivStaffamain').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffamain');
+                            //$('#targetDivStaffa').empty();
+                    }
+
+                },
+                error: function (data) {
+                        $('#targetDivStaffamain').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffamain');
+                        //$('#targetDivStaffa').empty();
+                }
+            });
+
+
+    }
+
+
+
+
+
+
+
+
+        
+    
+    
+    return false;
+});
 
 $("#btnSubmita_act").click(function (e) {
 
@@ -496,6 +698,9 @@ $("#btnSubmita_act").click(function (e) {
 
 
 </style>
+
+
+
 
 
 

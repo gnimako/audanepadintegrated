@@ -53,6 +53,15 @@ namespace AUDANEPAD_Integrated.Services
 		    return context.Trans_StrucDirectorate;
 		}
 
+		public IEnumerable<Trans_StrucDirectorate> GetAllRecordsByDirectorateId (int Id)
+        {
+            var records = context.Trans_StrucDirectorate
+                                .Where(s => s.Record_Id == Id)
+                                .ToList();
+
+            return records;
+        }
+
 		public Trans_StrucDirectorate GetRecord(string Id)
 		{
 		    return context.Trans_StrucDirectorate.Find(Id);

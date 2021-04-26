@@ -1,0 +1,155 @@
+
+
+
+
+@model WP_ProcurementProcessStepsWindowVM
+
+<form id="addformprocessstep">
+
+    <input hidden asp-for="WPProcurement_IdWindowVM" class="k-textbox" style="width:100%" value="@Model.WPProcurement_IdWindowVM">
+     <input hidden asp-for="Employee_IdWindowVM" class="k-textbox" style="width:100%" value="@Model.Employee_IdWindowVM">
+    <div class="form-body" style="padding: 1.25rem;">
+        <h6 style="color:#807878"> Select Procurement Step Action </h6>
+        @(Html.Kendo().DropDownList()
+            .Name("WPStepType_IdWindowVM")
+            .HtmlAttributes(new { style = "width:100%" })
+            .OptionLabel("Select Action...")
+            .DataTextField("DropDown_Name")
+            .DataValueField("DropDown_IntId")
+            .DataSource(source =>
+            {
+                source.Read(read =>
+                {
+                    read.Action("GetProcurementProcessingStepActions", "Admin");
+                });
+            })
+            // .SelectedIndex(Model.Directorate_Id)
+        )
+        <br />
+        <br />
+
+
+
+        
+
+        <h6 style="color:#807878"> Planned Date for Action</h6>
+             @(Html.Kendo().DatePickerFor(model => model.WPPlannedWindowVM)
+               // .Value(Model.PeriodEndDate)
+                //.HtmlAttributes(new { style = "width: 100%", title = "datepicker" })
+             )
+        <br />
+        <br />
+        <div id="targetDivStaffa" class="rssedStaffa">
+        </div>
+        <br />
+        <br />
+        <div style="align-content:center; text-align:center">
+            <a class="k-button" id="btnSubmita">
+                <span class="k-icon k-i-save"></span> Save
+            </a>
+
+            @* <a class="k-button" id="btnCloseStaffa">
+                <span class="k-icon k-i-cancel"></span> Close
+            </a> *@
+        </div>
+
+    </div>
+
+
+
+
+
+</form>
+
+
+
+
+
+
+
+
+<script>
+
+
+$("#btnCloseStaffa").click(function () {
+  $(".k-window-content").each(function () {
+                $('#getstaffwindow2').data("kendoWindow").close();
+          });
+});
+
+
+
+
+
+
+$("#btnSubmita").click(function () {
+    var wpsteptypeid = $("#WPStepType_IdWindowVM").val();  
+    var procurementid = $("#WPProcurement_IdWindowVM").val();  
+    var empid = $("#Employee_IdWindowVM").val();  
+
+    if(wpsteptypeid === "" && typeof wpsteptypeid === "string")
+    {
+        $('#targetDivStaffa').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select procurement step action. </span>').appendTo('.rssedStaffa');
+
+    }
+    else{
+        $.ajax({
+            type: "POST",
+            url: '/Admin/AddProcurementProcessStep',     //your action
+            data: $('#addformprocessstep').serialize(),   //your form name.it takes all the values of model
+            dataType: 'json',
+            success: function (result) {
+                var response = result.rtnmsg;
+
+                if (response == "success") {
+                            $('#targetDivStaffa').empty();
+                            $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Procurement Process Step Saved Successfully. </span>').appendTo('.rssedStaffa');
+
+                             
+                            var grid = $("#grid_procurementprocessstep").data("kendoGrid"); 
+
+                            grid.dataSource.transport.options.read.url = "/Admin/WP_ProcurementProcessSteps_Read/?wprocurementid=" + procurementid;
+                            grid.dataSource.read();
+                            grid.refresh();
+
+                }
+                else if (response == "pkerror") {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to Save. Step Action Already Exist. </span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
+                else if (response == "initalreadyexist") {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to Save. Initial Step Already Exist. You Can Amend the Initial Step.</span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
+                else {
+                        $('#targetDivStaffa').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffa');
+                        //$('#targetDivStaffa').empty();
+                }
+
+            },
+            error: function (data) {
+                    $('#targetDivStaffa').empty();
+                    $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffa');
+                    //$('#targetDivStaffa').empty();
+            }
+        })
+    }
+    
+        return false;
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+

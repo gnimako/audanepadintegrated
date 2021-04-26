@@ -15,6 +15,8 @@ namespace AUDANEPAD_Integrated.Models
 
         public int  Employee_Id { get; set; }
 
+        public int  RecordIter_Number { get; set; }
+
         [Required, MaxLength(300, ErrorMessage = "Title cannot exceed 300 characters")] 
         public string WPDocDesciptionTitle { get; set; }
         public string WPDocPath { get; set; }

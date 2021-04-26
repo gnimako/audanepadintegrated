@@ -16,6 +16,8 @@
     <link href="~/nepadstaff2/dist-assets/css/plugins/perfect-scrollbar.min.css" rel="stylesheet" />
     <link href="~/nepadstaff2/dist-assets/css/bulma-steps.css" rel="stylesheet" />
 
+
+
     
 
     <environment include="Development">
@@ -192,9 +194,9 @@
                     <li class="nav-item"><a class="nav-item-hold" asp-controller="nepadstaff" asp-action="index"><i class="nav-icon i-Shop-4"></i><span class="nav-text">Dashboard</span></a>
                         <div class="triangle"></div>
                     </li>
-                    <li class="nav-item" data-item="widgets">
+                    <li class="nav-item" data-item="maintasks">
                         <a class="nav-item-hold" href="#">
-                            <span class="badge badge-primary" style="position: absolute; border-radius: 10px;">3</span>
+                            <span class="badge badge-primary" style="position: absolute; border-radius: 10px;">@Model.ProgrammeCategoryMain</span>
                             <i class="nav-icon i-Suitcase header-icon"></i>
                             <span class="nav-text">Tasks</span>
                         </a>
@@ -264,14 +266,49 @@
                         </ul>
                     </li>
                  }
+
+                 @if(Model.Director==true )
+                 {
+                   
+                    <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-File-Clipboard-Text--Image"></i><span class="item-name" style="color: #003473;">Directorate-Level</span><i class="dd-arrow i-Arrow-Down"></i></a>
+                        <ul class="submenu">
+                            <li><a asp-controller="nepadstaff" asp-action="directorateworkplandraftlist"><span style="color: #003473;">All Workplans</span></a></li>
+                            <li><a href="#"><span style="color: #003473;">Approved Workplans</span></a></li>
+                            <li><a href="#"><span style="color: #003473;">Closed Workplans</span></a></li>
+                        </ul>
+                    </li>
+                 }
                 </ul>
 
-                <ul class="childNav" data-parent="widgets">
-                    <li class="nav-item"><a href="#"><i class="nav-icon i-Receipt-4"></i><span class="item-name">Workplan<span class="ml-2 badge badge-pill badge-danger">1</span></span></a></li>
-                    <li class="nav-item"><a href="#"><i class="nav-icon i-Receipt-4"></i><span class="item-name">Procurement<span class="ml-2 badge badge-pill badge-danger">1</span></span></a></li>
-                    <li class="nav-item"><a href="#"><i class="nav-icon i-Receipt-4"></i><span class="item-name">Mobility<span class="ml-2 badge badge-pill badge-danger">1</span></span></a></li>
-                    <li class="nav-item"><a href="#"><i class="nav-icon i-Receipt-4"></i><span class="item-name">Reporting<span class="ml-2 badge badge-pill badge-danger"> 1</span></span></a></li>
-                    <li class="nav-item"><a href="#"><i class="nav-icon i-Receipt-4"></i><span class="item-name">KPIs <span class="ml-2 badge badge-pill badge-danger">1</span></span></a></li>
+                <ul class="childNav" data-parent="maintasks">
+                    <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-Folders"></i><span class="item-name" style="color: #003473;">Workplan <span class="ml-2 badge badge-pill badge-danger">@Model.WorkplanTasksforProgrammeDept</span></span><i class="dd-arrow i-Arrow-Down"></i></a>
+                        <ul class="submenu">
+                            <li><a href="#"><span style="color: #003473;">All Workplans</span></a></li>    
+                             <li><a href="#"><span style="color: #003473;">Tasks <span class="ml-2 badge badge-pill badge-danger">@Model.WorkplanTasksforProgrammeDept</span></span></a></li>
+                        </ul>
+                    </li>
+                    @* <li class="nav-item"><a href="#"><i class="nav-icon i-Receipt-4"></i><span class="item-name">Procurement<span class="ml-2 badge badge-pill badge-danger">2</span></span></a></li> *@
+                     <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-Management"></i><span class="item-name" style="color: #003473;">Procurement <span class="ml-2 badge badge-pill badge-danger">@Model.ProcurementTasksforProgrammeDept</span></span><i class="dd-arrow i-Arrow-Down"></i></a>
+                        <ul class="submenu">
+                            <li><a href="#"><span style="color: #003473;">All Procurements</span></a></li>    
+                             <li><a asp-controller="nepadstaff" asp-action="ProgrammeProcurementTaskList"><span style="color: #003473;">Tasks <span class="ml-2 badge badge-pill badge-danger">@Model.ProcurementTasksforProgrammeDept</span></span></a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-Plane"></i><span class="item-name" style="color: #003473;">Mobility <span class="ml-2 badge badge-pill badge-danger">@Model.MobilityTasksforProgrammeDept</span></span><i class="dd-arrow i-Arrow-Down"></i></a>
+                        <ul class="submenu">
+                            <li><a href="#"><span style="color: #003473;">All Mobilities</span></a></li>    
+                             <li><a href="#"><span style="color: #003473;">Tasks <span class="ml-2 badge badge-pill badge-danger">@Model.MobilityTasksforProgrammeDept</span></span></a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-Bar-Chart"></i><span class="item-name" style="color: #003473;">Reporting <span class="ml-2 badge badge-pill badge-danger">@Model.ReportingTasksforProgrammeDept</span></span><i class="dd-arrow i-Arrow-Down"></i></a>
+                        <ul class="submenu">
+                            <li><a href="#"><span style="color: #003473;">All Reports</span></a></li>    
+                             <li><a href="#"><span style="color: #003473;">Tasks <span class="ml-2 badge badge-pill badge-danger">@Model.ReportingTasksforProgrammeDept</span></span></a></li>
+                        </ul>
+                    </li>
+                    
+                    
+                   
                 </ul>
             
 
@@ -297,14 +334,14 @@
                         </ul>
                     </li>
 
-                    <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-Repeat-3"></i><span class="item-name" style="color: #003473;">Procurement Processing <span class="ml-2 badge badge-pill badge-danger">@Model.ProcurementProcessing</span></span><i class="dd-arrow i-Arrow-Down"></i></a>
+                    <li class="nav-item dropdown-sidemenu"><a href=""><i class="nav-icon i-Repeat-3"></i><span class="item-name" style="color: #003473;">Procurement Processing <span class="ml-2 badge badge-pill badge-danger">@Model.ProcurementProcessingforProcurementDept</span></span><i class="dd-arrow i-Arrow-Down"></i></a>
                         <ul class="submenu">
                             <li><a asp-controller="nepadstaff" asp-action="institutionalprocurementplandraftlist"><span style="color: #003473;">All Procurements</span></a></li>
                             <li><a href="#"><span style="color: #003473;">Assigned Procurements</span></a></li>
 
 
 
-                             <li><a asp-controller="nepadstaff" asp-action="procurementprocesstasklist"><span style="color: #003473;">Tasks <span class="ml-2 badge badge-pill badge-danger">@Model.ProcurementProcessing</span></span></a></li>
+                             <li><a asp-controller="nepadstaff" asp-action="procurementprocesstasklist"><span style="color: #003473;">Tasks <span class="ml-2 badge badge-pill badge-danger">@Model.ProcurementProcessingforProcurementDept</span></span></a></li>
                         </ul>
                     </li>
 

@@ -12,6 +12,8 @@ namespace AUDANEPAD_Integrated.Interfaces
 
         IEnumerable<WP_ProcurementProcess> GetAllRecords();
 
+        WP_ProcurementProcess GetRecordByProcurementId (string recid);
+
     
         WP_ProcurementProcess Add(WP_ProcurementProcess rec);
         WP_ProcurementProcess Update(WP_ProcurementProcess recChanges);

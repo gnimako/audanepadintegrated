@@ -1,0 +1,486 @@
+@model EmployeeViewModel
+@{
+    ViewBag.Title = "AUDA-NEPAD Integrated Planning System";
+    Layout = "_NEPADStaffLayout2";
+
+}
+
+
+
+<h1 style="font-family: Faktslab;">All Workplans</h1>
+<div class="separator-breadcrumb border-top"></div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card mb-5">
+                            <div class="card-body">
+                                <div class="card-title mb-3">Institutional All Workplans</div>
+
+                                <form id="addformmain">
+                                <input hidden asp-for="IdentityUserId" class="k-textbox" style="width:100%" value="@Model.IdentityUserId">
+                                <input hidden asp-for="Employee_Id" class="k-textbox" style="width:100%" value="@Model.Id">
+                                    
+
+                                    <div class="form-group row" style="padding-right: 1.25rem; padding-left: 1.25rem; padding-bottom: 1.25rem;">
+
+                                        @(Html.Kendo().Grid<WorkplansViewModel>()
+                                                        .Name("grid")
+                                                        .Columns(columns =>
+                                                        {
+
+                                                            columns.Bound(c => c.Employee_Id).Hidden();
+                                                            columns.Bound(c => c.Transaction_Id).Hidden();
+                                                            columns.Bound(c => c.WPCEOApproveRole_String).Hidden();
+                                                            columns.Bound(c => c.PeriodStart).Hidden();
+                                                            columns.Bound(c => c.PeriodEnd).Hidden();
+                                                            columns.Bound(c => c.FYearIdent).Hidden();
+                                                            columns.Bound(c => c.FPeriodIdent).Hidden();
+                                                            columns.Bound(c => c.FisPeriodHidden).Hidden();
+                                                            columns.Bound(c => c.FisYear).Title("Year");
+                                                            columns.Bound(c => c.FisPeriod).Title("Period");
+
+                                                            //columns.Bound(c => c.PeriodType).ClientTemplate("#=PeriodType.CategoryName#").Title("View Reports").Width(300);
+                                                           // columns.Bound(x => x.PeriodTypeSingle).FooterTemplate("<input id='dropDownList'></input>")});
+
+                                                          // columns.Bound(c => c.PeriodTypeSingle).ClientTemplate("#=columnTemplateFunction#").Title("View Reports").Width(300);
+                                                           columns.Bound(c => c.PeriodTypeSingle).ClientTemplate("<input class='dropDownTemplate'></input>").Title("View Reports").Width(300);
+
+                                                           // columns.Command(command => command.Custom(" View Reports").IconClass("k-icon k-i-file-pdf").Click("viewreports")).Width(300);
+                                                             columns.Command(command => command.Custom(" View and Approve").IconClass("k-icon k-i-check-outline").Click("viewandapprovewp").Visible("ceoapproveVisible"));
+                                                            //columns.Command(command => { command.Destroy().Text(" Deactivate").IconClass("k-icon k-i-lock"); });
+                                                        })
+                                                        .HtmlAttributes(new { style = "height: 600px;" })
+                                                        .Scrollable()
+                                                        .Groupable()
+                                                        .Sortable()
+                                                        .Navigatable()
+                                                        .Filterable()
+                                                        .Pageable(pageable => pageable
+                                                            .Refresh(true)
+                                                            .PageSizes(true)
+                                                            .ButtonCount(5))
+                                                        .Events(events => events.DataBound("onDataBound"))
+                                                        .DataSource(dataSource => dataSource
+                                                            .Ajax()
+                                                            .Sort(sort => sort.Add("FisYear").Ascending())
+                                                            .Read(read => read
+                                                                        .Action("CurrentInstitutionalWorkplan_Read", "Admin"))
+                                                            .Model(model => model.Id(p => p.Transaction_Id))
+                                                           // .Create(create => create.Action("Struc_DivisionKPI_Create", "Admin", new {dirid=Model.Directorate_Id, divid=@Model.Division_Id}))
+                                                           // .Destroy(destroy => destroy.Action("Strategy_MTPStrategyMapping_Delete", "Admin"))
+                                                           // .Update(update => update.Action("WP_Outcomes_Update", "Admin"))
+                                                            .PageSize(20)
+                                                            .Events(events => events.Error("error_handler")
+                                                                                .RequestEnd("onRequestEnd"))
+                                                        )
+                                                    )
+                                        </div>
+
+                                   
+                                    
+                                    
+
+                                    
+                                   
+                                </form>
+
+
+                            
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+<div id="getstaffwindow">
+</div>
+<div id="windowstaff"></div>
+<div id="staffposwindow">
+</div>
+<div id="windowstaffpos">
+</div>
+
+<div id="example">
+    <div id="dialog">
+    </div>
+    <div id="undo">
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+
+    function columnTemplateFunction(dataItem) {
+        var input = '<input class="dropDownTemplate"/>'
+
+        return input
+    };
+
+    function onDataBound(e) {
+        var grid = e.sender;
+        var items = e.sender.items();
+
+        items.each(function(e) {
+            var dataItem = grid.dataItem(this);
+            var ddt = $(this).find('.dropDownTemplate');
+            var cycleid=dataItem.Transaction_Id;
+
+            $(ddt).width(280).kendoDropDownList({
+               // value: dataItem.value,
+               // dataSource: ddlDataSource,
+                dataTextField: "DropDown_Name",
+                dataValueField: "DropDown_IntId",
+                dataSource: {
+                    transport: {
+                        read: {
+                            dataType: "json",
+                            url: "/Admin/GetTransFiscalPeriodsInstiutionalReports",
+                            data:{"cycleid": cycleid},
+                        }
+                    }
+                },
+                optionLabel: "Select...",
+                change: onDDLChange
+            });
+        });
+
+    }
+
+    function onDDLChange(e) {
+        var element = e.sender.element;
+        var row = element.closest("tr");
+        var grid = $("#grid").data("kendoGrid");
+        var dataItem = grid.dataItem(row);
+
+
+
+         var transid = dataItem.Transaction_Id;
+   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
+    
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+        var selecteddropdown=this.dataItem().DropDown_IntId;
+        var selecteddropdowntext=this.dataItem().DropDown_Name;
+
+        if(selecteddropdown=="7")
+        {
+            var wnd2 = $("#getstaffwindow").kendoWindow({
+                //actions: ["Close"],
+                draggable: true,
+                modal: true,
+                animation: false,
+                resizable: true,
+                content: "/NEPADStaff/ChooseInstitutionalWPReport?transid=" + transid,
+                width: 600,
+                height: 500,
+
+                title: "Choose Institutional Report",
+                // close: onClose,
+                deactivate: function () {
+                    this.destroy();
+                }
+
+            }).data("kendoWindow");
+            wnd2.center().open();
+        }
+        else if(selecteddropdown === "" && typeof selecteddropdown === "string") 
+        {
+           
+
+        }
+        else
+        {
+             var wnd2 = $("#getstaffwindow").kendoWindow({
+                //actions: ["Close"],
+                draggable: true,
+                modal: true,
+                animation: false,
+                resizable: true,
+                content: "/NEPADStaff/ChooseInstitutionalWPReportPeriodRange?transid=" + transid+"&periodid=" + selecteddropdown,
+                width: 600,
+                height: 500,
+
+                title: "Choose "+selecteddropdowntext+" Institutional Report",
+                // close: onClose,
+                deactivate: function () {
+                    this.destroy();
+                }
+
+            }).data("kendoWindow");
+            wnd2.center().open();
+
+        }
+
+
+       // dataItem.set("value", e.sender.value());
+    };
+
+
+
+
+
+    function ceoapproveVisible(dataItem) {
+        // hide the Edit button for the item with ProductID=1
+        return dataItem.WPCEOApproveRole_String != "Cannot Approve";
+    }
+
+    function viewandapprovewp(e) {
+
+         
+
+         
+
+    }
+
+function redirect_blank(url) {
+  var a = document.createElement('a');
+  a.target="_blank";
+  a.href=url;
+  a.click();
+}
+    function error_handler(e) {    
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function() {
+                        message += this + "\n";
+                    });
+                }
+            });        
+            alert(message);
+        }
+    }
+
+    function onRequestEnd(e){
+            var recid = $("#Employee_Id").val();  
+            if (e.type === "update" || e.type === "create" || e.type === "destroy" ) {
+               
+                var grid = $("#gridkpis").data("kendoGrid"); 
+
+                grid.dataSource.transport.options.read.url = "/Admin/DivisionTransKPIs_Read/?recid=" + recid;
+                grid.dataSource.read();
+            }
+    }
+
+   $("#btnAdd").click(function () {
+
+
+                  $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+                var wnd2 = $("#getstaffwindow").kendoWindow({
+                    //actions: ["Close"],
+                    draggable: true,
+                    modal: true,
+                    animation: false,
+                    resizable: true,
+                    content: "/NEPADStaff/AddDivisionKPI",
+                    width: 600,
+                    height: 400,
+
+                    title: "Add KPI",
+                    // close: onClose,
+                    deactivate: function () {
+                        this.destroy();
+                    }
+
+                }).data("kendoWindow");
+                wnd2.center().open();
+
+   });
+
+
+function deactivatekpi(e) {
+    e.preventDefault();
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    var transid = dataItem.Transaction_Id;
+
+    var recid = $("#Employee_Id").val();  
+
+        var dialog = $('#dialog');
+        var undo = $("#undo");
+
+        function onClose() {
+            undo.fadeIn();
+        }
+
+
+
+              dialog.kendoDialog({
+                  width: "450px",
+                  title: "Confirmation",
+                  closable: false,
+                  modal: true,
+                  content: "<p>Please <strong>confirm</strong> the action.<p>",
+                  actions: [
+                      {
+                          text: 'Confirm',
+                          action: function (e) {
+                              $.ajax({
+                                  type: "POST",
+                                  url: '/Admin/DeactivateDivisionKPI',     //your action
+                                  data: { "transid": transid},
+                                  dataType: 'json',
+                                  success: function (result) {
+
+                                        var grid = $("#gridkpis").data("kendoGrid"); 
+                                        grid.dataSource.transport.options.read.url = "/Admin/DivisionTransKPIs_Read/?recid=" + recid;
+                                        grid.dataSource.read();
+                                        grid.refresh();
+
+
+    
+                                        var griddeactivated = $("#gridkpisdeactivated").data("kendoGrid"); 
+                                        griddeactivated.dataSource.transport.options.read.url = "/Admin/DivisionDeactivatedKPIs_Read/?recid=" + recid;
+                                        griddeactivated.dataSource.read();
+                                        griddeactivated.refresh();
+
+                                  },
+                                  error: function (data) {
+
+                                  }
+                              })
+                              return true;
+                          },
+                          primary: true
+
+                      },
+                      { text: 'Cancel' }
+                  ],
+                  close: onClose
+              });
+
+              dialog.data("kendoDialog").open();
+              undo.fadeOut();
+
+}
+
+function activatekpi(e) {
+    e.preventDefault();
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    var recordid = dataItem.Record_Id;
+
+    var recid = $("#Employee_Id").val();  
+
+        var dialog = $('#dialog');
+        var undo = $("#undo");
+
+        function onClose() {
+            undo.fadeIn();
+        }
+
+
+
+              dialog.kendoDialog({
+                  width: "450px",
+                  title: "Confirmation",
+                  closable: false,
+                  modal: true,
+                  content: "<p>Please <strong>confirm</strong> the action.<p>",
+                  actions: [
+                      {
+                          text: 'Confirm',
+                          action: function (e) {
+                              $.ajax({
+                                  type: "POST",
+                                  url: '/Admin/ActivateDivisionKPI',     //your action
+                                  data: { "recordid": recordid},
+                                  dataType: 'json',
+                                  success: function (result) {
+
+                                        var grid = $("#gridkpis").data("kendoGrid"); 
+                                        grid.dataSource.transport.options.read.url = "/Admin/DivisionTransKPIs_Read/?recid=" + recid;
+                                        grid.dataSource.read();
+                                        grid.refresh();
+
+
+    
+                                        var griddeactivated = $("#gridkpisdeactivated").data("kendoGrid"); 
+                                        griddeactivated.dataSource.transport.options.read.url = "/Admin/DivisionDeactivatedKPIs_Read/?recid=" + recid;
+                                        griddeactivated.dataSource.read();
+                                        griddeactivated.refresh();
+
+                                  },
+                                  error: function (data) {
+
+                                  }
+                              })
+                              return true;
+                          },
+                          primary: true
+
+                      },
+                      { text: 'Cancel' }
+                  ],
+                  close: onClose
+              });
+
+              dialog.data("kendoDialog").open();
+              undo.fadeOut();
+
+}
+
+function viewsummaryandpdf(e) {
+   e.preventDefault();
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    var transid=dataItem.Transaction_Id;
+
+
+    var url="/NEPADStaff/InstitutionalWorkplanDraft?transid=" + transid;
+
+    redirect_blank(url);
+
+
+}
+
+
+
+function viewreports(e) {
+
+    e.preventDefault();
+
+
+
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+    var transid = dataItem.Transaction_Id;
+   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
+    
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/NEPADStaff/ChooseInstitutionalWPReport?transid=" + transid,
+            width: 600,
+            height: 500,
+
+            title: "Choose Institutional Report",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+         
+
+}
+
+
+   
+
+</script>

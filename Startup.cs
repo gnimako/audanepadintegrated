@@ -24,6 +24,7 @@ using AUDANEPAD_Integrated.Services;
 using Newtonsoft.Json.Serialization;
 using AUDANEPAD_Integrated.HubSignalR;
 
+
 namespace AUDANEPAD_Integrated
 {
     public class Startup
@@ -344,6 +345,12 @@ namespace AUDANEPAD_Integrated
               // endpoints.MapHub<NotificationsHub>("/notificationshub");
                 
             });
+            
+
+
+
+
+            
         }
     }
 }

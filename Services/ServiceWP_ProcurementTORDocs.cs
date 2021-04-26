@@ -60,6 +60,14 @@ namespace AUDANEPAD_Integrated.Services
             return records;
         }
 
+		public WP_ProcurementTORDocs GetRecordByProcurementIdAndFilename (string recid, string filename)
+        {
+            var rec = context.WP_ProcurementTORDocs
+						.Where(s => s.WPProcurement_Id == recid && s.WPDocPath==filename)
+						.FirstOrDefault();
+            return rec;
+        }
+
 		
 
 		public WP_ProcurementTORDocs GetRecord(string Id)

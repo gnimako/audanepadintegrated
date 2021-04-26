@@ -118,7 +118,16 @@
 
 <div id="getstaffwindow">
 </div>
-<div id="windowstaff"></div>
+<div id="windowstaff">
+</div>
+
+
+<div id="getstaffwindow2">
+</div>
+<div id="windowstaff2">
+</div>
+
+
 <div id="staffposwindow">
 </div>
 <div id="windowstaffpos">
@@ -135,6 +144,45 @@
 
 
 <script type="text/javascript">
+
+  function dbdaterender2(e) {
+        var grid = this;
+        $(".templateCell").each(function () {
+            eval($(this).children("script").last().html());
+            var tr = $(this).closest('tr');
+            var item = grid.dataItem(tr);
+            kendo.bind($(this), item);
+        });
+    }
+
+
+
+      function dbdaterender(e) {
+       var grid = e.sender;
+        var items = e.sender.items();
+
+        items.each(function(e) {
+            var dataItem = grid.dataItem(this);
+            var ddt = $(this).find('.dropDownTemplate');
+          
+
+            $(ddt).width(200).kendoDropDownList({
+               // value: dataItem.value,
+               // dataSource: ddlDataSource,
+                dataTextField: "DropDown_Name",
+                dataValueField: "DropDown_IntId",
+                dataSource: {
+                    transport: {
+                        read: {
+                            dataType: "json",
+                            url: "/Admin/GetAllEmployee"
+                        }
+                    }
+                },
+                optionLabel: "Select..."
+            });
+        });
+    }
 
 function dataBoundProcurements (e) {
         // iterate the table rows and apply custom row and cell styling
@@ -252,6 +300,8 @@ function onRequestWPEmployeeName(e){
 
 function executeprocurementtask(e) {
 
+  
+
     e.preventDefault();
 
 
@@ -281,7 +331,7 @@ function executeprocurementtask(e) {
             animation: false,
             resizable: true,
             content: taskactiontext,
-            width: 700,
+            width: 800,
             height: 700,
 
             title: "Execute Procurement Task",
@@ -747,3 +797,11 @@ function deleteworkplan(e) {
 
     }
 </style>
+
+
+
+
+ @* <script src="~/lib/kendo-ui/js/kendo.culture.en-US.min.js"></script> 
+ <script>
+        kendo.culture("en-US");
+</script>*@

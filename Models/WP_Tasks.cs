@@ -27,6 +27,9 @@ namespace AUDANEPAD_Integrated.Models
 
         public int  WPDirectorate_Id { get; set; }
         public int  WPDivision_Id { get; set; }
+
+        public string  WPResponsibleDeptType { get; set; }
+        public string  TaskNotes { get; set; }
         public LocalDate TransactionDate { get; set; }
 
         

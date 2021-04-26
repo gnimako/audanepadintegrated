@@ -13,6 +13,7 @@ namespace AUDANEPAD_Integrated.ViewModels
     {
         public string WPCycle_Id { get; set; }
         public int Period_Id { get; set; }
+        public int Directorate_Id { get; set; }
       
         
     }

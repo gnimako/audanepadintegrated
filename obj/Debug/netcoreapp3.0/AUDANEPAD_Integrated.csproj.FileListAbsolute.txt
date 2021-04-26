@@ -228,6 +228,8 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Home/Index.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Home/Index_old.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Home/Privacy.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/DirectorateWorkplanDraftList.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/DirectorateWorkplanDraftRangePDF.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/DivisionKPIs.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/Index.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/Index_old.cshtml.g.cs
@@ -238,6 +240,7 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/InstitutionalProcurementPlanRangeGrid.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/InstitutionalWorkplanDraft.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/InstitutionalWorkplanDraftCommunicationPDF.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/InstitutionalWorkplanDraftList copy.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/InstitutionalWorkplanDraftList.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/InstitutionalWorkplanDraftList_Old.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/InstitutionalWorkplanDraftMobilityPDF.cshtml.g.cs
@@ -261,6 +264,7 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/ManageWorkplansDraft_Old3.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/MtpPriortyMapping.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/ProcurementProcessTaskList.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/ProgrammeProcurementTaskList.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/SystemMessage.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/Workplan.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/WorkplanActivityGanttChart.cshtml.g.cs
@@ -287,9 +291,11 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_AddOutputProcurement.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_AddOutputProcurementGantt.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_AddOutputRiskProfile.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_AddProcurementProcessStep.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_AddSAPLinkage.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_AddWorkplanCycle.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_AssignProcurementStaff.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_ChooseDirectorateWPReportTypePeriodRange.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_ChooseInstitutionalWPReport.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_ChooseInstitutionalWPReportPeriodRange.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_EditDivisionKPI.cshtml.g.cs
@@ -302,12 +308,16 @@
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_EditWorkplanCycle.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_ManageOutputBudgetLink.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_ProcurementProcessTaskInitiate.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/NEPADStaff/_ProgrammeProcurementSubmitDocs.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/EditorTemplates/ClientCategory.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/EditorTemplates/ClientDirectorate.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/EditorTemplates/ClientEmployeeName.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/EditorTemplates/ClientExternalType.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/EditorTemplates/ClientOutputLinkType.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/EditorTemplates/ClientPeriodType.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/EditorTemplates/ClientProcurementPlannedDate.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/EditorTemplates/ClientProcurementProcessStep.cshtml.g.cs
+/Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/EditorTemplates/DatePickerTemplate.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/Error.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/_AdminLayout.cshtml.g.cs
 /Users/gideonnimako/Library/Mobile Documents/com~apple~CloudDocs/DDrive/Projects/AUDANEPAD_Integrated/obj/Debug/netcoreapp3.0/Razor/Views/Shared/_FrontPageLayout.cshtml.g.cs

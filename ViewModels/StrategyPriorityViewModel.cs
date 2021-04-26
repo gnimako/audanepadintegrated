@@ -11,7 +11,7 @@ namespace AUDANEPAD_Integrated.ViewModels
     {
         public string Transaction_Id { get; set; }
 
-         public int MTPPriority_Id { get; set; }
+        public int MTPPriority_Id { get; set; }
 
         public int Priority_Id { get; set; }
 

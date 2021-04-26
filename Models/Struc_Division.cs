@@ -13,6 +13,7 @@ namespace AUDANEPAD_Integrated.Models
         [Required, MaxLength(255, ErrorMessage = "Name cannot exceed 255 characters")]
         public int Directorate_Id { get; set; }
         public string Record_Name { get; set; }
+        public string AcronymName { get; set; }
 
         public bool? Record_Status { get; set; }
 

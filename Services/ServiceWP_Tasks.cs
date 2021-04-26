@@ -49,7 +49,24 @@ namespace AUDANEPAD_Integrated.Services
 
             return records;
         }
-        public IEnumerable<WP_Tasks> GetRecordsByReference_Id (string recid)
+        public IEnumerable<WP_Tasks> GetRecordsByDirDivDeptTypeAndStatus (int dirid, int divid, string depttype, string status)
+        {
+            var records = context.WP_Tasks
+                                .Where(s => s.WPDirectorate_Id==dirid && s.WPDivision_Id==divid && s.WPResponsibleDeptType==depttype && s.WPTaskStatus==status)
+                                .ToList();
+
+            return records;
+        }
+		public IEnumerable<WP_Tasks> GetRecordsByCategoryDirDivDeptTypeAndStatus (string category, int dirid, int divid, string depttype, string status)
+        {
+            var records = context.WP_Tasks
+                                .Where(s => s.WPCategoryMain==category && s.WPDirectorate_Id==dirid && s.WPDivision_Id==divid && s.WPResponsibleDeptType==depttype && s.WPTaskStatus==status)
+                                .ToList();
+
+            return records;
+        }
+
+		public IEnumerable<WP_Tasks> GetRecordsByReference_Id (string recid)
         {
             var records = context.WP_Tasks
                                 .Where(s => s.WPReference_Id==recid)
@@ -76,10 +93,26 @@ namespace AUDANEPAD_Integrated.Services
             return rec;
         }
 
+		public WP_Tasks GetRecordByCategoryReferenceIdDirDivDeptTypeAndStatus (string category, string referenceid,  int dirid, int divid, string depttype, string status)
+        {
+            var rec = context.WP_Tasks
+						.Where(s => s.WPCategoryMain == category && s.WPReference_Id==referenceid && s.WPDirectorate_Id==dirid && s.WPDivision_Id==divid && s.WPResponsibleDeptType==depttype && s.WPTaskStatus==status)
+						.FirstOrDefault();
+            return rec;
+        }
+
 		public WP_Tasks GetRecordBySubcategory1ReferenceIdAndStatus (string subcategory1, string referenceid, string status)
         {
             var rec = context.WP_Tasks
 						.Where(s => s.WPCategorySub1 == subcategory1 && s.WPReference_Id==referenceid && s.WPTaskStatus==status)
+						.FirstOrDefault();
+            return rec;
+        }
+
+		public WP_Tasks GetRecordBySubcategory1ReferenceIdDirDivDeptTypeAndStatus (string subcategory1, string referenceid, int dirid, int divid, string depttype, string status)
+        {
+            var rec = context.WP_Tasks
+						.Where(s => s.WPCategorySub1 == subcategory1 && s.WPReference_Id==referenceid && s.WPDirectorate_Id==dirid && s.WPDivision_Id==divid && s.WPResponsibleDeptType==depttype && s.WPTaskStatus==status)
 						.FirstOrDefault();
             return rec;
         }

@@ -13,6 +13,8 @@ namespace AUDANEPAD_Integrated.Interfaces
 
         IEnumerable<WP_ProcurementTORDocs> GetAllRecords();
 
+        WP_ProcurementTORDocs GetRecordByProcurementIdAndFilename (string recid, string filename);
+
     
         WP_ProcurementTORDocs Add(WP_ProcurementTORDocs rec);
         WP_ProcurementTORDocs Update(WP_ProcurementTORDocs recChanges);

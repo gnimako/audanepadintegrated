@@ -64,6 +64,13 @@ namespace AUDANEPAD_Integrated.Services
 		{
 		    return context.WP_ProcurementProcess.Find(Id);
 		}
+		public WP_ProcurementProcess GetRecordByProcurementId (string recid)
+        {
+            var rec = context.WP_ProcurementProcess
+						.Where(s => s.WPProcurement_Id == recid)
+						.FirstOrDefault();
+            return rec;
+        }
 
 
         public WP_ProcurementProcess Update(WP_ProcurementProcess recChanges)
@@ -73,6 +80,8 @@ namespace AUDANEPAD_Integrated.Services
 		    context.SaveChanges();
 		    return recChanges;
 		}
+
+		
         
     }
 }

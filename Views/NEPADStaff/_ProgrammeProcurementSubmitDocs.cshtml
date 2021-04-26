@@ -1,0 +1,647 @@
+
+
+
+
+@model WP_OutputProcurementVMWindow
+@using  System.ComponentModel.DataAnnotations
+
+
+
+
+<form id="addform">
+
+    <input hidden asp-for="Transaction_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.Transaction_IdOPVMMain">
+    <input hidden asp-for="WPMainRecord_idOPVMMain" class="k-textbox" style="width:100%" value="@Model.WPMainRecord_idOPVMMain">
+    <input hidden asp-for="WPOutput_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.WPOutput_IdOPVMMain">
+    <input hidden asp-for="Employee_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.Employee_IdOPVMMain">
+    <input hidden asp-for="FiscalYear_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.FiscalYear_IdOPVMMain">
+    <input hidden asp-for="Period_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.Period_IdOPVMMain">
+    <input hidden asp-for="Project_IdOPVMMain" class="k-textbox" style="width:100%" value="@Model.Project_IdOPVMMain">
+    <input hidden asp-for="FisYearOPVMMain" class="k-textbox" style="width:100%" value="@Model.FisYearOPVMMain">
+    
+    <div class="form-body" style="padding: 1.25rem;">
+           
+            
+
+                @* <div id="mobilitycost"><h6 style="color:#807878"><span id="costinfo">Assign Procurement Staff</span></h6></div> *@
+                <div id="targetDivStaffa_int" class="rssedStaffa_int">
+                </div>
+
+                <div class="alert alert-info" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>Procurement:</strong> @Model.WPProcurement_DescriptionOPVMMain
+                </div>
+
+                <br \>
+                 <ul class="steps has-content-centered" style="list-style: none; padding: 0; margin: 0">
+                    @foreach (var record in Model.ProcurementSteps)
+                    {
+                        if(@record.StepNameVM=="Step 1")
+                        {
+                            <li class="steps-segment is-active">
+                                <span class="steps-marker">
+                                        <span class="icon">
+                                            <i class="k-icon k-i-check-outline"></i>
+                                        </span>
+                                </span>
+                                <div class="steps-content">
+                                    <p style="font-size: 0.813rem; margin:0rem"><strong>@record.StepNameVM</strong></p>
+                                    <p style="font-size: 0.713rem ; margin:0rem">@record.StepActionDescriptionVM</p>
+                                    <p style="font-size: 0.690rem ; margin:0rem"><i>@record.StepPlannedDateVM</i> </p>
+                                </div>
+                            </li>
+
+                        }
+                        else
+                        {
+                            <li class="steps-segment">
+                                <span class="steps-marker">
+                                        <span class="icon" style="color: #9c9a9a;">
+                                            <i class="k-icon k-i-check-outline"></i>
+                                        </span>
+                                </span>
+                                <div class="steps-content">
+                                    <p style="font-size: 0.813rem; margin:0rem"><strong>@record.StepNameVM</strong></p>
+                                    <p style="font-size: 0.713rem ; margin:0rem">@record.StepActionDescriptionVM</p>
+                                    <p style="font-size: 0.690rem ; margin:0rem"><i>@record.StepPlannedDateVM</i> </p>
+                                </div>
+                            </li>
+
+                        }
+                        
+
+
+                    }
+                       
+                </ul>
+
+
+                <br \>
+               
+                    
+             
+                        
+
+              
+                @* <a href="#" class="k-button " id="btnAdd" style="color: #003f59;">
+                   <span class="k-icon k-i-plus-outline"></span> Add Procurement Process Step
+                </a> *@
+
+                @(Html.Kendo().Upload()
+                    .Name("files")
+                    .Async(a => a
+                    .Save("SaveProcurementTORDocsFiles", "Admin", new { procid = @Model.Transaction_IdOPVMMain})
+                        .Remove("RemoveFile", "Admin")
+                        .AutoUpload(true)
+                    )
+                    .ShowFileList(false)
+                    .Events(events => events
+                        .Select("onSubSelect")
+                        .Success("onSubSuccess")
+                        .Upload("onSubUpload")
+                    )
+                )
+                
+               
+                 @(Html.Kendo().Grid<WP_ProcurementToRDocsVM>()
+                .Name("grid_procurementtordocsub")
+                .Columns(columns =>
+                {
+                    columns.Bound(c => c.Transaction_IdVM).Hidden();
+                    columns.Bound(c => c.WPMainRecord_idVM).Hidden();
+                    columns.Bound(c => c.WPProcurement_IdVM).Hidden();
+
+                    columns.Bound(c => c.WPStepNumberLabelVM).Title("No.");
+                  
+                    columns.Bound(c => c.WPDocDesciptionTitleVM).Title("Documennt Description").Width(300);
+                    //columns.Bound(c => c.WPDocPathVM).Title("File");
+                   //columns.Bound(c => c.WPDocPathVM).ClientTemplate("<a href='#= WPDocActualPathVM #' download='#= WPDocPathVM #'>#= WPDocPathVM #</a>").Title("File");
+                   columns.Bound(c => c.WPDocPathVM).ClientTemplate("<a href='/nepadstaff/DownloadProcurementToRDocs?procid=#= WPProcurement_IdVM #&filename=#= WPDocPathVM #' >#= WPDocPathVM #</a>").Title("File");
+                    
+                    //columns.Bound(o => o.WPDocPathVM).ClientTemplate(@Html.ActionLink("#=WPDocPathVM#", "DownloadProcurementToRDocs", "Admin", new { ID = "#=WPProcurement_IdVM#" }).ToString()).Title("File");
+                   // columns.Bound(c => c.WPDocPathVM).ClientTemplate("<a asp-controller='nepadstaff' asp-action='institutionalworkplanreportpdf' asp-route-id='#=WPProcurement_IdVM#'>#=WPDocPathVM#</a>").Title("File");
+                   //columns.Bound(c => c.WPDocPathVM).ClientTemplate("<a href='/nepadstaff/institutionalworkplanreportpdf/id=#= WPProcurement_IdVM #'>#=WPDocPathVM#</a>").Title("File");
+                   
+
+
+                   
+
+                 
+
+                   
+                                                             
+
+                    columns.Command(command => { command.Edit().Text(" Edit").IconClass("k-icon k-i-track-changes"); });
+                    columns.Command(command => { command.Destroy().Text(" Delete").IconClass("k-icon k-i-delete"); });
+
+                })
+                
+               // .ToolBar(toolbar => toolbar.Create().Text(" Add Procurement Process Step").IconClass("k-icon k-i-plus-outline"))
+               .Editable(editable => editable.Mode(GridEditMode.InLine))
+             //  .ToolBar(toolbar =>
+               // {
+              //      toolbar.Custom().Text(" Add Procurement Process Step").HtmlAttributes(new { id = "btnAdd" }).IconClass("k-icon k-i-plus-outline");
+              //  })
+
+                .Resizable(r=>r.Columns(true))
+                .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .Model(model =>
+                    {
+                        model.Id(p => p.Transaction_IdVM);
+                        model.Field(p => p.Transaction_IdVM).Editable(false);
+                        model.Field(p => p.WPStepNumberLabelVM).Editable(false);
+                        model.Field(p => p.WPDocPathVM).Editable(false);
+                       // model.Field(p => p.ProcurementProcessStep).DefaultValue(
+                            //ViewData["defaultProcurementProcessStep"] as CategoryViewModel);
+                    })
+                    .Read(read => read.Action("WP_ProcurementToRDocs_Read", "Admin", new {wprocurementid=Model.Transaction_IdOPVMMain}))
+                    .Model(model => 
+                        {
+                            model.Id(p => p.Transaction_IdVM);
+                            //model.Field(field => field.LookUp_Status).Editable(false);
+                        })
+                   // .Create(create => create.Action("WP_ProcurementWorkLoadEmployee_Create", "Admin", new {wprocurementid=Model.Transaction_IdOPVMMain}))
+                    .Update(update => update.Action("WP_ProcurementToRDocsSub_Update", "Admin", new {wprocurementid=Model.Transaction_IdOPVMMain}))
+                    .Destroy(destroy => destroy.Action("WP_ProcurementToRDocsSub_Delete", "Admin", new {wprocurementid=Model.Transaction_IdOPVMMain}))
+                   // .PageSize(20)
+                    .Events(events => events.Error("error_handler")
+                                            .RequestEnd("onRequestWPEmployeeName"))
+                    
+                )
+              // .Events(ev=>ev.DataBound("dbdaterender2")) 
+        )
+        <br />
+        <br />
+        <h6 style="color:#807878">Fully Released SAP Purchase Request (PR)</h6>
+        @Html.TextBoxFor(model => model.SAP_PR, new { @class = "k-textbox",  style = "width: 100%;", value=""})
+        <br />
+        <br />
+        <h6 style="color:#807878">Notes</h6>
+            @Html.TextAreaFor(model => model.TaskNoteToBeForwarded, new { @class = "k-textbox", style = "width: 100%;", value="", rows="3"})
+        <br />
+        <br />
+
+  
+        <div id="targetDivStaffamain" class="rssedStaffamain">
+        </div>
+        <br />
+        <br />
+        <div style="align-content:center; text-align:center">
+       
+       
+
+            <a class="k-button" id="btnprocurementdocs">
+                Submit to Procurement Division &nbsp;<span class="k-icon k-i-check-outline"></span> 
+            </a>
+        </div>
+
+    </div>
+
+                
+
+</form>
+
+
+<script>
+
+
+
+
+
+
+
+$("#btnAdd").click(function () {
+//"/NEPADStaff/ProcurementProcessTaskInitiate?procurementid=" + transid
+ var wprocurementid = $("#Transaction_IdOPVMMain").val(); 
+
+                  $("#windowstaff2").append("<div id='getstaffwindow2'></div>");
+
+                var wnd2 = $("#getstaffwindow2").kendoWindow({
+                    //actions: ["Close"],
+                    draggable: true,
+                    modal: true,
+                    animation: false,
+                    resizable: true,
+                    content: "/NEPADStaff/AddProcurementProcessStep?procurementid=" + wprocurementid,
+                    width: 500,
+                    height: 360,
+
+                    title: "Add Procurement Process Step",
+                    // close: onClose,
+                    deactivate: function () {
+                        this.destroy();
+                    }
+
+                }).data("kendoWindow");
+                wnd2.center().open();
+
+   });
+
+    
+    $("#btnCloseStaffa_act").click(function () {
+        $(".k-window-content").each(function () {
+            $(this).data("kendoWindow").close();
+        });
+    });
+
+
+
+
+
+
+$("#btnprocurementdocs").click(function (e) {
+
+    var procurementid= $("#Transaction_IdOPVMMain").val(); //
+    var procurement_pr= $("#SAP_PR").val(); 
+
+
+    $.ajax({
+            type: "POST",
+            url: '/Admin/CheckProcurementDocsSubmission',     //your action
+            data:{"procurementid": procurementid},
+            //data: { selectkeys: dataItem},
+            dataType: 'json',
+            success: function (result) {
+                var checkresponse = result.rtnmsg;
+
+                if (checkresponse == "nodocuments") {
+                    $('#targetDivStaffamain').empty();
+                    $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Document : Please upload the procurement documents to be submitted. </span>').appendTo('.rssedStaffamain');
+                }
+                else if(checkresponse == "somedescriptionnotprovided")
+                {
+                    $('#targetDivStaffamain').empty();
+                    $('<span class="alert alert-warning" style="display: block;font-size: 100%">Docuement Description: Please provide description for all documents uploaded. </span>').appendTo('.rssedStaffamain');
+
+                }
+                else
+                {
+                    if(procurement_pr === "" && typeof procurement_pr === "string")
+                    {
+                        $('#targetDivStaffamain').empty();
+                        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Entry : Please provide fully released SAP PR reference number. </span>').appendTo('.rssedStaffamain');
+                    }
+                    else
+                    {
+                        //Work on this...
+                        $.ajax({
+                                type: "POST",
+                                url: '/Admin/SubmitProcurementToRDocs',     //your action
+                                data: $('#addform').serialize(),   //your form name.it takes all the values of model
+                                dataType: 'json',
+                                success: function (result) {
+                                    var response = result.rtnmsg;
+                                    var remainfunds = result.remainfunds;
+
+
+                                    if (response == "success") {
+                                                $('#targetDivStaffamain').empty();
+                                                $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Procurement Initiated Successfully. </span>').appendTo('.rssedStaffamain');
+
+
+                                                var grid= $("#grid").data("kendoGrid"); 
+                                                grid.dataSource.transport.options.read.url = "/Admin/PendingProgrammeProcurementTaskforEmployee_Read";
+                                                grid.dataSource.read();
+
+
+                                    }
+                                    else {
+                                            $('#targetDivStaffamain').empty();
+                                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffamain');
+                                            //$('#targetDivStaffa').empty();
+                                    }
+
+                                },
+                                error: function (data) {
+                                        $('#targetDivStaffamain').empty();
+                                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffamain');
+                                        //$('#targetDivStaffa').empty();
+                                }
+                            });
+
+
+                    }
+
+                }
+
+
+            }
+    });
+
+    return false;
+});
+
+
+$("#btnSubmita_act").click(function (e) {
+
+    var gridid = $("#WPOutput_IdOMVMMain").val(); 
+
+    var projid = $("#Project_IdOMVMMain").val();  
+    var fyear = $("#FiscalYear_IdOMVMMain").val();  
+    var fperiod = $("#Period_IdOMVMMain").val();  
+    var periodtxt = $("#FisPeriodOMVMMain").val();  
+
+    var mobilitydesc = $("#WPMobility_DescriptionOMVMMain").val();  
+    var mobilitycountry = $("#Country_IdOMVMMain").val();  
+    var mobilitycity = $("#Mobility_CityOMVMMain").val();
+    var mobilitycost = $("#MobilityCostOMVMMain").val();  
+    var startDate= $("#MobilityStartDateOMVMMain").data("kendoDatePicker");
+    var endDate= $("#MobilityEndDateOMVMMain").data("kendoDatePicker");
+
+
+    
+
+
+
+
+    if(mobilitydesc === "" && typeof mobilitydesc === "string")
+    {
+        $('#targetDivStaffa_act').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Entry : Please describe the mobility. </span>').appendTo('.rssedStaffa_act');
+    }
+    else if(mobilitycountry === "" && typeof mobilitycountry === "string")
+    {
+        $('#targetDivStaffa_act').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Selection : Please select country. </span>').appendTo('.rssedStaffa_act');
+    }
+    else if(mobilitycity === "" && typeof mobilitycity === "string")
+    {
+        $('#targetDivStaffa_act').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Entry : Please enter city. </span>').appendTo('.rssedStaffa_act');
+    }
+    else if(mobilitycost === "" && typeof mobilitycost === "string")
+    {
+        $('#targetDivStaffa_act').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">No Entry : Please provide mobility/mission cost. </span>').appendTo('.rssedStaffa_act');
+    }
+    else if(isNaN(mobilitycost))
+    {
+        $('#targetDivStaffa_act').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">Mission cost should be a number. </span>').appendTo('.rssedStaffa_act');
+    }
+    else if(startDate.value()>endDate.value())
+    {
+        $('#targetDivStaffa_act').empty();
+        $('<span class="alert alert-warning" style="display: block;font-size: 100%">End Date should be a future date</span>').appendTo('.rssedStaffa_act');
+    }
+    else
+    {
+        //Work on this...
+        $.ajax({
+                type: "POST",
+                url: '/Admin/EditOutputMobility',     //your action
+                data: $('#addform').serialize(),   //your form name.it takes all the values of model
+                dataType: 'json',
+                success: function (result) {
+                    var response = result.rtnmsg;
+                    var remainfunds = result.remainfunds;
+
+
+                    if (response == "success") {
+                                $('#targetDivStaffa_act').empty();
+                                $('<span class="alert alert-success" style="display: block;font-size: 100%">Success : Mission Saved Successfully. </span>').appendTo('.rssedStaffa_act');
+
+
+                                var childGrid = $('#gridmobilitiessub_'+gridid).data("kendoGrid");
+
+                                childGrid.dataSource.transport.options.read.url = "/Admin/WP_OutputsSubMobilities_Read?output_transid=" + gridid;
+                                childGrid.dataSource.read();
+                                //childGrid.refresh();
+
+                                var grid_outputmobilities = $("#grid_outputmobilities").data("kendoGrid"); 
+                                grid_outputmobilities.dataSource.transport.options.read.url = "/Admin/WP_Outputs_for_Mobilities_Read?projid=" + projid + "&fyear=" + fyear + "&fperiod=" + fperiod + "&periodtxt=" + periodtxt;
+                                grid_outputmobilities.dataSource.read();
+
+
+                    }
+                    else if (response == "insufficientfunds") {
+                            $('#targetDivStaffa_act').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Insufficient funds available for this output. Remaining Funds: $'+ remainfunds+' </span>').appendTo('.rssedStaffa_act');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else if (response == "pkerror") {
+                            $('#targetDivStaffa_act').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unable to Save. Mission Already Exist. </span>').appendTo('.rssedStaffa_act');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else if (response == "createerror") {
+                            $('#targetDivStaffa_act').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Unable to save mission</span>').appendTo('.rssedStaffa_act');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else if (response == "doesnotexist") {
+                            $('#targetDivStaffa_act').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">No Record: Mission does not exist</span>').appendTo('.rssedStaffa_act');
+                            //$('#targetDivStaffa').empty();
+                    }
+                    else {
+                            $('#targetDivStaffa_act').empty();
+                            $('<span class="alert alert-danger" style="display: block;font-size: 100%">Unknown Error: Please try Again </span>').appendTo('.rssedStaffa_act');
+                            //$('#targetDivStaffa').empty();
+                    }
+
+                },
+                error: function (data) {
+                        $('#targetDivStaffa_act').empty();
+                        $('<span class="alert alert-danger" style="display: block;font-size: 100%">Error: Error Occurred whiles saving </span>').appendTo('.rssedStaffa_act');
+                        //$('#targetDivStaffa').empty();
+                }
+            });
+
+
+    }
+
+
+
+
+
+
+
+
+        
+    
+    
+    return false;
+});
+
+
+
+
+
+
+</script>
+
+
+<style>
+
+.div1 {
+    width: 50%;
+    float: left;
+    height: 100%;
+}
+.div2 {
+    width: 50%;
+    float: right;
+    height: 100%;
+}
+/*TOOLTIP*/
+.k-widget.k-tooltip{
+        color: #353623;
+        background-color: #f6f7e1;
+        border-color: #f6f7e1;
+
+}
+
+/*SWITCH ON*/
+
+    .k-switch-on .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28
+    }
+
+    .k-switch-on:hover .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:hover .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+    .k-switch-on:active .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4
+    }
+
+    .k-switch-on:active .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28
+    }
+
+
+
+    .k-switch-on:visited .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:visited .k-switch-handle{
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+    .k-switch-on:focus .k-switch-container {
+        border-color: #13ad28;
+        color: #c5fcd4;
+        background-color: #c5fcd4;
+    }
+
+    .k-switch-on:focus .k-switch-handle {
+        border-color: #13ad28;
+        color: #fff;
+        background-color: #13ad28;
+    }
+
+
+
+
+    /*SWITCH OFF*/
+
+    .k-switch-off .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+
+    .k-switch-off:hover .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:hover .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+    .k-switch-off:active .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:active .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+    .k-switch-off:visited .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:visited .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+    .k-switch-off:focus .k-switch-container {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #fff;
+    }
+
+    .k-switch-off:focus .k-switch-handle {
+        border-color: #c5c7c9;
+        color: #fff;
+        background-color: #c5c7c9;
+    }
+
+
+
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

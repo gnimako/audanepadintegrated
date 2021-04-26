@@ -64,6 +64,15 @@ namespace AUDANEPAD_Integrated.ViewModels
 
         public int SelectionMethod_Id { get; set; }
         public int ShortlistLeadTime_Id { get; set; }
+
+        public string TaskNoteIncoming  { get; set; }
+
+        public string TaskNoteToBeForwarded  { get; set; }
+        public string SAP_WBS { get; set; }
+        public string SAP_PR { get; set; }
+        public string SAP_PO { get; set; }
+
+        public List<ProcurementStepListViewModel> ProcurementSteps { get; set; }
         
     }
 }

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+//using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NodaTime;
 using System.Runtime.Serialization.Json;
@@ -173,6 +174,8 @@ namespace AUDANEPAD_Integrated.Controllers
         private readonly ITrans_ProcurementProcessStepsRepository _transProcurementProcessStepsReposity;
         private readonly IWP_ProcurementProcessStepsRepository _wpProcurementProcessStepsRepository;
         private readonly IWP_ProcurementTORDocsRepository _wpProcurementTORDocsRepository;
+
+      
 
 
 
@@ -424,6 +427,7 @@ namespace AUDANEPAD_Integrated.Controllers
             _transProcurementProcessStepsReposity=transProcurementProcessStepsReposity;
             _wpProcurementProcessStepsRepository=wpProcurementProcessStepsRepository;
             _wpProcurementTORDocsRepository=wpProcurementTORDocsRepository;
+          
         
 
 
@@ -3404,7 +3408,7 @@ namespace AUDANEPAD_Integrated.Controllers
                         WP_ProcurementWorkLoadAssignment rec_to_add = new WP_ProcurementWorkLoadAssignment
                         {
                             Transaction_Id=Guid.NewGuid().ToString(),
-                            WPMainRecord_id=record.WPMainRecord_idExtPartVM,
+                            WPMainRecord_id=procurementrec.WPMainRecord_id,
                             WPProcurement_Id=wprocurementid,
                             Employee_Id=record.EmployeeName.CategoryID,
                             ProcurementApprovalAuthority_Id=approveauthority,
@@ -3420,8 +3424,14 @@ namespace AUDANEPAD_Integrated.Controllers
                     WP_Tasks taskrec=_wpTasksRepository.GetRecordByCategoryReferenceIdSubcategory1AndTask("Procurement",wprocurementid,"Procurement Process","Initiate Procurement Process");
                     var user = await userManager.GetUserAsync(HttpContext.User);
 
+
+                    
+
                     if(taskrec==null)
                     {
+                        int dirid=_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(record.EmployeeName.CategoryID).Directorate_Id;
+                        int divid=_strucDivStaffMappingRepository.GetRecordByEmployeeAndPrimaryDivision(record.EmployeeName.CategoryID).Division_Id;
+
                         WP_Tasks rec_to_add=new WP_Tasks
                         {
                             Transaction_Id=Guid.NewGuid().ToString(),
@@ -3430,13 +3440,42 @@ namespace AUDANEPAD_Integrated.Controllers
                             WPCategorySub1="Procurement Process",
                             WPTaskDescription="Initiate Procurement Process",
                             WPTaskStatus="Active",
+                            WPDirectorate_Id=dirid,
+                            WPDivision_Id=divid,
+                            WPResponsibleDeptType="Procurement Department",
                             WPRequesterEmployee_Id=user.Employee_Id,
                             TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
                         };
 
                         _wpTasksRepository.Add(rec_to_add);
 
+
                     }
+
+                    WP_ProcurementProcessSteps procinitprocessstep=_wpProcurementProcessStepsRepository.GetRecordByProcurementIdStepId1OrStepId2(wprocurementid, 1, 2);
+
+                    if(procinitprocessstep==null)
+                    {
+                        WP_ProcurementProcessSteps rec_to_add=new WP_ProcurementProcessSteps
+                        {
+                            Transaction_Id=Guid.NewGuid().ToString(),
+                            WPMainRecord_id=procurementrec.WPMainRecord_id,
+                            WPProcurement_Id=wprocurementid,
+                            Employee_Id=record.EmployeeName.CategoryID,
+                            WPStepNumber=1,
+                            WPStepType_Id=1,
+                            WPPlannedDate=new LocalDate(procurementrec.WPTORSubmissionDate.Year,procurementrec.WPTORSubmissionDate.Month, procurementrec.WPTORSubmissionDate.Day),
+                            WPStep_Status="Active",
+                            WPAtThisStep=true,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+                        _wpProcurementProcessStepsRepository.Add(rec_to_add);
+
+                        
+
+                    }
+
+
                  }
                            
             }
@@ -3989,6 +4028,90 @@ namespace AUDANEPAD_Integrated.Controllers
                             
                         }  
                     }
+                }    
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+
+        [AcceptVerbs("Post")]
+		public ActionResult WP_ProcurementToRDocsSub_Update([DataSourceRequest] DataSourceRequest request, WP_ProcurementToRDocsVM record, string wprocurementid)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                
+                if(wprocurementid!=null )
+                {
+
+                    WP_ProcurementTORDocs wp_rec_fetch=_wpProcurementTORDocsRepository.GetRecord(record.Transaction_IdVM);
+
+                    
+                    if (wp_rec_fetch != null)
+                    {
+                        if(record.WPDocDesciptionTitleVM==null)
+                        {
+                            wp_rec_fetch.WPDocDesciptionTitle="";
+                        }
+                        else
+                        {
+                            wp_rec_fetch.WPDocDesciptionTitle=record.WPDocDesciptionTitleVM;
+
+                        }
+                        
+                        
+                        wp_rec_fetch.TransactionDate=new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+
+                        _wpProcurementTORDocsRepository.Update(wp_rec_fetch);
+                        
+                    }  
+                    
+                }    
+                           
+            }
+            
+            return Json(new [] { record }.ToDataSourceResult(request, ModelState));
+        }
+
+        [AcceptVerbs("Post")]
+		public ActionResult WP_ProcurementToRDocsSub_Delete([DataSourceRequest] DataSourceRequest request, WP_ProcurementToRDocsVM record, string wprocurementid)
+        {
+            if (record != null && ModelState.IsValid)
+            {  
+                
+                if(wprocurementid!=null )
+                {
+
+                    WP_ProcurementTORDocs wp_rec_fetch=_wpProcurementTORDocsRepository.GetRecord(record.Transaction_IdVM);
+
+                    
+                    if (wp_rec_fetch != null)
+                    {
+                        //Delete file first
+                        string procurementpath = @"wwwroot/appdirectory/procurements/submissionofproctordocs/" + wprocurementid;
+                        var physicalPath = Path.Combine(procurementpath, wp_rec_fetch.WPDocPath);
+                        if(System.IO.File.Exists(physicalPath))
+                            System.IO.File.Delete(physicalPath);
+
+                        //Deleting Database Record
+                        _wpProcurementTORDocsRepository.Delete(wp_rec_fetch.Transaction_Id);
+
+                        var DBProcurementToRDocs_Recs=_wpProcurementTORDocsRepository.GetRecordsByProcurementId(wprocurementid);
+                        int initialcount=0;
+
+                        foreach (var recordset in DBProcurementToRDocs_Recs)
+                        {
+                            initialcount=initialcount+1;
+                            recordset.RecordIter_Number=initialcount;
+                            _wpProcurementTORDocsRepository.Update(recordset);     
+                        }
+
+
+
+                        
+                    }  
+                    
                 }    
                            
             }
@@ -5135,6 +5258,121 @@ namespace AUDANEPAD_Integrated.Controllers
 
             return Json(collection_recs.ToDataSourceResult(request));
         }
+
+
+        public ActionResult WP_ProcurementProcessSteps_Read([DataSourceRequest]DataSourceRequest request, string wprocurementid)
+        {
+
+
+            List<WP_ProcurementProcessStepsVM> collection_recs = new List<WP_ProcurementProcessStepsVM>();
+
+
+            var DB_Recs =  _wpProcurementProcessStepsRepository.GetRecordsByProcurementId(wprocurementid);
+
+     
+
+           
+
+
+
+            int _count =  DB_Recs.Count();
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+                   // WP_Procurement procurement=_wpProcurementRepository.GetRecord(rec.WPProcurement_Id);
+   
+                    WP_ProcurementProcessStepsVM srec = new WP_ProcurementProcessStepsVM
+                    {
+                        Transaction_IdVM = rec.Transaction_Id,
+                        WPMainRecord_idVM=rec.WPMainRecord_id,
+                        WPProcurement_IdVM=rec.WPProcurement_Id,
+                        Employee_IdVM=rec.Employee_Id,
+                        WPStepNumberVM=rec.WPStepNumber,
+                        WPStepNumberLabelVM="Step "+rec.WPStepNumber.ToString(),
+                        WPStepType_IdVM=rec.WPStepType_Id,
+                        WPPlannedDateVM=new DateTime(rec.WPPlannedDate.Year,rec.WPPlannedDate.Month, rec.WPPlannedDate.Day),
+                        WPActualDateVM=new DateTime(rec.WPActualDate.Year,rec.WPActualDate.Month, rec.WPActualDate.Day),
+                        WPStep_StatusVM=rec.WPStep_Status,
+                        ProcurementProcessStepAction=_lkupProcurementProcessStepsRepository.GetRecord(rec.WPStepType_Id).Record_Name
+
+                        // ProcurementPlannedDate = new CategoryDateViewModel()
+                        // {
+                        //     WPPlannedDateVM=new DateTime(rec.WPPlannedDate.Year,rec.WPPlannedDate.Month, rec.WPPlannedDate.Day)
+                        // },
+
+                       
+                        // ProcurementProcessStep = new CategoryViewModel()
+                        // {
+                        //     CategoryID = rec.WPStepType_Id,
+                        //     CategoryName = _lkupProcurementProcessStepsRepository.GetRecord(rec.WPStepType_Id).Record_Name
+                        // },
+
+
+                    };
+
+                    collection_recs.Add(srec);
+                }
+            }
+      
+            collection_recs=collection_recs.OrderBy(d => d.WPStepNumberVM).ToList();
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+
+        public ActionResult WP_ProcurementToRDocs_Read([DataSourceRequest]DataSourceRequest request, string wprocurementid)
+        {
+
+
+            List<WP_ProcurementToRDocsVM> collection_recs = new List<WP_ProcurementToRDocsVM>();
+
+
+            var DB_Recs =  _wpProcurementTORDocsRepository.GetRecordsByProcurementId(wprocurementid);
+
+            int _count =  DB_Recs.Count();
+
+           // int _iter=0;
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in DB_Recs)
+                {
+                 
+                 //  _iter=_iter+1;
+                   string procurementpath = @"wwwroot/appdirectory/procurements/submissionofproctordocs/" + rec.WPProcurement_Id+"/"+rec.WPDocPath;
+   
+                    WP_ProcurementToRDocsVM srec = new WP_ProcurementToRDocsVM
+                    {
+                        Transaction_IdVM = rec.Transaction_Id,
+                        WPMainRecord_idVM=rec.WPMainRecord_id,
+                        WPProcurement_IdVM=rec.WPProcurement_Id,
+                        Employee_IdVM=rec.Employee_Id,
+                        WPStepNumberVM=rec.RecordIter_Number,
+                        WPStepNumberLabelVM=rec.RecordIter_Number.ToString(),
+                        WPDocDesciptionTitleVM=rec.WPDocDesciptionTitle,
+                        WPDocPathVM=rec.WPDocPath,
+                        WPDocActualPathVM=procurementpath,
+                        WPDoc_StatusVM=rec.WPDoc_Status
+
+                    };
+
+                    collection_recs.Add(srec);
+                }
+            }
+      
+           collection_recs=collection_recs.OrderBy(d => d.WPStepNumberVM).ToList();
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
+
+        
 
         public ActionResult WP_Outputs_Read([DataSourceRequest]DataSourceRequest request, string projid, string fyear, string fperiod, string periodtxt)
         {
@@ -9442,10 +9680,13 @@ namespace AUDANEPAD_Integrated.Controllers
             var user = await userManager.GetUserAsync(HttpContext.User);
 
             var DB_ProcurementActive=_wpProcurementWorkLoadAssignmentRepository.GetRecordsByEmployeeIdAndStatus(user.Employee_Id, "Active").ToList();
+
+            int dirid=_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(user.Employee_Id).Directorate_Id;
+            int divid=_strucDivStaffMappingRepository.GetRecordByEmployeeAndPrimaryDivision(user.Employee_Id).Division_Id;
          
             foreach(var recordset in DB_ProcurementActive)
             {
-                WP_Tasks procurementprocessingrec=_wpTasksRepository.GetRecordBySubcategory1ReferenceIdAndStatus("Procurement Process",recordset.WPProcurement_Id, "Active");
+                WP_Tasks procurementprocessingrec=_wpTasksRepository.GetRecordBySubcategory1ReferenceIdDirDivDeptTypeAndStatus("Procurement Process",recordset.WPProcurement_Id, dirid, divid, "Procurement Department", "Active");
 
                 if(procurementprocessingrec!=null)
                 {
@@ -9498,6 +9739,81 @@ namespace AUDANEPAD_Integrated.Controllers
 
             return Json(collection_recs.ToDataSourceResult(request));
         }
+
+
+
+
+        public async Task<ActionResult>  PendingProgrammeProcurementTaskforEmployee_Read ([DataSourceRequest]DataSourceRequest request)
+        {
+
+
+            List<WP_ProcurementGridVM> collection_recs = new List<WP_ProcurementGridVM>();
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+           // var DB_ProcurementActive=_wpProcurementWorkLoadAssignmentRepository.GetRecordsByEmployeeIdAndStatus(user.Employee_Id, "Active").ToList();
+
+            int dirid=_strucDirStaffMappingRepository.GetRecordByEmployeeAndPrimaryDirectorate(user.Employee_Id).Directorate_Id;
+            int divid=_strucDivStaffMappingRepository.GetRecordByEmployeeAndPrimaryDivision(user.Employee_Id).Division_Id;
+
+            var AllProgrammeProcurementTasks_DB=_wpTasksRepository.GetRecordsByCategoryDirDivDeptTypeAndStatus("Procurement", dirid, divid, "Programme Department", "Active").ToList();
+         
+            foreach(var recordset in AllProgrammeProcurementTasks_DB)
+            {
+               
+
+                if(recordset!=null)
+                {
+                    WP_Procurement record=_wpProcurementRepository.GetRecord(recordset.WPReference_Id);
+                    WP_MainRecord mainrec=_wpMainRecordRepository.GetRecord(record.WPMainRecord_id);
+
+                    WP_ProcurementGridVM srec = new WP_ProcurementGridVM
+                    {
+                        Transaction_IdGVM = record.Transaction_Id,
+                        WPMainRecord_idGVM = record.WPMainRecord_id,
+                        Project_IdGVM  = record.Project_Id,
+                        FiscalYear_IdGVM  = record.FiscalYear_Id,
+                        Period_IdGVM = record.Period_Id,
+                        WPOutput_IdGVM = record.WPOutput_Id,
+                        WPOutput_StatementGVM=_wpOutputsRepository.GetRecord(record.WPOutput_Id).Output,
+                        WPProcurement_DescriptionGVM = record.WPProcurement_Description,
+                        WPProcurementType_IdGVM = record.WPProcurementType_Id,
+                        WPProcurementType_NameGVM = _lkupProcurementTypeRepository.GetRecord(record.WPProcurementType_Id).Record_Name,
+                        WPProcurementLeadTime_IdGVM = record.WPProcurementLeadTime_Id,
+                        WPProcurementCostGVM = record.WPProcurementCost,
+                        WPProcurement_SourceOfFundsDescrGVM  = record.WPProcurement_SourceOfFundsDescr,
+                        Directorate_IdGVM = mainrec.Directorate_Id,
+                        Directorate_NameGVM = _strucDirectorateRepository.GetRecord(mainrec.Directorate_Id).AcronymName,
+                        Division_IdGVM =  mainrec.Division_Id,
+                        Division_NameGVM = _strucDivisionRepository.GetRecord(mainrec.Division_Id).Record_Name,
+                        WPProcurementTask_Action=recordset.WPTaskDescription,
+                        WPProcurementTask_Id=recordset.Transaction_Id
+                        
+                    };
+                    collection_recs.Add(srec);
+
+                }
+                   
+
+            }
+            
+
+            
+
+            
+
+            //Sorting
+            collection_recs=collection_recs.OrderBy(d => d.Directorate_IdGVM).ThenBy(d => d.Division_IdGVM).ToList();
+
+
+
+                
+            
+
+
+            return Json(collection_recs.ToDataSourceResult(request));
+        }
+
 
 
 
@@ -12555,6 +12871,626 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
 
+        [HttpPost]
+        public async Task<ActionResult> InitiateProcurement(WP_OutputProcurementVMWindow model)
+        {
+           
+            try
+            {
+                var DB_ProcurementProcessSteps=_wpProcurementProcessStepsRepository.GetRecordsByProcurementId(model.Transaction_IdOPVMMain);
+                
+
+                if(DB_ProcurementProcessSteps.Count()<2)
+                {
+                    return Json(new { rtnmsg = "insufficientsteps" });
+                }
+                else
+                {
+                    bool step_begin_ok=false;
+                    bool step_end_ok=false;
+
+                    WP_ProcurementProcessSteps wpstep_begin=_wpProcurementProcessStepsRepository.GetRecordByProcurementIdStepNumber(model.Transaction_IdOPVMMain,1);
+                    WP_ProcurementProcessSteps wpstep_end=_wpProcurementProcessStepsRepository.GetRecordByProcurementIdStepNumber(model.Transaction_IdOPVMMain,DB_ProcurementProcessSteps.Count());
+
+                    if(wpstep_begin.WPStepType_Id==1 || wpstep_begin.WPStepType_Id==2)
+                    {
+                        step_begin_ok=true;
+                    }
+
+                    if(_lkupProcurementProcessStepsRepository.GetRecord(wpstep_end.WPStepType_Id).Record_Name=="Submission of Final Report")
+                    {
+                        step_end_ok=true;
+                    }
+
+                    if(step_begin_ok==true && step_end_ok==true)
+                    {
+                        //Update Procurement Record
+                        WP_Procurement procurement=_wpProcurementRepository.GetRecord(model.Transaction_IdOPVMMain);
+                        procurement.MicroProcurement=model.MicroProcurement;
+                        _wpProcurementRepository.Update(procurement);
+
+                        //Add Procurement Process
+
+                      
+                        int approveauthority=0;
+
+                        if(procurement.WPProcurementCost<=15000)
+                        {
+                            approveauthority=5;
+                        }
+                        else if(procurement.WPProcurementCost>=15001 && procurement.WPProcurementCost<=50000)
+                        {
+                            approveauthority=4;
+                        }
+                        else if(procurement.WPProcurementCost>=50001 && procurement.WPProcurementCost<=100000)
+                        {
+                            approveauthority=3;
+                        }
+                        else if(procurement.WPProcurementCost>10000 )
+                        {
+                            approveauthority=2;
+                        }
+
+                        var user = await userManager.GetUserAsync(HttpContext.User);
+
+                        WP_ProcurementProcess fetchedrec=_wpProcurementProcessRepository.GetRecordByProcurementId(model.Transaction_IdOPVMMain);
+
+                        if(fetchedrec==null)
+                        {
+                            WP_ProcurementProcess rec_to_add = new WP_ProcurementProcess
+                            {
+                                Transaction_Id=Guid.NewGuid().ToString(),
+                                WPMainRecord_id=procurement.WPMainRecord_id,
+                                WPProcurement_Id=procurement.Transaction_Id,
+                                ProcurementEmployee_Id=user.Employee_Id,
+                                ProcurementApprovalAuthority_Id=approveauthority,
+                                ProcurementSelectionMethod_Id=model.SelectionMethod_Id,
+                                WPDocTORSubmissionDate_Plan=new LocalDate(wpstep_begin.WPPlannedDate.Year, wpstep_begin.WPPlannedDate.Month, wpstep_begin.WPPlannedDate.Day),
+                                WPProcurementProcess_Status="Active",
+                                
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _wpProcurementProcessRepository.Add(rec_to_add);
+                        }
+                        else
+                        {
+                            fetchedrec.WPMainRecord_id=procurement.WPMainRecord_id;
+                            fetchedrec.WPProcurement_Id=procurement.Transaction_Id;
+                            fetchedrec.ProcurementEmployee_Id=user.Employee_Id;
+                            fetchedrec.ProcurementApprovalAuthority_Id=approveauthority;
+                            fetchedrec.ProcurementSelectionMethod_Id=model.SelectionMethod_Id;
+                            fetchedrec.WPDocTORSubmissionDate_Plan=new LocalDate(wpstep_begin.WPPlannedDate.Year, wpstep_begin.WPPlannedDate.Month, wpstep_begin.WPPlannedDate.Day);
+                            fetchedrec.WPProcurementProcess_Status="Active";
+                            fetchedrec.TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+
+                            _wpProcurementProcessRepository.Update(fetchedrec);
+
+
+                        }
+
+
+                        //Update Task Record to Complete Task
+                        WP_Tasks taskrec=_wpTasksRepository.GetRecordByCategoryReferenceIdSubcategory1AndTask("Procurement",model.Transaction_IdOPVMMain,"Procurement Process","Initiate Procurement Process");
+                        taskrec.WPTaskStatus="Completed";
+                        taskrec.WPRepondentEmployee_Id=user.Employee_Id;
+                        _wpTasksRepository.Update(taskrec);
+
+
+                        //Request Programme Managers to Submit Procurement Documents
+                        WP_Tasks taskrecsubmitdocs=_wpTasksRepository.GetRecordByCategoryReferenceIdSubcategory1AndTask("Procurement",model.Transaction_IdOPVMMain,"Procurement Process","Submit Procurement or TOR Documents");
+                   
+                        WP_MainRecord mainrecord=_wpMainRecordRepository.GetRecord(procurement.WPMainRecord_id);
+
+                        if(taskrecsubmitdocs==null)
+                        {
+                            
+                            WP_Tasks rec_to_add=new WP_Tasks
+                            {
+                                Transaction_Id=Guid.NewGuid().ToString(),
+                                WPCategoryMain="Procurement",
+                                WPReference_Id=model.Transaction_IdOPVMMain,
+                                WPCategorySub1="Procurement Process",
+                                WPTaskDescription="Submit Procurement or TOR Documents",
+                                WPTaskStatus="Active",
+                                WPRequesterEmployee_Id=user.Employee_Id,
+                                WPDirectorate_Id=mainrecord.Directorate_Id,
+                                WPDivision_Id=mainrecord.Division_Id,
+                                WPResponsibleDeptType="Programme Department",
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _wpTasksRepository.Add(rec_to_add);
+
+
+                        }
+                        else
+                        {
+                            taskrecsubmitdocs.WPCategoryMain="Procurement";
+                            taskrecsubmitdocs.WPReference_Id=model.Transaction_IdOPVMMain;
+                            taskrecsubmitdocs.WPCategorySub1="Procurement Process";
+                            taskrecsubmitdocs.WPTaskDescription="Submit Procurement or TOR Documents";
+                            taskrecsubmitdocs.WPTaskStatus="Active";
+                            taskrecsubmitdocs.WPRequesterEmployee_Id=user.Employee_Id;
+                            taskrecsubmitdocs.WPDirectorate_Id=mainrecord.Directorate_Id;
+                            taskrecsubmitdocs.WPDivision_Id=mainrecord.Division_Id;
+                            taskrecsubmitdocs.WPResponsibleDeptType="Programme Department";
+                            taskrecsubmitdocs.TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                            
+                            _wpTasksRepository.Update (taskrecsubmitdocs);
+
+                        }
+
+
+
+
+
+
+
+                    }
+                    else
+                    {
+                        return Json(new { rtnmsg = "incorrectbeginendsteps" });
+
+                    }
+
+                }
+                                  
+
+               
+              
+                return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> InitiateProcurement_Renamed(WP_OutputProcurementVMWindow model)
+        {
+           
+            try
+            {
+                var DB_ProcurementProcessSteps=_wpProcurementProcessStepsRepository.GetRecordsByProcurementId(model.Transaction_IdOPVMMain);
+                
+
+                if(DB_ProcurementProcessSteps.Count()<2)
+                {
+                    return Json(new { rtnmsg = "insufficientsteps" });
+                }
+                else
+                {
+                    bool step_begin_ok=false;
+                    bool step_end_ok=false;
+
+                    WP_ProcurementProcessSteps wpstep_begin=_wpProcurementProcessStepsRepository.GetRecordByProcurementIdStepNumber(model.Transaction_IdOPVMMain,1);
+                    WP_ProcurementProcessSteps wpstep_end=_wpProcurementProcessStepsRepository.GetRecordByProcurementIdStepNumber(model.Transaction_IdOPVMMain,DB_ProcurementProcessSteps.Count());
+
+                    if(wpstep_begin.WPStepType_Id==1 || wpstep_begin.WPStepType_Id==2)
+                    {
+                        step_begin_ok=true;
+                    }
+
+                    if(_lkupProcurementProcessStepsRepository.GetRecord(wpstep_end.WPStepType_Id).Record_Name=="Submission of Final Report")
+                    {
+                        step_end_ok=true;
+                    }
+
+                    if(step_begin_ok==true && step_end_ok==true)
+                    {
+                        //Update Procurement Record
+                        WP_Procurement procurement=_wpProcurementRepository.GetRecord(model.Transaction_IdOPVMMain);
+                        procurement.MicroProcurement=model.MicroProcurement;
+                        _wpProcurementRepository.Update(procurement);
+
+                        //Add Procurement Process
+
+                      
+                        int approveauthority=0;
+
+                        if(procurement.WPProcurementCost<=15000)
+                        {
+                            approveauthority=5;
+                        }
+                        else if(procurement.WPProcurementCost>=15001 && procurement.WPProcurementCost<=50000)
+                        {
+                            approveauthority=4;
+                        }
+                        else if(procurement.WPProcurementCost>=50001 && procurement.WPProcurementCost<=100000)
+                        {
+                            approveauthority=3;
+                        }
+                        else if(procurement.WPProcurementCost>10000 )
+                        {
+                            approveauthority=2;
+                        }
+
+                        var user = await userManager.GetUserAsync(HttpContext.User);
+
+                        WP_ProcurementProcess fetchedrec=_wpProcurementProcessRepository.GetRecordByProcurementId(model.Transaction_IdOPVMMain);
+
+                        if(fetchedrec==null)
+                        {
+                            WP_ProcurementProcess rec_to_add = new WP_ProcurementProcess
+                            {
+                                Transaction_Id=Guid.NewGuid().ToString(),
+                                WPMainRecord_id=procurement.WPMainRecord_id,
+                                WPProcurement_Id=procurement.Transaction_Id,
+                                ProcurementEmployee_Id=user.Employee_Id,
+                                ProcurementApprovalAuthority_Id=approveauthority,
+                                ProcurementSelectionMethod_Id=model.SelectionMethod_Id,
+                                WPDocTORSubmissionDate_Plan=new LocalDate(wpstep_begin.WPPlannedDate.Year, wpstep_begin.WPPlannedDate.Month, wpstep_begin.WPPlannedDate.Day),
+                                WPProcurementProcess_Status="Active",
+                                
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _wpProcurementProcessRepository.Add(rec_to_add);
+                        }
+                        else
+                        {
+                            fetchedrec.WPMainRecord_id=procurement.WPMainRecord_id;
+                            fetchedrec.WPProcurement_Id=procurement.Transaction_Id;
+                            fetchedrec.ProcurementEmployee_Id=user.Employee_Id;
+                            fetchedrec.ProcurementApprovalAuthority_Id=approveauthority;
+                            fetchedrec.ProcurementSelectionMethod_Id=model.SelectionMethod_Id;
+                            fetchedrec.WPDocTORSubmissionDate_Plan=new LocalDate(wpstep_begin.WPPlannedDate.Year, wpstep_begin.WPPlannedDate.Month, wpstep_begin.WPPlannedDate.Day);
+                            fetchedrec.WPProcurementProcess_Status="Active";
+                            fetchedrec.TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+
+                            _wpProcurementProcessRepository.Update(fetchedrec);
+
+
+                        }
+
+
+                        //Update Task Record to Complete Task
+                        WP_Tasks taskrec=_wpTasksRepository.GetRecordByCategoryReferenceIdSubcategory1AndTask("Procurement",model.Transaction_IdOPVMMain,"Procurement Process","Initiate Procurement Process");
+                        taskrec.WPTaskStatus="Completed";
+                        taskrec.WPRepondentEmployee_Id=user.Employee_Id;
+                        _wpTasksRepository.Update(taskrec);
+
+
+                        //Request Programme Managers to Submit Procurement Documents
+                        WP_Tasks taskrecsubmitdocs=_wpTasksRepository.GetRecordByCategoryReferenceIdSubcategory1AndTask("Procurement",model.Transaction_IdOPVMMain,"Procurement Process","Submit Procurement or TOR Documents");
+                   
+                        WP_MainRecord mainrecord=_wpMainRecordRepository.GetRecord(procurement.WPMainRecord_id);
+
+                        if(taskrecsubmitdocs==null)
+                        {
+                            
+                            WP_Tasks rec_to_add=new WP_Tasks
+                            {
+                                Transaction_Id=Guid.NewGuid().ToString(),
+                                WPCategoryMain="Procurement",
+                                WPReference_Id=model.Transaction_IdOPVMMain,
+                                WPCategorySub1="Procurement Process",
+                                WPTaskDescription="Submit Procurement or TOR Documents",
+                                WPTaskStatus="Active",
+                                WPRequesterEmployee_Id=user.Employee_Id,
+                                WPDirectorate_Id=mainrecord.Directorate_Id,
+                                WPDivision_Id=mainrecord.Division_Id,
+                                WPResponsibleDeptType="Programme Department",
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _wpTasksRepository.Add(rec_to_add);
+
+
+                        }
+                        else
+                        {
+                            taskrecsubmitdocs.WPCategoryMain="Procurement";
+                            taskrecsubmitdocs.WPReference_Id=model.Transaction_IdOPVMMain;
+                            taskrecsubmitdocs.WPCategorySub1="Procurement Process";
+                            taskrecsubmitdocs.WPTaskDescription="Submit Procurement or TOR Documents";
+                            taskrecsubmitdocs.WPTaskStatus="Active";
+                            taskrecsubmitdocs.WPRequesterEmployee_Id=user.Employee_Id;
+                            taskrecsubmitdocs.WPDirectorate_Id=mainrecord.Directorate_Id;
+                            taskrecsubmitdocs.WPDivision_Id=mainrecord.Division_Id;
+                            taskrecsubmitdocs.WPResponsibleDeptType="Programme Department";
+                            taskrecsubmitdocs.TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                            
+                            _wpTasksRepository.Update (taskrecsubmitdocs);
+
+                        }
+
+
+
+
+
+
+
+                    }
+                    else
+                    {
+                        return Json(new { rtnmsg = "incorrectbeginendsteps" });
+
+                    }
+
+                }
+                                  
+
+               
+              
+                return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+
+        }
+
+
+
+        //async Task<ActionResult> Async_Save(IEnumerable<IFormFile> files, string procid)
+
+        public async Task<ActionResult> SaveProcurementTORDocsFiles(IEnumerable<IFormFile> files, string procid)
+        {
+       
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            WP_Procurement procurementrec=_wpProcurementRepository.GetRecord(procid);
+
+            string procurementpath = @"wwwroot/appdirectory/procurements/submissionofproctordocs/" + procurementrec.Transaction_Id;
+
+
+            var directory = new DirectoryInfo(procurementpath);
+
+            if (directory.Exists == false)
+            {
+                directory.Create();
+            }
+
+            if (files != null)
+            {
+                
+                foreach (var file in files)
+                {
+                    var fileContent = ContentDispositionHeaderValue.Parse(file.ContentDisposition);
+
+                    // Some browsers send file names with full path.
+                    // We are only interested in the file name.
+                    var fileName = Path.GetFileName(fileContent.FileName.ToString().Trim('"'));
+                    var physicalPath = Path.Combine(procurementpath, fileName);
+
+                    // The files are actually saved here
+                    using (var fileStream = new FileStream(physicalPath, FileMode.Create))
+                    {
+                       await file.CopyToAsync(fileStream);
+                    }
+                    
+
+
+                    //Save to DB
+                    WP_ProcurementTORDocs existingrec=_wpProcurementTORDocsRepository.GetRecordByProcurementIdAndFilename(procid,fileName);
+
+                    if(existingrec==null)
+                    {
+                        
+                        WP_ProcurementTORDocs rec_to_add = new WP_ProcurementTORDocs
+                        {
+                            Transaction_Id=Guid.NewGuid().ToString(),
+                            WPMainRecord_id=procurementrec.WPMainRecord_id,
+                            WPProcurement_Id=procurementrec.Transaction_Id,
+                            Employee_Id=user.Employee_Id,
+                            WPDocDesciptionTitle="",
+                            WPDocPath=fileName,
+                            WPDoc_Status="Active",
+                           // RecordIter_Number=initialcount,
+
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+
+                        _wpProcurementTORDocsRepository.Add(rec_to_add);
+
+                    }
+
+                }
+                var DBProcurementToRDocs_Recs=_wpProcurementTORDocsRepository.GetRecordsByProcurementId(procid);
+                int initialcount=0;
+
+                foreach (var record in DBProcurementToRDocs_Recs)
+                {
+                    initialcount=initialcount+1;
+                    record.RecordIter_Number=initialcount;
+                    _wpProcurementTORDocsRepository.Update(record);     
+                }
+
+
+            }
+
+
+
+         
+
+            // Return an empty string to signify success
+            return Content("");
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult> InitiateProcurementSave(WP_OutputProcurementVMWindow model)
+        {
+           
+            try
+            {
+                var DB_ProcurementProcessSteps=_wpProcurementProcessStepsRepository.GetRecordsByProcurementId(model.Transaction_IdOPVMMain);
+                
+
+                if(DB_ProcurementProcessSteps.Count()<2)
+                {
+                    return Json(new { rtnmsg = "insufficientsteps" });
+                }
+                else
+                {
+                    bool step_begin_ok=false;
+                    bool step_end_ok=false;
+
+                    WP_ProcurementProcessSteps wpstep_begin=_wpProcurementProcessStepsRepository.GetRecordByProcurementIdStepNumber(model.Transaction_IdOPVMMain,1);
+                    WP_ProcurementProcessSteps wpstep_end=_wpProcurementProcessStepsRepository.GetRecordByProcurementIdStepNumber(model.Transaction_IdOPVMMain,DB_ProcurementProcessSteps.Count());
+
+                    if(wpstep_begin.WPStepType_Id==1 || wpstep_begin.WPStepType_Id==2)
+                    {
+                        step_begin_ok=true;
+                    }
+
+                    if(_lkupProcurementProcessStepsRepository.GetRecord(wpstep_end.WPStepType_Id).Record_Name=="Submission of Final Report")
+                    {
+                        step_end_ok=true;
+                    }
+
+                    if(step_begin_ok==true && step_end_ok==true)
+                    {
+                        //Update Procurement Record
+                        WP_Procurement procurement=_wpProcurementRepository.GetRecord(model.Transaction_IdOPVMMain);
+                        procurement.MicroProcurement=model.MicroProcurement;
+                        _wpProcurementRepository.Update(procurement);
+
+                        //Add Procurement Process
+
+                      
+                        int approveauthority=0;
+
+                        if(procurement.WPProcurementCost<=15000)
+                        {
+                            approveauthority=5;
+                        }
+                        else if(procurement.WPProcurementCost>=15001 && procurement.WPProcurementCost<=50000)
+                        {
+                            approveauthority=4;
+                        }
+                        else if(procurement.WPProcurementCost>=50001 && procurement.WPProcurementCost<=100000)
+                        {
+                            approveauthority=3;
+                        }
+                        else if(procurement.WPProcurementCost>10000 )
+                        {
+                            approveauthority=2;
+                        }
+
+                        var user = await userManager.GetUserAsync(HttpContext.User);
+
+                        WP_ProcurementProcess fetchedrec=_wpProcurementProcessRepository.GetRecordByProcurementId(model.Transaction_IdOPVMMain);
+
+                        if(fetchedrec==null)
+                        {
+                            WP_ProcurementProcess rec_to_add = new WP_ProcurementProcess
+                            {
+                                Transaction_Id=Guid.NewGuid().ToString(),
+                                WPMainRecord_id=procurement.WPMainRecord_id,
+                                WPProcurement_Id=procurement.Transaction_Id,
+                                ProcurementEmployee_Id=user.Employee_Id,
+                                ProcurementApprovalAuthority_Id=approveauthority,
+                                ProcurementSelectionMethod_Id=model.SelectionMethod_Id,
+                                WPDocTORSubmissionDate_Plan=new LocalDate(wpstep_begin.WPPlannedDate.Year, wpstep_begin.WPPlannedDate.Month, wpstep_begin.WPPlannedDate.Day),
+                                WPProcurementProcess_Status="Active",
+                                
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _wpProcurementProcessRepository.Add(rec_to_add);
+                        }
+                        else
+                        {
+                            fetchedrec.WPMainRecord_id=procurement.WPMainRecord_id;
+                            fetchedrec.WPProcurement_Id=procurement.Transaction_Id;
+                            fetchedrec.ProcurementEmployee_Id=user.Employee_Id;
+                            fetchedrec.ProcurementApprovalAuthority_Id=approveauthority;
+                            fetchedrec.ProcurementSelectionMethod_Id=model.SelectionMethod_Id;
+                            fetchedrec.WPDocTORSubmissionDate_Plan=new LocalDate(wpstep_begin.WPPlannedDate.Year, wpstep_begin.WPPlannedDate.Month, wpstep_begin.WPPlannedDate.Day);
+                            fetchedrec.WPProcurementProcess_Status="Active";
+                            fetchedrec.TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+
+                            _wpProcurementProcessRepository.Update(fetchedrec);
+
+
+                        }
+
+
+                        //Update Task Record to Complete Task
+                        WP_Tasks taskrec=_wpTasksRepository.GetRecordByCategoryReferenceIdSubcategory1AndTask("Procurement",model.Transaction_IdOPVMMain,"Procurement Process","Initiate Procurement Process");
+                        taskrec.WPTaskStatus="Active";
+                        taskrec.WPRepondentEmployee_Id=user.Employee_Id;
+                        _wpTasksRepository.Update(taskrec);
+
+
+                        //Request Programme Managers to Submit Procurement Documents
+                        WP_Tasks taskrecsubmitdocs=_wpTasksRepository.GetRecordByCategoryReferenceIdSubcategory1AndTask("Procurement",model.Transaction_IdOPVMMain,"Procurement Process","Submit Procurement or TOR Documents");
+                   
+                        WP_MainRecord mainrecord=_wpMainRecordRepository.GetRecord(procurement.WPMainRecord_id);
+
+                        if(taskrecsubmitdocs==null)
+                        {
+                            
+                            WP_Tasks rec_to_add=new WP_Tasks
+                            {
+                                Transaction_Id=Guid.NewGuid().ToString(),
+                                WPCategoryMain="Procurement",
+                                WPReference_Id=model.Transaction_IdOPVMMain,
+                                WPCategorySub1="Procurement Process",
+                                WPTaskDescription="Submit Procurement or TOR Documents",
+                                WPTaskStatus="Active",
+                                WPRequesterEmployee_Id=user.Employee_Id,
+                                WPDirectorate_Id=mainrecord.Directorate_Id,
+                                WPDivision_Id=mainrecord.Division_Id,
+                                WPResponsibleDeptType="Programme Department",
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+
+                            _wpTasksRepository.Add(rec_to_add);
+
+
+                        }
+                        else
+                        {
+                            taskrecsubmitdocs.WPCategoryMain="Procurement";
+                            taskrecsubmitdocs.WPReference_Id=model.Transaction_IdOPVMMain;
+                            taskrecsubmitdocs.WPCategorySub1="Procurement Process";
+                            taskrecsubmitdocs.WPTaskDescription="Submit Procurement or TOR Documents";
+                            taskrecsubmitdocs.WPTaskStatus="Active";
+                            taskrecsubmitdocs.WPRequesterEmployee_Id=user.Employee_Id;
+                            taskrecsubmitdocs.WPDirectorate_Id=mainrecord.Directorate_Id;
+                            taskrecsubmitdocs.WPDivision_Id=mainrecord.Division_Id;
+                            taskrecsubmitdocs.WPResponsibleDeptType="Programme Department";
+                            taskrecsubmitdocs.TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                            
+                            _wpTasksRepository.Update (taskrecsubmitdocs);
+
+                        }
+
+
+
+
+
+
+
+                    }
+                    else
+                    {
+                        return Json(new { rtnmsg = "incorrectbeginendsteps" });
+
+                    }
+
+                }
+                                  
+
+               
+              
+                return Json(new { rtnmsg = "success" });
+            }
+            catch (Exception)
+            {
+                return Json(new { rtnmsg = "error" });
+            }
+
+        }
+
+
+
 
 
         [HttpPost]
@@ -13249,6 +14185,94 @@ namespace AUDANEPAD_Integrated.Controllers
 
 
         }
+
+
+       [HttpPost]
+        public ActionResult AddProcurementProcessStep(WP_ProcurementProcessStepsWindowVM model)
+        {
+            WP_Procurement procurementrec=_wpProcurementRepository.GetRecord(model.WPProcurement_IdWindowVM);
+            var ProcurementProcessSteps_DB=_wpProcurementProcessStepsRepository.GetRecordsByProcurementId(model.WPProcurement_IdWindowVM).ToList();
+
+            WP_ProcurementProcessSteps rec = _wpProcurementProcessStepsRepository.GetRecordByProcurementIdStepId(model.WPProcurement_IdWindowVM, model.WPStepType_IdWindowVM);
+
+
+
+            if (rec == null)
+            {
+                try
+                {
+
+                    if(model.WPStepType_IdWindowVM==1 || model.WPStepType_IdWindowVM==2)
+                    {
+
+                        WP_ProcurementProcessSteps procinitprocessstep=_wpProcurementProcessStepsRepository.GetRecordByProcurementIdStepId1OrStepId2(model.WPProcurement_IdWindowVM, 1, 2);
+
+                        if(procinitprocessstep==null)
+                        {
+                            WP_ProcurementProcessSteps rec_to_add=new WP_ProcurementProcessSteps
+                            {
+                                Transaction_Id=Guid.NewGuid().ToString(),
+                                WPMainRecord_id=procurementrec.WPMainRecord_id,
+                                WPProcurement_Id=model.WPProcurement_IdWindowVM,
+                                Employee_Id=model.Employee_IdWindowVM,
+                                WPStepNumber=ProcurementProcessSteps_DB.Count()+1,
+                                WPStepType_Id=model.WPStepType_IdWindowVM,
+                                WPPlannedDate=new LocalDate(model.WPPlannedWindowVM.Date.Year, model.WPPlannedWindowVM.Date.Month, model.WPPlannedWindowVM.Date.Day),
+                                WPStep_Status="Active",
+                                WPAtThisStep=true,
+                                TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                            };
+                            _wpProcurementProcessStepsRepository.Add(rec_to_add);
+
+                            
+
+                        }
+                        else
+                        {
+                            return Json(new { rtnmsg = "initalreadyexist" });
+                        }
+
+                    }
+                    else
+                    {
+                      
+                        WP_ProcurementProcessSteps rec_to_add=new WP_ProcurementProcessSteps
+                        {
+                            Transaction_Id=Guid.NewGuid().ToString(),
+                            WPMainRecord_id=procurementrec.WPMainRecord_id,
+                            WPProcurement_Id=model.WPProcurement_IdWindowVM,
+                            Employee_Id=model.Employee_IdWindowVM,
+                            WPStepNumber=ProcurementProcessSteps_DB.Count()+1,
+                            WPStepType_Id=model.WPStepType_IdWindowVM,
+                            WPPlannedDate=new LocalDate(model.WPPlannedWindowVM.Date.Year, model.WPPlannedWindowVM.Date.Month, model.WPPlannedWindowVM.Date.Day),
+                            WPStep_Status="Active",
+                            WPAtThisStep=false,
+                            TransactionDate = new LocalDate(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day)
+                        };
+                        _wpProcurementProcessStepsRepository.Add(rec_to_add);
+                    }
+
+                   
+
+                    
+
+                    return Json(new { rtnmsg = "success" });
+                }
+                catch (Exception)
+                {
+                    return Json(new { rtnmsg = "error" });
+                }
+        
+
+            }
+            else{
+                return Json(new { rtnmsg = "pkerror" });
+            }
+
+        }
+
+
+
 
         [HttpPost]
         public ActionResult EditDivisionKPI(DivisionKPIsViewModel model)
@@ -14548,7 +15572,49 @@ namespace AUDANEPAD_Integrated.Controllers
         }
 
         [HttpPost]
-        public ActionResult CheckOutputIndicatorType(string indicatorid)
+        public ActionResult CheckProcurementDocsSubmission(string procurementid)
+        {
+
+           // WP_MainRecord mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
+
+
+            string returnstring="";
+            bool alldocdescription_provided=true;
+
+            if(procurementid!=null)
+            {
+                var DocRecs=_wpProcurementTORDocsRepository.GetRecordsByProcurementId(procurementid).ToList();
+                
+                if(DocRecs.Count()<=0)
+                {
+                
+                    return Json(new { rtnmsg = "nodocuments" });
+                }
+                else
+                {
+                    foreach (var record in DocRecs)
+                    {
+                        if(record.WPDocDesciptionTitle=="")
+                        {
+                            alldocdescription_provided=false;
+                        }
+                    }
+
+                    if(alldocdescription_provided==true)
+                        returnstring="success";
+                    else
+                        returnstring="somedescriptionnotprovided";
+
+                }
+            }
+
+            return Json(new { rtnmsg = returnstring });
+
+        }
+
+
+        [HttpPost]
+        public ActionResult CheckOutputIndicatorType (string indicatorid)
         {
 
            // WP_MainRecord mainrec=_wpMainRecordRepository.GetRecordByProjectYearAndPeriod(Int32.Parse(projid), Int32.Parse(fyear), Int32.Parse(fperiod));
@@ -17233,6 +18299,42 @@ namespace AUDANEPAD_Integrated.Controllers
                     {
                             DropDown_IntId = rec.Id,
                             DropDown_Name = rec.First_Name+" "+rec.Last_Name
+                    };
+                    // EmployeeDropDownViewModel me = DB_Employees[_count];
+                    collection_recs.Add(srec);
+                }
+            }
+
+
+            return Json(collection_recs.ToList());
+
+        }
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetProcurementProcessingStepActions()
+        {
+            // IEnumerable<Employee> DB_Employees = new List<Employee>();
+            
+
+            var recs =  _transProcurementProcessStepsReposity.GetAllRecordsByType("Procurement Processing").ToList();
+
+            int _count = recs.Count();
+
+            List<DropDownListViewModel> collection_recs = new List<DropDownListViewModel>();
+
+
+
+            if (_count > 0)
+            {
+                foreach (var rec in recs)
+                {
+                   
+                    DropDownListViewModel srec = new DropDownListViewModel
+                    {
+                            DropDown_IntId = rec.Record_Id,
+                            DropDown_Name = _lkupProcurementProcessStepsRepository.GetRecord(rec.Record_Id).Record_Name
                     };
                     // EmployeeDropDownViewModel me = DB_Employees[_count];
                     collection_recs.Add(srec);

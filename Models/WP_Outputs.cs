@@ -17,6 +17,7 @@ namespace AUDANEPAD_Integrated.Models
         public string Output  { get; set; }
         public int  Employee_Id { get; set; }
         public string WPSAPLink_Id  { get; set; }
+        public string WPSAP_WBS  { get; set; }
 
         public int  WPOutputLinkType_Id { get; set; }
         public LocalDate TransactionDate { get; set; }

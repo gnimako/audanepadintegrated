@@ -59,12 +59,38 @@ namespace AUDANEPAD_Integrated.Services
             return records;
         }
 
+        public WP_ProcurementProcessSteps GetRecordByProcurementIdStepId1OrStepId2 (string recid, int stepid1, int stepid2)
+        {
+            var rec = context.WP_ProcurementProcessSteps
+						.Where(s => s.WPProcurement_Id == recid && (s.WPStepType_Id==stepid1 || s.WPStepType_Id==stepid2 ))
+						.FirstOrDefault();
+            return rec;
+        }
+
+		public WP_ProcurementProcessSteps GetRecordByProcurementIdStepId (string recid, int stepid)
+        {
+            var rec = context.WP_ProcurementProcessSteps
+						.Where(s => s.WPProcurement_Id == recid && s.WPStepType_Id==stepid )
+						.FirstOrDefault();
+            return rec;
+        }
+
+		public WP_ProcurementProcessSteps GetRecordByProcurementIdStepNumber (string recid, int stepnumber)
+        {
+            var rec = context.WP_ProcurementProcessSteps
+						.Where(s => s.WPProcurement_Id == recid && s.WPStepNumber==stepnumber )
+						.FirstOrDefault();
+            return rec;
+        }
+
 		
 
 		public WP_ProcurementProcessSteps GetRecord(string Id)
 		{
 		    return context.WP_ProcurementProcessSteps.Find(Id);
 		}
+
+
 
 
         public WP_ProcurementProcessSteps Update(WP_ProcurementProcessSteps recChanges)

@@ -1279,6 +1279,9 @@ namespace AUDANEPAD_Integrated.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<string>("AcronymName")
+                        .HasColumnType("text");
+
                     b.Property<int>("Directorate_Id")
                         .HasColumnType("integer")
                         .HasMaxLength(255);
@@ -2742,6 +2745,9 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.Property<string>("WPSAPLink_Id")
                         .HasColumnType("text");
 
+                    b.Property<string>("WPSAP_WBS")
+                        .HasColumnType("text");
+
                     b.HasKey("Transaction_Id");
 
                     b.ToTable("WP_Outputs");
@@ -2841,6 +2847,12 @@ namespace AUDANEPAD_Integrated.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("WPProcurement_SourceOfFundsDescr")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPSAP_PO")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WPSAP_PR")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("WPTORSubmissionDate")
@@ -2992,6 +3004,9 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.Property<DateTime>("WPActualDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<bool>("WPAtThisStep")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("WPMainRecord_id")
                         .HasColumnType("text");
 
@@ -3024,6 +3039,9 @@ namespace AUDANEPAD_Integrated.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("Employee_Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RecordIter_Number")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("TransactionDate")
@@ -3235,6 +3253,9 @@ namespace AUDANEPAD_Integrated.Migrations
                     b.Property<string>("Transaction_Id")
                         .HasColumnType("text");
 
+                    b.Property<string>("TaskNotes")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("timestamp without time zone");
 
@@ -3270,6 +3291,9 @@ namespace AUDANEPAD_Integrated.Migrations
 
                     b.Property<int>("WPRequesterEmployee_Id")
                         .HasColumnType("integer");
+
+                    b.Property<string>("WPResponsibleDeptType")
+                        .HasColumnType("text");
 
                     b.Property<string>("WPTaskDescription")
                         .HasColumnType("text");

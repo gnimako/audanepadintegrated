@@ -112,6 +112,7 @@ namespace AUDANEPAD_Integrated.ViewModels
         public string InstitutionalRepPeriod { get; set; }
         public string InstitutionalRepPeriodShort { get; set; }
         public string InstitutionalRepPeriodIdent { get; set; }
+        public string InstitutionalRepDirectorateIdent { get; set; }
         public string InstitutionalWPYear { get; set; }
 
 
@@ -123,7 +124,15 @@ namespace AUDANEPAD_Integrated.ViewModels
 
         //Procurement Tasks
         public string ProcurementCategoryMain { get; set; }
-        public string ProcurementProcessing { get; set; }
+        public string ProcurementProcessingforProcurementDept { get; set; }
+
+
+        //Programme Tasks
+        public string ProgrammeCategoryMain { get; set; }
+        public string ProcurementTasksforProgrammeDept { get; set; }
+        public string WorkplanTasksforProgrammeDept { get; set; }
+        public string MobilityTasksforProgrammeDept { get; set; }
+        public string ReportingTasksforProgrammeDept { get; set; }
 
 
 

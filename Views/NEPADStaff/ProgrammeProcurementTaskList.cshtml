@@ -1,0 +1,823 @@
+@model EmployeeViewModel
+@{
+    ViewBag.Title = "AUDA-NEPAD Integrated Planning System";
+    Layout = "_NEPADStaffLayout2";
+
+}
+
+
+
+<h1 style="font-family: Faktslab;">Pending Procurement Tasks</h1>
+<div class="separator-breadcrumb border-top"></div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card mb-5">
+                            <div class="card-body">
+                                <div class="card-title mb-3">Procurement Tasks </div>
+
+                                <form id="addformmain">
+                                <input hidden asp-for="IdentityUserId" class="k-textbox" style="width:100%" value="@Model.IdentityUserId">
+                                <input hidden asp-for="Employee_Id" class="k-textbox" style="width:100%" value="@Model.Id">
+
+                                <input hidden asp-for="DispatchCycle_Id" class="k-textbox" style="width:100%" value="@Model.DispatchCycle_Id">
+                                <input hidden asp-for="InstitutionalRepPeriodIdent" class="k-textbox" style="width:100%" value="@Model.InstitutionalRepPeriodIdent">
+                                
+
+                                    <div class="form-group row" style="padding-right: 1.25rem; padding-left: 1.25rem; padding-bottom: 1.25rem;">
+                                        
+
+
+                                        @(Html.Kendo().Grid<WP_ProcurementGridVM>()
+                                        .Name("grid")
+                                        .Columns(columns =>
+                                        {
+
+                                            columns.Bound(c => c.Transaction_IdGVM).Hidden();
+                                            columns.Bound(c => c.WPMainRecord_idGVM).Hidden();
+                                            columns.Bound(c => c.Project_IdGVM).Hidden();
+                                            columns.Bound(c => c.FiscalYear_IdGVM).Hidden();
+                                            columns.Bound(c => c.Period_IdGVM).Hidden();
+                                            columns.Bound(c => c.WPOutput_IdGVM).Hidden();
+                                            columns.Bound(c => c.WPProcurementType_IdGVM).Hidden();
+                                            columns.Bound(c => c.WPProcurementTask_Id).Hidden();
+                                            columns.Bound(c => c.WPProcurement_SourceOfFundsDescrGVM).Hidden();
+                                            columns.Bound(c => c.Directorate_IdGVM).Hidden();
+                                            columns.Bound(c => c.Division_IdGVM).Hidden();
+
+
+                                            columns.Bound(c => c.WPOutput_StatementGVM).Title("Procurement will Contribute to this OUTPUT");//.Width(400);
+                                            columns.Bound(c => c.WPProcurement_DescriptionGVM).Title("Procurement Description");//.Width(400);
+                                            columns.Bound(c => c.Directorate_NameGVM).Title("Directorate");//.Width(200);
+                                            columns.Bound(c => c.Division_NameGVM).Title("Department");
+                                            columns.Bound(c => c.WPProcurementType_NameGVM).Title("Type");
+                                            columns.Bound(c => c.WPProcurementCostGVM).Title("Est. Amount").Format("{0:n0}").HtmlAttributes(new { style = "text-align:right" }).HeaderHtmlAttributes(new { style = "text-align:right" });
+                                            columns.Bound(c => c.WPProcurementTask_Action).Title("Task").HtmlAttributes(new { style = "font-weight: bold" });
+
+
+                                            
+
+                                            columns.Command(command => command.Custom(" Execute Task").IconClass("k-icon k-i-gear").Click("executeprocurementtask"));
+
+
+                                            //columns.Command(command => { command.Destroy().Text(" Deactivate").IconClass("k-icon k-i-lock"); });
+                                        })
+                                        .HtmlAttributes(new { style = "height: 600px;" })
+                                        .Scrollable()
+                                       // .Resizable(resize => resize.Columns(true)) 
+                                        .Groupable()
+                                        .Sortable()
+                                        .Navigatable()
+                                        .Filterable()
+                                        .Pageable(pageable => pageable
+                                            .Refresh(true)
+                                            .PageSizes(true)
+                                            .ButtonCount(5))
+                                        .DataSource(dataSource => dataSource
+                                            .Ajax()
+                                            //  .Sort(sort => sort.Add("Division_Name").Ascending())
+                                            .Read(read => read
+                                                        .Action("PendingProgrammeProcurementTaskforEmployee_Read", "Admin"))
+                                            .Model(model => model.Id(p => p.Transaction_IdGVM))
+                                        
+                                            .PageSize(500)
+                                            .Events(events => events.Error("error_handler")
+                                                                .RequestEnd("onRequestEnd"))
+                                        )
+                                        .Events(events => events.DataBound("dataBoundProcurements"))
+
+                                    )
+                                        </div>
+
+                                   
+                                    
+                                    
+
+                                    
+                                   
+                                </form>
+
+
+                            
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+<div id="getstaffwindow">
+</div>
+<div id="windowstaff">
+</div>
+
+
+<div id="getstaffwindow2">
+</div>
+<div id="windowstaff2">
+</div>
+
+
+<div id="staffposwindow">
+</div>
+<div id="windowstaffpos">
+</div>
+
+<div id="example">
+    <div id="dialog">
+    </div>
+    <div id="undo">
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+function onSubSelect(e) {
+    
+}
+
+function onSubSuccess(e) {
+    var grid = $("#grid_procurementtordocsub").data("kendoGrid");
+    grid.dataSource.read();
+    grid.refresh();
+}
+
+function onSubUpload(e) {
+    
+}
+
+
+  function dbdaterender2(e) {
+        var grid = this;
+        $(".templateCell").each(function () {
+            eval($(this).children("script").last().html());
+            var tr = $(this).closest('tr');
+            var item = grid.dataItem(tr);
+            kendo.bind($(this), item);
+        });
+    }
+
+
+
+      function dbdaterender(e) {
+       var grid = e.sender;
+        var items = e.sender.items();
+
+        items.each(function(e) {
+            var dataItem = grid.dataItem(this);
+            var ddt = $(this).find('.dropDownTemplate');
+          
+
+            $(ddt).width(200).kendoDropDownList({
+               // value: dataItem.value,
+               // dataSource: ddlDataSource,
+                dataTextField: "DropDown_Name",
+                dataValueField: "DropDown_IntId",
+                dataSource: {
+                    transport: {
+                        read: {
+                            dataType: "json",
+                            url: "/Admin/GetAllEmployee"
+                        }
+                    }
+                },
+                optionLabel: "Select..."
+            });
+        });
+    }
+
+function dataBoundProcurements (e) {
+        // iterate the table rows and apply custom row and cell styling
+      
+
+        var rows = e.sender.tbody.children();
+        var row_alt = true;
+        var row_altcompleted = true;
+
+
+       
+        for (var j = 0; j < rows.length; j++) 
+        {
+            var row = $(rows[j]);
+            var dataItem = e.sender.dataItem(row);
+          
+
+            
+          
+            var cellIndex_15=11;
+            var cellIndex_16=12;
+            var cellIndex_17=13;
+            var cellIndex_18=14;
+            var cellIndex_19=15;
+            var cellIndex_20=16;
+            var cellIndex_21=17;
+            var cellIndex_22=18;
+         
+    
+
+            var cell_15 = row.find("td:eq(" + cellIndex_15+ ")");
+            var cell_16 = row.find("td:eq(" + cellIndex_16 + ")");
+            var cell_17 = row.find("td:eq(" + cellIndex_17+ ")");
+            var cell_18 = row.find("td:eq(" + cellIndex_18 + ")");
+            var cell_19 = row.find("td:eq(" + cellIndex_19 + ")");
+            var cell_20 = row.find("td:eq(" + cellIndex_20 + ")");
+            var cell_21 = row.find("td:eq(" + cellIndex_21 + ")");
+            var cell_22 = row.find("td:eq(" + cellIndex_22 + ")");
+           
+            //   var cell_8 = row.find("td:eq(" + cellIndex_8 + ")");
+        
+
+            
+            if(row_alt==false)
+            {
+                cell_15.addClass("procurementassignedgridcss");
+                cell_16.addClass("procurementassignedgridcss");
+                cell_17.addClass("procurementassignedgridcss");
+                cell_18.addClass("procurementassignedgridcss");
+                cell_19.addClass("procurementassignedgridcss");
+                cell_20.addClass("procurementassignedgridcss");
+                cell_21.addClass("procurementassignedgridcss");
+                cell_22.addClass("procurementassignedgridcss");
+             
+            }
+            else
+            {
+                cell_15.addClass("procurementassignedgridcss2");
+                cell_16.addClass("procurementassignedgridcss2");
+                cell_17.addClass("procurementassignedgridcss2");
+                cell_18.addClass("procurementassignedgridcss2");
+                cell_19.addClass("procurementassignedgridcss2");
+                cell_20.addClass("procurementassignedgridcss2");
+                cell_21.addClass("procurementassignedgridcss2");
+                cell_22.addClass("procurementassignedgridcss2");
+
+
+                
+
+            }
+            row_alt=ToggleBoolean(row_alt);
+
+            
+
+        
+
+       }
+
+
+    }
+
+
+function ToggleBoolean (bval)
+{
+    return bval = !bval;
+} 
+
+
+function onRequestWPEmployeeName(e){
+   
+            var wprocurementid = $("#Transaction_IdOPVMMain").val(); 
+           // var cycleid= $("#DispatchCycle_Id").val(); 
+            //var periodid= $("#InstitutionalRepPeriodIdent").val(); 
+       
+
+
+            if (e.type === "update" || e.type === "create" || e.type === "destroy" ) {
+
+                var grid = $("#grid_procurementtordocsub").data("kendoGrid");
+                grid.dataSource.transport.options.read.url = "/Admin/WP_ProcurementToRDocs_Read?wprocurementid=" + wprocurementid;
+                grid.dataSource.read();
+                //grid.refresh();
+
+
+                
+               // var grid_wpemployee = $("#grid_wpemployee").data("kendoGrid"); 
+               // var grid_main = $("#grid").data("kendoGrid"); 
+
+
+               // grid_wpemployee.dataSource.transport.options.read.url = "/Admin/WP_ProcurementWorkLoadEmployee_Read?wprocurementid=" + wprocurementid;
+               // grid_wpemployee.dataSource.read();
+
+               // grid_main.dataSource.transport.options.read.url = "/Admin/AllProcurementPlans_Read?cycleid=" + cycleid + "&periodid=" + periodid;
+               // grid_main.dataSource.read();
+
+
+
+            }
+            
+            
+}
+
+
+function executeprocurementtask(e) {
+
+  
+
+    e.preventDefault();
+
+
+
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+    var transid = dataItem.Transaction_IdGVM;
+    var taskid = dataItem.WPProcurementTask_Id;
+  
+    var taskaction = dataItem.WPProcurementTask_Action;
+
+    var taskactiontext="";
+
+    if(taskaction=="Submit Procurement or TOR Documents")
+    {
+        taskactiontext="/NEPADStaff/ProgrammeProcurementSubmitDocs?procurementid=" + transid+ "&taskid=" + taskid;
+    }
+
+    
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: taskactiontext,
+            width: 850,
+            height: 700,
+
+            title: "Execute Procurement Task",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+         
+
+}
+
+
+function wkloaddiststringVisible(dataItem) {
+        // hide the Edit button for the item with ProductID=1
+        return dataItem.WPWorkLoadDistributionRole_String != "Cannot Approve";
+    }
+
+function redirect_blank(url) {
+  var a = document.createElement('a');
+  a.target="_blank";
+  a.href=url;
+  a.click();
+}
+    function error_handler(e) {    
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function() {
+                        message += this + "\n";
+                    });
+                }
+            });        
+            alert(message);
+        }
+    }
+
+    function onRequestEnd(e){
+            var recid = $("#Employee_Id").val();  
+            if (e.type === "update" || e.type === "create" || e.type === "destroy" ) {
+               
+                var grid = $("#gridkpis").data("kendoGrid"); 
+
+                grid.dataSource.transport.options.read.url = "/Admin/DivisionTransKPIs_Read/?recid=" + recid;
+                grid.dataSource.read();
+            }
+    }
+
+
+function deleteoutputprocurement(e) {
+    e.preventDefault();
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    //var subindicatorid = dataItem.Transaction_IndicatorId;
+    var subrecid = dataItem.Transaction_IdGVM;
+
+    var cycleid = $("#DispatchCycle_Id").val();
+    var periodid = $("#InstitutionalRepPeriodIdent").val();
+   
+
+
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+    dialog.kendoDialog({
+        width: "450px",
+        title: "Confirmation",
+        closable: false,
+        modal: true,
+        content: "<p>Please confirm the DELETE action.<p>",
+        actions: [
+            {
+                text: 'Confirm',
+                action: function (e) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/Admin/WP_OutputsSubProcurement_Delete',     //your action
+                        data: { "subrecid": subrecid},
+                        dataType: 'json',
+                        success: function (result) {
+
+                          //  var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+                          //  .Action("AllProcurementPlans_Read", "Admin", new { cycleid = @Model.DispatchCycle_Id, periodid=@Model.InstitutionalRepPeriodIdent}))
+
+                            var grid = $('#grid').data("kendoGrid");
+
+                            grid.dataSource.transport.options.read.url = "/Admin/AllProcurementPlans_Read?cycleid=" + cycleid+"&periodid=" + periodid;
+                            grid.dataSource.read();
+                            grid.refresh();
+
+
+                      
+
+
+                        },
+                        error: function (data) {
+
+                        }
+                    })
+                    return true;
+                },
+                primary: true
+
+            },
+            { text: 'Cancel' }
+        ],
+        close: onClose
+    });
+
+    dialog.data("kendoDialog").open();
+    undo.fadeOut();
+
+}
+
+
+function editoutputprocurment(e) {
+
+    e.preventDefault();
+
+
+
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+    var transid = dataItem.Transaction_IdGVM;
+
+    var cycleid = $("#DispatchCycle_Id").val();
+    var periodid = $("#InstitutionalRepPeriodIdent").val();
+   // var grid_outputindicators = $("#grid_outputindicators").data("kendoGrid"); 
+    //var parentrow = $("#grid_outputindicators").data("kendoGrid").dataItem(e.sender.element.closest("tr").prev());
+    
+
+        $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+        var wnd2 = $("#getstaffwindow").kendoWindow({
+            //actions: ["Close"],
+            draggable: true,
+            modal: true,
+            animation: false,
+            resizable: true,
+            content: "/NEPADStaff/EditOutputProcurementInst?transid=" + transid+"&cycleid=" + cycleid+"&periodid=" + periodid,
+            width: 600,
+            height: 500,
+
+            title: "Edit Procurement",
+            // close: onClose,
+            deactivate: function () {
+                this.destroy();
+            }
+
+        }).data("kendoWindow");
+        wnd2.center().open();
+         
+
+}
+
+
+   $("#btnAdd").click(function () {
+
+
+                  $("#windowstaff").append("<div id='getstaffwindow'></div>");
+
+                var wnd2 = $("#getstaffwindow").kendoWindow({
+                    //actions: ["Close"],
+                    draggable: true,
+                    modal: true,
+                    animation: false,
+                    resizable: true,
+                    content: "/NEPADStaff/AddDivisionKPI",
+                    width: 600,
+                    height: 400,
+
+                    title: "Add KPI",
+                    // close: onClose,
+                    deactivate: function () {
+                        this.destroy();
+                    }
+
+                }).data("kendoWindow");
+                wnd2.center().open();
+
+   });
+
+
+function deactivatekpi(e) {
+    e.preventDefault();
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    var transid = dataItem.Transaction_Id;
+
+    var recid = $("#Employee_Id").val();  
+
+        var dialog = $('#dialog');
+        var undo = $("#undo");
+
+        function onClose() {
+            undo.fadeIn();
+        }
+
+
+
+              dialog.kendoDialog({
+                  width: "450px",
+                  title: "Confirmation",
+                  closable: false,
+                  modal: true,
+                  content: "<p>Please <strong>confirm</strong> the action.<p>",
+                  actions: [
+                      {
+                          text: 'Confirm',
+                          action: function (e) {
+                              $.ajax({
+                                  type: "POST",
+                                  url: '/Admin/DeactivateDivisionKPI',     //your action
+                                  data: { "transid": transid},
+                                  dataType: 'json',
+                                  success: function (result) {
+
+                                        var grid = $("#gridkpis").data("kendoGrid"); 
+                                        grid.dataSource.transport.options.read.url = "/Admin/DivisionTransKPIs_Read/?recid=" + recid;
+                                        grid.dataSource.read();
+                                        grid.refresh();
+
+
+    
+                                        var griddeactivated = $("#gridkpisdeactivated").data("kendoGrid"); 
+                                        griddeactivated.dataSource.transport.options.read.url = "/Admin/DivisionDeactivatedKPIs_Read/?recid=" + recid;
+                                        griddeactivated.dataSource.read();
+                                        griddeactivated.refresh();
+
+                                  },
+                                  error: function (data) {
+
+                                  }
+                              })
+                              return true;
+                          },
+                          primary: true
+
+                      },
+                      { text: 'Cancel' }
+                  ],
+                  close: onClose
+              });
+
+              dialog.data("kendoDialog").open();
+              undo.fadeOut();
+
+}
+
+function activatekpi(e) {
+    e.preventDefault();
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    var recordid = dataItem.Record_Id;
+
+    var recid = $("#Employee_Id").val();  
+
+        var dialog = $('#dialog');
+        var undo = $("#undo");
+
+        function onClose() {
+            undo.fadeIn();
+        }
+
+
+
+              dialog.kendoDialog({
+                  width: "450px",
+                  title: "Confirmation",
+                  closable: false,
+                  modal: true,
+                  content: "<p>Please <strong>confirm</strong> the action.<p>",
+                  actions: [
+                      {
+                          text: 'Confirm',
+                          action: function (e) {
+                              $.ajax({
+                                  type: "POST",
+                                  url: '/Admin/ActivateDivisionKPI',     //your action
+                                  data: { "recordid": recordid},
+                                  dataType: 'json',
+                                  success: function (result) {
+
+                                        var grid = $("#gridkpis").data("kendoGrid"); 
+                                        grid.dataSource.transport.options.read.url = "/Admin/DivisionTransKPIs_Read/?recid=" + recid;
+                                        grid.dataSource.read();
+                                        grid.refresh();
+
+
+    
+                                        var griddeactivated = $("#gridkpisdeactivated").data("kendoGrid"); 
+                                        griddeactivated.dataSource.transport.options.read.url = "/Admin/DivisionDeactivatedKPIs_Read/?recid=" + recid;
+                                        griddeactivated.dataSource.read();
+                                        griddeactivated.refresh();
+
+                                  },
+                                  error: function (data) {
+
+                                  }
+                              })
+                              return true;
+                          },
+                          primary: true
+
+                      },
+                      { text: 'Cancel' }
+                  ],
+                  close: onClose
+              });
+
+              dialog.data("kendoDialog").open();
+              undo.fadeOut();
+
+}
+
+function manageworkplan(e) {
+   e.preventDefault();
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    var projid=dataItem.ProjectId;
+    var fyear =dataItem.FYearIdent;
+    var fperiod =dataItem.FPeriodIdent;
+    var periodtxt =dataItem.FisPeriodHidden;
+    var dirid = dataItem.Directorate_Id;
+    var divid = dataItem.Division_Id;
+    var progid =dataItem.Programme_Id;
+    var mainrecid = dataItem.WPMainRecord_Ident;
+
+    var url="/NEPADStaff/ManageWorkplansDraft?divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+
+    redirect_blank(url);
+
+
+}
+
+
+function deleteworkplan(e) {
+   e.preventDefault();
+    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    var projid=dataItem.ProjectId;
+    var fyear =dataItem.FYearIdent;
+    var fperiod =dataItem.FPeriodIdent;
+    var periodtxt =dataItem.FisPeriodHidden;
+    var dirid = dataItem.Directorate_Id;
+    var divid = dataItem.Division_Id;
+    var progid =dataItem.Programme_Id;
+    var mainrecid = dataItem.WPMainRecord_Ident;
+    var empid = $("#Employee_Id").val();
+
+   // var url="/NEPADStaff/DeleteWorkplansDraft?divid=" + divid + "&progid=" + progid + "&projid=" + projid + "&yearid=" + fyear+"&periodid=" + fperiod +"&periodtxt=" + periodtxt;
+
+    //redirect_blank(url);
+
+
+
+    var dialog = $('#dialog');
+    var undo = $("#undo");
+
+    function onClose() {
+        undo.fadeIn();
+    }
+
+    dialog.kendoDialog({
+        width: "450px",
+        title: "Confirmation",
+        closable: false,
+        modal: true,
+        content: "<p>Please confirm the DELETE action.<p>",
+        actions: [
+            {
+                text: 'Confirm',
+                action: function (e) {
+                    $.ajax({
+                        type: "POST",
+                        url: url="/Admin/DeleteWorkplansDraft?transid=" + mainrecid,     //your action
+                        //data: { "subrecid": subrecid},
+                        dataType: 'json',
+                        success: function (result) {
+
+
+                            var grid_main = $("#grid").data("kendoGrid"); 
+                            grid_main.dataSource.transport.options.read.url = "/Admin/DraftWorkplans_Read?empid=" + empid;
+                            grid_main.dataSource.read();
+                            //grid_outputsactivities.refresh();
+
+
+                        },
+                        error: function (data) {
+
+                        }
+                    })
+                    return true;
+                },
+                primary: true
+
+            },
+            { text: 'Cancel' }
+        ],
+        close: onClose
+    });
+
+    dialog.data("kendoDialog").open();
+    undo.fadeOut();
+
+
+}
+
+
+   
+
+</script>
+
+
+<style>
+    .procurementassignedgridcsscompleted 
+    {
+        color: #003f59;
+        background-color: #e6f8f4;
+        /*border-style: solid; /e6f2f8 f7fdff
+        border-bottom-width:1px;
+        border-bottom-color: #000;*/
+        border-color: #cde9ce;
+
+    }
+    .procurementassignedgridcsscompleted2 
+    {
+        color: #003f59;
+        background-color: #d0f5ec;
+        /*border-style: solid; /e6f2f8 f7fdff
+        border-bottom-width:1px;
+        border-bottom-color: #000;*/
+        border-color: #cde9ce;
+
+    }
+
+
+
+
+
+
+    .procurementassignedgridcss 
+    {
+        color: #003f59;
+        background-color: #f8f8e6;
+        /*border-style: solid; /e6f2f8 f7fdff
+        border-bottom-width:1px;
+        border-bottom-color: #000;*/
+        border-color: #cde9ce;
+
+    }
+    .procurementassignedgridcss2 
+    {
+        color: #003f59;
+        background-color: #f5f3d0;
+        /*border-style: solid; /e6f2f8 f7fdff
+        border-bottom-width:1px;
+        border-bottom-color: #000;*/
+        border-color: #cde9ce;
+
+    }
+</style>
+
+
+
+
+ @* <script src="~/lib/kendo-ui/js/kendo.culture.en-US.min.js"></script> 
+ <script>
+        kendo.culture("en-US");
+</script>*@

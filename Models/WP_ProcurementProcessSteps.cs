@@ -24,6 +24,7 @@ namespace AUDANEPAD_Integrated.Models
 
 
         public string WPStep_Status { get; set; }
+        public bool WPAtThisStep { get; set; }
         public LocalDate TransactionDate { get; set; }
         
     }
