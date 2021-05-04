@@ -5487,7 +5487,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                 {
                                     LkUp_Project project= _lkupProjectRepository.GetRecord(rec_proj.Project_Id);
 
-                                    inneriter=inneriter+1;
+                                    
                                     
                                     //Compute MS, DP and Total Budget for Project
                                     double proj_ms_budget=0;
@@ -5788,6 +5788,7 @@ namespace AUDANEPAD_Integrated.Controllers
                                     if(proj_total_budget>0)
                                     {
                                         currentrow=currentrow+1;
+                                        inneriter=inneriter+1;
 
                                         IRow rowoutcont2 = worksheetouts.CreateRow(currentrow);
 
@@ -5850,6 +5851,7 @@ namespace AUDANEPAD_Integrated.Controllers
 
                                 }
                                 //Totals
+                                inneriter=0;
 
                                 currentrow=currentrow+1;
 
