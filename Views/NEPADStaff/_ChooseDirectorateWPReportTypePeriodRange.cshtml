@@ -34,14 +34,14 @@
 
                                 <div class="d-flex flex-column flex-sm-row align-items-sm-center mb-3"><img class="avatar-lg mb-3 mb-sm-0 rounded mr-sm-3" src="~/nepadstaff2/images/excelformat.png"  alt="" />
                                     <div class="flex-grow-1">
-                                        <h5><a href="javascript:void(0)" onclick="GenerateFullReport()">Workplan in Excel Format</a></h5>
+                                        <h5><a asp-controller="ExcelAPI" asp-action="DirectorateWorkplanRangeExcel" asp-route-id="@Model.WPCycle_Id" asp-route-periodid="@Model.Period_Id" asp-route-dirid="@Model.Directorate_Id">Workplan in Excel Format</a></h5>
                                         <p class="m-0 text-small text-muted">This format is used by programme managers</p>
                                       
                                     </div>
                                     <div>
                                 
 
-                                        <a href="javascript:void(0)" onclick="GenerateFullReport()" class="btn btn-outline-primary mt-3 mb-3 m-sm-0 btn-rounded btn-sm">
+                                        <a asp-controller="ExcelAPI" asp-action="DirectorateWorkplanRangeExcel" asp-route-id="@Model.WPCycle_Id" asp-route-periodid="@Model.Period_Id" asp-route-dirid="@Model.Directorate_Id" class="btn btn-outline-primary mt-3 mb-3 m-sm-0 btn-rounded btn-sm">
                                             View
                                             Report
                                         </a>
